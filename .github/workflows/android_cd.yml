@@ -1,0 +1,64 @@
+name: Android CD
+
+on:
+  push:
+    branches: ["release"]
+  pull_request:
+    branches: ["release"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug --build-cache --stacktrace
+
+      - name: KtlintCheck
+        run: ./gradlew ktlintcheck
+
+      - name: Test
+        run: ./gradlew test --stacktrace
+
+      - name: Build AAB for Firebase
+        run: ./gradlew bundleRelease --stacktrace
+
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-release.aab
+          path: app/build/outputs/bundle/release/app-release.aab
+
+      - name: Build APK for Testing
+        run: ./gradlew assembleRelease --stacktrace
+
+      - name: Install Firebase CLI
+        run: curl -sL firebase.tools | bash
+
+      - name: Upload APK to Firebase App Distribution
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: |
+          firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
+          --app ${{ secrets.FIREBASE_APP_ID }} \
+          --release-notes "~새로운 릴리즈 버전이 날라왔어용~" \
+          --groups "최강야뿌앱3팀"
