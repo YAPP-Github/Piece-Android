@@ -26,7 +26,7 @@ androidxSplashscreen = "1.0.1"
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
 androidxComposeBom = "2024.11.00"
 # https://developer.android.com/jetpack/androidx/releases/navigation
-androidxComposeNavigation = "2.8.3"
+androidxComposeNavigation = "2.8.4"
 # https://developer.android.com/jetpack/androidx/releases/compose-material
 androidxComposeMaterial = "1.7.4"
 # https://developer.android.com/jetpack/androidx/releases/compose-material3
