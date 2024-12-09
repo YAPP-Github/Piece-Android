@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.example.auth.navigation.AuthRoute
 import com.example.auth.navigation.authScreen
+import com.example.etc.navigation.etcScreen
 import com.example.matching.navigation.matchingScreen
 import com.example.mypage.navigation.myPageScreen
 import com.yapp.chaeum.ui.AppState
@@ -25,5 +26,6 @@ fun AppNavHost(
         )
         matchingScreen()
         myPageScreen()
+        etcScreen()
     }
 }

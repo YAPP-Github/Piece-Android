@@ -14,7 +14,10 @@ fun AuthRoute(
     onLoginSuccess: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "AuthRoute", fontSize = 30.sp, modifier = Modifier.clickable { onLoginSuccess() })
+        Text(
+            text = "AuthRoute",
+            fontSize = 30.sp,
+            modifier = Modifier.clickable { onLoginSuccess() })
     }
 }
 
