@@ -23,3 +23,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Chaeum"
 include(":app")
+include(":feature:auth")
+include(":feature:mypage")
+include(":feature:matching")
+include(":feature:etc")
