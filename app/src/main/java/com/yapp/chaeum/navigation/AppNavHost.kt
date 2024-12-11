@@ -3,12 +3,12 @@ package com.yapp.chaeum.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.example.auth.navigation.AuthRoute
-import com.example.auth.navigation.authScreen
-import com.example.etc.navigation.etcScreen
-import com.example.matching.navigation.matchingScreen
-import com.example.mypage.navigation.myPageScreen
+import androidx.navigation.compose.composable
+import com.example.auth.navigation.AuthGraph
+import com.example.auth.navigation.authNavGraph
 import com.yapp.chaeum.ui.AppState
+import com.yapp.chaeum.ui.HomeGraph
+import com.yapp.chaeum.ui.HomeRoute
 
 @Composable
 fun AppNavHost(
@@ -18,14 +18,14 @@ fun AppNavHost(
     val navController = appState.navController
     NavHost(
         navController = navController,
-        startDestination = AuthRoute,
+        startDestination = AuthGraph,
         modifier = modifier,
     ) {
-        authScreen(
+        authNavGraph(
             onLoginSuccess = { appState.loginSuccess() },
         )
-        matchingScreen()
-        myPageScreen()
-        etcScreen()
+        composable<HomeGraph> {
+            HomeRoute()
+        }
     }
 }

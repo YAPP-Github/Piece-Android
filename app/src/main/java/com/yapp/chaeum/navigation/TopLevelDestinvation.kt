@@ -5,7 +5,7 @@ import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.etc.navigation.EtcRoute
-import com.example.matching.navigation.MatchingRoute
+import com.example.matching.navigation.MatchingGraphDest
 import com.example.mypage.navigation.MyPageRoute
 import kotlin.reflect.KClass
 
@@ -21,7 +21,7 @@ enum class TopLevelDestination(
         unselectedIcon = Icons.Outlined.Call,
         iconText = "매칭",
         titleText = "매칭",
-        route = MatchingRoute::class,
+        route = MatchingGraphDest.MatchingRoute::class,
     ),
     MYPAGE(
         selectedIcon = Icons.Filled.Call,

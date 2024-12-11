@@ -4,21 +4,29 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.example.auth.AuthRoute
 import kotlinx.serialization.Serializable
 
 @Serializable
-object AuthRoute
+data object AuthGraph
+
+sealed class AuthGraphDest {
+    @Serializable
+    data object AuthRoute : AuthGraphDest()
+}
 
 fun NavController.navigateToAuth(navOptions: NavOptions) =
-    navigate(route = AuthRoute, navOptions)
+    navigate(route = AuthGraphDest.AuthRoute, navOptions)
 
-fun NavGraphBuilder.authScreen(
-    onLoginSuccess: () -> Unit
+fun NavGraphBuilder.authNavGraph(
+    onLoginSuccess: () -> Unit,
 ) {
-    composable<AuthRoute> {
-        AuthRoute(
-            onLoginSuccess = onLoginSuccess
-        )
+    navigation<AuthGraph>(startDestination = AuthGraphDest.AuthRoute) {
+        composable<AuthGraphDest.AuthRoute> {
+            AuthRoute(
+                onLoginSuccess = onLoginSuccess
+            )
+        }
     }
 }
