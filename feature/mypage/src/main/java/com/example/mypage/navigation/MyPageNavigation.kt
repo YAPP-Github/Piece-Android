@@ -1,5 +1,6 @@
 package com.example.mypage.navigation
 
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -13,8 +14,8 @@ object MyPageRoute
 fun NavController.navigateToMyPage(navOptions: NavOptions) =
     navigate(route = MyPageRoute, navOptions)
 
-fun NavGraphBuilder.myPageScreen() {
+fun NavGraphBuilder.myPageScreen(modifier: Modifier = Modifier) {
     composable<MyPageRoute> {
-        MyPageRoute()
+        MyPageRoute(modifier)
     }
 }

@@ -36,5 +36,9 @@ enum class TopLevelDestination(
         iconText = "ETC",
         titleText = "ETC",
         route = EtcRoute::class,
-    ),
+    );
+
+    companion object {
+        val topLevelDestinations = entries
+    }
 }

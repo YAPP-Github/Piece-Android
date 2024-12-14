@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun MyPageRoute() {
+fun MyPageRoute(
+    modifier: Modifier = Modifier,
+) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "MyPageRoute", fontSize = 30.sp)
     }

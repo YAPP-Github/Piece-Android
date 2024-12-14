@@ -1,5 +1,6 @@
 package com.example.etc.navigation
 
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -13,8 +14,8 @@ object EtcRoute
 fun NavController.navigateToEtc(navOptions: NavOptions) =
     navigate(route = EtcRoute, navOptions)
 
-fun NavGraphBuilder.etcScreen() {
+fun NavGraphBuilder.etcScreen(modifier: Modifier = Modifier) {
     composable<EtcRoute> {
-        EtcRoute()
+        EtcRoute(modifier)
     }
 }

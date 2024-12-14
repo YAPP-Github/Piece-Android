@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun EtcRoute() {
+fun EtcRoute(
+    modifier: Modifier = Modifier,
+) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "EtcRoute", fontSize = 30.sp)
     }
