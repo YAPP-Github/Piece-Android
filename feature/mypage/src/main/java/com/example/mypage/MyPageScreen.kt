@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 fun MyPageRoute(
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "MyPageRoute", fontSize = 30.sp)
     }
 }

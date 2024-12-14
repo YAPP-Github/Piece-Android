@@ -10,27 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun MatchingDetailRoute(
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { onBack() },
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "MatchingDetailRoute", fontSize = 30.sp)
-    }
-}
-
-@Composable
 fun MatchingRoute(
     onNavigateToDetail: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .clickable { onNavigateToDetail() },
         contentAlignment = Alignment.Center

@@ -1,12 +1,13 @@
 package com.example.matching.navigation
 
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.matching.MatchingDetailRoute
 import com.example.matching.MatchingRoute
+import com.example.matching.detail.MatchingDetailRoute
 import kotlinx.serialization.Serializable
 
 
@@ -21,12 +22,16 @@ sealed class MatchingGraphDest {
     data object MatchingDetailRoute : MatchingGraphDest()
 }
 
-fun NavController.navigateToMatching(navOptions: NavOptions) =
+fun NavController.navigateToMatchingGraph(navOptions: NavOptions) =
     navigate(route = MatchingGraph, navOptions)
+
+fun NavController.navigateToMatchingDetailRoute() =
+    navigate(MatchingGraphDest.MatchingDetailRoute)
 
 fun NavGraphBuilder.matchingNavGraph(
     onNavigateToDetail: () -> Unit,
     onBack: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     navigation<MatchingGraph>(
         startDestination = MatchingGraphDest.MatchingRoute,
@@ -35,12 +40,14 @@ fun NavGraphBuilder.matchingNavGraph(
         composable<MatchingGraphDest.MatchingRoute> {
             MatchingRoute(
                 onNavigateToDetail = onNavigateToDetail,
+                modifier = modifier,
             )
         }
 
         composable<MatchingGraphDest.MatchingDetailRoute> {
             MatchingDetailRoute(
                 onBack = onBack,
+                modifier = modifier,
             )
         }
     }
