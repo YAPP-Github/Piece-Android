@@ -1,7 +1,6 @@
 plugins {
     id("chaeum.android.application")
     id("chaeum.android.compose")
-    alias(libs.plugins.androidx.navigation.safeargs)
     alias(libs.plugins.kotlin.serialization)
 }
 

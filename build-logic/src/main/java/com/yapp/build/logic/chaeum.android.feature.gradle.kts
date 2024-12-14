@@ -4,6 +4,7 @@ import com.yapp.build.logic.libs
 plugins {
     id("chaeum.android.library")
     id("chaeum.android.compose")
+//    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
@@ -22,6 +23,7 @@ dependencies {
 //    implementation(project(":core:common-ui"))
 
     val libs = project.extensions.libs
+    implementation(libs.findLibrary("kotlinx.serialization.json").get())
     implementation(libs.findLibrary("androidx.compose.navigation").get())
     implementation(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
     implementation(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
