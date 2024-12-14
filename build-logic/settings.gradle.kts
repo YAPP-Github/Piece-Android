@@ -12,4 +12,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Chaeum"
+rootProject.name = "Piece"

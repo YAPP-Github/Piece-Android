@@ -1,7 +1,7 @@
 plugins {
-    id("chaeum.android.feature")
+    id("piece.android.feature")
 }
 
 android {
-    namespace = "com.chaeum.matching"
+    namespace = "com.puzzle.matching"
 }
