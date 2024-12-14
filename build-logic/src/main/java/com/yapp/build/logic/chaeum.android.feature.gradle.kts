@@ -4,7 +4,6 @@ import com.yapp.build.logic.libs
 plugins {
     id("chaeum.android.library")
     id("chaeum.android.compose")
-//    id("org.jetbrains.kotlin.plugin.serialization")
 }
 
 android {
