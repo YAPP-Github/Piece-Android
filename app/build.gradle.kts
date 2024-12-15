@@ -1,11 +1,10 @@
 plugins {
-    id("chaeum.android.application")
-    id("chaeum.android.compose")
-    alias(libs.plugins.kotlin.serialization)
+    id("piece.android.application")
+    id("piece.android.compose")
 }
 
 android {
-    namespace = "com.yapp.chaeum"
+    namespace = "com.puzzle.piece"
 
     defaultConfig {
         versionCode = 1

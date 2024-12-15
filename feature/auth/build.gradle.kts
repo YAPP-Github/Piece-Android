@@ -1,8 +1,7 @@
 plugins {
-    id("chaeum.android.feature")
-    alias(libs.plugins.kotlin.serialization)
+    id("piece.android.feature")
 }
 
 android {
-    namespace = "com.chaeum.auth"
+    namespace = "com.puzzle.auth"
 }
