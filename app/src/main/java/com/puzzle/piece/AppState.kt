@@ -1,4 +1,4 @@
-package com.puzzle.piece.ui
+package com.puzzle.piece
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

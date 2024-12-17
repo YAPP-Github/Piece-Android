@@ -7,7 +7,7 @@ import com.puzzle.auth.navigation.AuthGraph
 import com.puzzle.auth.navigation.authNavGraph
 import com.puzzle.matching.navigation.navigateToMatchingDetailRoute
 import com.puzzle.piece.navigation.home.homeNavGraph
-import com.puzzle.piece.ui.AppState
+import com.puzzle.piece.AppState
 
 @Composable
 fun AppNavHost(

@@ -4,9 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.puzzle.piece.ui.App
-import com.puzzle.piece.ui.rememberAppState
-import com.puzzle.piece.ui.theme.PieceTheme
+import com.puzzle.designsystem.foundation.PieceTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,7 +12,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val appState = rememberAppState()
-            PieceTheme {
+            com.puzzle.designsystem.foundation.PieceTheme {
                 App(appState)
             }
         }

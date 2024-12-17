@@ -1,4 +1,4 @@
-package com.puzzle.piece.ui.theme
+package com.puzzle.designsystem.foundation
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
