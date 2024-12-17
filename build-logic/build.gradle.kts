@@ -12,12 +12,12 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidHilt") {
-            id = "care.android.hilt"
-            implementationClass = "com.idle.app.HiltAndroidPlugin"
+            id = "piece.android.hilt"
+            implementationClass = "com.puzzle.build.logic.HiltAndroidPlugin"
         }
         register("kotlinHilt") {
-            id = "care.kotlin.hilt"
-            implementationClass = "com.idle.app.HiltKotlinPlugin"
+            id = "piece.kotlin.hilt"
+            implementationClass = "com.puzzle.build.logic.HiltKotlinPlugin"
         }
     }
 }
