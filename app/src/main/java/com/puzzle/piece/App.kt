@@ -12,7 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import com.puzzle.auth.navigation.AuthGraph
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.puzzle.navigation.AuthGraph
+import com.puzzle.navigation.EtcRoute
+import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.MyPageRoute
+import com.puzzle.navigation.Route
 import com.puzzle.piece.navigation.AppNavHost
 import com.puzzle.piece.navigation.TopLevelDestination
 import kotlin.reflect.KClass
@@ -20,20 +26,27 @@ import kotlin.reflect.KClass
 @Composable
 fun App(
     appState: AppState = rememberAppState(),
+    navController: NavHostController,
     modifier: Modifier = Modifier,
+    navigateToTopLevelDestination: (Route) -> Unit,
 ) {
-    val currentDestination = appState.currentDestination
+    val currentDestination = navController.currentBackStackEntryAsState()
+        .value?.destination
 
     Scaffold(
         bottomBar = {
             if (currentDestination?.isInAuthGraph() == false) {
-                AppBottomBar(appState, currentDestination)
+                AppBottomBar(
+                    currentDestination = currentDestination,
+                    navigateToTopLevelDestination = navigateToTopLevelDestination,
+                )
             }
         }
     ) { innerPadding ->
         val contentModifier = modifier.padding(innerPadding)
+
         AppNavHost(
-            appState = appState,
+            navController = navController,
             modifier = contentModifier,
         )
     }
@@ -41,8 +54,8 @@ fun App(
 
 @Composable
 private fun AppBottomBar(
-    appState: AppState,
-    currentDestination: NavDestination?
+    currentDestination: NavDestination?,
+    navigateToTopLevelDestination: (Route) -> Unit,
 ) {
     BottomNavigation(
         modifier = Modifier.navigationBarsPadding()
@@ -58,8 +71,12 @@ private fun AppBottomBar(
                 label = { Text(topLevelRoute.name) },
                 selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
                 onClick = {
-                    appState.navigateToTopLevelDestination(topLevelRoute)
-                }
+                    when (topLevelRoute) {
+                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
+                        TopLevelDestination.MY_PAGE -> navigateToTopLevelDestination(MyPageRoute)
+                        TopLevelDestination.ETC -> navigateToTopLevelDestination(EtcRoute)
+                    }
+                },
             )
         }
     }
@@ -74,7 +91,7 @@ private fun NavDestination?.isInAuthGraph(): Boolean =
     } ?: false
 
 /**
- * 현재 목적지가 TopLeveLDestination 라우트에 속하는지 확인하는 메서드
+ * 현재 목적지가 TopLevelDestination 라우트에 속하는지 확인하는 메서드
  */
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any {

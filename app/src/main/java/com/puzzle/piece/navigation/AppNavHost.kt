@@ -2,31 +2,27 @@ package com.puzzle.piece.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.puzzle.auth.navigation.AuthGraph
 import com.puzzle.auth.navigation.authNavGraph
-import com.puzzle.matching.navigation.navigateToMatchingDetailRoute
-import com.puzzle.piece.navigation.home.homeNavGraph
-import com.puzzle.piece.AppState
+import com.puzzle.etc.navigation.etcScreen
+import com.puzzle.matching.navigation.matchingNavGraph
+import com.puzzle.mypage.navigation.myPageScreen
+import com.puzzle.navigation.AuthGraph
 
 @Composable
 fun AppNavHost(
-    appState: AppState,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val navController = appState.navController
-
     NavHost(
         navController = navController,
         startDestination = AuthGraph,
+        modifier = modifier,
     ) {
-        authNavGraph(
-            onLoginSuccess = appState::navigateToHome,
-        )
-        homeNavGraph(
-            onNavigateToDetail = navController::navigateToMatchingDetailRoute,
-            onBack = navController::popBackStack,
-            modifier = modifier,
-        )
+        authNavGraph()
+        matchingNavGraph()
+        myPageScreen()
+        etcScreen()
     }
 }

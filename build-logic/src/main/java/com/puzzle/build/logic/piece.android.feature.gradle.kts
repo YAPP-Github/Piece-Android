@@ -17,7 +17,7 @@ configureHiltAndroid()
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
-//    implementation(project(":core:navigation"))
+    implementation(project(":core:navigation"))
 //    implementation(project(":core:analytics"))
 //    implementation(project(":core:common-ui"))
 
