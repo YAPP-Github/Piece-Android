@@ -33,7 +33,6 @@ dependencies {
     implementation(libs.androidx.navigation.ui)
     implementation(libs.androidx.compose.navigation)
     implementation(libs.kotlinx.serialization.json)
-    implementation(libs.androidx.compose.material3)
 
     implementation(projects.feature.auth)
     implementation(projects.feature.etc)

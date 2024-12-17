@@ -12,7 +12,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val appState = rememberAppState()
-            com.puzzle.designsystem.foundation.PieceTheme {
+            PieceTheme {
                 App(appState)
             }
         }
