@@ -2,23 +2,23 @@ package com.puzzle.navigation
 
 import kotlinx.serialization.Serializable
 
-sealed class Route
+sealed interface Route
 
 @Serializable
-data object AuthGraph : Route()
+data object AuthGraph : Route
 
-sealed class AuthGraphDest : Route() {
+sealed class AuthGraphDest : Route {
     @Serializable
     data object AuthRoute : AuthGraphDest()
 }
 
 @Serializable
-data object EtcRoute : Route()
+data object EtcRoute : Route
 
 @Serializable
-data object MatchingGraph : Route()
+data object MatchingGraph : Route
 
-sealed class MatchingGraphDest : Route() {
+sealed class MatchingGraphDest : Route {
     @Serializable
     data object MatchingRoute : MatchingGraphDest()
 
@@ -27,4 +27,4 @@ sealed class MatchingGraphDest : Route() {
 }
 
 @Serializable
-data object MyPageRoute : Route()
+data object MyPageRoute : Route
