@@ -11,10 +11,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.puzzle.MainViewModel
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.piece.ui.App
+import com.puzzle.piece.ui.rememberAppState
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        navigationFlow.collect { event ->
+                        navigationHelper.navigationFlow.collect { event ->
                             handleNavigationEvent(
                                 navController = navController,
                                 event = event,

@@ -1,4 +1,4 @@
-package com.puzzle.piece
+package com.puzzle.piece.ui
 
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
