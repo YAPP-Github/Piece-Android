@@ -35,7 +35,7 @@ fun App(
 
     Scaffold(
         bottomBar = {
-            if (currentDestination?.isInAuthGraph() == false) {
+            if (currentDestination?.isHideBottomNavigationRoute() == false) {
                 AppBottomBar(
                     currentDestination = currentDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -83,9 +83,9 @@ private fun AppBottomBar(
 }
 
 /**
- * 현재 목적지가 AuthGraph 인지 확인하는 메서드
+ * 현재 목적지가 바텀 네비게이션이 보여지지 않는 화면인지 확인하는 메서드
  */
-private fun NavDestination?.isInAuthGraph(): Boolean =
+private fun NavDestination?.isHideBottomNavigationRoute(): Boolean =
     this?.hierarchy?.any { destination ->
         destination.route == AuthGraph::class.qualifiedName
     } ?: false
