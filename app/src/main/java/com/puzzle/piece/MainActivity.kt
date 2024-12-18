@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
                         appState = appState,
                         navController = navController,
                         navigateToTopLevelDestination = { topLevelDestination ->
-                            navigationHelper.navigateTo(
+                            navigationHelper.navigate(
                                 NavigationEvent.TopLevelNavigateTo(topLevelDestination)
                             )
                         }
@@ -65,7 +65,14 @@ class MainActivity : ComponentActivity() {
         when (event) {
             is NavigationEvent.NavigateTo -> {
                 val navOptions = event.popUpTo?.let {
-                    navOptions { popUpTo(it) }
+                    navOptions {
+                        popUpTo(it) {
+                            saveState = true
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
 
                 navController.navigate(
@@ -80,6 +87,7 @@ class MainActivity : ComponentActivity() {
                 val topLevelNavOptions = navOptions {
                     popUpTo(MatchingGraph) {
                         saveState = true
+                        inclusive = true
                     }
                     launchSingleTop = true
                     restoreState = true

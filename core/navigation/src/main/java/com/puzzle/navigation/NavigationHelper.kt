@@ -11,13 +11,13 @@ class NavigationHelper @Inject constructor() {
     private val _navigationFlow = Channel<NavigationEvent>(BUFFERED)
     val navigationFlow = _navigationFlow.receiveAsFlow()
 
-    fun navigateTo(navigationEvent: NavigationEvent) {
+    fun navigate(navigationEvent: NavigationEvent) {
         _navigationFlow.trySend(navigationEvent)
     }
 }
 
 sealed class NavigationEvent {
-    data class NavigateTo(val route: Route, val popUpTo: Int? = null) : NavigationEvent()
+    data class NavigateTo(val route: Route, val popUpTo: Route? = null) : NavigationEvent()
     data object NavigateUp : NavigationEvent()
     data class TopLevelNavigateTo(val route: Route) : NavigationEvent()
 }
