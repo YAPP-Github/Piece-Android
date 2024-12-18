@@ -4,9 +4,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.outlined.Call
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.puzzle.etc.navigation.EtcRoute
-import com.puzzle.matching.navigation.MatchingGraphDest
-import com.puzzle.mypage.navigation.MyPageRoute
+import com.puzzle.navigation.EtcRoute
+import com.puzzle.navigation.MatchingGraphDest
+import com.puzzle.navigation.MyPageRoute
 import kotlin.reflect.KClass
 
 enum class TopLevelDestination(
@@ -23,7 +23,7 @@ enum class TopLevelDestination(
         titleText = "매칭",
         route = MatchingGraphDest.MatchingRoute::class,
     ),
-    MYPAGE(
+    MY_PAGE(
         selectedIcon = Icons.Filled.Call,
         unselectedIcon = Icons.Outlined.Call,
         iconText = "마이페이지",

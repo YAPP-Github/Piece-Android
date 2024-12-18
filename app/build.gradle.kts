@@ -38,4 +38,7 @@ dependencies {
     implementation(projects.feature.etc)
     implementation(projects.feature.matching)
     implementation(projects.feature.mypage)
+
+    implementation(projects.core.designsystem)
+    implementation(projects.core.navigation)
 }
