@@ -1,34 +1,105 @@
 package com.puzzle.designsystem.foundation
 
-import androidx.compose.material3.Typography
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.puzzle.designsystem.R
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+val PretendardBold = FontFamily(
+    Font(
+        resId = R.font.pretendard_bold,
+        weight = FontWeight.Bold,
+    ),
+)
+
+val PretendardSemiBold = FontFamily(
+    Font(
+        resId = R.font.pretendard_semi_bold,
+        weight = FontWeight.SemiBold,
+    ),
+)
+
+val PretendardMedium = FontFamily(
+    Font(
+        resId = R.font.pretendard_medium,
+        weight = FontWeight.Medium,
+    ),
+)
+
+@Immutable
+data class PieceTypography(
+    // Headings
+    val heading1: TextStyle = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 28.sp,
+        lineHeight = 40.sp,
+        letterSpacing = (-0.28).sp, // -1% of 28sp
+    ),
+    val heading2: TextStyle = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 24.sp,
+        lineHeight = 32.sp,
+        letterSpacing = (-0.24).sp, // -1% of 24sp
+    ),
+    val heading3: TextStyle = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 20.sp,
+        lineHeight = 24.sp,
+        letterSpacing = (-0.2).sp, // -1% of 20sp
+    ),
+    val heading4: TextStyle = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 18.sp,
+        lineHeight = 22.sp,
+        letterSpacing = (-0.18).sp, // -1% of 18sp
+    ),
+    val heading5: TextStyle = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 18.sp,
+        lineHeight = 22.sp,
+        letterSpacing = (-0.18).sp,
+    ),
+
+    // Body
+    val body1: TextStyle = TextStyle(
+        fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        letterSpacing = (-0.16).sp,
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
+    val body2: TextStyle = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = (-0.16).sp,
+    ),
+    val body3: TextStyle = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = (-0.16).sp,
+    ),
+    val body4: TextStyle = TextStyle(
+        fontFamily = PretendardSemiBold,
+        fontSize = 14.sp,
+        lineHeight = 18.sp,
+        letterSpacing = (-0.14).sp,
+    ),
+    val body5: TextStyle = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 14.sp,
+        lineHeight = 18.sp,
+        letterSpacing = (-0.14).sp,
+    ),
+
+    // Caption
+    val caption1: TextStyle = TextStyle(
+        fontFamily = PretendardMedium,
+        fontSize = 12.sp,
         lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
-    )
-    */
+        letterSpacing = (-0.12).sp,
+    ),
 )
