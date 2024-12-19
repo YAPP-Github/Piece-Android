@@ -29,9 +29,15 @@ private val PretendardMedium = FontFamily(
     ),
 )
 
+private val DecimalBook = FontFamily(
+    Font(
+        resId = R.font.decimal_book,
+        weight = FontWeight.Normal,
+    )
+)
+
 @Immutable
 data class PieceTypography(
-    // Headings
     val heading1: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 28.sp,
@@ -62,8 +68,6 @@ data class PieceTypography(
         lineHeight = 22.sp,
         letterSpacing = (-0.18).sp,
     ),
-
-    // Body
     val body1: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
@@ -94,12 +98,15 @@ data class PieceTypography(
         lineHeight = 18.sp,
         letterSpacing = (-0.14).sp,
     ),
-
-    // Caption
     val caption1: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = (-0.12).sp,
     ),
+    val decimalBook: TextStyle = TextStyle(
+        fontFamily = DecimalBook,
+        fontSize = 16.sp,
+        lineHeight = (19.2).sp,
+    )
 )
