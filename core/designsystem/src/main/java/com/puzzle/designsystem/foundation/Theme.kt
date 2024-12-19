@@ -5,10 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 
-val LocalColors = staticCompositionLocalOf {
+private val LocalColors = staticCompositionLocalOf {
     PieceColors()
 }
-val LocalTypography = staticCompositionLocalOf {
+private val LocalTypography = staticCompositionLocalOf {
     PieceTypography()
 }
 

@@ -8,21 +8,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.puzzle.designsystem.R
 
-val PretendardBold = FontFamily(
+private val PretendardBold = FontFamily(
     Font(
         resId = R.font.pretendard_bold,
         weight = FontWeight.Bold,
     ),
 )
 
-val PretendardSemiBold = FontFamily(
+private val PretendardSemiBold = FontFamily(
     Font(
         resId = R.font.pretendard_semi_bold,
         weight = FontWeight.SemiBold,
     ),
 )
 
-val PretendardMedium = FontFamily(
+private val PretendardMedium = FontFamily(
     Font(
         resId = R.font.pretendard_medium,
         weight = FontWeight.Medium,
