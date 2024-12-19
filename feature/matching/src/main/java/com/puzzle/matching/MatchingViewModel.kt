@@ -10,12 +10,18 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
 data class MatchingState(
-    val isLoading: Boolean,
+    val isLoading: Boolean = false,
 ) : MavericksState
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
 ) : MavericksViewModel<MatchingState>(initialState) {
+
+    internal fun processIntent(intent: MatchingIntent) {
+        when (intent) {
+            else -> Unit
+        }
+    }
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<MatchingViewModel, MatchingState> {
@@ -25,3 +31,5 @@ class MatchingViewModel @AssistedInject constructor(
     companion object :
         MavericksViewModelFactory<MatchingViewModel, MatchingState> by hiltMavericksViewModelFactory()
 }
+
+sealed class MatchingIntent
