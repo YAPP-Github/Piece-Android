@@ -5,9 +5,13 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
+import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.flow.receiveAsFlow
 
 data class MatchingState(
     val isLoading: Boolean = false,
@@ -15,10 +19,20 @@ data class MatchingState(
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
+    val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
+
+    private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
+    val sideEffect = _sideEffect.receiveAsFlow()
 
     internal fun processIntent(intent: MatchingIntent) {
         when (intent) {
+            else -> Unit
+        }
+    }
+
+    private fun handleSideEffect(sideEffect: MatchingSideEffect) {
+        when (sideEffect) {
             else -> Unit
         }
     }
@@ -33,3 +47,5 @@ class MatchingViewModel @AssistedInject constructor(
 }
 
 sealed class MatchingIntent
+
+sealed class MatchingSideEffect
