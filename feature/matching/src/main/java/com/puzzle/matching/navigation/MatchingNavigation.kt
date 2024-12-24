@@ -12,7 +12,6 @@ fun NavGraphBuilder.matchingNavGraph() {
     navigation<MatchingGraph>(
         startDestination = MatchingGraphDest.MatchingRoute,
     ) {
-        /** 예시 코드, 삭제 예정 */
         composable<MatchingGraphDest.MatchingRoute> {
             MatchingRoute()
         }

@@ -23,6 +23,9 @@ dependencies {
 
     val libs = project.extensions.libs
     implementation(libs.findLibrary("kotlinx.serialization.json").get())
+    implementation(libs.findLibrary("mavericks").get())
+    implementation(libs.findLibrary("mavericks.hilt").get())
+    implementation(libs.findLibrary("mavericks.compose").get())
     implementation(libs.findLibrary("androidx.compose.navigation").get())
     implementation(libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
     implementation(libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
