@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.puzzle.designsystem"
+    namespace = "com.puzzle.common.ui"
 }
 
 dependencies {}

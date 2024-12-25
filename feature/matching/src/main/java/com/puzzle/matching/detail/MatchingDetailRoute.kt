@@ -13,7 +13,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.matching.detail.contract.MatchingDetailState
 
 @Composable
-fun MatchingDetailRoute(
+internal fun MatchingDetailRoute(
     viewModel: MatchingDetailViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -24,7 +24,7 @@ fun MatchingDetailRoute(
 }
 
 @Composable
-fun MatchingDetailScreen(
+internal fun MatchingDetailScreen(
     state: MatchingDetailState,
 ) {
     Box(

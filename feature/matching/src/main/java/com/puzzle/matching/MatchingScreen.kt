@@ -39,7 +39,7 @@ import com.puzzle.matching.contract.MatchingIntent
 import com.puzzle.matching.contract.MatchingState
 
 @Composable
-fun MatchingRoute(
+internal fun MatchingRoute(
     viewModel: MatchingViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()

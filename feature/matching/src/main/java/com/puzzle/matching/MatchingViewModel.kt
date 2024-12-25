@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
-    val navigationHelper: NavigationHelper,
+    private val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
 
     private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
