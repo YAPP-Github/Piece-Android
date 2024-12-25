@@ -24,14 +24,6 @@ import com.puzzle.piece.navigation.AppNavHost
 import com.puzzle.piece.navigation.TopLevelDestination
 import kotlin.reflect.KClass
 
-/**
- * 숨겨야 하는 경로들을 상수로 정의
- */
-private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
-    AuthGraph::class.qualifiedName,
-    MatchingDetailRoute::class.qualifiedName
-)
-
 @Composable
 fun App(
     appState: AppState = rememberAppState(),
@@ -90,6 +82,11 @@ private fun AppBottomBar(
         }
     }
 }
+
+private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
+    AuthGraph::class.qualifiedName,
+    MatchingDetailRoute::class.qualifiedName
+)
 
 /**
  * 현재 목적지가 바텀 네비게이션이 보여지지 않는 화면인지 확인하는 메서드
