@@ -4,8 +4,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
@@ -69,10 +66,10 @@ fun MatchingDetailScreen(
         modifier = modifier.fillMaxSize()
     ) {
         MatchingDetailTopBar(
-            showBackButton = state.currentPage != MatchingDetailState.MatchingDetailPage.BASIC_INFO,
+            showBackButton = state.currentPage !is MatchingDetailState.BasicInfoState,
             onBackClick = onBackPageClick,
             onCloseClick = onCloseClick,
-            title = stringResource(state.currentPage.titleResId)
+            title = state.currentPage.title,
         )
 
         MatchingDetailContent(
@@ -130,9 +127,9 @@ fun MatchingDetailContent(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (currentPage) {
-            MatchingDetailState.MatchingDetailPage.BASIC_INFO -> ProfileBasicInfoBody()
-            MatchingDetailState.MatchingDetailPage.VALUE_TALK -> ProfileValueTalkBody()
-            MatchingDetailState.MatchingDetailPage.VALUE_PICK -> ProfileValuePickBody()
+            is MatchingDetailState.BasicInfoState -> ProfileBasicInfoBody(currentPage)
+            is MatchingDetailState.ValuePick -> ProfileValuePickBody(currentPage)
+            is MatchingDetailState.ValueTalk -> ProfileValueTalkBody(currentPage)
         }
     }
 }
@@ -159,55 +156,98 @@ fun MatchingDetailBottomBar(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProfileBasicInfoBody() {
-    val userInfo = remember {
-        listOf(
-            "만 25세 2000년생",
-            "키 180cm",
-            "종교 상관없음",
-            "세종특별자치시",
-            "프리랜서",
-            "비흡연"
-        )
-    }
-
+fun ProfileBasicInfoBody(
+    state: MatchingDetailState.BasicInfoState,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.padding(horizontal = 20.dp),
     ) {
-        Text(text = "음악과 요리를 좋아하는")
-        Text(text = "수줍은 수달")
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+        Column(
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .weight(1f),
         ) {
-            userInfo.forEach { info ->
-                InfoItem(text = info)
+            Text(text = "오늘의 매칭 조각")
+            Spacer(modifier = modifier.weight(1f))
+            Text(text = "나를 표현하는 한 마디")
+            Row {
+                Text(text = "닉네임", modifier = Modifier.weight(1f))
+            }
+        }
+        Column(
+            modifier = Modifier
+                .padding(vertical = 12.dp),
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.5.dp),
+            ) {
+                InfoItem(
+                    title = "나이",
+                    content = state.birthYear,
+                    subContent = state.birthYear,
+                    modifier = Modifier.weight(1f)
+                )
+                InfoItem(
+                    title = "키",
+                    content = state.height,
+                    modifier = Modifier.weight(1f)
+                )
+                InfoItem(
+                    title = "종교",
+                    content = state.religion,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(5.5.dp),
+            ) {
+                InfoItem(
+                    title = "활동 지역",
+                    content = state.activityRegion,
+                    modifier = Modifier.weight(1f)
+                )
+                InfoItem(
+                    title = "직업",
+                    content = state.occupation,
+                    modifier = Modifier.weight(1f)
+                )
+                InfoItem(
+                    title = "흡연",
+                    content = state.smokeStatue,
+                    modifier = Modifier.weight(1f)
+                )
             }
         }
     }
 }
 
 @Composable
-fun InfoItem(text: String) {
-    Box(
-        modifier = Modifier
-            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+fun InfoItem(
+    title: String,
+    content: String,
+    subContent: String? = null,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp)),
     ) {
-        Text(text = text)
+        Text(text = title)
+        Row {
+            Text(text = content, modifier = modifier)
+            if (subContent != null) {
+                Text(text = subContent, modifier = modifier)
+            }
+        }
     }
 }
 
 @Composable
-fun ProfileValueTalkBody() {
+fun ProfileValueTalkBody(
+    state: MatchingDetailState.ValueTalk,
+) {
     val dummyItems = remember { dummyValueTalkItems() }
 
     LazyColumn(
@@ -245,7 +285,9 @@ fun ValueTalkCard(item: ValueTalkItem) {
 }
 
 @Composable
-fun ProfileValuePickBody() {
+fun ProfileValuePickBody(
+    state: MatchingDetailState.ValuePick
+) {
     val tabIndex = remember { mutableIntStateOf(0) }
 
     val tabTitles = listOf("전체", "나와 같은", "나와 다른")
@@ -307,7 +349,7 @@ private fun MatchingDetailScreenPreview() {
 @Composable
 private fun ProfileBasicInfoBodyPreview() {
     PieceTheme {
-        ProfileBasicInfoBody()
+        ProfileBasicInfoBody(MatchingDetailState.BasicInfoState())
     }
 }
 
@@ -315,7 +357,7 @@ private fun ProfileBasicInfoBodyPreview() {
 @Composable
 private fun ProfileValueTalkBodyPreview() {
     PieceTheme {
-        ProfileValueTalkBody()
+        ProfileValueTalkBody(MatchingDetailState.ValueTalk())
     }
 }
 
@@ -323,7 +365,7 @@ private fun ProfileValueTalkBodyPreview() {
 @Composable
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
-        ProfileValuePickBody()
+        ProfileValuePickBody(MatchingDetailState.ValuePick())
     }
 }
 
