@@ -7,4 +7,6 @@ android {
     namespace = "com.puzzle.common.ui"
 }
 
-dependencies {}
+dependencies {
+    implementation(projects.core.designsystem)
+}

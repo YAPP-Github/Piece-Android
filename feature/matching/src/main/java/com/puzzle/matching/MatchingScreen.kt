@@ -205,6 +205,7 @@ internal fun MatchingScreen(
                 }
 
                 LazyColumn(
+                    state = listState,
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier
                         .padding(top = 12.dp)
@@ -222,6 +223,10 @@ internal fun MatchingScreen(
                             "함께 술을 즐기고 싶어요2",
                             "커밍아웃은 가까운 친구에게만 했어요2",
                             "연락은 바쁘더라도 자주2",
+                            "바깥 데이트 스킨십도 가능3",
+                            "함께 술을 즐기고 싶어요3",
+                            "커밍아웃은 가까운 친구에게만 했어요3",
+                            "연락은 바쁘더라도 자주3",
                         ),
                         key = { it },
                     ) { value -> ValueTag(value) }
