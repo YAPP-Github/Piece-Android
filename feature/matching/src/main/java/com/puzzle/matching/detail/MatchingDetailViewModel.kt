@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.detail.contract.MatchingDetailState
+import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -19,6 +21,7 @@ import kotlinx.coroutines.launch
 
 class MatchingDetailViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingDetailState,
+    private val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingDetailState>(initialState) {
 
     private val intents = Channel<MatchingDetailIntent>(BUFFERED)
@@ -38,8 +41,12 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
-            else -> Unit
+            MatchingDetailIntent.OnMatchingDetailCloseClick -> processOnMatchingDetailCloseClickIntent()
         }
+    }
+
+    private fun processOnMatchingDetailCloseClickIntent() {
+        navigationHelper.navigate(NavigationEvent.NavigateUp)
     }
 
     private fun handleSideEffect(sideEffect: MatchingDetailSideEffect) {
