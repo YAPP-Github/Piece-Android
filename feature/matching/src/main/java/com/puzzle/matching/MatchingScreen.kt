@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -32,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.verticalScrollbar
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -55,6 +57,8 @@ internal fun MatchingScreen(
     state: MatchingState,
     navigateToMatchingDetail: () -> Unit,
 ) {
+    val listState = rememberLazyListState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -211,7 +215,8 @@ internal fun MatchingScreen(
                         .padding(top = 12.dp)
                         .fillMaxWidth()
                         .weight(1f)
-                        .heightIn(max = 191.dp),
+                        .heightIn(max = 191.dp)
+                        .verticalScrollbar(state = listState),
                 ) {
                     items(
                         items = mutableListOf(
