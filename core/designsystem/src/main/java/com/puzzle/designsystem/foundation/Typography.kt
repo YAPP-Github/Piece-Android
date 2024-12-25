@@ -29,84 +29,72 @@ private val PretendardMedium = FontFamily(
     ),
 )
 
-private val DecimalBook = FontFamily(
-    Font(
-        resId = R.font.decimal_book,
-        weight = FontWeight.Normal,
-    )
-)
-
 @Immutable
 data class PieceTypography(
-    val heading1: TextStyle = TextStyle(
+    val headingXLSB: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 28.sp,
         lineHeight = 40.sp,
         letterSpacing = (-0.28).sp, // -1% of 28sp
     ),
-    val heading2: TextStyle = TextStyle(
+    val headingLSB: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 24.sp,
         lineHeight = 32.sp,
         letterSpacing = (-0.24).sp, // -1% of 24sp
     ),
-    val heading3: TextStyle = TextStyle(
+    val headingMSB: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 20.sp,
         lineHeight = 24.sp,
         letterSpacing = (-0.2).sp, // -1% of 20sp
     ),
-    val heading4: TextStyle = TextStyle(
+    val headingSSB: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 18.sp,
         lineHeight = 22.sp,
         letterSpacing = (-0.18).sp, // -1% of 18sp
     ),
-    val heading5: TextStyle = TextStyle(
+    val headingSM: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 18.sp,
         lineHeight = 22.sp,
         letterSpacing = (-0.18).sp,
     ),
-    val body1: TextStyle = TextStyle(
+    val bodyMSB: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = (-0.16).sp,
     ),
-    val body2: TextStyle = TextStyle(
+    val bodyMM: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = (-0.16).sp,
     ),
-    val body3: TextStyle = TextStyle(
+    val bodyMR: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = (-0.16).sp,
     ),
-    val body4: TextStyle = TextStyle(
+    val bodySSB: TextStyle = TextStyle(
         fontFamily = PretendardSemiBold,
         fontSize = 14.sp,
         lineHeight = 18.sp,
         letterSpacing = (-0.14).sp,
     ),
-    val body5: TextStyle = TextStyle(
+    val bodySM: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 14.sp,
         lineHeight = 18.sp,
         letterSpacing = (-0.14).sp,
     ),
-    val caption1: TextStyle = TextStyle(
+    val captionM: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = (-0.12).sp,
     ),
-    val decimalBook: TextStyle = TextStyle(
-        fontFamily = DecimalBook,
-        fontSize = 16.sp,
-        lineHeight = (19.2).sp,
-    )
 )
