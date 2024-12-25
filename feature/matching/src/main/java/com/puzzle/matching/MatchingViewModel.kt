@@ -15,22 +15,35 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
     private val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
+    private val intents = Channel<MatchingIntent>(BUFFERED)
 
     private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
     val sideEffect = _sideEffect.receiveAsFlow()
 
-    internal fun processIntent(intent: MatchingIntent) {
+    init {
+        intents.receiveAsFlow()
+            .onEach(::processIntent)
+            .launchIn(viewModelScope)
+    }
+
+    internal fun onIntent(intent: MatchingIntent) = viewModelScope.launch {
+        intents.send(intent)
+    }
+
+    private fun processIntent(intent: MatchingIntent) {
         when (intent) {
             MatchingIntent.NavigateToMatchingDetail -> {
                 navigationHelper.navigate(NavigateTo(MatchingGraphDest.MatchingDetailRoute))
             }
-            else -> Unit
         }
     }
 

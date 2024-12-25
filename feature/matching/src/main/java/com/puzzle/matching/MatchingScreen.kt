@@ -48,7 +48,7 @@ internal fun MatchingRoute(
 
     MatchingScreen(
         state = state,
-        navigateToMatchingDetail = { viewModel.processIntent(MatchingIntent.NavigateToMatchingDetail) },
+        navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToMatchingDetail) },
     )
 }
 
