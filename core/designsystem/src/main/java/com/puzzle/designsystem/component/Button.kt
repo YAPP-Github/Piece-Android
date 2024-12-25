@@ -39,7 +39,7 @@ fun PieceSolidButton(
             disabledContainerColor = PieceTheme.colors.light1,
             disabledContentColor = PieceTheme.colors.white,
         ),
-        modifier = modifier,
+        modifier = modifier.height(52.dp),
     ) {
         Text(
             text = label,
@@ -134,7 +134,6 @@ fun PieceIconButton(
             Text(
                 text = label,
                 style = PieceTheme.typography.bodyMSB,
-                color = PieceTheme.colors.white,
             )
         }
     }
