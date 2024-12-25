@@ -42,6 +42,30 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
             MatchingDetailIntent.OnMatchingDetailCloseClick -> processOnMatchingDetailCloseClickIntent()
+            MatchingDetailIntent.OnBackPageClick -> processOnBackPageClickIntent()
+            MatchingDetailIntent.OnNextPageClick -> processOnNextPageClickIntent()
+        }
+    }
+
+    private fun processOnNextPageClickIntent() {
+        setState {
+            val updatedPage = when (currentPage) {
+                MatchingDetailState.MatchingDetailPage.BASIC_INFO -> MatchingDetailState.MatchingDetailPage.VALUE_TALK
+                MatchingDetailState.MatchingDetailPage.VALUE_TALK -> MatchingDetailState.MatchingDetailPage.VALUE_PICK
+                MatchingDetailState.MatchingDetailPage.VALUE_PICK -> MatchingDetailState.MatchingDetailPage.VALUE_PICK
+            }
+            copy(currentPage = updatedPage)
+        }
+    }
+
+    private fun processOnBackPageClickIntent() {
+        setState {
+            val updatedPage = when (currentPage) {
+                MatchingDetailState.MatchingDetailPage.BASIC_INFO -> MatchingDetailState.MatchingDetailPage.BASIC_INFO
+                MatchingDetailState.MatchingDetailPage.VALUE_TALK -> MatchingDetailState.MatchingDetailPage.BASIC_INFO
+                MatchingDetailState.MatchingDetailPage.VALUE_PICK -> MatchingDetailState.MatchingDetailPage.VALUE_TALK
+            }
+            copy(currentPage = updatedPage)
         }
     }
 

@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
@@ -50,7 +51,9 @@ fun MatchingDetailRoute(
 
     MatchingDetailScreen(
         state = state,
-        onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) }
+        onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) },
+        onBackPageClick = { viewModel.onIntent(MatchingDetailIntent.OnBackPageClick) },
+        onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
     )
 }
 
@@ -58,40 +61,28 @@ fun MatchingDetailRoute(
 fun MatchingDetailScreen(
     state: MatchingDetailState,
     onCloseClick: () -> Unit,
+    onBackPageClick: () -> Unit,
+    onNextPageClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val pageIndex = remember { mutableIntStateOf(0) }
-
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
     ) {
         MatchingDetailTopBar(
-            showBackButton = (pageIndex.intValue != 0),
-            onBackClick = {
-                if (pageIndex.intValue > 0) pageIndex.intValue--
-            },
+            showBackButton = state.currentPage != MatchingDetailState.MatchingDetailPage.BASIC_INFO,
+            onBackClick = onBackPageClick,
             onCloseClick = onCloseClick,
-            title = "가치관 pick",
+            title = stringResource(state.currentPage.titleResId)
         )
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-        ) {
-            when (pageIndex.intValue) {
-                0 -> ProfileBasicInfoBody()
-                1 -> ProfileValueTalkBody()
-                2 -> ProfileValuePickBody()
-            }
-        }
+        MatchingDetailContent(
+            currentPage = state.currentPage,
+            modifier = modifier.weight(1f),
+        )
 
         MatchingDetailBottomBar(
-            onShowPicturesClick = {
-                if (pageIndex.intValue > 0) pageIndex.intValue--
-            },
-            onConfirmClick = {
-                if (pageIndex.intValue < 2) pageIndex.intValue++
-            }
+            onShowPicturesClick = onBackPageClick,
+            onConfirmClick = onNextPageClick
         )
     }
 }
@@ -127,6 +118,21 @@ fun MatchingDetailTopBar(
                 imageVector = Icons.Default.Close,
                 contentDescription = "Close"
             )
+        }
+    }
+}
+
+
+@Composable
+fun MatchingDetailContent(
+    currentPage: MatchingDetailState.MatchingDetailPage,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        when (currentPage) {
+            MatchingDetailState.MatchingDetailPage.BASIC_INFO -> ProfileBasicInfoBody()
+            MatchingDetailState.MatchingDetailPage.VALUE_TALK -> ProfileValueTalkBody()
+            MatchingDetailState.MatchingDetailPage.VALUE_PICK -> ProfileValuePickBody()
         }
     }
 }
@@ -290,6 +296,8 @@ private fun MatchingDetailScreenPreview() {
     PieceTheme {
         MatchingDetailScreen(
             MatchingDetailState(),
+            {},
+            {},
             {},
         )
     }
