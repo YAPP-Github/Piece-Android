@@ -210,7 +210,7 @@ fun ProfileBasicValueBody() {
             .padding(16.dp)
     ) {
         items(dummyItems) { item ->
-            TalkCard(item)
+            BasicValueCard(item)
         }
     }
 }
@@ -224,7 +224,7 @@ fun dummyBasicValueItems() = listOf(
 )
 
 @Composable
-fun TalkCard(item: BasicValueItem) {
+fun BasicValueCard(item: BasicValueItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -286,7 +286,7 @@ fun TabContent(contentText: String) {
 
 @Preview
 @Composable
-private fun MainPreview() {
+private fun MatchingDetailScreenPreview() {
     PieceTheme {
         MatchingDetailScreen(
             MatchingDetailState(),
@@ -297,7 +297,7 @@ private fun MainPreview() {
 
 @Preview
 @Composable
-private fun FirstPagePreview() {
+private fun ProfileBasicInfoBodyPreview() {
     PieceTheme {
         ProfileBasicInfoBody()
     }
@@ -305,7 +305,7 @@ private fun FirstPagePreview() {
 
 @Preview
 @Composable
-private fun SecondPagePreview() {
+private fun ProfileBasicValueBodyPreview() {
     PieceTheme {
         ProfileBasicValueBody()
     }
@@ -313,7 +313,7 @@ private fun SecondPagePreview() {
 
 @Preview
 @Composable
-private fun ThirdPagePreview() {
+private fun ProfileAllValueBodyPreview() {
     PieceTheme {
         ProfileAllValueBody()
     }
