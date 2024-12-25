@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,9 +71,23 @@ fun PieceSubTopBar(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0)
+@Preview
 @Composable
 fun PreviewPieceMainTopBar() {
+    PieceTheme {
+        PieceMainTopBar(
+            title = "Feature Name",
+            rightComponent = { },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPieceMainTopBarWithRightComponent() {
     PieceTheme {
         PieceMainTopBar(
             title = "Feature Name",
@@ -80,7 +95,8 @@ fun PreviewPieceMainTopBar() {
                 Image(
                     painter = painterResource(R.drawable.ic_alarm),
                     contentDescription = "오른쪽 버튼",
-                    modifier = Modifier.size(32.dp)
+                    colorFilter = ColorFilter.tint(PieceTheme.colors.black),
+                    modifier = Modifier.size(32.dp),
                 )
             },
             modifier = Modifier
@@ -90,7 +106,7 @@ fun PreviewPieceMainTopBar() {
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0)
+@Preview
 @Composable
 fun PreviewPieceSubTopBar() {
     PieceTheme {
