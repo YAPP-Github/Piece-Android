@@ -18,7 +18,7 @@ private val Dark3 = Color(0xFF757575)
 private val Light1 = Color(0xFFBDBDBD)
 private val Light2 = Color(0xFFE0E0E0)
 private val Light3 = Color(0xFFEEEEEE)
-private val White = Color(0xFFF5F5F5)
+private val White = Color(0xFFFFFFFF)
 
 @Immutable
 data class PieceColors(

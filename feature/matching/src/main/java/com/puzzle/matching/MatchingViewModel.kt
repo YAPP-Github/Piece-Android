@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.matching.contract.MatchingIntent
 import com.puzzle.matching.contract.MatchingSideEffect
 import com.puzzle.matching.contract.MatchingState
+import com.puzzle.navigation.MatchingGraphDest
+import com.puzzle.navigation.NavigationEvent.NavigateTo
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -25,6 +27,9 @@ class MatchingViewModel @AssistedInject constructor(
 
     internal fun processIntent(intent: MatchingIntent) {
         when (intent) {
+            MatchingIntent.NavigateToMatchingDetail -> {
+                navigationHelper.navigate(NavigateTo(MatchingGraphDest.MatchingDetailRoute))
+            }
             else -> Unit
         }
     }
