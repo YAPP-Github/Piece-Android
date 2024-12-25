@@ -80,8 +80,8 @@ fun MatchingDetailScreen(
         ) {
             when (pageIndex.intValue) {
                 0 -> ProfileBasicInfoBody()
-                1 -> ProfileBasicValueBody()
-                2 -> ProfileAllValueBody()
+                1 -> ProfileValueTalkBody()
+                2 -> ProfileValuePickBody()
             }
         }
 
@@ -201,8 +201,8 @@ fun InfoItem(text: String) {
 }
 
 @Composable
-fun ProfileBasicValueBody() {
-    val dummyItems = remember { dummyBasicValueItems() }
+fun ProfileValueTalkBody() {
+    val dummyItems = remember { dummyValueTalkItems() }
 
     LazyColumn(
         modifier = Modifier
@@ -210,21 +210,21 @@ fun ProfileBasicValueBody() {
             .padding(16.dp),
     ) {
         items(dummyItems) { item ->
-            BasicValueCard(item)
+            ValueTalkCard(item)
         }
     }
 }
 
-data class BasicValueItem(val title: String, val description: String)
+data class ValueTalkItem(val title: String, val description: String)
 
-fun dummyBasicValueItems() = listOf(
-    BasicValueItem("음악 취향", "여행하며 모을 감성, LGBTQ+ 권리를 말해요..."),
-    BasicValueItem("공통 가치관", "요리, 고기, 라이딩 좋아해요..."),
-    BasicValueItem("연애관", "서로 존중하고 신뢰받으며 성장하는 관계...")
+fun dummyValueTalkItems() = listOf(
+    ValueTalkItem("음악 취향", "여행하며 모을 감성, LGBTQ+ 권리를 말해요..."),
+    ValueTalkItem("공통 가치관", "요리, 고기, 라이딩 좋아해요..."),
+    ValueTalkItem("연애관", "서로 존중하고 신뢰받으며 성장하는 관계...")
 )
 
 @Composable
-fun BasicValueCard(item: BasicValueItem) {
+fun ValueTalkCard(item: ValueTalkItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -239,7 +239,7 @@ fun BasicValueCard(item: BasicValueItem) {
 }
 
 @Composable
-fun ProfileAllValueBody() {
+fun ProfileValuePickBody() {
     val tabIndex = remember { mutableIntStateOf(0) }
 
     val tabTitles = listOf("전체", "나와 같은", "나와 다른")
@@ -305,17 +305,17 @@ private fun ProfileBasicInfoBodyPreview() {
 
 @Preview
 @Composable
-private fun ProfileBasicValueBodyPreview() {
+private fun ProfileValueTalkBodyPreview() {
     PieceTheme {
-        ProfileBasicValueBody()
+        ProfileValueTalkBody()
     }
 }
 
 @Preview
 @Composable
-private fun ProfileAllValueBodyPreview() {
+private fun ProfileValuePickBodyPreview() {
     PieceTheme {
-        ProfileAllValueBody()
+        ProfileValuePickBody()
     }
 }
 
