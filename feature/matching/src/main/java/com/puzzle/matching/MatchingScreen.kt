@@ -2,7 +2,6 @@ package com.puzzle.matching
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -30,10 +30,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.component.PieceMainTopBar
+import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.contract.MatchingIntent
 import com.puzzle.matching.contract.MatchingState
@@ -77,8 +77,8 @@ internal fun MatchingScreen(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .fillMaxWidth()
-                .background(PieceTheme.colors.white.copy(alpha = 0.1f))
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.white.copy(alpha = 0.1f)),
         ) {
             Text(
                 text = buildAnnotatedString {
@@ -97,8 +97,8 @@ internal fun MatchingScreen(
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier
-                .weight(1f)
-                .padding(top = 8.dp)
+                .wrapContentSize()
+                .padding(top = 8.dp, bottom = 20.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(PieceTheme.colors.white)
                 .padding(20.dp),
@@ -186,8 +186,9 @@ internal fun MatchingScreen(
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
@@ -206,8 +207,10 @@ internal fun MatchingScreen(
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     modifier = Modifier
+                        .padding(top = 12.dp)
                         .fillMaxWidth()
-                        .height(191.dp),
+                        .weight(1f)
+                        .heightIn(max = 191.dp),
                 ) {
                     items(
                         items = mutableListOf(
@@ -218,20 +221,21 @@ internal fun MatchingScreen(
                             "바깥 데이트 스킨십도 가능2",
                             "함께 술을 즐기고 싶어요2",
                             "커밍아웃은 가까운 친구에게만 했어요2",
+                            "연락은 바쁘더라도 자주2",
                         ),
                         key = { it },
-                    ) { value ->
-                        ValueTag(value)
-                    }
+                    ) { value -> ValueTag(value) }
                 }
+
+                PieceSolidButton(
+                    label = "매칭 수락하기",
+                    onClick = { navigateToMatchingDetail() },
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                )
             }
         }
-
-        Text(
-            text = "MatchingRoute",
-            fontSize = 30.sp,
-            modifier = Modifier.clickable { navigateToMatchingDetail() }
-        )
     }
 }
 

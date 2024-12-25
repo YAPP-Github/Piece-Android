@@ -29,7 +29,7 @@ fun PieceMainTopBar(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(horizontal = 20.dp),
+        modifier = modifier,
     ) {
         Text(
             text = title,
@@ -53,7 +53,7 @@ fun PieceSubTopBar(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(horizontal = 20.dp),
+        modifier = modifier,
     ) {
         Image(
             painter = painterResource(R.drawable.ic_arrow_left),
