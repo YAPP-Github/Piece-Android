@@ -17,11 +17,20 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.EtcRoute
 import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.MyPageRoute
 import com.puzzle.navigation.Route
 import com.puzzle.piece.navigation.AppNavHost
 import com.puzzle.piece.navigation.TopLevelDestination
 import kotlin.reflect.KClass
+
+/**
+ * 숨겨야 하는 경로들을 상수로 정의
+ */
+private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
+    AuthGraph::class.qualifiedName,
+    MatchingDetailRoute::class.qualifiedName
+)
 
 @Composable
 fun App(
@@ -35,7 +44,7 @@ fun App(
 
     Scaffold(
         bottomBar = {
-            if (currentDestination?.isHideBottomNavigationRoute() == false) {
+            if (currentDestination?.shouldHideBottomNavigation() == false) {
                 AppBottomBar(
                     currentDestination = currentDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -85,9 +94,9 @@ private fun AppBottomBar(
 /**
  * 현재 목적지가 바텀 네비게이션이 보여지지 않는 화면인지 확인하는 메서드
  */
-private fun NavDestination?.isHideBottomNavigationRoute(): Boolean =
+private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
     this?.hierarchy?.any { destination ->
-        destination.route == AuthGraph::class.qualifiedName
+        destination.route in HIDDEN_BOTTOM_NAV_ROUTES
     } ?: false
 
 /**
