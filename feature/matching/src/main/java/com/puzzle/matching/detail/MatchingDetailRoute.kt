@@ -62,7 +62,7 @@ fun MatchingDetailScreen(
     val pageIndex = remember { mutableIntStateOf(0) }
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         MatchingDetailTopBar(
             showBackButton = (pageIndex.intValue != 0),
@@ -70,13 +70,13 @@ fun MatchingDetailScreen(
                 if (pageIndex.intValue > 0) pageIndex.intValue--
             },
             onCloseClick = onCloseClick,
-            title = "가치관 pick"
+            title = "가치관 pick",
         )
 
         Box(
             modifier = Modifier
                 .weight(1f)
-                .fillMaxWidth()
+                .fillMaxWidth(),
         ) {
             when (pageIndex.intValue) {
                 0 -> ProfileBasicInfoBody()
@@ -101,14 +101,14 @@ fun MatchingDetailTopBar(
     showBackButton: Boolean,
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
-    title: String
+    title: String,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         if (showBackButton) {
             IconButton(onClick = onBackClick) {
@@ -134,14 +134,14 @@ fun MatchingDetailTopBar(
 @Composable
 fun MatchingDetailBottomBar(
     onShowPicturesClick: () -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Button(onClick = onShowPicturesClick) {
             Text("사진 보기")
@@ -171,7 +171,7 @@ fun ProfileBasicInfoBody() {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(text = "음악과 요리를 좋아하는")
         Text(text = "수줍은 수달")
@@ -180,7 +180,7 @@ fun ProfileBasicInfoBody() {
 
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             userInfo.forEach { info ->
                 InfoItem(text = info)
@@ -194,7 +194,7 @@ fun InfoItem(text: String) {
     Box(
         modifier = Modifier
             .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp)
+            .padding(horizontal = 12.dp, vertical = 8.dp),
     ) {
         Text(text = text)
     }
@@ -207,7 +207,7 @@ fun ProfileBasicValueBody() {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         items(dummyItems) { item ->
             BasicValueCard(item)
@@ -245,17 +245,17 @@ fun ProfileAllValueBody() {
     val tabTitles = listOf("전체", "나와 같은", "나와 다른")
 
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) {
         TabRow(
             selectedTabIndex = tabIndex.intValue,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
                     selected = (tabIndex.intValue == index),
                     onClick = { tabIndex.intValue = index },
-                    text = { Text(text = title) }
+                    text = { Text(text = title) },
                 )
             }
         }
@@ -273,12 +273,12 @@ fun TabContent(contentText: String) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp),
     ) {
         items(15) { index ->
             Text(
                 text = "$contentText 아이템 $index",
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp),
             )
         }
     }
