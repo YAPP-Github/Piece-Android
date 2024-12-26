@@ -41,9 +41,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
-            MatchingIntent.NavigateToMatchingDetail -> {
-                navigationHelper.navigate(NavigateTo(MatchingGraphDest.MatchingDetailRoute))
-            }
+            MatchingIntent.NavigateToMatchingDetail -> navigateToMatchingDetail()
         }
     }
 
@@ -52,6 +50,9 @@ class MatchingViewModel @AssistedInject constructor(
             else -> Unit
         }
     }
+
+    private fun navigateToMatchingDetail() =
+        navigationHelper.navigate(NavigateTo(MatchingGraphDest.MatchingDetailRoute))
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<MatchingViewModel, MatchingState> {
