@@ -44,6 +44,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
             MatchingDetailIntent.OnMatchingDetailCloseClick -> processOnMatchingDetailCloseClickIntent()
             MatchingDetailIntent.OnBackPageClick -> processOnBackPageClickIntent()
             MatchingDetailIntent.OnNextPageClick -> processOnNextPageClickIntent()
+            MatchingDetailIntent.OnMoreClick -> TODO()
         }
     }
 
