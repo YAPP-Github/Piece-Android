@@ -231,7 +231,7 @@ private fun ProfileBasicInfoBody(
 ) {
     val currentYear = remember { LocalDate.now().year }
     val ageText = remember(state.birthYear, currentYear) {
-        state.birthYear.toIntOrNull()?.let { (currentYear - it).toString() } ?: "Unknown"
+        state.birthYear.toIntOrNull()?.let { (currentYear - it).toString() } ?: "_"
     }
 
     Column(modifier = modifier) {
@@ -309,7 +309,6 @@ private fun BasicInfoCard(
             .fillMaxWidth()
             .padding(vertical = 12.dp),
     ) {
-        // 첫째 줄
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.5.dp),
         ) {
@@ -355,9 +354,9 @@ private fun BasicInfoCard(
                 modifier = modifier.weight(1f),
             )
         }
+
         Spacer(modifier = Modifier.height(4.dp))
 
-        // 둘째 줄
         Row(
             horizontalArrangement = Arrangement.spacedBy(5.5.dp),
         ) {
@@ -399,7 +398,9 @@ private fun InfoItem(
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark2,
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         if (content != null) {
             Text(
                 text = title,
