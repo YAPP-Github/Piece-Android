@@ -244,20 +244,20 @@ private fun BasicInfoName(
     Column(modifier = modifier) {
         Text(
             text = "오늘의 매칭 조각",
-            style = PieceTheme.typography.body2,
+            style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = "나를 표현하는 한 마디",
-            style = PieceTheme.typography.body3,
-            color = Color(0xFF1B1A2A),
+            style = PieceTheme.typography.bodyMR,
+            color = PieceTheme.colors.black,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "오늘의 매칭 조각",
-                style = PieceTheme.typography.heading2,
+                style = PieceTheme.typography.headingLSB,
                 color = PieceTheme.colors.primaryDefault,
                 modifier = Modifier.weight(1f)
             )
@@ -301,24 +301,24 @@ private fun BasicInfoCard(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             text = "만",
-                            style = PieceTheme.typography.body5,
-                            color = Color(0xFF1B1A2A),
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.black,
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = ageText,
-                            style = PieceTheme.typography.heading4,
-                            color = Color(0xFF1B1A2A),
+                            style = PieceTheme.typography.headingSSB,
+                            color = PieceTheme.colors.black,
                         )
                         Text(
                             text = "세",
-                            style = PieceTheme.typography.body5,
-                            color = Color(0xFF1B1A2A),
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.black,
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
                             text = "${birthYear}년생",
-                            style = PieceTheme.typography.body5,
+                            style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.dark2,
                         )
                     }
@@ -378,15 +378,15 @@ private fun InfoItem(
     ) {
         Text(
             text = title,
-            style = PieceTheme.typography.body4,
+            style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark2,
         )
         Spacer(modifier = Modifier.height(8.dp))
         if (content != null) {
             Text(
                 text = title,
-                style = PieceTheme.typography.heading4,
-                color = Color(0xFF1B1A2A),
+                style = PieceTheme.typography.headingSSB,
+                color = PieceTheme.colors.black,
             )
         } else {
             text()

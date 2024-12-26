@@ -1,3 +1,5 @@
 package com.puzzle.matching.contract
 
-sealed class MatchingIntent
+sealed class MatchingIntent {
+    data object NavigateToMatchingDetail : MatchingIntent()
+}

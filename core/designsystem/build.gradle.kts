@@ -7,6 +7,4 @@ android {
     namespace = "com.puzzle.designsystem"
 }
 
-dependencies {
-    implementation(libs.lottie.compose)
-}
+dependencies {}
