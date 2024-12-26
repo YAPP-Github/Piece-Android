@@ -128,8 +128,8 @@ fun MatchingDetailContent(
     Box(modifier = modifier.fillMaxSize()) {
         when (currentPage) {
             is MatchingDetailState.BasicInfoState -> ProfileBasicInfoBody(currentPage)
-            is MatchingDetailState.ValuePick -> ProfileValuePickBody(currentPage)
-            is MatchingDetailState.ValueTalk -> ProfileValueTalkBody(currentPage)
+            is MatchingDetailState.ValuePickState -> ProfileValuePickBody(currentPage)
+            is MatchingDetailState.ValueTalkState -> ProfileValueTalkBody(currentPage)
         }
     }
 }
@@ -246,7 +246,7 @@ fun InfoItem(
 
 @Composable
 fun ProfileValueTalkBody(
-    state: MatchingDetailState.ValueTalk,
+    state: MatchingDetailState.ValueTalkState,
 ) {
     val dummyItems = remember { dummyValueTalkItems() }
 
@@ -286,7 +286,7 @@ fun ValueTalkCard(item: ValueTalkItem) {
 
 @Composable
 fun ProfileValuePickBody(
-    state: MatchingDetailState.ValuePick
+    state: MatchingDetailState.ValuePickState
 ) {
     val tabIndex = remember { mutableIntStateOf(0) }
 
@@ -357,7 +357,7 @@ private fun ProfileBasicInfoBodyPreview() {
 @Composable
 private fun ProfileValueTalkBodyPreview() {
     PieceTheme {
-        ProfileValueTalkBody(MatchingDetailState.ValueTalk())
+        ProfileValueTalkBody(MatchingDetailState.ValueTalkState())
     }
 }
 
@@ -365,7 +365,7 @@ private fun ProfileValueTalkBodyPreview() {
 @Composable
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
-        ProfileValuePickBody(MatchingDetailState.ValuePick())
+        ProfileValuePickBody(MatchingDetailState.ValuePickState())
     }
 }
 

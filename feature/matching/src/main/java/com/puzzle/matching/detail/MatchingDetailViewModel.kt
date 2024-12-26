@@ -50,9 +50,9 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private fun processOnNextPageClickIntent() {
         setState {
             val updatedPage = when (currentPage) {
-                is MatchingDetailState.BasicInfoState -> MatchingDetailState.ValueTalk()
-                is MatchingDetailState.ValueTalk -> MatchingDetailState.ValuePick()
-                is MatchingDetailState.ValuePick -> MatchingDetailState.ValuePick()
+                is MatchingDetailState.BasicInfoState -> MatchingDetailState.ValueTalkState()
+                is MatchingDetailState.ValueTalkState -> MatchingDetailState.ValuePickState()
+                is MatchingDetailState.ValuePickState -> MatchingDetailState.ValuePickState()
             }
             copy(currentPage = updatedPage)
         }
@@ -62,8 +62,8 @@ class MatchingDetailViewModel @AssistedInject constructor(
         setState {
             val updatedPage = when (currentPage) {
                 is MatchingDetailState.BasicInfoState -> MatchingDetailState.BasicInfoState()
-                is MatchingDetailState.ValueTalk -> MatchingDetailState.BasicInfoState()
-                is MatchingDetailState.ValuePick -> MatchingDetailState.ValueTalk()
+                is MatchingDetailState.ValueTalkState -> MatchingDetailState.BasicInfoState()
+                is MatchingDetailState.ValuePickState -> MatchingDetailState.ValueTalkState()
             }
             copy(currentPage = updatedPage)
         }

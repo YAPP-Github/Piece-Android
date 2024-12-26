@@ -21,7 +21,7 @@ data class MatchingDetailState(
         val smokeStatue: String = "",
     ) : MatchingDetailPage(title)
 
-    data class ValueTalk(
+    data class ValueTalkState(
         override val title: String = "",
         val selfDescription: String = "",
         val nickName: String = "",
@@ -34,7 +34,7 @@ data class MatchingDetailState(
         )
     }
 
-    data class ValuePick(
+    data class ValuePickState(
         override val title: String = "",
         val pickCards: List<PickCard> = emptyList(),
     ) : MatchingDetailPage(title) {
