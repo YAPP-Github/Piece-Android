@@ -30,6 +30,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Set up local.properties
+        run: |
+          echo "KAKAO_APP_KEY=${{ secrets.KAKAO_APP_KEY }}" >> local.properties
+
       - name: Build with Gradle
         run: ./gradlew assembleDebug --build-cache --stacktrace
 
