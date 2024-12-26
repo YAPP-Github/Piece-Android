@@ -124,6 +124,7 @@ private fun BackgroundImage(
     }
 }
 
+// TODO(Top bar 변경되면 삭제)
 @Composable
 private fun MatchingDetailTopBar(
     showBackButton: Boolean,

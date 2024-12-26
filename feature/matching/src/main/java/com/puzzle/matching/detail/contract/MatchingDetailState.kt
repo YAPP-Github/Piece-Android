@@ -25,9 +25,9 @@ data class MatchingDetailState(
         override val title: String = "",
         val selfDescription: String = "",
         val nickName: String = "",
-        val talkCards: List<TalkCard> = emptyList(),
+        val talkCards: List<Card> = emptyList(),
     ) : MatchingDetailPage(title) {
-        data class TalkCard(
+        data class Card(
             val label: String = "",
             val title: String = "",
             val content: String = "",
@@ -36,9 +36,9 @@ data class MatchingDetailState(
 
     data class ValuePickState(
         override val title: String = "",
-        val pickCards: List<PickCard> = emptyList(),
+        val pickCards: List<Card> = emptyList(),
     ) : MatchingDetailPage(title) {
-        data class PickCard(
+        data class Card(
             val category: String = "",
             val question: String = "",
             val option1: String = "",
