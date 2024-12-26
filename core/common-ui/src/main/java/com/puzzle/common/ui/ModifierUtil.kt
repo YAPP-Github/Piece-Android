@@ -27,12 +27,12 @@ import com.puzzle.designsystem.foundation.PieceTheme
 
 fun Modifier.addFocusCleaner(
     focusManager: FocusManager,
-    doOnClear: () -> Unit = {},
+    onFocusCleared: () -> Unit = {},
 ): Modifier {
     return this.pointerInput(Unit) {
         detectTapGestures(
             onTap = {
-                doOnClear()
+                onFocusCleared()
                 focusManager.clearFocus()
             },
         )

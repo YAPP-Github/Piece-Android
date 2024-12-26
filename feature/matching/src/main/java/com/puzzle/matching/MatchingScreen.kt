@@ -255,13 +255,13 @@ private fun ValueTag(value: String) {
         modifier = Modifier
             .wrapContentSize()
             .clip(RoundedCornerShape(4.dp))
-            .background(PieceTheme.colors.primaryLight),
+            .background(PieceTheme.colors.primaryLight)
+            .padding(vertical = 6.dp, horizontal = 12.dp),
     ) {
         Text(
             text = value,
             style = PieceTheme.typography.bodyMR,
             color = PieceTheme.colors.black,
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
         )
     }
 }
