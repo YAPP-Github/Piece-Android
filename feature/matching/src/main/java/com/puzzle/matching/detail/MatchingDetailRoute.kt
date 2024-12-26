@@ -58,7 +58,7 @@ internal fun MatchingDetailRoute(
         onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) },
         onBackPageClick = { viewModel.onIntent(MatchingDetailIntent.OnBackPageClick) },
         onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
-        onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) }
+        onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
     )
 }
 
@@ -75,7 +75,7 @@ private fun MatchingDetailScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 20.dp),
     ) {
         PieceSubTopBar(
             title = state.currentPage.title,
@@ -97,12 +97,12 @@ private fun MatchingDetailScreen(
         MatchingDetailContent(
             currentPage = state.currentPage,
             onMoreClick = onMoreClick,
-            modifier = modifier.weight(1f),
+            modifier = Modifier.weight(1f),
         )
 
         MatchingDetailBottomBar(
             onShowPicturesClick = onBackPageClick,
-            onConfirmClick = onNextPageClick
+            onConfirmClick = onNextPageClick,
         )
     }
 }
@@ -118,9 +118,8 @@ private fun BackgroundImage(
         Image(
             painter = painterResource(id = R.drawable.ic_bg),
             contentDescription = "basic info 배경화면",
-            modifier = Modifier
-                .matchParentSize(),
-            contentScale = ContentScale.Crop
+            modifier = Modifier.matchParentSize(),
+            contentScale = ContentScale.Crop,
         )
     }
 }
@@ -143,7 +142,7 @@ private fun MatchingDetailTopBar(
             IconButton(onClick = onBackClick) {
                 Icon(
                     imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = "Back",
                 )
             }
             Text(text = title)
@@ -154,7 +153,7 @@ private fun MatchingDetailTopBar(
         IconButton(onClick = onCloseClick) {
             Icon(
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close"
+                contentDescription = "Close",
             )
         }
     }
@@ -169,13 +168,20 @@ private fun MatchingDetailContent(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (currentPage) {
-            is MatchingDetailState.BasicInfoState -> ProfileBasicInfoBody(
-                state = currentPage,
-                onMoreClick = onMoreClick,
-            )
+            is MatchingDetailState.BasicInfoState -> {
+                ProfileBasicInfoBody(
+                    state = currentPage,
+                    onMoreClick = onMoreClick,
+                )
+            }
 
-            is MatchingDetailState.ValuePickState -> ProfileValuePickBody(currentPage)
-            is MatchingDetailState.ValueTalkState -> ProfileValueTalkBody(currentPage)
+            is MatchingDetailState.ValuePickState -> {
+                ProfileValuePickBody(currentPage)
+            }
+
+            is MatchingDetailState.ValueTalkState -> {
+                ProfileValueTalkBody(currentPage)
+            }
         }
     }
 }
@@ -184,7 +190,7 @@ private fun MatchingDetailContent(
 private fun MatchingDetailBottomBar(
     onShowPicturesClick: () -> Unit,
     onConfirmClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -200,7 +206,7 @@ private fun MatchingDetailBottomBar(
                 .size(52.dp)
                 .clickable {
                     onShowPicturesClick()
-                }
+                },
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -211,7 +217,7 @@ private fun MatchingDetailBottomBar(
                 .size(52.dp)
                 .clickable {
                     onConfirmClick()
-                }
+                },
         )
     }
 }
@@ -232,7 +238,7 @@ private fun ProfileBasicInfoBody(
             onMoreClick = onMoreClick,
             modifier = Modifier
                 .padding(vertical = 20.dp)
-                .weight(1f)
+                .weight(1f),
         )
 
         BasicInfoCard(
@@ -242,7 +248,7 @@ private fun ProfileBasicInfoBody(
             religion = state.religion,
             activityRegion = state.activityRegion,
             occupation = state.occupation,
-            smokeStatue = state.smokeStatue
+            smokeStatue = state.smokeStatue,
         )
     }
 }
@@ -280,7 +286,7 @@ private fun BasicInfoName(
                     .size(32.dp)
                     .clickable {
                         onMoreClick()
-                    }
+                    },
             )
         }
     }
