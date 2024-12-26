@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
@@ -72,13 +73,25 @@ private fun MatchingDetailScreen(
 ) {
     BackgroundImage(modifier)
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp)
     ) {
-        MatchingDetailTopBar(
-            showBackButton = state.currentPage !is MatchingDetailState.BasicInfoState,
-            onBackClick = onBackPageClick,
-            onCloseClick = onCloseClick,
+        PieceSubTopBar(
             title = state.currentPage.title,
+            onNavigationClick = { },
+            rightComponent = {
+                Image(
+                    painter = painterResource(R.drawable.ic_close),
+                    contentDescription = "오른쪽 버튼",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable { onCloseClick() },
+                )
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
         )
 
         MatchingDetailContent(
@@ -214,9 +227,7 @@ private fun ProfileBasicInfoBody(
         state.birthYear.toIntOrNull()?.let { (currentYear - it).toString() } ?: "Unknown"
     }
 
-    Column(
-        modifier = modifier.padding(horizontal = 20.dp),
-    ) {
+    Column(modifier = modifier) {
         BasicInfoName(
             onMoreClick = onMoreClick,
             modifier = Modifier
