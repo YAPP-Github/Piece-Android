@@ -18,8 +18,8 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
+    implementation(project(":core:common-ui"))
 //    implementation(project(":core:analytics"))
-//    implementation(project(":core:common-ui"))
 
     val libs = project.extensions.libs
     implementation(libs.findLibrary("kotlinx.serialization.json").get())

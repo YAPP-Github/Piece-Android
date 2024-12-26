@@ -43,7 +43,7 @@ import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
 
 @Composable
-fun MatchingDetailRoute(
+internal fun MatchingDetailRoute(
     viewModel: MatchingDetailViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -55,7 +55,7 @@ fun MatchingDetailRoute(
 }
 
 @Composable
-fun MatchingDetailScreen(
+internal fun MatchingDetailScreen(
     state: MatchingDetailState,
     onCloseClick: () -> Unit,
 ) {

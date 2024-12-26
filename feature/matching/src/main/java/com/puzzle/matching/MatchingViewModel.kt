@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.matching.contract.MatchingIntent
 import com.puzzle.matching.contract.MatchingSideEffect
 import com.puzzle.matching.contract.MatchingState
+import com.puzzle.navigation.MatchingGraphDest
+import com.puzzle.navigation.NavigationEvent.NavigateTo
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,9 +22,8 @@ import kotlinx.coroutines.launch
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
-    val navigationHelper: NavigationHelper,
+    private val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
-
     private val intents = Channel<MatchingIntent>(BUFFERED)
 
     private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
@@ -40,7 +41,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
-            else -> Unit
+            MatchingIntent.NavigateToMatchingDetail -> navigateToMatchingDetail()
         }
     }
 
@@ -50,6 +51,9 @@ class MatchingViewModel @AssistedInject constructor(
         }
     }
 
+    private fun navigateToMatchingDetail() =
+        navigationHelper.navigate(NavigateTo(MatchingGraphDest.MatchingDetailRoute))
+
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<MatchingViewModel, MatchingState> {
         override fun create(state: MatchingState): MatchingViewModel
@@ -58,6 +62,3 @@ class MatchingViewModel @AssistedInject constructor(
     companion object :
         MavericksViewModelFactory<MatchingViewModel, MatchingState> by hiltMavericksViewModelFactory()
 }
-
-
-

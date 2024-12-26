@@ -3,22 +3,22 @@ package com.puzzle.designsystem.foundation
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 
-private val PrimaryDefault = Color(0xFF6200EE)
-private val PrimaryMiddle = Color(0xFFBB86FC)
-private val PrimaryLight = Color(0xFFEDE7F6)
+private val PrimaryDefault = Color(0xFF6F00FB)
+private val PrimaryMiddle = Color(0xFFD0ABFD)
+private val PrimaryLight = Color(0xFFF6EFFF)
 
-private val SubDefault = Color(0xFFF48FB1)
-private val SubMiddle = Color(0xFFF8BBD0)
-private val SubLight = Color(0xFFFCE4EC)
+private val SubDefault = Color(0xFFFF7490)
+private val SubMiddle = Color(0xFFFFB9C7)
+private val SubLight = Color(0xFFFFE3E9)
 
-private val Black = Color(0xFF212121)
-private val Dark1 = Color(0xFF424242)
-private val Dark2 = Color(0xFF616161)
-private val Dark3 = Color(0xFF757575)
-private val Light1 = Color(0xFFBDBDBD)
-private val Light2 = Color(0xFFE0E0E0)
-private val Light3 = Color(0xFFEEEEEE)
-private val White = Color(0xFFF5F5F5)
+private val Black = Color(0xFF1B1A2A)
+private val Dark1 = Color(0xFF484B4D)
+private val Dark2 = Color(0xFF6C7073)
+private val Dark3 = Color(0xFF909599)
+private val Light1 = Color(0xFFCBD1D9)
+private val Light2 = Color(0xFFE8EBF0)
+private val Light3 = Color(0xFFF4F6FA)
+private val White = Color(0xFFFFFFFF)
 
 @Immutable
 data class PieceColors(
