@@ -196,7 +196,7 @@ private fun MatchingDetailBottomBar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 10.dp, start = 20.dp, end = 20.dp),
+            .padding(top = 12.dp, bottom = 10.dp),
         horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
     ) {
