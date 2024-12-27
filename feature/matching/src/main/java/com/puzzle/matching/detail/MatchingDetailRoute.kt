@@ -116,7 +116,7 @@ private fun BackgroundImage(
             .fillMaxSize()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_bg),
+            painter = painterResource(id = R.drawable.matchingdetail_bg),
             contentDescription = "basic info 배경화면",
             modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
