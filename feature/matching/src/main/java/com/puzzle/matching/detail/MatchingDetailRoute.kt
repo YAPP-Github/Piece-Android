@@ -231,9 +231,7 @@ private fun ProfileBasicInfoBody(
     modifier: Modifier = Modifier,
 ) {
     val currentYear = remember { LocalDate.now().year }
-    val ageText = remember(state.birthYear, currentYear) {
-        state.birthYear.toIntOrNull()?.let { (currentYear - it).toString() } ?: "_"
-    }
+    val ageText = remember(state.birthYear, currentYear) { state.calculateAge(currentYear)}
 
     Column(modifier = modifier) {
         BasicInfoName(

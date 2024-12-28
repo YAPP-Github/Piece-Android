@@ -43,7 +43,10 @@ data class MatchingDetailState(
         val occupation: String = "",
         val activityRegion: String = "",
         val smokeStatue: String = "",
-    )
+    ) {
+        fun calculateAge(currentYear: Int): String =
+            birthYear.toIntOrNull()?.let { (currentYear - it).toString() } ?: "_"
+    }
 
     data class ValueTalkState(
         val title: String = "",
