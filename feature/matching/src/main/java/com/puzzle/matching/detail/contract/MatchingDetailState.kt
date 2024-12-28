@@ -5,9 +5,20 @@ import com.airbnb.mvrx.MavericksState
 data class MatchingDetailState(
     val isLoading: Boolean = false,
     val currentPage: MatchingDetailPage = MatchingDetailPage.BasicInfoState,
-    val basicInfoState: BasicInfoState = BasicInfoState(),
-    val valueTalkState: ValueTalkState = ValueTalkState(),
-    val valuePickState: ValuePickState = ValuePickState(),
+    // BasicInfoState
+    val selfDescription: String = "",
+    val nickName: String = "",
+    val age: String = "_",
+    val birthYear: String = "",
+    val height: String = "",
+    val religion: String = "",
+    val occupation: String = "",
+    val activityRegion: String = "",
+    val smokeStatue: String = "",
+    // ValueTalkState
+    val talkCards: List<ValueTalkCard> = emptyList(),
+    // ValuePickState
+    val pickCards: List<ValuePickCard> = emptyList(),
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {
@@ -34,43 +45,17 @@ data class MatchingDetailState(
         }
     }
 
-    data class BasicInfoState(
-        val selfDescription: String = "",
-        val nickName: String = "",
-        val birthYear: String = "",
-        val height: String = "",
-        val religion: String = "",
-        val occupation: String = "",
-        val activityRegion: String = "",
-        val smokeStatue: String = "",
-    ) {
-        fun calculateAge(currentYear: Int): String =
-            birthYear.toIntOrNull()?.let { (currentYear - it).toString() } ?: "_"
-    }
-
-    data class ValueTalkState(
+    data class ValueTalkCard(
+        val label: String = "",
         val title: String = "",
-        val selfDescription: String = "",
-        val nickName: String = "",
-        val talkCards: List<Card> = emptyList(),
-    ) {
-        data class Card(
-            val label: String = "",
-            val title: String = "",
-            val content: String = "",
-        )
-    }
+        val content: String = "",
+    )
 
-    data class ValuePickState(
-        val title: String = "",
-        val pickCards: List<Card> = emptyList(),
-    ) {
-        data class Card(
-            val category: String = "",
-            val question: String = "",
-            val option1: String = "",
-            val option2: String = "",
-            val isSimilarToMe: Boolean = true,
-        )
-    }
+    data class ValuePickCard(
+        val category: String = "",
+        val question: String = "",
+        val option1: String = "",
+        val option2: String = "",
+        val isSimilarToMe: Boolean = true,
+    )
 }

@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -45,8 +44,8 @@ import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
-import com.puzzle.matching.detail.contract.MatchingDetailState.BasicInfoState
-import java.time.LocalDate
+import com.puzzle.matching.detail.contract.MatchingDetailState.ValuePickCard
+import com.puzzle.matching.detail.contract.MatchingDetailState.ValueTalkCard
 
 @Composable
 internal fun MatchingDetailRoute(
@@ -143,7 +142,7 @@ private fun MatchingDetailTopBar(
         if (showBackButton) {
             IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back",
                 )
             }
@@ -172,17 +171,27 @@ private fun MatchingDetailContent(
         when (state.currentPage) {
             MatchingDetailState.MatchingDetailPage.BasicInfoState -> {
                 ProfileBasicInfoBody(
-                    state = state.basicInfoState,
+                    birthYear = state.birthYear,
+                    age = state.age,
+                    height = state.height,
+                    religion = state.religion,
+                    activityRegion = state.activityRegion,
+                    occupation = state.occupation,
+                    smokeStatue = state.smokeStatue,
                     onMoreClick = onMoreClick,
                 )
             }
 
             MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
-                ProfileValueTalkBody(state.valueTalkState)
+                ProfileValueTalkBody(
+                    talkCards = state.talkCards
+                )
             }
 
             MatchingDetailState.MatchingDetailPage.ValuePickState -> {
-                ProfileValuePickBody(state.valuePickState)
+                ProfileValuePickBody(
+                    pickCards = state.pickCards
+                )
             }
         }
     }
@@ -212,6 +221,7 @@ private fun MatchingDetailBottomBar(
         )
 
         Spacer(modifier = Modifier.width(8.dp))
+
         Image(
             painter = painterResource(id = R.drawable.ic_right_able),
             contentDescription = "다음 페이지 버튼",
@@ -226,13 +236,16 @@ private fun MatchingDetailBottomBar(
 
 @Composable
 private fun ProfileBasicInfoBody(
-    state: BasicInfoState,
+    birthYear: String,
+    age: String,
+    height: String,
+    religion: String,
+    activityRegion: String,
+    occupation: String,
+    smokeStatue: String,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val currentYear = remember { LocalDate.now().year }
-    val ageText = remember(state.birthYear, currentYear) { state.calculateAge(currentYear)}
-
     Column(modifier = modifier) {
         BasicInfoName(
             onMoreClick = onMoreClick,
@@ -242,13 +255,13 @@ private fun ProfileBasicInfoBody(
         )
 
         BasicInfoCard(
-            ageText = ageText,
-            birthYear = state.birthYear,
-            height = state.height,
-            religion = state.religion,
-            activityRegion = state.activityRegion,
-            occupation = state.occupation,
-            smokeStatue = state.smokeStatue,
+            age = age,
+            birthYear = birthYear,
+            height = height,
+            religion = religion,
+            activityRegion = activityRegion,
+            occupation = occupation,
+            smokeStatue = smokeStatue,
         )
     }
 }
@@ -264,13 +277,17 @@ private fun BasicInfoName(
             style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
         )
+
         Spacer(modifier = Modifier.weight(1f))
+
         Text(
             text = "나를 표현하는 한 마디",
             style = PieceTheme.typography.bodyMR,
             color = PieceTheme.colors.black,
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "오늘의 매칭 조각",
@@ -278,7 +295,9 @@ private fun BasicInfoName(
                 color = PieceTheme.colors.primaryDefault,
                 modifier = Modifier.weight(1f)
             )
+
             Spacer(modifier = Modifier.width(28.dp))
+
             Image(
                 painter = painterResource(id = R.drawable.ic_more),
                 contentDescription = "basic info 배경화면",
@@ -294,7 +313,7 @@ private fun BasicInfoName(
 
 @Composable
 private fun BasicInfoCard(
-    ageText: String,
+    age: String,
     birthYear: String,
     height: String,
     religion: String,
@@ -309,7 +328,7 @@ private fun BasicInfoCard(
             .padding(vertical = 12.dp),
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(5.5.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             InfoItem(
                 title = "나이",
@@ -320,18 +339,23 @@ private fun BasicInfoCard(
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.black,
                         )
+
                         Spacer(modifier = Modifier.width(4.dp))
+
                         Text(
-                            text = ageText,
+                            text = age,
                             style = PieceTheme.typography.headingSSB,
                             color = PieceTheme.colors.black,
                         )
+
                         Text(
                             text = "세",
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.black,
                         )
+
                         Spacer(modifier = Modifier.width(4.dp))
+
                         Text(
                             text = "${birthYear}년생",
                             style = PieceTheme.typography.bodySM,
@@ -339,8 +363,10 @@ private fun BasicInfoCard(
                         )
                     }
                 },
-                // TODO(이 부분은 디자이너님한테 물어보고 수정 및 상수화 필요)
-                modifier = modifier.weight((120 / 66f)),
+                modifier = modifier.size(
+                    width = 144.dp,
+                    height = 80.dp,
+                ),
             )
             InfoItem(
                 title = "키",
@@ -362,13 +388,18 @@ private fun BasicInfoCard(
             InfoItem(
                 title = "활동 지역",
                 content = activityRegion,
-                modifier = modifier.weight((120 / 66f)),
+                modifier = modifier.size(
+                    width = 144.dp,
+                    height = 80.dp,
+                ),
             )
+
             InfoItem(
                 title = "직업",
                 content = occupation,
                 modifier = modifier.weight(1f),
             )
+
             InfoItem(
                 title = "흡연",
                 content = smokeStatue,
@@ -415,7 +446,7 @@ private fun InfoItem(
 // TODO(아래는 다음 이슈부터 작업)
 @Composable
 private fun ProfileValueTalkBody(
-    state: MatchingDetailState.ValueTalkState,
+    talkCards: List<ValueTalkCard>
 ) {
     val dummyItems = remember { dummyValueTalkItems() }
 
@@ -447,6 +478,7 @@ private fun ValueTalkCard(item: ValueTalkItem) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = item.title)
+
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = item.description)
         }
@@ -455,7 +487,7 @@ private fun ValueTalkCard(item: ValueTalkItem) {
 
 @Composable
 private fun ProfileValuePickBody(
-    state: MatchingDetailState.ValuePickState,
+    pickCards: List<ValuePickCard>,
 ) {
     val tabIndex = remember { mutableIntStateOf(0) }
 
@@ -520,8 +552,14 @@ private fun MatchingDetailScreenPreview() {
 private fun ProfileBasicInfoBodyPreview() {
     PieceTheme {
         ProfileBasicInfoBody(
-            state = MatchingDetailState.BasicInfoState(),
-            onMoreClick = {},
+            birthYear = "1994",
+            age = "31",
+            height = "200",
+            religion = "도교",
+            activityRegion = "서울특별시",
+            occupation = "개발자",
+            smokeStatue = "비흡연",
+            onMoreClick = { },
         )
     }
 }
@@ -530,7 +568,9 @@ private fun ProfileBasicInfoBodyPreview() {
 @Composable
 private fun ProfileValueTalkBodyPreview() {
     PieceTheme {
-        ProfileValueTalkBody(MatchingDetailState.ValueTalkState())
+        ProfileValueTalkBody(
+            talkCards = emptyList()
+        )
     }
 }
 
@@ -538,7 +578,9 @@ private fun ProfileValueTalkBodyPreview() {
 @Composable
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
-        ProfileValuePickBody(MatchingDetailState.ValuePickState())
+        ProfileValuePickBody(
+            pickCards = emptyList()
+        )
     }
 }
 
