@@ -1,19 +1,22 @@
 package com.puzzle.piece.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.EtcRoute
 import com.puzzle.navigation.MatchingGraph
@@ -42,7 +45,8 @@ fun App(
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
                 )
             }
-        }
+        },
+        containerColor = PieceTheme.colors.white,
     ) { innerPadding ->
         val contentModifier = modifier.padding(innerPadding)
 
@@ -59,18 +63,27 @@ private fun AppBottomBar(
     navigateToTopLevelDestination: (Route) -> Unit,
 ) {
     BottomNavigation(
+        elevation = 0.dp,
+        backgroundColor = PieceTheme.colors.white,
         modifier = Modifier.navigationBarsPadding()
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             BottomNavigationItem(
                 icon = {
-                    Icon(
-                        imageVector = topLevelRoute.selectedIcon,
-                        contentDescription = topLevelRoute.name
+                    Image(
+                        painter = painterResource(topLevelRoute.iconDrawableId),
+                        contentDescription = topLevelRoute.contentDescription,
                     )
                 },
-                label = { Text(topLevelRoute.name) },
+                label = {
+                    Text(
+                        text = topLevelRoute.title,
+                        style = PieceTheme.typography.captionM,
+                    )
+                },
                 selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
+                selectedContentColor = PieceTheme.colors.primaryDefault,
+                unselectedContentColor = PieceTheme.colors.dark3,
                 onClick = {
                     when (topLevelRoute) {
                         TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
@@ -88,9 +101,6 @@ private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     MatchingDetailRoute::class.qualifiedName
 )
 
-/**
- * 현재 목적지가 바텀 네비게이션이 보여지지 않는 화면인지 확인하는 메서드
- */
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
     this?.hierarchy?.any { destination ->
         destination.route in HIDDEN_BOTTOM_NAV_ROUTES
@@ -100,6 +110,4 @@ private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
  * 현재 목적지가 TopLevelDestination 라우트에 속하는지 확인하는 메서드
  */
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
-    this?.hierarchy?.any {
-        it.hasRoute(route)
-    } ?: false
+    this?.hierarchy?.any { it.hasRoute(route) } ?: false
