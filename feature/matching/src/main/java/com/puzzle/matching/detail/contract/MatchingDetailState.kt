@@ -1,8 +1,8 @@
 package com.puzzle.matching.detail.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.pick.ValuePickCard
-import com.puzzle.domain.model.value.ValueTalkCard
+import com.puzzle.domain.model.pick.ValuePick
+import com.puzzle.domain.model.value.ValueTalk
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
@@ -18,9 +18,9 @@ data class MatchingDetailState(
     val activityRegion: String = "",
     val smokeStatue: String = "",
     // ValueTalkState
-    val talkCards: List<ValueTalkCard> = emptyList(),
+    val talkCards: List<ValueTalk> = emptyList(),
     // ValuePickState
-    val pickCards: List<ValuePickCard> = emptyList(),
+    val pickCards: List<ValuePick> = emptyList(),
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {

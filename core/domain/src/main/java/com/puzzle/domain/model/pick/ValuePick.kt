@@ -1,6 +1,6 @@
 package com.puzzle.domain.model.pick
 
-data class ValuePickCard(
+data class ValuePick(
     val category: String = "",
     val question: String = "",
     val option1: String = "",
