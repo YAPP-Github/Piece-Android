@@ -17,12 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -41,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.R
-import com.puzzle.designsystem.component.PieceSubTopBar
+import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
@@ -78,18 +73,9 @@ private fun MatchingDetailScreen(
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
-        PieceSubTopBar(
+        PieceSubCloseTopBar(
             title = state.currentPage.title,
-            onNavigationClick = { },
-            rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_close),
-                    contentDescription = "오른쪽 버튼",
-                    modifier = Modifier
-                        .size(32.dp)
-                        .clickable { onCloseClick() },
-                )
-            },
+            onCloseClick = onCloseClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 14.dp),
@@ -124,43 +110,6 @@ private fun BackgroundImage(
         )
     }
 }
-
-// TODO(Top bar 변경되면 삭제)
-@Composable
-private fun MatchingDetailTopBar(
-    showBackButton: Boolean,
-    onBackClick: () -> Unit,
-    onCloseClick: () -> Unit,
-    title: String,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (showBackButton) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                )
-            }
-            Text(text = title)
-        } else {
-            Spacer(modifier = Modifier.size(48.dp))
-        }
-
-        IconButton(onClick = onCloseClick) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close",
-            )
-        }
-    }
-}
-
 
 @Composable
 private fun MatchingDetailContent(
