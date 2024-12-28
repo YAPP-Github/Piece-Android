@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -107,7 +106,6 @@ private fun MatchingDetailScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(topBarHeight)
-                .padding(horizontal = 20.dp)
                 .align(Alignment.TopCenter)
                 .let {
                     if (state.currentPage != MatchingDetailPage.BasicInfoState) {
@@ -115,7 +113,8 @@ private fun MatchingDetailScreen(
                     } else {
                         it
                     }
-                },
+                }
+                .padding(horizontal = 20.dp),
         )
 
         MatchingDetailBottomBar(
@@ -490,7 +489,6 @@ private fun ProfileValueTalkBody(
                 Modifier.height(spaceHeight)
             )
             LazyColumn(
-                contentPadding = PaddingValues(top = valueTalkHeaderHeight),
                 modifier = Modifier
                     .fillMaxSize()
                     .background(PieceTheme.colors.light3)
