@@ -1,11 +1,11 @@
 package com.puzzle.matching.detail
 
-import androidx.compose.foundation.border
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,13 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -33,12 +27,19 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.pick.ValuePickCard
+import com.puzzle.domain.model.value.ValueTalkCard
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
 
@@ -50,158 +51,353 @@ internal fun MatchingDetailRoute(
 
     MatchingDetailScreen(
         state = state,
-        onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) }
+        onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) },
+        onBackPageClick = { viewModel.onIntent(MatchingDetailIntent.OnBackPageClick) },
+        onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
+        onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
     )
 }
 
 @Composable
-internal fun MatchingDetailScreen(
+private fun MatchingDetailScreen(
     state: MatchingDetailState,
     onCloseClick: () -> Unit,
+    onBackPageClick: () -> Unit,
+    onNextPageClick: () -> Unit,
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val pageIndex = remember { mutableIntStateOf(0) }
-
+    BackgroundImage(modifier)
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 20.dp),
     ) {
-        MatchingDetailTopBar(
-            showBackButton = (pageIndex.intValue != 0),
-            onBackClick = {
-                if (pageIndex.intValue > 0) pageIndex.intValue--
-            },
+        PieceSubCloseTopBar(
+            title = state.currentPage.title,
             onCloseClick = onCloseClick,
-            title = "가치관 pick",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 14.dp),
         )
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-        ) {
-            when (pageIndex.intValue) {
-                0 -> ProfileBasicInfoBody()
-                1 -> ProfileValueTalkBody()
-                2 -> ProfileValuePickBody()
-            }
-        }
+        MatchingDetailContent(
+            state = state,
+            onMoreClick = onMoreClick,
+            modifier = Modifier.weight(1f),
+        )
 
         MatchingDetailBottomBar(
-            onShowPicturesClick = {
-                if (pageIndex.intValue > 0) pageIndex.intValue--
-            },
-            onConfirmClick = {
-                if (pageIndex.intValue < 2) pageIndex.intValue++
-            }
+            onShowPicturesClick = onBackPageClick,
+            onConfirmClick = onNextPageClick,
         )
     }
 }
 
 @Composable
-fun MatchingDetailTopBar(
-    showBackButton: Boolean,
-    onBackClick: () -> Unit,
-    onCloseClick: () -> Unit,
-    title: String,
+private fun BackgroundImage(
+    modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+    Box(
+        modifier = modifier
+            .fillMaxSize()
     ) {
-        if (showBackButton) {
-            IconButton(onClick = onBackClick) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back"
+        Image(
+            painter = painterResource(id = R.drawable.matchingdetail_bg),
+            contentDescription = "basic info 배경화면",
+            modifier = Modifier.matchParentSize(),
+            contentScale = ContentScale.Crop,
+        )
+    }
+}
+
+@Composable
+private fun MatchingDetailContent(
+    state: MatchingDetailState,
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        when (state.currentPage) {
+            MatchingDetailState.MatchingDetailPage.BasicInfoState -> {
+                ProfileBasicInfoBody(
+                    birthYear = state.birthYear,
+                    age = state.age,
+                    height = state.height,
+                    religion = state.religion,
+                    activityRegion = state.activityRegion,
+                    occupation = state.occupation,
+                    smokeStatue = state.smokeStatue,
+                    onMoreClick = onMoreClick,
                 )
             }
-            Text(text = title)
-        } else {
-            Spacer(modifier = Modifier.size(48.dp))
-        }
 
-        IconButton(onClick = onCloseClick) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Close"
+            MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
+                ProfileValueTalkBody(
+                    talkCards = state.talkCards
+                )
+            }
+
+            MatchingDetailState.MatchingDetailPage.ValuePickState -> {
+                ProfileValuePickBody(
+                    pickCards = state.pickCards
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MatchingDetailBottomBar(
+    onShowPicturesClick: () -> Unit,
+    onConfirmClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 12.dp, bottom = 10.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_left_disable),
+            contentDescription = "이전 페이지 버튼",
+            modifier = modifier
+                .size(52.dp)
+                .clickable {
+                    onShowPicturesClick()
+                },
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Image(
+            painter = painterResource(id = R.drawable.ic_right_able),
+            contentDescription = "다음 페이지 버튼",
+            modifier = modifier
+                .size(52.dp)
+                .clickable {
+                    onConfirmClick()
+                },
+        )
+    }
+}
+
+@Composable
+private fun ProfileBasicInfoBody(
+    birthYear: String,
+    age: String,
+    height: String,
+    religion: String,
+    activityRegion: String,
+    occupation: String,
+    smokeStatue: String,
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        BasicInfoName(
+            onMoreClick = onMoreClick,
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .weight(1f),
+        )
+
+        BasicInfoCard(
+            age = age,
+            birthYear = birthYear,
+            height = height,
+            religion = religion,
+            activityRegion = activityRegion,
+            occupation = occupation,
+            smokeStatue = smokeStatue,
+        )
+    }
+}
+
+@Composable
+private fun BasicInfoName(
+    onMoreClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = "오늘의 매칭 조각",
+            style = PieceTheme.typography.bodyMM,
+            color = PieceTheme.colors.primaryDefault,
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            text = "나를 표현하는 한 마디",
+            style = PieceTheme.typography.bodyMR,
+            color = PieceTheme.colors.black,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "오늘의 매칭 조각",
+                style = PieceTheme.typography.headingLSB,
+                color = PieceTheme.colors.primaryDefault,
+                modifier = Modifier.weight(1f)
+            )
+
+            Spacer(modifier = Modifier.width(28.dp))
+
+            Image(
+                painter = painterResource(id = R.drawable.ic_more),
+                contentDescription = "basic info 배경화면",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        onMoreClick()
+                    },
             )
         }
     }
 }
 
 @Composable
-fun MatchingDetailBottomBar(
-    onShowPicturesClick: () -> Unit,
-    onConfirmClick: () -> Unit,
+private fun BasicInfoCard(
+    age: String,
+    birthYear: String,
+    height: String,
+    religion: String,
+    activityRegion: String,
+    occupation: String,
+    smokeStatue: String,
+    modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = Modifier
+    Column(
+        modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.End,
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(vertical = 12.dp),
     ) {
-        Button(onClick = onShowPicturesClick) {
-            Text("사진 보기")
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            InfoItem(
+                title = "나이",
+                text = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "만",
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.black,
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = age,
+                            style = PieceTheme.typography.headingSSB,
+                            color = PieceTheme.colors.black,
+                        )
+
+                        Text(
+                            text = "세",
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.black,
+                        )
+
+                        Spacer(modifier = Modifier.width(4.dp))
+
+                        Text(
+                            text = "${birthYear}년생",
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.dark2,
+                        )
+                    }
+                },
+                modifier = modifier.size(
+                    width = 144.dp,
+                    height = 80.dp,
+                ),
+            )
+            InfoItem(
+                title = "키",
+                content = height,
+                modifier = modifier.weight(1f),
+            )
+            InfoItem(
+                title = "종교",
+                content = religion,
+                modifier = modifier.weight(1f),
+            )
         }
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(onClick = onConfirmClick) {
-            Text("매칭 수락하기")
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(5.5.dp),
+        ) {
+            InfoItem(
+                title = "활동 지역",
+                content = activityRegion,
+                modifier = modifier.size(
+                    width = 144.dp,
+                    height = 80.dp,
+                ),
+            )
+
+            InfoItem(
+                title = "직업",
+                content = occupation,
+                modifier = modifier.weight(1f),
+            )
+
+            InfoItem(
+                title = "흡연",
+                content = smokeStatue,
+                modifier = modifier.weight(1f),
+            )
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ProfileBasicInfoBody() {
-    val userInfo = remember {
-        listOf(
-            "만 25세 2000년생",
-            "키 180cm",
-            "종교 상관없음",
-            "세종특별자치시",
-            "프리랜서",
-            "비흡연"
-        )
-    }
-
+private fun InfoItem(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: String? = null,
+    text: @Composable () -> Unit? = {},
+) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(Color.White)
+            .padding(vertical = 16.dp, horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(text = "음악과 요리를 좋아하는")
-        Text(text = "수줍은 수달")
+        Text(
+            text = title,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark2,
+        )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            userInfo.forEach { info ->
-                InfoItem(text = info)
-            }
+        if (content != null) {
+            Text(
+                text = title,
+                style = PieceTheme.typography.headingSSB,
+                color = PieceTheme.colors.black,
+            )
+        } else {
+            text()
         }
     }
 }
 
+// TODO(아래는 다음 이슈부터 작업)
 @Composable
-fun InfoItem(text: String) {
-    Box(
-        modifier = Modifier
-            .border(1.dp, Color.Gray, RoundedCornerShape(8.dp))
-            .padding(horizontal = 12.dp, vertical = 8.dp),
-    ) {
-        Text(text = text)
-    }
-}
-
-@Composable
-fun ProfileValueTalkBody() {
+private fun ProfileValueTalkBody(
+    talkCards: List<ValueTalkCard>
+) {
     val dummyItems = remember { dummyValueTalkItems() }
 
     LazyColumn(
@@ -224,7 +420,7 @@ fun dummyValueTalkItems() = listOf(
 )
 
 @Composable
-fun ValueTalkCard(item: ValueTalkItem) {
+private fun ValueTalkCard(item: ValueTalkItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -232,6 +428,7 @@ fun ValueTalkCard(item: ValueTalkItem) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = item.title)
+
             Spacer(modifier = Modifier.height(4.dp))
             Text(text = item.description)
         }
@@ -239,7 +436,9 @@ fun ValueTalkCard(item: ValueTalkItem) {
 }
 
 @Composable
-fun ProfileValuePickBody() {
+private fun ProfileValuePickBody(
+    pickCards: List<ValuePickCard>,
+) {
     val tabIndex = remember { mutableIntStateOf(0) }
 
     val tabTitles = listOf("전체", "나와 같은", "나와 다른")
@@ -269,7 +468,7 @@ fun ProfileValuePickBody() {
 }
 
 @Composable
-fun TabContent(contentText: String) {
+private fun TabContent(contentText: String) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -291,6 +490,9 @@ private fun MatchingDetailScreenPreview() {
         MatchingDetailScreen(
             MatchingDetailState(),
             {},
+            {},
+            {},
+            {},
         )
     }
 }
@@ -299,7 +501,16 @@ private fun MatchingDetailScreenPreview() {
 @Composable
 private fun ProfileBasicInfoBodyPreview() {
     PieceTheme {
-        ProfileBasicInfoBody()
+        ProfileBasicInfoBody(
+            birthYear = "1994",
+            age = "31",
+            height = "200",
+            religion = "도교",
+            activityRegion = "서울특별시",
+            occupation = "개발자",
+            smokeStatue = "비흡연",
+            onMoreClick = { },
+        )
     }
 }
 
@@ -307,7 +518,9 @@ private fun ProfileBasicInfoBodyPreview() {
 @Composable
 private fun ProfileValueTalkBodyPreview() {
     PieceTheme {
-        ProfileValueTalkBody()
+        ProfileValueTalkBody(
+            talkCards = emptyList()
+        )
     }
 }
 
@@ -315,7 +528,9 @@ private fun ProfileValueTalkBodyPreview() {
 @Composable
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
-        ProfileValuePickBody()
+        ProfileValuePickBody(
+            pickCards = emptyList()
+        )
     }
 }
 

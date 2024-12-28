@@ -3,6 +3,7 @@ package com.puzzle.designsystem.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,6 +72,56 @@ fun PieceSubTopBar(
     }
 }
 
+@Composable
+fun PieceSubBackTopBar(
+    title: String,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_left),
+            contentDescription = "뒤로 가기 버튼",
+            modifier = Modifier
+                .size(32.dp)
+                .clickable { onBackClick() }
+                .align(Alignment.CenterStart),
+        )
+
+        Text(
+            text = title,
+            style = PieceTheme.typography.headingSM,
+            color = PieceTheme.colors.black,
+            modifier = Modifier.align(Alignment.Center),
+        )
+    }
+}
+
+@Composable
+fun PieceSubCloseTopBar(
+    title: String,
+    onCloseClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        Text(
+            text = title,
+            style = PieceTheme.typography.headingSM,
+            color = PieceTheme.colors.black,
+            modifier = Modifier.align(Alignment.Center),
+        )
+
+        Image(
+            painter = painterResource(R.drawable.ic_close),
+            contentDescription = "오른쪽 버튼",
+            modifier = Modifier
+                .size(32.dp)
+                .clickable { onCloseClick() }
+                .align(Alignment.CenterEnd),
+        )
+    }
+}
+
 @Preview
 @Composable
 fun PreviewPieceMainTopBar() {
@@ -120,6 +171,34 @@ fun PreviewPieceSubTopBar() {
                     modifier = Modifier.size(32.dp),
                 )
             },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPieceSubBackTopBar() {
+    PieceTheme {
+        PieceSubBackTopBar(
+            title = "Page Name",
+            onBackClick = { },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 20.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPieceSubCloseTopBar() {
+    PieceTheme {
+        PieceSubCloseTopBar(
+            title = "Page Name",
+            onCloseClick = { },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp),

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_matching_detail_basicinfo_title" />
+    <string name="feature_matching_detail_valuetalk_title">가치관 Talk</string>
+    <string name="feature_matching_detail_valuepick_title">가치관 Pick</string>
+</resources>

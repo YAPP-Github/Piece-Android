@@ -42,6 +42,21 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
             MatchingDetailIntent.OnMatchingDetailCloseClick -> processOnMatchingDetailCloseClickIntent()
+            MatchingDetailIntent.OnBackPageClick -> processOnBackPageClickIntent()
+            MatchingDetailIntent.OnNextPageClick -> processOnNextPageClickIntent()
+            MatchingDetailIntent.OnMoreClick -> Unit
+        }
+    }
+
+    private fun processOnNextPageClickIntent() {
+        setState {
+            copy(currentPage = MatchingDetailState.MatchingDetailPage.getNextPage(currentPage))
+        }
+    }
+
+    private fun processOnBackPageClickIntent() {
+        setState {
+            copy(currentPage = MatchingDetailState.MatchingDetailPage.getPreviousPage(currentPage))
         }
     }
 
