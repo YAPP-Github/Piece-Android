@@ -22,6 +22,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.EtcRoute
@@ -77,7 +78,6 @@ private fun AppBottomBar(
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             BottomNavigationItem(
-                interactionSource = remember { NoRippleInteractionSource() },
                 icon = {
                     Icon(
                         painter = painterResource(topLevelRoute.iconDrawableId),
@@ -90,9 +90,10 @@ private fun AppBottomBar(
                         style = PieceTheme.typography.captionM,
                     )
                 },
+                selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
                 selectedContentColor = PieceTheme.colors.primaryDefault,
                 unselectedContentColor = PieceTheme.colors.dark3,
-                selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
+                interactionSource = remember { NoRippleInteractionSource() },
                 onClick = {
                     when (topLevelRoute) {
                         TopLevelDestination.MATCHING -> navigateToTopLevelDestination(
@@ -106,12 +107,6 @@ private fun AppBottomBar(
             )
         }
     }
-}
-
-class NoRippleInteractionSource : MutableInteractionSource {
-    override suspend fun emit(interaction: Interaction) {}
-    override val interactions: Flow<Interaction> = emptyFlow()
-    override fun tryEmit(interaction: Interaction): Boolean = true
 }
 
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
