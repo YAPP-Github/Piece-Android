@@ -21,8 +21,6 @@ android {
         buildConfigField("String", "KAKAO_APP_KEY", "\"${localProperties["KAKAO_APP_KEY"]}\"")
     }
 
-    packaging { resources { excludes += "/META-INF/*" } }
-
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")
@@ -46,7 +44,7 @@ dependencies {
     implementation(libs.kakao.user)
 
     implementation(projects.feature.auth)
-    implementation(projects.feature.etc)
+    implementation(projects.feature.setting)
     implementation(projects.feature.matching)
     implementation(projects.feature.mypage)
 

@@ -3,5 +3,5 @@ plugins {
 }
 
 android {
-    namespace = "com.puzzle.etc"
+    namespace = "com.puzzle.setting"
 }

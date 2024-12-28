@@ -13,7 +13,7 @@ sealed class AuthGraphDest : Route {
 }
 
 @Serializable
-data object EtcRoute : Route
+data object SettingRoute : Route
 
 @Serializable
 data object MatchingGraph : Route

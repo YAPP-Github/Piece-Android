@@ -1,7 +1,7 @@
 package com.puzzle.piece.navigation
 
 import androidx.annotation.DrawableRes
-import com.puzzle.navigation.EtcRoute
+import com.puzzle.navigation.SettingRoute
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.MyPageRoute
 import com.puzzle.piece.R
@@ -15,8 +15,8 @@ enum class TopLevelDestination(
 ) {
     MY_PAGE(
         iconDrawableId = R.drawable.ic_profile,
-        contentDescription = "마이페이지",
-        title = "마이페이지",
+        contentDescription = "프로필",
+        title = "프로필",
         route = MyPageRoute::class,
     ),
     MATCHING(
@@ -25,11 +25,11 @@ enum class TopLevelDestination(
         title = "매칭",
         route = MatchingGraphDest.MatchingRoute::class,
     ),
-    ETC(
+    SETTING(
         iconDrawableId = R.drawable.ic_setting,
-        contentDescription = "ETC",
-        title = "ETC",
-        route = EtcRoute::class,
+        contentDescription = "설정",
+        title = "설정",
+        route = SettingRoute::class,
     );
 
     companion object {
