@@ -38,10 +38,10 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.pick.ValuePickCard
+import com.puzzle.domain.model.value.ValueTalkCard
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
-import com.puzzle.matching.detail.contract.MatchingDetailState.ValuePickCard
-import com.puzzle.matching.detail.contract.MatchingDetailState.ValueTalkCard
 
 @Composable
 internal fun MatchingDetailRoute(

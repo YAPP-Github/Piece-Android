@@ -1,6 +1,8 @@
 package com.puzzle.matching.detail.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.domain.model.pick.ValuePickCard
+import com.puzzle.domain.model.value.ValueTalkCard
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
@@ -44,18 +46,4 @@ data class MatchingDetailState(
             }
         }
     }
-
-    data class ValueTalkCard(
-        val label: String = "",
-        val title: String = "",
-        val content: String = "",
-    )
-
-    data class ValuePickCard(
-        val category: String = "",
-        val question: String = "",
-        val option1: String = "",
-        val option2: String = "",
-        val isSimilarToMe: Boolean = true,
-    )
 }
