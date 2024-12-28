@@ -2,8 +2,11 @@
 
 package com.puzzle.piece.ui
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -15,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -69,21 +73,28 @@ private fun AppBottomBar(
 ) {
     NavigationBar(
         containerColor = PieceTheme.colors.white,
-        modifier = Modifier.navigationBarsPadding(),
+        modifier = Modifier
+            .navigationBarsPadding()
+            .height(68.dp),
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             NavigationBarItem(
+                alwaysShowLabel = false,
                 icon = {
-                    Icon(
-                        painter = painterResource(topLevelRoute.iconDrawableId),
-                        contentDescription = topLevelRoute.contentDescription,
-                    )
-                },
-                label = {
-                    Text(
-                        text = topLevelRoute.title,
-                        style = PieceTheme.typography.captionM,
-                    )
+                    Column(
+                        horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
+                        modifier = Modifier.padding(top = 2.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(topLevelRoute.iconDrawableId),
+                            contentDescription = topLevelRoute.contentDescription,
+                            modifier = Modifier.size(32.dp),
+                        )
+                        Text(
+                            text = topLevelRoute.title,
+                            style = PieceTheme.typography.captionM,
+                        )
+                    }
                 },
                 selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
                 colors = androidx.compose.material3.NavigationBarItemDefaults.colors(
