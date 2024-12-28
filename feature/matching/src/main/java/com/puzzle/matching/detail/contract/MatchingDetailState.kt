@@ -4,13 +4,37 @@ import com.airbnb.mvrx.MavericksState
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
-    val currentPage: MatchingDetailPage = BasicInfoState(),
+    val currentPage: MatchingDetailPage = MatchingDetailPage.BasicInfoState,
+    val basicInfoState: BasicInfoState = BasicInfoState(),
+    val valueTalkState: ValueTalkState = ValueTalkState(),
+    val valuePickState: ValuePickState = ValuePickState(),
 ) : MavericksState {
 
-    sealed class MatchingDetailPage(open val title: String)
+    enum class MatchingDetailPage(val title: String) {
+        BasicInfoState(title = ""),
+        ValueTalkState(title = "가치관 Talk"),
+        ValuePickState(title = "가치관 Pick");
+
+        companion object {
+            fun getNextPage(currentPage: MatchingDetailPage): MatchingDetailPage {
+                return when (currentPage) {
+                    BasicInfoState -> ValueTalkState
+                    ValueTalkState -> ValuePickState
+                    ValuePickState -> ValuePickState
+                }
+            }
+
+            fun getPreviousPage(currentPage: MatchingDetailPage): MatchingDetailPage {
+                return when (currentPage) {
+                    BasicInfoState -> BasicInfoState
+                    ValueTalkState -> BasicInfoState
+                    ValuePickState -> ValueTalkState
+                }
+            }
+        }
+    }
 
     data class BasicInfoState(
-        override val title: String = "",
         val selfDescription: String = "",
         val nickName: String = "",
         val birthYear: String = "",
@@ -19,14 +43,14 @@ data class MatchingDetailState(
         val occupation: String = "",
         val activityRegion: String = "",
         val smokeStatue: String = "",
-    ) : MatchingDetailPage(title)
+    )
 
     data class ValueTalkState(
-        override val title: String = "",
+        val title: String = "",
         val selfDescription: String = "",
         val nickName: String = "",
         val talkCards: List<Card> = emptyList(),
-    ) : MatchingDetailPage(title) {
+    ) {
         data class Card(
             val label: String = "",
             val title: String = "",
@@ -35,9 +59,9 @@ data class MatchingDetailState(
     }
 
     data class ValuePickState(
-        override val title: String = "",
+        val title: String = "",
         val pickCards: List<Card> = emptyList(),
-    ) : MatchingDetailPage(title) {
+    ) {
         data class Card(
             val category: String = "",
             val question: String = "",

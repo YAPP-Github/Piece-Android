@@ -45,6 +45,7 @@ import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
+import com.puzzle.matching.detail.contract.MatchingDetailState.BasicInfoState
 import java.time.LocalDate
 
 @Composable
@@ -95,7 +96,7 @@ private fun MatchingDetailScreen(
         )
 
         MatchingDetailContent(
-            currentPage = state.currentPage,
+            state = state,
             onMoreClick = onMoreClick,
             modifier = Modifier.weight(1f),
         )
@@ -163,25 +164,25 @@ private fun MatchingDetailTopBar(
 
 @Composable
 private fun MatchingDetailContent(
-    currentPage: MatchingDetailState.MatchingDetailPage,
+    state: MatchingDetailState,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        when (currentPage) {
-            is MatchingDetailState.BasicInfoState -> {
+        when (state.currentPage) {
+            MatchingDetailState.MatchingDetailPage.BasicInfoState -> {
                 ProfileBasicInfoBody(
-                    state = currentPage,
+                    state = state.basicInfoState,
                     onMoreClick = onMoreClick,
                 )
             }
 
-            is MatchingDetailState.ValuePickState -> {
-                ProfileValuePickBody(currentPage)
+            MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
+                ProfileValueTalkBody(state.valueTalkState)
             }
 
-            is MatchingDetailState.ValueTalkState -> {
-                ProfileValueTalkBody(currentPage)
+            MatchingDetailState.MatchingDetailPage.ValuePickState -> {
+                ProfileValuePickBody(state.valuePickState)
             }
         }
     }
@@ -225,7 +226,7 @@ private fun MatchingDetailBottomBar(
 
 @Composable
 private fun ProfileBasicInfoBody(
-    state: MatchingDetailState.BasicInfoState,
+    state: BasicInfoState,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -456,7 +457,7 @@ private fun ValueTalkCard(item: ValueTalkItem) {
 
 @Composable
 private fun ProfileValuePickBody(
-    state: MatchingDetailState.ValuePickState
+    state: MatchingDetailState.ValuePickState,
 ) {
     val tabIndex = remember { mutableIntStateOf(0) }
 
