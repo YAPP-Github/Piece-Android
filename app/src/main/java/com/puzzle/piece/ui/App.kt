@@ -1,13 +1,19 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.puzzle.piece.ui
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.Icon
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -25,6 +31,8 @@ import com.puzzle.navigation.MyPageRoute
 import com.puzzle.navigation.Route
 import com.puzzle.piece.navigation.AppNavHost
 import com.puzzle.piece.navigation.TopLevelDestination
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlin.reflect.KClass
 
 @Composable
@@ -65,12 +73,13 @@ private fun AppBottomBar(
     BottomNavigation(
         elevation = 0.dp,
         backgroundColor = PieceTheme.colors.white,
-        modifier = Modifier.navigationBarsPadding()
+        modifier = Modifier.navigationBarsPadding(),
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             BottomNavigationItem(
+                interactionSource = remember { NoRippleInteractionSource() },
                 icon = {
-                    Image(
+                    Icon(
                         painter = painterResource(topLevelRoute.iconDrawableId),
                         contentDescription = topLevelRoute.contentDescription,
                     )
@@ -81,12 +90,15 @@ private fun AppBottomBar(
                         style = PieceTheme.typography.captionM,
                     )
                 },
-                selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
                 selectedContentColor = PieceTheme.colors.primaryDefault,
                 unselectedContentColor = PieceTheme.colors.dark3,
+                selected = currentDestination.isRouteInHierarchy(topLevelRoute.route),
                 onClick = {
                     when (topLevelRoute) {
-                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
+                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(
+                            MatchingGraph
+                        )
+
                         TopLevelDestination.MY_PAGE -> navigateToTopLevelDestination(MyPageRoute)
                         TopLevelDestination.ETC -> navigateToTopLevelDestination(EtcRoute)
                     }
@@ -96,18 +108,19 @@ private fun AppBottomBar(
     }
 }
 
+class NoRippleInteractionSource : MutableInteractionSource {
+    override suspend fun emit(interaction: Interaction) {}
+    override val interactions: Flow<Interaction> = emptyFlow()
+    override fun tryEmit(interaction: Interaction): Boolean = true
+}
+
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     AuthGraph::class.qualifiedName,
-    MatchingDetailRoute::class.qualifiedName
+    MatchingDetailRoute::class.qualifiedName,
 )
 
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
-    this?.hierarchy?.any { destination ->
-        destination.route in HIDDEN_BOTTOM_NAV_ROUTES
-    } ?: false
+    this?.hierarchy?.any { destination -> destination.route in HIDDEN_BOTTOM_NAV_ROUTES } ?: false
 
-/**
- * 현재 목적지가 TopLevelDestination 라우트에 속하는지 확인하는 메서드
- */
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
-    this?.hierarchy?.any { it.hasRoute(route) } ?: false
+    this?.hierarchy?.any { it.hasRoute(route) } == true
