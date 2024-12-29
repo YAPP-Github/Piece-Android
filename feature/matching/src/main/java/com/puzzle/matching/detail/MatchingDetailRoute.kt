@@ -273,7 +273,7 @@ private fun MatchingDetailBottomBar(
                     disabledContainerColor = PieceTheme.colors.light1,
                     disabledContentColor = PieceTheme.colors.white,
                 ),
-                modifier = modifier.height(52.dp),
+                modifier = Modifier.height(52.dp),
             ) {
                 Text(
                     text = "매칭 수락하기",
