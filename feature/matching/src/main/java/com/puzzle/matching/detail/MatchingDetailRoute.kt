@@ -346,34 +346,16 @@ private fun BasicInfoName(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Text(
-            text = selfDescription,
-            style = PieceTheme.typography.bodyMR,
-            color = PieceTheme.colors.black,
+        ValueTalkHeader(
+            nickName = nickName,
+            selfDescription = selfDescription,
+            onMoreClick = onMoreClick,
+            modifier = Modifier
+                .padding(
+                    vertical = 20.dp,
+                    horizontal = 20.dp
+                ),
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(
-                text = nickName,
-                style = PieceTheme.typography.headingLSB,
-                color = PieceTheme.colors.primaryDefault,
-                modifier = Modifier.weight(1f)
-            )
-
-            Spacer(modifier = Modifier.width(28.dp))
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_more),
-                contentDescription = "basic info 배경화면",
-                modifier = Modifier
-                    .size(32.dp)
-                    .clickable {
-                        onMoreClick()
-                    },
-            )
-        }
     }
 }
 
@@ -580,11 +562,16 @@ private fun ProfileValueTalkBody(
             selfDescription = selfDescription,
             onMoreClick = onMoreClick,
             modifier = Modifier
-                .offset { IntOffset(0, connection.headerOffset) },
+                .offset { IntOffset(0, connection.headerOffset) }
+                .background(Color.White)
+                .padding(
+                    vertical = 20.dp,
+                    horizontal = 20.dp
+                ),
         )
 
         Spacer(
-            modifier = modifier
+            modifier = Modifier
                 .height(1.dp)
                 .fillMaxWidth()
                 .background(PieceTheme.colors.light2)
@@ -630,12 +617,7 @@ private fun ValueTalkHeader(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .background(Color.White)
-            .padding(
-                vertical = 20.dp,
-                horizontal = 20.dp
-            ),
+        modifier = modifier,
     ) {
         Text(
             text = selfDescription,
@@ -672,6 +654,7 @@ private fun ValueTalkHeader(
 private fun ValueTalkCard(
     item: ValueTalk,
     idx: Int,
+    modifier: Modifier = Modifier,
 ) {
     val icons = remember {
         listOf(
@@ -684,7 +667,7 @@ private fun ValueTalkCard(
     val idxInRange = idx % icons.size
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(12.dp))
             .background(Color.White)
             .padding(
@@ -729,13 +712,14 @@ private fun ValueTalkCard(
 @Composable
 private fun ProfileValuePickBody(
     pickCards: List<ValuePick>,
+    modifier: Modifier = Modifier,
 ) {
     val tabIndex = remember { mutableIntStateOf(0) }
 
     val tabTitles = listOf("전체", "나와 같은", "나와 다른")
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) {
         TabRow(
             selectedTabIndex = tabIndex.intValue,
