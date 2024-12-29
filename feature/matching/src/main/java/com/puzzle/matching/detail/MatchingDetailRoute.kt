@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -61,7 +63,7 @@ internal fun MatchingDetailRoute(
     MatchingDetailScreen(
         state = state,
         onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) },
-        onBackPageClick = { viewModel.onIntent(MatchingDetailIntent.OnBackPageClick) },
+        onPreviousPageClick = { viewModel.onIntent(MatchingDetailIntent.OnPreviousPageClick) },
         onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
         onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
     )
@@ -71,7 +73,7 @@ internal fun MatchingDetailRoute(
 private fun MatchingDetailScreen(
     state: MatchingDetailState,
     onCloseClick: () -> Unit,
-    onBackPageClick: () -> Unit,
+    onPreviousPageClick: () -> Unit,
     onNextPageClick: () -> Unit,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -118,8 +120,11 @@ private fun MatchingDetailScreen(
         )
 
         MatchingDetailBottomBar(
-            onShowPicturesClick = onBackPageClick,
-            onConfirmClick = onNextPageClick,
+            currentPage = state.currentPage,
+            onNextPageClick = onNextPageClick,
+            onPreviousPageClick = onPreviousPageClick,
+            onShowPicturesClick = {},
+            onAcceptClick = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(bottomBarHeight)
@@ -173,9 +178,12 @@ private fun MatchingDetailContent(
 
             MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
                 ProfileValueTalkBody(
-                    nickName = state.nickName,
-                    selfDescription = state.selfDescription,
-                    onMoreClick = onMoreClick,
+                    nickName =
+                    "수줍은 수달",
+//                    state.nickName,
+                    selfDescription =
+                    "음악과 요리를 좋아하는",
+//                    state.selfDescription,
                     talkCards = listOf(
                         ValueTalk(
                             label = "꿈과 목표",
@@ -192,7 +200,9 @@ private fun MatchingDetailContent(
                             title = "서로 존중하고 신뢰하며, 함께 성장하는 관계를 원해요. ",
                             content = "저는 연애에서 서로의 존중과 신뢰가 가장 중요하다고 생각합니다. 진정한 소통을 통해 서로의 감정을 이해하고, 함께 성장할 수 있는 관계를 원합니다. 일상 속 작은 것에도 감사하며, 서로의 꿈과 목표를 지지하고 응원하는 파트너가 되고 싶습니다. 또한, 유머와 즐거움을 잃지 않으며, 함께하는 순간들을 소중히 여기고 싶습니다. 사랑은 서로를 더 나은 사람으로 만들어주는 힘이 있다고 믿습니다. 서로에게 긍정적인 영향을 주며 행복한 시간을 함께하고 싶습니다!"
                         )
-                    )
+                    ),
+//                            state.talkCards
+                    onMoreClick = onMoreClick
                 )
             }
 
@@ -207,36 +217,80 @@ private fun MatchingDetailContent(
 
 @Composable
 private fun MatchingDetailBottomBar(
+    currentPage: MatchingDetailPage,
+    onPreviousPageClick: () -> Unit,
+    onNextPageClick: () -> Unit,
     onShowPicturesClick: () -> Unit,
-    onConfirmClick: () -> Unit,
+    onAcceptClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        horizontalArrangement = Arrangement.End,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_left_disable),
-            contentDescription = "이전 페이지 버튼",
-            modifier = Modifier
-                .size(52.dp)
-                .clickable {
-                    onShowPicturesClick()
-                },
-        )
+        if (currentPage == MatchingDetailPage.ValuePickState) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_profile_image_temp),
+                contentDescription = "이전 페이지 버튼",
+                modifier = Modifier
+                    .size(52.dp)
+                    .clickable {
+                        onShowPicturesClick()
+                    },
+            )
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+
+        if (currentPage == MatchingDetailPage.BasicInfoState) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_left_disable),
+                contentDescription = "이전 페이지 버튼",
+                modifier = Modifier
+                    .size(52.dp),
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.ic_left_able),
+                contentDescription = "이전 페이지 버튼",
+                modifier = Modifier
+                    .size(52.dp)
+                    .clickable {
+                        onPreviousPageClick()
+                    },
+            )
+        }
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        Image(
-            painter = painterResource(id = R.drawable.ic_right_able),
-            contentDescription = "다음 페이지 버튼",
-            modifier = Modifier
-                .size(52.dp)
-                .clickable {
-                    onConfirmClick()
-                },
-        )
+        if (currentPage == MatchingDetailPage.ValuePickState) {
+            Button(
+                onClick = onAcceptClick,
+                shape = RoundedCornerShape(46.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PieceTheme.colors.primaryDefault,
+                    contentColor = PieceTheme.colors.white,
+                    disabledContainerColor = PieceTheme.colors.light1,
+                    disabledContentColor = PieceTheme.colors.white,
+                ),
+                modifier = modifier.height(52.dp),
+            ) {
+                Text(
+                    text = "매칭 수락하기",
+                    style = PieceTheme.typography.bodyMSB,
+                )
+            }
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.ic_right_able),
+                contentDescription = "다음 페이지 버튼",
+                modifier = Modifier
+                    .size(52.dp)
+                    .clickable {
+                        onNextPageClick()
+                    },
+            )
+        }
     }
 }
 
@@ -463,28 +517,40 @@ private fun ProfileValueTalkBody(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // 1) 고정 헤더 높이(105.dp)
     val valueTalkHeaderHeight = 105.dp
-
     val valueTalkHeaderHeightPx = with(LocalDensity.current) { valueTalkHeaderHeight.roundToPx() }
 
+    // 2) 헤더가 얼마나 접혔는지(offset)를 관리해주는 NestedScrollConnection
     val connection = remember(valueTalkHeaderHeightPx) {
         CollapsingHeaderNestedScrollConnection(valueTalkHeaderHeightPx)
     }
 
+    // 3) 헤더와 리스트 간 공간(Spacer)에 사용할 height (DP)
+    //    헤더가 접힐수록 headerOffset이 음수가 되면서 spaceHeight가 줄어듦
     val density = LocalDensity.current
     val spaceHeight by remember(density) {
         derivedStateOf {
             with(density) {
+                // (헤더 높이 + offset)를 DP로 변환
+                // offset이 -105px이면 0dp,
+                // offset이 0px이면 105dp
                 (valueTalkHeaderHeightPx + connection.headerOffset).toDp()
             }
         }
     }
 
+    // 4) Box에 nestedScroll(connection)을 달아, 스크롤 이벤트가
+    //    CollapsingHeaderNestedScrollConnection으로 전달되도록 함
     Box(
         modifier = modifier
             .nestedScroll(connection)
     ) {
+        // 5) Column: Spacer + LazyColumn을 세로로 배치
+        //    헤더가 접힐수록 Spacer의 높이가 줄어들고, 그만큼 리스트가 위로 올라옴
         Column {
+            // 5-1) 헤더 높이만큼 Spacer를 줘서 리스트가 '헤더 아래'에서 시작
+            //      헤더 offset이 변하면, spaceHeight가 변해 리스트도 따라 위로 올라감
             Spacer(
                 Modifier.height(spaceHeight)
             )
@@ -507,6 +573,8 @@ private fun ProfileValueTalkBody(
             }
         }
 
+        // 6) 실제 헤더 뷰
+        //    offset을 통해 y축 이동 (headerOffset이 음수면 위로 올라가며 사라짐)
         ValueTalkHeader(
             nickName = nickName,
             selfDescription = selfDescription,
@@ -529,15 +597,27 @@ private class CollapsingHeaderNestedScrollConnection(
     val headerHeight: Int
 ) : NestedScrollConnection {
 
+    // 헤더 offset(픽셀 단위), 0이면 펼침, -headerHeight이면 완전 접힘
     var headerOffset: Int by mutableIntStateOf(0)
         private set
 
+    // 스크롤 이벤트가 오기 전, 먼저 얼마나 소모할지 계산
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        // y축 델타(수직 스크롤 양)
         val delta = available.y.toInt()
+
+        // 새 offset = 기존 offset + 스크롤 델타
         val newOffset = headerOffset + delta
         val previousOffset = headerOffset
+
+        // -headerHeight ~ 0 사이로 제한
+        //   -> 최소 -105: 완전히 접힘, 최대 0: 완전히 펼침
         headerOffset = newOffset.coerceIn(-headerHeight, 0)
+
+        // 소비(consumed)된 스크롤 양 = (바뀐 offset - 기존 offset)
         val consumed = headerOffset - previousOffset
+
+        // x축은 소비 안 함(0f), y축은 consumed만큼 소비했다고 반환
         return Offset(0f, consumed.toFloat())
     }
 }
@@ -765,4 +845,47 @@ private fun ProfileValuePickBodyPreview() {
         )
     }
 }
+
+@Preview
+@Composable
+private fun BottomNavigationOnBasicInfoStatePreview() {
+    PieceTheme {
+        MatchingDetailBottomBar(
+            currentPage = MatchingDetailPage.BasicInfoState,
+            {},
+            {},
+            {},
+            {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun BottomNavigationOnValueTalkStatePreview() {
+    PieceTheme {
+        MatchingDetailBottomBar(
+            currentPage = MatchingDetailPage.ValueTalkState,
+            {},
+            {},
+            {},
+            {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun BottomNavigationOnValuePickStatePreview() {
+    PieceTheme {
+        MatchingDetailBottomBar(
+            currentPage = MatchingDetailPage.ValuePickState,
+            {},
+            {},
+            {},
+            {},
+        )
+    }
+}
+
 
