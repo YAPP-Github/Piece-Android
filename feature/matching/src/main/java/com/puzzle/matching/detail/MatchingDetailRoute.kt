@@ -704,10 +704,97 @@ private fun ProfileValuePickBody(
         }
 
         when (tabIndex.intValue) {
-            0 -> TabContent("전체 탭의 내용 예시...")
+            0 -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(PieceTheme.colors.light3)
+                        .padding(horizontal = 20.dp),
+                ) {
+                    itemsIndexed(pickCards) { idx, item ->
+                        Spacer(Modifier.height(20.dp))
+
+                        ValuePickCard(
+                            valuePick = item,
+                        )
+                    }
+
+                    item {
+                        Spacer(Modifier.height(60.dp))
+                    }
+                }
+            }
+
             1 -> TabContent("나만 탭의 내용 예시...")
             2 -> TabContent("너만 탭의 내용 예시...")
         }
+    }
+}
+
+@Composable
+private fun ValuePickCard(
+    valuePick: ValuePick,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(PieceTheme.colors.white)
+            .padding(
+                horizontal = 20.dp,
+                vertical = 24.dp,
+            )
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_puzzle1),
+                contentDescription = "basic info 배경화면",
+                modifier = Modifier
+                    .size(20.dp),
+            )
+
+            Spacer(modifier = modifier.width(6.dp))
+
+            Text(
+                text = valuePick.category,
+                style = PieceTheme.typography.bodyMM,
+                color = PieceTheme.colors.primaryDefault,
+            )
+
+            Spacer(modifier = modifier.weight(1f))
+
+            if (valuePick.isSimilarToMe) {
+                Text(
+                    text = "나와 같은",
+                    style = PieceTheme.typography.bodyMM,
+                    color = PieceTheme.colors.primaryDefault,
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = valuePick.question,
+            style = PieceTheme.typography.headingMSB,
+            color = PieceTheme.colors.black,
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = valuePick.option1,
+            style = PieceTheme.typography.headingMSB,
+            color = PieceTheme.colors.black,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = valuePick.option2,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark2,
+        )
     }
 }
 
@@ -794,7 +881,36 @@ private fun ProfileValueTalkBodyPreview() {
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
         ProfileValuePickBody(
-            pickCards = emptyList()
+            pickCards = listOf(
+                ValuePick(
+                    category = "음주",
+                    question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
+                    option1 = "함께 술을 즐기고 싶어요",
+                    option2 = "같이 술을 즐길 수 없어도 괜찮아요",
+                    isSimilarToMe = true,
+                ),
+                ValuePick(
+                    category = "만남 빈도",
+                    question = "주말에 얼마나 자주 데이트를 하고싶나요?",
+                    option1 = "주말에는 최대한 같이 있고 싶어요",
+                    option2 = "하루 정도는 각자 보내고 싶어요",
+                    isSimilarToMe = true,
+                ),
+                ValuePick(
+                    category = "연락 빈도",
+                    question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
+                    option1 = "바빠도 최대한 자주 연락하고 싶어요",
+                    option2 = "연락은 생각날 때만 종종 해도 괜찮아요",
+                    isSimilarToMe = true,
+                ),
+                ValuePick(
+                    category = "연락 방식",
+                    question = "연락할 때 어떤 방법을 더 좋아하나요?",
+                    option1 = "전화보다는 문자나 카톡이 좋아요",
+                    option2 = "문자나 카톡보다는 전화가 좋아요",
+                    isSimilarToMe = true,
+                )
+            )
         )
     }
 }
