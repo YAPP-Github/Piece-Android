@@ -1,4 +1,4 @@
-package com.puzzle.etc
+package com.puzzle.setting
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

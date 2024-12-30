@@ -1,4 +1,4 @@
-package com.puzzle.etc
+package com.puzzle.setting
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,14 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun EtcRoute(
+fun SettingRoute(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "EtcRoute", fontSize = 30.sp)
+        Text(text = "SettingRoute", fontSize = 30.sp)
     }
 }
 
 @Composable
-internal fun EtcScreen() {
+internal fun SettingScreen() {
 }
