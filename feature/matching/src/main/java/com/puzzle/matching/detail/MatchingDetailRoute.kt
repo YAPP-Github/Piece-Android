@@ -465,9 +465,10 @@ private fun ProfileValueTalkBody(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
     // 1) 고정 헤더 높이(105.dp)
     val valueTalkHeaderHeight = 105.dp
-    val valueTalkHeaderHeightPx = with(LocalDensity.current) { valueTalkHeaderHeight.roundToPx() }
+    val valueTalkHeaderHeightPx = with(density) { valueTalkHeaderHeight.roundToPx() }
 
     // 2) 헤더가 얼마나 접혔는지(offset)를 관리해주는 NestedScrollConnection
     val connection = remember(valueTalkHeaderHeightPx) {
@@ -476,7 +477,6 @@ private fun ProfileValueTalkBody(
 
     // 3) 헤더와 리스트 간 공간(Spacer)에 사용할 height (DP)
     //    헤더가 접힐수록 headerOffset이 음수가 되면서 spaceHeight가 줄어듦
-    val density = LocalDensity.current
     val spaceHeight by remember(density) {
         derivedStateOf {
             with(density) {
@@ -502,6 +502,7 @@ private fun ProfileValueTalkBody(
             Spacer(
                 Modifier.height(spaceHeight)
             )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -510,11 +511,13 @@ private fun ProfileValueTalkBody(
             ) {
                 itemsIndexed(talkCards) { idx, item ->
                     Spacer(Modifier.height(20.dp))
+
                     ValueTalkCard(
                         item = item,
                         idx = idx,
                     )
                 }
+
                 item {
                     Spacer(Modifier.height(60.dp))
                 }
