@@ -46,10 +46,11 @@ dependencies {
     implementation(libs.kakao.user)
 
     implementation(projects.feature.auth)
-    implementation(projects.feature.etc)
+    implementation(projects.feature.setting)
     implementation(projects.feature.matching)
     implementation(projects.feature.mypage)
 
     implementation(projects.core.designsystem)
     implementation(projects.core.navigation)
+    implementation(projects.core.commonUi)
 }

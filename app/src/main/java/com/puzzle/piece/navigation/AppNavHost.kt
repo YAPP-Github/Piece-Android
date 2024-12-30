@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.puzzle.auth.navigation.authNavGraph
-import com.puzzle.etc.navigation.etcScreen
+import com.puzzle.setting.navigation.settingScreen
 import com.puzzle.matching.navigation.matchingNavGraph
 import com.puzzle.mypage.navigation.myPageScreen
 import com.puzzle.navigation.AuthGraph
@@ -23,6 +23,6 @@ fun AppNavHost(
         authNavGraph()
         matchingNavGraph()
         myPageScreen()
-        etcScreen()
+        settingScreen()
     }
 }
