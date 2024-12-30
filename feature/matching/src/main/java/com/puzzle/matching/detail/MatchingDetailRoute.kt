@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -46,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.pick.ValuePick
@@ -243,22 +242,10 @@ private fun MatchingDetailBottomBar(
         Spacer(modifier = Modifier.width(8.dp))
 
         if (currentPage == MatchingDetailPage.ValuePickState) {
-            Button(
+            PieceRoundingButton(
+                label = "매칭 수락하기",
                 onClick = onAcceptClick,
-                shape = RoundedCornerShape(46.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = PieceTheme.colors.primaryDefault,
-                    contentColor = PieceTheme.colors.white,
-                    disabledContainerColor = PieceTheme.colors.light1,
-                    disabledContentColor = PieceTheme.colors.white,
-                ),
-                modifier = Modifier.height(52.dp),
-            ) {
-                Text(
-                    text = "매칭 수락하기",
-                    style = PieceTheme.typography.bodyMSB,
-                )
-            }
+            )
         } else {
             Image(
                 painter = painterResource(id = R.drawable.ic_right_able),
