@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -136,6 +137,36 @@ fun PieceIconButton(
                 style = PieceTheme.typography.bodyMSB,
             )
         }
+    }
+}
+
+@Composable
+fun PieceRoundingButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(46.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = PieceTheme.colors.primaryDefault,
+            contentColor = PieceTheme.colors.white,
+            disabledContainerColor = PieceTheme.colors.light1,
+            disabledContentColor = PieceTheme.colors.white,
+        ),
+        modifier = modifier.height(52.dp),
+        contentPadding = PaddingValues(
+            horizontal = 29.5.dp,
+            vertical = 14.dp,
+        )
+    ) {
+        Text(
+            text = label,
+            style = PieceTheme.typography.bodyMSB,
+        )
     }
 }
 
