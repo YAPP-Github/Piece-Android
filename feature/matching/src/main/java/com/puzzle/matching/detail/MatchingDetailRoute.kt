@@ -31,13 +31,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -243,7 +243,7 @@ private fun MatchingDetailBottomBar(
 
         if (currentPage == MatchingDetailPage.ValuePickState) {
             PieceRoundingButton(
-                label = "매칭 수락하기",
+                label = stringResource(R.string.feature_matching_detail_valuepick_bottom_bar_label),
                 onClick = onAcceptClick,
             )
         } else {
@@ -305,7 +305,7 @@ private fun BasicInfoName(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "오늘의 매칭 조각",
+            text = stringResource(R.string.feature_matching_detail_basicinfo_main_label),
             style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
         )
@@ -345,11 +345,11 @@ private fun BasicInfoCard(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             InfoItem(
-                title = "나이",
+                title = stringResource(R.string.feature_matching_detail_basicinfocard_age),
                 text = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = "만",
+                            text = stringResource(R.string.feature_matching_detail_basicinfocard_age_particle),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.black,
                         )
@@ -363,7 +363,7 @@ private fun BasicInfoCard(
                         )
 
                         Text(
-                            text = "세",
+                            text = stringResource(R.string.feature_matching_detail_basicinfocard_age_classifier),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.black,
                         )
@@ -371,7 +371,7 @@ private fun BasicInfoCard(
                         Spacer(modifier = Modifier.width(4.dp))
 
                         Text(
-                            text = "${birthYear}년생",
+                            text = birthYear + stringResource(R.string.feature_matching_detail_basicinfocard_age_suffix),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.dark2,
                         )
@@ -383,12 +383,12 @@ private fun BasicInfoCard(
                 ),
             )
             InfoItem(
-                title = "키",
+                title = stringResource(R.string.feature_matching_detail_basicinfocard_height),
                 content = height,
                 modifier = modifier.weight(1f),
             )
             InfoItem(
-                title = "종교",
+                title = stringResource(R.string.feature_matching_detail_basicinfocard_religion),
                 content = religion,
                 modifier = modifier.weight(1f),
             )
@@ -400,7 +400,7 @@ private fun BasicInfoCard(
             horizontalArrangement = Arrangement.spacedBy(5.5.dp),
         ) {
             InfoItem(
-                title = "활동 지역",
+                title = stringResource(R.string.feature_matching_detail_basicinfocard_activityRegion),
                 content = activityRegion,
                 modifier = modifier.size(
                     width = 144.dp,
@@ -409,13 +409,13 @@ private fun BasicInfoCard(
             )
 
             InfoItem(
-                title = "직업",
+                title = stringResource(R.string.feature_matching_detail_basicinfocard_occupation),
                 content = occupation,
                 modifier = modifier.weight(1f),
             )
 
             InfoItem(
-                title = "흡연",
+                title = stringResource(R.string.feature_matching_detail_basicinfocard_smokeStatue),
                 content = smokeStatue,
                 modifier = modifier.weight(1f),
             )
