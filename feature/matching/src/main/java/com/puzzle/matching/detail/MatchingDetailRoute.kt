@@ -433,7 +433,7 @@ private fun InfoItem(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(Color.White)
+            .background(PieceTheme.colors.white)
             .padding(vertical = 16.dp, horizontal = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -532,7 +532,7 @@ private fun ProfileValueTalkBody(
             onMoreClick = onMoreClick,
             modifier = Modifier
                 .offset { IntOffset(0, connection.headerOffset) }
-                .background(Color.White)
+                .background(PieceTheme.colors.white)
                 .padding(
                     vertical = 20.dp,
                     horizontal = 20.dp
@@ -638,7 +638,7 @@ private fun ValueTalkCard(
     Column(
         modifier = modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White)
+            .background(PieceTheme.colors.white)
             .padding(
                 top = 20.dp,
                 bottom = 32.dp,
