@@ -3,7 +3,6 @@
 package com.puzzle.piece.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -76,9 +75,7 @@ fun App(
                     Image(
                         painter = painterResource(R.drawable.ic_matching),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(80.dp)
-                            .background(PieceTheme.colors.white),
+                        modifier = Modifier.size(80.dp),
                     )
                 }
             }
