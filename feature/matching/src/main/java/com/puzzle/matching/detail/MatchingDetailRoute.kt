@@ -20,12 +20,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,6 +41,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -45,6 +50,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceRoundingButton
+import com.puzzle.designsystem.component.PieceSubButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.pick.ValuePick
@@ -65,6 +71,9 @@ internal fun MatchingDetailRoute(
         onPreviousPageClick = { viewModel.onIntent(MatchingDetailIntent.OnPreviousPageClick) },
         onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
         onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
+        onRefuseClick = { },
+        onAcceptClick = { },
+        onShowPicturesClick = { },
     )
 }
 
@@ -75,6 +84,9 @@ private fun MatchingDetailScreen(
     onPreviousPageClick: () -> Unit,
     onNextPageClick: () -> Unit,
     onMoreClick: () -> Unit,
+    onRefuseClick: () -> Unit,
+    onShowPicturesClick: () -> Unit,
+    onAcceptClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     BackgroundImage(modifier)
@@ -96,6 +108,7 @@ private fun MatchingDetailScreen(
         MatchingDetailContent(
             state = state,
             onMoreClick = onMoreClick,
+            onRefuseClick = onRefuseClick,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = topBarHeight, bottom = bottomBarHeight),
@@ -122,8 +135,8 @@ private fun MatchingDetailScreen(
             currentPage = state.currentPage,
             onNextPageClick = onNextPageClick,
             onPreviousPageClick = onPreviousPageClick,
-            onShowPicturesClick = {},
-            onAcceptClick = {},
+            onShowPicturesClick = onShowPicturesClick,
+            onAcceptClick = onAcceptClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(bottomBarHeight)
@@ -155,6 +168,7 @@ private fun BackgroundImage(
 private fun MatchingDetailContent(
     state: MatchingDetailState,
     onMoreClick: () -> Unit,
+    onRefuseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -186,7 +200,37 @@ private fun MatchingDetailContent(
 
             MatchingDetailState.MatchingDetailPage.ValuePickState -> {
                 ProfileValuePickBody(
-                    pickCards = state.pickCards
+                    pickCards = listOf(
+                        ValuePick(
+                            category = "음주",
+                            question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
+                            option1 = "함께 술을 즐기고 싶어요",
+                            option2 = "같이 술을 즐길 수 없어도 괜찮아요",
+                            isSimilarToMe = true,
+                        ),
+                        ValuePick(
+                            category = "만남 빈도",
+                            question = "주말에 얼마나 자주 데이트를 하고싶나요?",
+                            option1 = "주말에는 최대한 같이 있고 싶어요",
+                            option2 = "하루 정도는 각자 보내고 싶어요",
+                            isSimilarToMe = false,
+                        ),
+                        ValuePick(
+                            category = "연락 빈도",
+                            question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
+                            option1 = "바빠도 최대한 자주 연락하고 싶어요",
+                            option2 = "연락은 생각날 때만 종종 해도 괜찮아요",
+                            isSimilarToMe = true,
+                        ),
+                        ValuePick(
+                            category = "연락 방식",
+                            question = "연락할 때 어떤 방법을 더 좋아하나요?",
+                            option1 = "전화보다는 문자나 카톡이 좋아요",
+                            option2 = "문자나 카톡보다는 전화가 좋아요",
+                            isSimilarToMe = false,
+                        )
+                    ),
+                    onRefuseClick = onRefuseClick
                 )
             }
         }
@@ -208,7 +252,7 @@ private fun MatchingDetailBottomBar(
     ) {
         if (currentPage == MatchingDetailPage.ValuePickState) {
             Image(
-                painter = painterResource(id = R.drawable.ic_profile_image_temp),
+                painter = painterResource(id = R.drawable.ic_profile_image),
                 contentDescription = "이전 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
@@ -312,7 +356,7 @@ private fun BasicInfoName(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ValueTalkHeader(
+        BasicInfoHeader(
             nickName = nickName,
             selfDescription = selfDescription,
             onMoreClick = onMoreClick,
@@ -467,7 +511,7 @@ private fun ProfileValueTalkBody(
 ) {
     val density = LocalDensity.current
     // 1) 고정 헤더 높이(105.dp)
-    val valueTalkHeaderHeight = 105.dp
+    val valueTalkHeaderHeight = 104.dp
     val valueTalkHeaderHeightPx = with(density) { valueTalkHeaderHeight.roundToPx() }
 
     // 2) 헤더가 얼마나 접혔는지(offset)를 관리해주는 NestedScrollConnection
@@ -503,36 +547,19 @@ private fun ProfileValueTalkBody(
                 Modifier.height(spaceHeight)
             )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(PieceTheme.colors.light3)
-                    .padding(horizontal = 20.dp),
-            ) {
-                itemsIndexed(talkCards) { idx, item ->
-                    Spacer(Modifier.height(20.dp))
-
-                    ValueTalkCard(
-                        item = item,
-                        idx = idx,
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(60.dp))
-                }
-            }
+            ValueTalkCards(talkCards)
         }
 
         // 6) 실제 헤더 뷰
         //    offset을 통해 y축 이동 (headerOffset이 음수면 위로 올라가며 사라짐)
-        ValueTalkHeader(
+        BasicInfoHeader(
             nickName = nickName,
             selfDescription = selfDescription,
             onMoreClick = onMoreClick,
             modifier = Modifier
                 .offset { IntOffset(0, connection.headerOffset) }
                 .background(PieceTheme.colors.white)
+                .height(valueTalkHeaderHeight)
                 .padding(
                     vertical = 20.dp,
                     horizontal = 20.dp
@@ -546,6 +573,29 @@ private fun ProfileValueTalkBody(
                 .background(PieceTheme.colors.light2)
                 .align(Alignment.TopCenter),
         )
+    }
+}
+
+@Composable
+private fun ValueTalkCards(talkCards: List<ValueTalk>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PieceTheme.colors.light3)
+            .padding(horizontal = 20.dp),
+    ) {
+        itemsIndexed(talkCards) { idx, item ->
+            Spacer(Modifier.height(20.dp))
+
+            ValueTalkCard(
+                item = item,
+                idx = idx,
+            )
+        }
+
+        item {
+            Spacer(Modifier.height(60.dp))
+        }
     }
 }
 
@@ -579,15 +629,13 @@ private class CollapsingHeaderNestedScrollConnection(
 }
 
 @Composable
-private fun ValueTalkHeader(
+private fun BasicInfoHeader(
     nickName: String,
     selfDescription: String,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = selfDescription,
             style = PieceTheme.typography.bodyMR,
@@ -681,52 +729,193 @@ private fun ValueTalkCard(
 @Composable
 private fun ProfileValuePickBody(
     pickCards: List<ValuePick>,
+    onRefuseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val tabIndex = remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
 
-    val tabTitles = listOf("전체", "나와 같은", "나와 다른")
+    val valuePickHeaderHeight = 104.dp
 
-    Column(
-        modifier = modifier.fillMaxSize(),
+    val valuePickHeaderHeightPx = with(density) { valuePickHeaderHeight.roundToPx() }
+
+    val connection = remember(valuePickHeaderHeightPx) {
+        CollapsingHeaderNestedScrollConnection(valuePickHeaderHeightPx)
+    }
+
+    val spaceHeight by remember(density) {
+        derivedStateOf {
+            with(density) {
+                (valuePickHeaderHeightPx + connection.headerOffset).toDp()
+            }
+        }
+    }
+
+    val tabIndex = rememberSaveable { mutableIntStateOf(0) }
+
+    val tabTitles = listOf(
+        stringResource(R.string.feature_matching_detail_valuepick_all),
+        stringResource(R.string.feature_matching_detail_valuepick_same),
+        stringResource(R.string.feature_matching_detail_valuepick_different),
+    )
+
+    Box(
+        modifier = modifier
+            .nestedScroll(connection)
     ) {
-        TabRow(
-            selectedTabIndex = tabIndex.intValue,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            tabTitles.forEachIndexed { index, title ->
-                Tab(
-                    selected = (tabIndex.intValue == index),
-                    onClick = { tabIndex.intValue = index },
-                    text = { Text(text = title) },
+        Column {
+            Spacer(Modifier.height(spaceHeight))
+
+            Column(
+                modifier = modifier.fillMaxSize(),
+            ) {
+                ValuePickTabRow(
+                    tabIndex = tabIndex.intValue,
+                    tabTitles = tabTitles,
+                    onTabClick = { tabIndex.intValue = it },
+                )
+
+                ValuePickTabContent(
+                    tabIndex = tabIndex.intValue,
+                    pickCards = pickCards,
+                    onRefuseClick = onRefuseClick,
                 )
             }
         }
 
-        when (tabIndex.intValue) {
-            0 -> {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(PieceTheme.colors.light3)
-                        .padding(horizontal = 20.dp),
-                ) {
-                    itemsIndexed(pickCards) { idx, item ->
-                        Spacer(Modifier.height(20.dp))
+        BasicInfoHeader(
+            nickName = "nickName",
+            selfDescription = "selfDescription",
+            onMoreClick = { },
+            modifier = Modifier
+                .offset { IntOffset(0, connection.headerOffset) }
+                .background(PieceTheme.colors.white)
+                .height(valuePickHeaderHeight)
+                .padding(
+                    vertical = 20.dp,
+                    horizontal = 20.dp
+                ),
+        )
 
-                        ValuePickCard(
-                            valuePick = item,
-                        )
-                    }
+        Spacer(
+            modifier = Modifier
+                .height(1.dp)
+                .fillMaxWidth()
+                .background(PieceTheme.colors.light2)
+                .align(Alignment.TopCenter),
+        )
+    }
+}
 
-                    item {
-                        Spacer(Modifier.height(60.dp))
-                    }
-                }
+@Composable
+private fun ValuePickTabContent(
+    tabIndex: Int,
+    pickCards: List<ValuePick>,
+    onRefuseClick: () -> Unit,
+) {
+    when (tabIndex) {
+        ALL -> {
+            ValuePickCards(
+                pickCards = pickCards,
+                onRefuseClick = onRefuseClick,
+            )
+        }
+
+        SAME -> {
+            ValuePickCards(
+                pickCards = pickCards.filter { it.isSimilarToMe },
+                onRefuseClick = onRefuseClick,
+            )
+        }
+
+        DIFFERENT -> {
+            ValuePickCards(
+                pickCards = pickCards.filterNot { it.isSimilarToMe },
+                onRefuseClick = onRefuseClick,
+            )
+        }
+    }
+}
+
+const val ALL = 0
+const val SAME = 1
+const val DIFFERENT = 2
+
+@Composable
+private fun ValuePickCards(
+    pickCards: List<ValuePick>,
+    onRefuseClick: () -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PieceTheme.colors.light3)
+            .padding(horizontal = 20.dp),
+    ) {
+        itemsIndexed(pickCards) { idx, item ->
+            Spacer(Modifier.height(20.dp))
+
+            ValuePickCard(
+                valuePick = item,
+            )
+        }
+
+        item {
+            Spacer(Modifier.height(60.dp))
+
+            Text(
+                text = stringResource(R.string.feature_matching_detail_valuepick_refuse),
+                style = PieceTheme.typography.bodyMM.copy(
+                    textDecoration = TextDecoration.Underline
+                ),
+                color = PieceTheme.colors.dark3,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onRefuseClick()
+                    },
+            )
+
+            Spacer(Modifier.height(60.dp))
+        }
+    }
+}
+
+@Composable
+private fun ValuePickTabRow(
+    tabIndex: Int,
+    onTabClick: (Int) -> Unit,
+    tabTitles: List<String>
+) {
+    TabRow(
+        containerColor = PieceTheme.colors.white,
+        selectedTabIndex = tabIndex,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        indicator = { tabPositions ->
+            if (tabIndex < tabPositions.size) {
+                TabRowDefaults.SecondaryIndicator(
+                    color = PieceTheme.colors.black,
+                    modifier = Modifier.tabIndicatorOffset(tabPositions[tabIndex]),
+                )
             }
-
-            1 -> TabContent("나만 탭의 내용 예시...")
-            2 -> TabContent("너만 탭의 내용 예시...")
+        },
+        divider = {},
+    ) {
+        tabTitles.forEachIndexed { index, title ->
+            Tab(
+                selected = (tabIndex == index),
+                onClick = { onTabClick(tabIndex) },
+                text = {
+                    Text(
+                        text = title,
+                        style = PieceTheme.typography.bodyMM,
+                    )
+                },
+                selectedContentColor = PieceTheme.colors.black,
+                unselectedContentColor = PieceTheme.colors.dark3,
+            )
         }
     }
 }
@@ -745,9 +934,12 @@ private fun ValuePickCard(
                 vertical = 24.dp,
             )
     ) {
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_puzzle1),
+                painter = painterResource(id = R.drawable.ic_question),
                 contentDescription = "basic info 배경화면",
                 modifier = Modifier
                     .size(20.dp),
@@ -757,7 +949,7 @@ private fun ValuePickCard(
 
             Text(
                 text = valuePick.category,
-                style = PieceTheme.typography.bodyMM,
+                style = PieceTheme.typography.bodySSB,
                 color = PieceTheme.colors.primaryDefault,
             )
 
@@ -766,8 +958,13 @@ private fun ValuePickCard(
             if (valuePick.isSimilarToMe) {
                 Text(
                     text = "나와 같은",
-                    style = PieceTheme.typography.bodyMM,
-                    color = PieceTheme.colors.primaryDefault,
+                    style = PieceTheme.typography.captionM,
+                    color = PieceTheme.colors.subDefault,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(23.dp))
+                        .background(PieceTheme.colors.subLight)
+                        .padding(vertical = 6.dp, horizontal = 12.dp),
+                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -777,40 +974,26 @@ private fun ValuePickCard(
         Text(
             text = valuePick.question,
             style = PieceTheme.typography.headingMSB,
-            color = PieceTheme.colors.black,
+            color = PieceTheme.colors.dark1,
         )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Text(
-            text = valuePick.option1,
-            style = PieceTheme.typography.headingMSB,
-            color = PieceTheme.colors.black,
+        PieceSubButton(
+            label = valuePick.option1,
+            onClick = {},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = valuePick.option2,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark2,
+        PieceSubButton(
+            label = valuePick.option2,
+            onClick = {},
+            modifier = Modifier.fillMaxWidth(),
+            enabled = false,
         )
-    }
-}
-
-@Composable
-private fun TabContent(contentText: String) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-    ) {
-        items(15) { index ->
-            Text(
-                text = "$contentText 아이템 $index",
-                modifier = Modifier.padding(vertical = 8.dp),
-            )
-        }
     }
 }
 
@@ -820,6 +1003,9 @@ private fun MatchingDetailScreenPreview() {
     PieceTheme {
         MatchingDetailScreen(
             MatchingDetailState(),
+            {},
+            {},
+            {},
             {},
             {},
             {},
@@ -910,7 +1096,8 @@ private fun ProfileValuePickBodyPreview() {
                     option2 = "문자나 카톡보다는 전화가 좋아요",
                     isSimilarToMe = true,
                 )
-            )
+            ),
+            {},
         )
     }
 }

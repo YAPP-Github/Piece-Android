@@ -11,4 +11,8 @@
     <string name="feature_matching_detail_basicinfocard_activityRegion">활동 지역</string>
     <string name="feature_matching_detail_basicinfocard_occupation">직업</string>
     <string name="feature_matching_detail_basicinfocard_smokeStatue">흡연</string>
+    <string name="feature_matching_detail_valuepick_all">전체</string>
+    <string name="feature_matching_detail_valuepick_same">나와 같은</string>
+    <string name="feature_matching_detail_valuepick_different">나와 다른</string>
+    <string name="feature_matching_detail_valuepick_refuse">매칭 거절하기</string>
 </resources>
