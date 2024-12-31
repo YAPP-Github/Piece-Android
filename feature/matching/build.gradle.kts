@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "com.puzzle.matching"
 }
+
+dependencies {
+    implementation(libs.cloudy.compose)
+}
