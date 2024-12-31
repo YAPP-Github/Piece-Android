@@ -200,6 +200,8 @@ private fun MatchingDetailContent(
 
             MatchingDetailState.MatchingDetailPage.ValuePickState -> {
                 ProfileValuePickBody(
+                    nickName = state.nickName,
+                    selfDescription = state.selfDescription,
                     pickCards = state.pickCards,
                     onRefuseClick = onRefuseClick
                 )
@@ -699,6 +701,8 @@ private fun ValueTalkCard(
 
 @Composable
 private fun ProfileValuePickBody(
+    nickName: String,
+    selfDescription: String,
     pickCards: List<ValuePick>,
     onRefuseClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -742,7 +746,7 @@ private fun ProfileValuePickBody(
                 ValuePickTabRow(
                     tabIndex = tabIndex.intValue,
                     tabTitles = tabTitles,
-                    onTabClick = { tabIndex.intValue = it },
+                    onTabClick = { tabIndex.intValue = it.toInt() },
                 )
 
                 ValuePickTabContent(
@@ -754,8 +758,8 @@ private fun ProfileValuePickBody(
         }
 
         BasicInfoHeader(
-            nickName = "nickName",
-            selfDescription = "selfDescription",
+            nickName = nickName,
+            selfDescription = selfDescription,
             onMoreClick = { },
             modifier = Modifier
                 .offset { IntOffset(0, connection.headerOffset) }
@@ -877,7 +881,7 @@ private fun ValuePickTabRow(
         tabTitles.forEachIndexed { index, title ->
             Tab(
                 selected = (tabIndex == index),
-                onClick = { onTabClick(tabIndex) },
+                onClick = { onTabClick(index) },
                 text = {
                     Text(
                         text = title,
@@ -1038,6 +1042,8 @@ private fun ProfileValueTalkBodyPreview() {
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
         ProfileValuePickBody(
+            nickName = "nickName",
+            selfDescription = "selfDescription",
             pickCards = listOf(
                 ValuePick(
                     category = "음주",
@@ -1068,7 +1074,7 @@ private fun ProfileValuePickBodyPreview() {
                     isSimilarToMe = true,
                 )
             ),
-            {},
+            onRefuseClick = {},
         )
     }
 }
