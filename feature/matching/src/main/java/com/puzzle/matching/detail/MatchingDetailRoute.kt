@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,6 +43,7 @@ import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
 import com.puzzle.matching.detail.contract.MatchingDetailState.MatchingDetailPage
 import com.puzzle.matching.ui.DialogType
+import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun MatchingDetailRoute(
@@ -141,7 +141,7 @@ private fun MatchingDetailScreen(
             )
             .then(
                 if (showDialog) {
-                    Modifier.blur(8.dp)
+                    Modifier.cloudy(radius = 8)
                 } else {
                     Modifier
                 }

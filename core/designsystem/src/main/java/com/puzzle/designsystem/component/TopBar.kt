@@ -64,7 +64,7 @@ fun PieceSubTopBar(
 
         Text(
             text = title,
-            style = PieceTheme.typography.headingSM,
+            style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.black,
         )
 
@@ -90,7 +90,7 @@ fun PieceSubBackTopBar(
 
         Text(
             text = title,
-            style = PieceTheme.typography.headingSM,
+            style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.black,
             modifier = Modifier.align(Alignment.Center),
         )
@@ -106,7 +106,7 @@ fun PieceSubCloseTopBar(
     Box(modifier = modifier.fillMaxWidth()) {
         Text(
             text = title,
-            style = PieceTheme.typography.headingSM,
+            style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.black,
             modifier = Modifier.align(Alignment.Center),
         )
