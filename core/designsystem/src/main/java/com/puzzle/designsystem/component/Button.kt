@@ -241,3 +241,17 @@ fun PreviewPieceIconButton() {
         )
     }
 }
+
+@Preview
+@Composable
+fun PreviewPieceRoundingButton() {
+    PieceTheme {
+        PieceRoundingButton(
+            label = "Label",
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        )
+    }
+}

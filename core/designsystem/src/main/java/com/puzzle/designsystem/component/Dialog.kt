@@ -3,8 +3,10 @@ package com.puzzle.designsystem.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -196,6 +198,34 @@ fun PieceDialogBottom(
             onClick = onRightButtonClick,
             modifier = Modifier.weight(1f),
         )
+    }
+}
+
+@Composable
+fun PieceImageDialog(
+    buttonLabel: String,
+    modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
+    onButtonClick: () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            PieceSubCloseTopBar(
+                title = "",
+                contentColor = PieceTheme.colors.white,
+                onCloseClick = onDismissRequest,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
+
+            PieceRoundingButton(
+                label = buttonLabel,
+                onClick = onButtonClick,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 
