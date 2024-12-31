@@ -39,7 +39,7 @@ import com.puzzle.domain.model.value.ValueTalk
 import com.puzzle.matching.detail.component.ValueTalkHeader
 
 @Composable
-internal fun ProfileValueTalkBody(
+internal fun ValueTalkBody(
     nickName: String,
     selfDescription: String,
     talkCards: List<ValueTalk>,
@@ -217,7 +217,7 @@ private fun ValueTalkCard(
 @Composable
 private fun ProfileValueTalkBodyPreview() {
     PieceTheme {
-        ProfileValueTalkBody(
+        ValueTalkBody(
             nickName = "수줍은 수달",
             selfDescription = "음악과 요리를 좋아하는",
             onMoreClick = {},

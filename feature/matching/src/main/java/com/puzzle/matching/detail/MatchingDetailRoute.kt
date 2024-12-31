@@ -36,9 +36,9 @@ import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.matching.detail.content.ProfileBasicInfoBody
-import com.puzzle.matching.detail.content.ProfileValuePickBody
-import com.puzzle.matching.detail.content.ProfileValueTalkBody
+import com.puzzle.matching.detail.content.BasicInfoBody
+import com.puzzle.matching.detail.content.ValuePickBody
+import com.puzzle.matching.detail.content.ValueTalkBody
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
 import com.puzzle.matching.detail.contract.MatchingDetailState.MatchingDetailPage
@@ -210,7 +210,7 @@ private fun MatchingDetailContent(
     Box(modifier = modifier.fillMaxSize()) {
         when (state.currentPage) {
             MatchingDetailState.MatchingDetailPage.BasicInfoState -> {
-                ProfileBasicInfoBody(
+                BasicInfoBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     birthYear = state.birthYear,
@@ -226,7 +226,7 @@ private fun MatchingDetailContent(
             }
 
             MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
-                ProfileValueTalkBody(
+                ValueTalkBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     talkCards = state.talkCards,
@@ -235,7 +235,7 @@ private fun MatchingDetailContent(
             }
 
             MatchingDetailState.MatchingDetailPage.ValuePickState -> {
-                ProfileValuePickBody(
+                ValuePickBody(
                     pickCards = state.pickCards
                 )
             }

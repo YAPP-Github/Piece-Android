@@ -24,7 +24,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.detail.component.ValueTalkHeader
 
 @Composable
-internal fun ProfileBasicInfoBody(
+internal fun BasicInfoBody(
     nickName: String,
     selfDescription: String,
     birthYear: String,
@@ -224,7 +224,7 @@ private fun InfoItem(
 @Composable
 private fun ProfileBasicInfoBodyPreview() {
     PieceTheme {
-        ProfileBasicInfoBody(
+        BasicInfoBody(
             nickName = "수줍은 수달",
             selfDescription = "음악과 요리를 좋아하는",
             birthYear = "1994",

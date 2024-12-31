@@ -18,7 +18,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.pick.ValuePick
 
 @Composable
-internal fun ProfileValuePickBody(
+internal fun ValuePickBody(
     pickCards: List<ValuePick>,
     modifier: Modifier = Modifier,
 ) {
@@ -68,7 +68,7 @@ private fun TabContent(contentText: String) {
 @Composable
 private fun ProfileValuePickBodyPreview() {
     PieceTheme {
-        ProfileValuePickBody(
+        ValuePickBody(
             pickCards = emptyList()
         )
     }
