@@ -17,7 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -39,7 +39,7 @@ fun PieceDialog(
         Card(
             colors = cardColors().copy(containerColor = PieceTheme.colors.white),
             shape = RoundedCornerShape(12.dp),
-            modifier = modifier,
+            modifier = modifier.padding(horizontal = 32.dp),
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -60,17 +60,19 @@ fun PieceDialogDefaultTop(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
     ) {
         Text(
             text = title,
             color = PieceTheme.colors.black,
+            textAlign = TextAlign.Center,
             style = PieceTheme.typography.headingMSB,
-            modifier = Modifier.padding(top = 40.dp),
         )
 
         Text(
             text = subText,
             color = PieceTheme.colors.dark2,
+            textAlign = TextAlign.Center,
             style = PieceTheme.typography.bodySM,
         )
     }
@@ -84,18 +86,20 @@ fun PieceDialogDefaultTop(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
     ) {
         Text(
             text = title,
             color = PieceTheme.colors.black,
             style = PieceTheme.typography.headingMSB,
-            modifier = Modifier.padding(top = 40.dp),
+            textAlign = TextAlign.Center,
         )
 
         Text(
             text = subText,
             color = PieceTheme.colors.dark2,
             style = PieceTheme.typography.bodySM,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -110,25 +114,26 @@ fun PieceDialogIconTop(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
     ) {
         Image(
             painter = painterResource(id),
             contentDescription = contentDescription,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(top = 40.dp),
+            modifier = Modifier.size(40.dp),
         )
 
         Text(
             text = title,
             color = PieceTheme.colors.black,
             style = PieceTheme.typography.headingMSB,
+            textAlign = TextAlign.Center,
         )
 
         Text(
             text = subText,
             color = PieceTheme.colors.dark2,
             style = PieceTheme.typography.bodySM,
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -143,25 +148,26 @@ fun PieceDialogIconTop(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
     ) {
         Image(
             painter = painterResource(id),
             contentDescription = contentDescription,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(top = 40.dp),
+            modifier = Modifier.size(40.dp),
         )
 
         Text(
             text = title,
             color = PieceTheme.colors.black,
             style = PieceTheme.typography.headingMSB,
+            textAlign = TextAlign.Center,
         )
 
         Text(
             text = subText,
             color = PieceTheme.colors.dark2,
             style = PieceTheme.typography.bodySM,
+            textAlign = TextAlign.Center,
         )
     }
 }

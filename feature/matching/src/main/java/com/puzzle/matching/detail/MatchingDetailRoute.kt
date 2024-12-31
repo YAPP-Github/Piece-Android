@@ -14,25 +14,35 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceDialog
+import com.puzzle.designsystem.component.PieceDialogBottom
+import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.matching.detail.contract.MatchingDetailIntent
-import com.puzzle.matching.detail.contract.MatchingDetailState
-import com.puzzle.matching.detail.contract.MatchingDetailState.MatchingDetailPage
 import com.puzzle.matching.detail.content.ProfileBasicInfoBody
 import com.puzzle.matching.detail.content.ProfileValuePickBody
 import com.puzzle.matching.detail.content.ProfileValueTalkBody
+import com.puzzle.matching.detail.contract.MatchingDetailIntent
+import com.puzzle.matching.detail.contract.MatchingDetailState
+import com.puzzle.matching.detail.contract.MatchingDetailState.MatchingDetailPage
+import com.puzzle.matching.ui.DialogType
 
 @Composable
 internal fun MatchingDetailRoute(
@@ -58,6 +68,64 @@ private fun MatchingDetailScreen(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    var dialogType by rememberSaveable { mutableStateOf(DialogType.ACCEPT_MATCHING) }
+
+    if (showDialog) {
+        when (dialogType) {
+            DialogType.ACCEPT_MATCHING -> {
+                PieceDialog(
+                    dialogTop = {
+                        PieceDialogDefaultTop(
+                            title = buildAnnotatedString {
+                                withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                    append("수줍은 수달")
+                                }
+                                append("님과의\n인연을 이어가시겠습니까?")
+                            },
+                            subText = "서로 매칭을 수락하면, 연락처가 공개됩니다.",
+                        )
+                    },
+                    dialogBottom = {
+                        PieceDialogBottom(
+                            leftButtonText = "뒤로",
+                            rightButtonText = "매칭 수락하기",
+                            onLeftButtonClick = { showDialog = false },
+                            onRightButtonClick = {},
+                        )
+                    },
+                    onDismissRequest = { showDialog = false },
+                )
+            }
+
+            DialogType.DECLINE_MATCHING -> {
+                PieceDialog(
+                    dialogTop = {
+                        PieceDialogDefaultTop(
+                            title = buildAnnotatedString {
+                                append("수줍은 수달님과의\n인연을")
+                                withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                    append("거절")
+                                }
+                                append("하시겠습니까?")
+                            },
+                            subText = "매칭을 거절하면 이후에 되돌릴 수 없으니\n신중히 선택해 주세요.",
+                        )
+                    },
+                    dialogBottom = {
+                        PieceDialogBottom(
+                            leftButtonText = "뒤로",
+                            rightButtonText = "매칭 거절하기",
+                            onLeftButtonClick = { showDialog = false },
+                            onRightButtonClick = {},
+                        )
+                    },
+                    onDismissRequest = { showDialog = false },
+                )
+            }
+        }
+    }
+
     BackgroundImage(modifier)
 
     Box(
@@ -104,7 +172,10 @@ private fun MatchingDetailScreen(
             onNextPageClick = onNextPageClick,
             onPreviousPageClick = onPreviousPageClick,
             onShowPicturesClick = {},
-            onAcceptClick = {},
+            onAcceptClick = {
+                dialogType = DialogType.ACCEPT_MATCHING
+                showDialog = true
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(bottomBarHeight)
@@ -116,9 +187,7 @@ private fun MatchingDetailScreen(
 }
 
 @Composable
-private fun BackgroundImage(
-    modifier: Modifier = Modifier,
-) {
+private fun BackgroundImage(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
