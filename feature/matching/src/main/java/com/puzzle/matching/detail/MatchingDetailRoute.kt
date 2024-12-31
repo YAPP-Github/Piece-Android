@@ -130,7 +130,7 @@ private fun MatchingDetailScreen(
                 PieceImageDialog(
                     imageUri = "https://s3-alpha-sig.figma.com/img/8760/4901/8bde4e95875afc55effc572d30f262c9?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=CbG2KhUw8J1G6SUW1xKNVuEz-G9VA-vgxaP9GI2mQQ-m3ibGqEzheg3L0mOGbqvK9nv7DK0Op0YrVSGYS1OV3Rf-L2Q7V9esCG3veKkGEnJXWNnQRoIE~3QG6CUhpakzfqG5uUWm7JAodUXZ0LCfnDuavFB6uk1NDsPl0XrQtlUUTHTqD31JDJiUN4eMVQip99dGOHjJ7f9oxWVxjsEh8pZOX0Y4bWx16Dv3vIGxEb2ht3ibDsvf913ie7BlX1eqqxWihMjfFZ2TvjBbwRZUrH5h3eP7g0t4Ds65qbFacFdFmMHCxHsugmhoUe1juFosguFkPEeEUFw4p-BveERWvA__",
                     buttonLabel = "매칭 수락하기",
-                    onButtonClick = {},
+                    onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },
                 )
             }
@@ -188,25 +188,27 @@ private fun MatchingDetailScreen(
                 .padding(horizontal = 20.dp),
         )
 
-        MatchingDetailBottomBar(
-            currentPage = state.currentPage,
-            onNextPageClick = onNextPageClick,
-            onPreviousPageClick = onPreviousPageClick,
-            onShowPicturesClick = {
-                dialogType = DialogType.PROFILE_IMAGE_DETAIL
-                showDialog = true
-            },
-            onAcceptClick = {
-                dialogType = DialogType.ACCEPT_MATCHING
-                showDialog = true
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(bottomBarHeight)
-                .padding(top = 12.dp, bottom = 10.dp)
-                .padding(horizontal = 20.dp)
-                .align(Alignment.BottomCenter),
-        )
+        if (!showDialog || dialogType != DialogType.PROFILE_IMAGE_DETAIL) {
+            MatchingDetailBottomBar(
+                currentPage = state.currentPage,
+                onNextPageClick = onNextPageClick,
+                onPreviousPageClick = onPreviousPageClick,
+                onShowPicturesClick = {
+                    dialogType = DialogType.PROFILE_IMAGE_DETAIL
+                    showDialog = true
+                },
+                onAcceptClick = {
+                    dialogType = DialogType.ACCEPT_MATCHING
+                    showDialog = true
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(bottomBarHeight)
+                    .padding(top = 12.dp, bottom = 10.dp)
+                    .padding(horizontal = 20.dp)
+                    .align(Alignment.BottomCenter),
+            )
+        }
     }
 }
 
