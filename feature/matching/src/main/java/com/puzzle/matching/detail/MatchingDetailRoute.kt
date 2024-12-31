@@ -15,10 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -68,8 +69,8 @@ private fun MatchingDetailScreen(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var showDialog by rememberSaveable { mutableStateOf(false) }
-    var dialogType by rememberSaveable { mutableStateOf(DialogType.ACCEPT_MATCHING) }
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogType by remember { mutableStateOf(DialogType.ACCEPT_MATCHING) }
 
     if (showDialog) {
         when (dialogType) {
@@ -131,13 +132,20 @@ private fun MatchingDetailScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .let {
+            .then(
                 if (state.currentPage != MatchingDetailPage.BasicInfoState) {
-                    it.background(PieceTheme.colors.light3)
+                    Modifier.background(PieceTheme.colors.light3)
                 } else {
-                    it
+                    Modifier
                 }
-            },
+            )
+            .then(
+                if (showDialog) {
+                    Modifier.blur(8.dp)
+                } else {
+                    Modifier
+                }
+            ),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp
