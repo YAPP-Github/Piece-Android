@@ -141,7 +141,7 @@ private fun MatchingDetailScreen(
             )
             .then(
                 if (showDialog) {
-                    Modifier.cloudy(radius = 8)
+                    Modifier.cloudy(radius = 40)
                 } else {
                     Modifier
                 }
