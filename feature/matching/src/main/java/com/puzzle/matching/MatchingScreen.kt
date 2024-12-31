@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,7 +68,7 @@ internal fun MatchingScreen(
             .padding(horizontal = 20.dp),
     ) {
         PieceMainTopBar(
-            title = "Matching",
+            title = stringResource(R.string.matching_title),
             titleColor = PieceTheme.colors.white,
             rightComponent = {
                 Image(
@@ -87,9 +89,11 @@ internal fun MatchingScreen(
             Text(
                 text = buildAnnotatedString {
                     append("소중한 인연이 시작되기까지 ")
+
                     withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
                         append("02:32:75")
                     }
+
                     append(" 남았어요")
                 },
                 style = PieceTheme.typography.bodySM,
@@ -124,7 +128,7 @@ internal fun MatchingScreen(
                 )
 
                 Text(
-                    text = "매칭 조각을 확인해주세요!",
+                    text = stringResource(R.string.check_the_matching_pieces),
                     style = PieceTheme.typography.bodySM,
                     color = PieceTheme.colors.dark3
                 )
@@ -196,7 +200,7 @@ internal fun MatchingScreen(
             ) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Text(
-                        text = "나와 같은 가치관",
+                        text = stringResource(R.string.same_value_as_me),
                         style = PieceTheme.typography.bodyMM,
                         color = PieceTheme.colors.black,
                     )
@@ -235,10 +239,18 @@ internal fun MatchingScreen(
                         ),
                         key = { it },
                     ) { value -> ValueTag(value) }
+
+                    item {
+                        Spacer(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(20.dp),
+                        )
+                    }
                 }
 
                 PieceSolidButton(
-                    label = "매칭 수락하기",
+                    label = stringResource(R.string.accept_matching),
                     onClick = { navigateToMatchingDetail() },
                     modifier = Modifier
                         .padding(top = 16.dp)
