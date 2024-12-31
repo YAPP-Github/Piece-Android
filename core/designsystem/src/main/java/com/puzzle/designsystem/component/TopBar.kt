@@ -102,6 +102,7 @@ fun PieceSubCloseTopBar(
     title: String,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
+    showCloseButton: Boolean = true,
     contentColor: Color = PieceTheme.colors.black,
 ) {
     Box(modifier = modifier.fillMaxWidth()) {
@@ -112,15 +113,17 @@ fun PieceSubCloseTopBar(
             modifier = Modifier.align(Alignment.Center),
         )
 
-        Image(
-            painter = painterResource(R.drawable.ic_close),
-            contentDescription = "오른쪽 버튼",
-            colorFilter = ColorFilter.tint(contentColor),
-            modifier = Modifier
-                .size(32.dp)
-                .clickable { onCloseClick() }
-                .align(Alignment.CenterEnd),
-        )
+        if (showCloseButton) {
+            Image(
+                painter = painterResource(R.drawable.ic_close),
+                contentDescription = "닫기 버튼",
+                colorFilter = ColorFilter.tint(contentColor),
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { onCloseClick() }
+                    .align(Alignment.CenterEnd),
+            )
+        }
     }
 }
 

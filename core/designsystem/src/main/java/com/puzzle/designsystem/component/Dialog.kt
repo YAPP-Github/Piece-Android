@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults.cardColors
@@ -17,6 +18,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -24,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import coil.compose.AsyncImage
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 
@@ -203,8 +207,8 @@ fun PieceDialogBottom(
 
 @Composable
 fun PieceImageDialog(
+    imageUri: Any?,
     buttonLabel: String,
-    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onButtonClick: () -> Unit,
 ) {
@@ -217,13 +221,28 @@ fun PieceImageDialog(
                 title = "",
                 contentColor = PieceTheme.colors.white,
                 onCloseClick = onDismissRequest,
-                modifier = Modifier.align(Alignment.TopCenter),
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(start = 20.dp, end = 20.dp, top = 12.dp),
+            )
+
+            AsyncImage(
+                model = imageUri,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.ic_image_default),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .clip(CircleShape)
+                    .size(180.dp),
             )
 
             PieceRoundingButton(
                 label = buttonLabel,
                 onClick = onButtonClick,
-                modifier = Modifier.align(Alignment.BottomCenter),
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(bottom = 10.dp),
             )
         }
     }
@@ -275,6 +294,19 @@ fun PreviewPieceDialogIcon() {
                 )
             },
             onDismissRequest = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPieceImageDialog() {
+    PieceTheme {
+        PieceImageDialog(
+            imageUri = R.drawable.ic_image_default,
+            buttonLabel = "매칭 수락하기",
+            onDismissRequest = {},
+            onButtonClick = {},
         )
     }
 }

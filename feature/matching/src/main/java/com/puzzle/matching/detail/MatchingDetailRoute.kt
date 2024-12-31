@@ -33,6 +33,7 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
 import com.puzzle.designsystem.component.PieceDialogDefaultTop
+import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -124,6 +125,15 @@ private fun MatchingDetailScreen(
                     onDismissRequest = { showDialog = false },
                 )
             }
+
+            DialogType.PROFILE_IMAGE_DETAIL -> {
+                PieceImageDialog(
+                    imageUri = "https://s3-alpha-sig.figma.com/img/8760/4901/8bde4e95875afc55effc572d30f262c9?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=CbG2KhUw8J1G6SUW1xKNVuEz-G9VA-vgxaP9GI2mQQ-m3ibGqEzheg3L0mOGbqvK9nv7DK0Op0YrVSGYS1OV3Rf-L2Q7V9esCG3veKkGEnJXWNnQRoIE~3QG6CUhpakzfqG5uUWm7JAodUXZ0LCfnDuavFB6uk1NDsPl0XrQtlUUTHTqD31JDJiUN4eMVQip99dGOHjJ7f9oxWVxjsEh8pZOX0Y4bWx16Dv3vIGxEb2ht3ibDsvf913ie7BlX1eqqxWihMjfFZ2TvjBbwRZUrH5h3eP7g0t4Ds65qbFacFdFmMHCxHsugmhoUe1juFosguFkPEeEUFw4p-BveERWvA__",
+                    buttonLabel = "매칭 수락하기",
+                    onButtonClick = {},
+                    onDismissRequest = { showDialog = false },
+                )
+            }
         }
     }
 
@@ -161,6 +171,9 @@ private fun MatchingDetailScreen(
         PieceSubCloseTopBar(
             title = state.currentPage.title,
             onCloseClick = onCloseClick,
+            showCloseButton = if (showDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL) {
+                false
+            } else true,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(topBarHeight)
@@ -179,7 +192,10 @@ private fun MatchingDetailScreen(
             currentPage = state.currentPage,
             onNextPageClick = onNextPageClick,
             onPreviousPageClick = onPreviousPageClick,
-            onShowPicturesClick = {},
+            onShowPicturesClick = {
+                dialogType = DialogType.PROFILE_IMAGE_DETAIL
+                showDialog = true
+            },
             onAcceptClick = {
                 dialogType = DialogType.ACCEPT_MATCHING
                 showDialog = true
