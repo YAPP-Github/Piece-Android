@@ -97,6 +97,9 @@ kakao = "2.20.6"
 # https://airbnb.io/mavericks/#/setup
 mavericks = "3.0.9"
 
+# https://github.com/skydoves/Cloudy
+cloudy = "0.2.4"
+
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -160,10 +163,9 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 firebase-config = { group = "com.google.firebase", name = "firebase-config-ktx" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "messaging" }
 
-amplitude-analytics = { module = "com.amplitude:analytics-android", version.ref = "amplitudeAnalytics" }
-
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
+cloudy-compose = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 
