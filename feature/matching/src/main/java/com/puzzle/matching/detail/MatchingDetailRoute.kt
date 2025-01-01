@@ -243,7 +243,7 @@ private fun MatchingDetailBottomBar(
 
         if (currentPage == MatchingDetailPage.ValuePickState) {
             PieceRoundingButton(
-                label = stringResource(R.string.feature_matching_detail_valuepick_bottom_bar_label),
+                label = stringResource(R.string.valuepick_bottom_bar_label),
                 onClick = onAcceptClick,
             )
         } else {
@@ -305,7 +305,7 @@ private fun BasicInfoName(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = stringResource(R.string.feature_matching_detail_basicinfo_main_label),
+            text = stringResource(R.string.basicinfo_main_label),
             style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
         )
@@ -345,11 +345,11 @@ private fun BasicInfoCard(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             InfoItem(
-                title = stringResource(R.string.feature_matching_detail_basicinfocard_age),
+                title = stringResource(R.string.basicinfocard_age),
                 text = {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = stringResource(R.string.feature_matching_detail_basicinfocard_age_particle),
+                            text = stringResource(R.string.basicinfocard_age_particle),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.black,
                         )
@@ -363,7 +363,7 @@ private fun BasicInfoCard(
                         )
 
                         Text(
-                            text = stringResource(R.string.feature_matching_detail_basicinfocard_age_classifier),
+                            text = stringResource(R.string.basicinfocard_age_classifier),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.black,
                         )
@@ -371,7 +371,7 @@ private fun BasicInfoCard(
                         Spacer(modifier = Modifier.width(4.dp))
 
                         Text(
-                            text = birthYear + stringResource(R.string.feature_matching_detail_basicinfocard_age_suffix),
+                            text = birthYear + stringResource(R.string.basicinfocard_age_suffix),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.dark2,
                         )
@@ -383,12 +383,12 @@ private fun BasicInfoCard(
                 ),
             )
             InfoItem(
-                title = stringResource(R.string.feature_matching_detail_basicinfocard_height),
+                title = stringResource(R.string.basicinfocard_height),
                 content = height,
                 modifier = modifier.weight(1f),
             )
             InfoItem(
-                title = stringResource(R.string.feature_matching_detail_basicinfocard_religion),
+                title = stringResource(R.string.basicinfocard_religion),
                 content = religion,
                 modifier = modifier.weight(1f),
             )
@@ -400,7 +400,7 @@ private fun BasicInfoCard(
             horizontalArrangement = Arrangement.spacedBy(5.5.dp),
         ) {
             InfoItem(
-                title = stringResource(R.string.feature_matching_detail_basicinfocard_activityRegion),
+                title = stringResource(R.string.basicinfocard_activityRegion),
                 content = activityRegion,
                 modifier = modifier.size(
                     width = 144.dp,
@@ -409,13 +409,13 @@ private fun BasicInfoCard(
             )
 
             InfoItem(
-                title = stringResource(R.string.feature_matching_detail_basicinfocard_occupation),
+                title = stringResource(R.string.basicinfocard_occupation),
                 content = occupation,
                 modifier = modifier.weight(1f),
             )
 
             InfoItem(
-                title = stringResource(R.string.feature_matching_detail_basicinfocard_smokeStatue),
+                title = stringResource(R.string.basicinfocard_smokeStatue),
                 content = smokeStatue,
                 modifier = modifier.weight(1f),
             )

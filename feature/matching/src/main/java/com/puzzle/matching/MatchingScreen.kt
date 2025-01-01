@@ -41,6 +41,7 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.contract.MatchingIntent
 import com.puzzle.matching.contract.MatchingState
+import com.puzzle.designsystem.R
 
 @Composable
 internal fun MatchingRoute(
@@ -72,7 +73,7 @@ internal fun MatchingScreen(
             titleColor = PieceTheme.colors.white,
             rightComponent = {
                 Image(
-                    painter = painterResource(com.puzzle.designsystem.R.drawable.ic_alarm),
+                    painter = painterResource(R.drawable.ic_alarm),
                     contentDescription = "",
                 )
             },
