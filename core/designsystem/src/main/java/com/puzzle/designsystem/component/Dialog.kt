@@ -36,8 +36,8 @@ import com.puzzle.designsystem.foundation.PieceTheme
 fun PieceDialog(
     dialogTop: @Composable () -> Unit,
     dialogBottom: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
