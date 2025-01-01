@@ -319,7 +319,7 @@ private fun MatchingDetailBottomBar(
 
         if (currentPage == MatchingDetailPage.ValuePickState) {
             PieceRoundingButton(
-                label = stringResource(R.string.feature_matching_detail_valuepick_bottom_bar_label),
+                label = stringResource(R.string.valuepick_bottom_bar_label),
                 onClick = onAcceptClick,
             )
         } else {

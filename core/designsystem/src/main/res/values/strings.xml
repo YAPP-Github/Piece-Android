@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="feature_matching_detail_valuepick_bottom_bar_label">매칭 수락하기</string>
-    <string name="feature_matching_detail_basicinfo_main_label">오늘의 매칭 조각</string>
-    <string name="feature_matching_detail_basicinfocard_age">나이</string>
-    <string name="feature_matching_detail_basicinfocard_age_particle">만</string>
-    <string name="feature_matching_detail_basicinfocard_age_classifier">세</string>
-    <string name="feature_matching_detail_basicinfocard_age_suffix">년생</string>
-    <string name="feature_matching_detail_basicinfocard_height">키</string>
-    <string name="feature_matching_detail_basicinfocard_religion">종교</string>
-    <string name="feature_matching_detail_basicinfocard_activityRegion">활동 지역</string>
-    <string name="feature_matching_detail_basicinfocard_occupation">직업</string>
-    <string name="feature_matching_detail_basicinfocard_smokeStatue">흡연</string>
+    <!--Matching-->
+    <string name="matching_title">Matching</string>
+    <string name="check_the_matching_pieces">매칭 조각을 확인해주세요!</string>
+    <string name="same_value_as_me">나와 같은 가치관</string>
+    <string name="accept_matching">매칭 수락하기</string>
+
+    <!--Matching Detail-->
+    <string name="basicinfo_title" />
+    <string name="valuetalk_title">가치관 Talk</string>
+    <string name="valuepick_title">가치관 Pick</string>
+    <string name="valuepick_bottom_bar_label">매칭 수락하기</string>
+    <string name="basicinfo_main_label">오늘의 매칭 조각</string>
+    <string name="basicinfocard_age">나이</string>
+    <string name="basicinfocard_age_particle">만</string>
+    <string name="basicinfocard_age_classifier">세</string>
+    <string name="basicinfocard_age_suffix">년생</string>
+    <string name="basicinfocard_height">키</string>
+    <string name="basicinfocard_religion">종교</string>
+    <string name="basicinfocard_activityRegion">활동 지역</string>
+    <string name="basicinfocard_occupation">직업</string>
+    <string name="basicinfocard_smokeStatue">흡연</string>
 </resources>
