@@ -158,8 +158,8 @@ private fun BackgroundImage(
         Image(
             painter = painterResource(id = R.drawable.matchingdetail_bg),
             contentDescription = "basic info 배경화면",
-            modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize(),
         )
     }
 }
@@ -445,11 +445,11 @@ private fun InfoItem(
     text: @Composable () -> Unit? = {},
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(PieceTheme.colors.white)
             .padding(vertical = 16.dp, horizontal = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = title,
@@ -505,8 +505,7 @@ private fun ProfileValueTalkBody(
     // 4) Box에 nestedScroll(connection)을 달아, 스크롤 이벤트가
     //    CollapsingHeaderNestedScrollConnection으로 전달되도록 함
     Box(
-        modifier = modifier
-            .nestedScroll(connection)
+        modifier = modifier.nestedScroll(connection)
     ) {
         // 5) Column: Spacer + LazyColumn을 세로로 배치
         //    헤더가 접힐수록 Spacer의 높이가 줄어들고, 그만큼 리스트가 위로 올라옴
@@ -731,8 +730,7 @@ private fun ProfileValuePickBody(
     )
 
     Box(
-        modifier = modifier
-            .nestedScroll(connection)
+        modifier = modifier.nestedScroll(connection)
     ) {
         Column {
             Spacer(Modifier.height(spaceHeight))
@@ -859,9 +857,6 @@ private fun ValuePickTabRow(
     TabRow(
         containerColor = PieceTheme.colors.white,
         selectedTabIndex = tabIndex,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
         indicator = { tabPositions ->
             if (tabIndex < tabPositions.size) {
                 TabRowDefaults.SecondaryIndicator(
@@ -871,6 +866,9 @@ private fun ValuePickTabRow(
             }
         },
         divider = {},
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
     ) {
         tabTitles.forEachIndexed { index, title ->
             Tab(
@@ -904,8 +902,8 @@ private fun ValuePickCard(
             )
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth(),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_question),
@@ -929,11 +927,11 @@ private fun ValuePickCard(
                     text = "나와 같은",
                     style = PieceTheme.typography.captionM,
                     color = PieceTheme.colors.subDefault,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier
                         .clip(RoundedCornerShape(23.dp))
                         .background(PieceTheme.colors.subLight)
                         .padding(vertical = 6.dp, horizontal = 12.dp),
-                    textAlign = TextAlign.Center,
                 )
             }
         }
@@ -951,8 +949,8 @@ private fun ValuePickCard(
         PieceSubButton(
             label = valuePick.option1,
             onClick = {},
-            modifier = Modifier.fillMaxWidth(),
             enabled = true,
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -960,8 +958,8 @@ private fun ValuePickCard(
         PieceSubButton(
             label = valuePick.option2,
             onClick = {},
-            modifier = Modifier.fillMaxWidth(),
             enabled = false,
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
