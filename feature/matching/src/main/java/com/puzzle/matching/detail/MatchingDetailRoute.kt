@@ -71,7 +71,7 @@ internal fun MatchingDetailRoute(
         onPreviousPageClick = { viewModel.onIntent(MatchingDetailIntent.OnPreviousPageClick) },
         onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
         onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
-        onRefuseClick = { },
+        onDeclineClick = { },
         onAcceptClick = { },
         onShowPicturesClick = { },
     )
@@ -84,7 +84,7 @@ private fun MatchingDetailScreen(
     onPreviousPageClick: () -> Unit,
     onNextPageClick: () -> Unit,
     onMoreClick: () -> Unit,
-    onRefuseClick: () -> Unit,
+    onDeclineClick: () -> Unit,
     onShowPicturesClick: () -> Unit,
     onAcceptClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -108,7 +108,7 @@ private fun MatchingDetailScreen(
         MatchingDetailContent(
             state = state,
             onMoreClick = onMoreClick,
-            onRefuseClick = onRefuseClick,
+            onDeclineClick = onDeclineClick,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = topBarHeight, bottom = bottomBarHeight),
@@ -168,7 +168,7 @@ private fun BackgroundImage(
 private fun MatchingDetailContent(
     state: MatchingDetailState,
     onMoreClick: () -> Unit,
-    onRefuseClick: () -> Unit,
+    onDeclineClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -203,7 +203,7 @@ private fun MatchingDetailContent(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     pickCards = state.pickCards,
-                    onRefuseClick = onRefuseClick
+                    onDeclineClick = onDeclineClick
                 )
             }
         }
@@ -704,7 +704,7 @@ private fun ProfileValuePickBody(
     nickName: String,
     selfDescription: String,
     pickCards: List<ValuePick>,
-    onRefuseClick: () -> Unit,
+    onDeclineClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
@@ -752,7 +752,7 @@ private fun ProfileValuePickBody(
                 ValuePickTabContent(
                     tabIndex = tabIndex.intValue,
                     pickCards = pickCards,
-                    onRefuseClick = onRefuseClick,
+                    onDeclineClick = onDeclineClick,
                 )
             }
         }
@@ -785,27 +785,27 @@ private fun ProfileValuePickBody(
 private fun ValuePickTabContent(
     tabIndex: Int,
     pickCards: List<ValuePick>,
-    onRefuseClick: () -> Unit,
+    onDeclineClick: () -> Unit,
 ) {
     when (tabIndex) {
         ALL -> {
             ValuePickCards(
                 pickCards = pickCards,
-                onRefuseClick = onRefuseClick,
+                onDeclineClick = onDeclineClick,
             )
         }
 
         SAME -> {
             ValuePickCards(
                 pickCards = pickCards.filter { it.isSimilarToMe },
-                onRefuseClick = onRefuseClick,
+                onDeclineClick = onDeclineClick,
             )
         }
 
         DIFFERENT -> {
             ValuePickCards(
                 pickCards = pickCards.filterNot { it.isSimilarToMe },
-                onRefuseClick = onRefuseClick,
+                onDeclineClick = onDeclineClick,
             )
         }
     }
@@ -818,7 +818,7 @@ const val DIFFERENT = 2
 @Composable
 private fun ValuePickCards(
     pickCards: List<ValuePick>,
-    onRefuseClick: () -> Unit,
+    onDeclineClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -847,7 +847,7 @@ private fun ValuePickCards(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable {
-                        onRefuseClick()
+                        onDeclineClick()
                     },
             )
 
@@ -1074,7 +1074,7 @@ private fun ProfileValuePickBodyPreview() {
                     isSimilarToMe = true,
                 )
             ),
-            onRefuseClick = {},
+            onDeclineClick = {},
         )
     }
 }
