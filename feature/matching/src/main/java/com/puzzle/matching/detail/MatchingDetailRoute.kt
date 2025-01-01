@@ -173,7 +173,7 @@ private fun MatchingDetailContent(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (state.currentPage) {
-            MatchingDetailState.MatchingDetailPage.BasicInfoState -> {
+            MatchingDetailState.MatchingDetailPage.BasicInfoState ->
                 ProfileBasicInfoBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
@@ -187,25 +187,22 @@ private fun MatchingDetailContent(
                     onMoreClick = onMoreClick,
                     modifier = Modifier.padding(horizontal = 20.dp)
                 )
-            }
 
-            MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
+            MatchingDetailState.MatchingDetailPage.ValueTalkState ->
                 ProfileValueTalkBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     talkCards = state.talkCards,
                     onMoreClick = onMoreClick
                 )
-            }
 
-            MatchingDetailState.MatchingDetailPage.ValuePickState -> {
+            MatchingDetailState.MatchingDetailPage.ValuePickState ->
                 ProfileValuePickBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     pickCards = state.pickCards,
                     onDeclineClick = onDeclineClick
                 )
-            }
         }
     }
 }
@@ -788,26 +785,23 @@ private fun ValuePickTabContent(
     onDeclineClick: () -> Unit,
 ) {
     when (tabIndex) {
-        ALL -> {
+        ALL ->
             ValuePickCards(
                 pickCards = pickCards,
                 onDeclineClick = onDeclineClick,
             )
-        }
 
-        SAME -> {
+        SAME ->
             ValuePickCards(
                 pickCards = pickCards.filter { it.isSimilarToMe },
                 onDeclineClick = onDeclineClick,
             )
-        }
 
-        DIFFERENT -> {
+        DIFFERENT ->
             ValuePickCards(
                 pickCards = pickCards.filterNot { it.isSimilarToMe },
                 onDeclineClick = onDeclineClick,
             )
-        }
     }
 }
 
