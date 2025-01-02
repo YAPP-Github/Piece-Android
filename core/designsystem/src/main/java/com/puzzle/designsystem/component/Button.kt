@@ -90,8 +90,8 @@ fun PieceSubButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = PieceTheme.colors.primaryLight,
             contentColor = PieceTheme.colors.primaryDefault,
-            disabledContainerColor = PieceTheme.colors.light1,
-            disabledContentColor = PieceTheme.colors.white,
+            disabledContainerColor = PieceTheme.colors.light3,
+            disabledContentColor = PieceTheme.colors.dark2,
         ),
         modifier = modifier.height(52.dp),
     ) {

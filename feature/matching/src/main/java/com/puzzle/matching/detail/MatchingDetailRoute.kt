@@ -58,6 +58,9 @@ internal fun MatchingDetailRoute(
         onPreviousPageClick = { viewModel.onIntent(MatchingDetailIntent.OnPreviousPageClick) },
         onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
         onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
+        onDeclineClick = { },
+        onAcceptClick = { },
+        onShowPicturesClick = { },
     )
 }
 
@@ -68,6 +71,9 @@ private fun MatchingDetailScreen(
     onPreviousPageClick: () -> Unit,
     onNextPageClick: () -> Unit,
     onMoreClick: () -> Unit,
+    onDeclineClick: () -> Unit,
+    onShowPicturesClick: () -> Unit,
+    onAcceptClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
@@ -163,6 +169,7 @@ private fun MatchingDetailScreen(
         MatchingDetailContent(
             state = state,
             onMoreClick = onMoreClick,
+            onDeclineClick = onDeclineClick,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = topBarHeight, bottom = bottomBarHeight),
@@ -171,9 +178,7 @@ private fun MatchingDetailScreen(
         PieceSubCloseTopBar(
             title = state.currentPage.title,
             onCloseClick = onCloseClick,
-            showCloseButton = if (showDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL) {
-                false
-            } else true,
+            showCloseButton = !(showDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(topBarHeight)
@@ -196,10 +201,12 @@ private fun MatchingDetailScreen(
                 onShowPicturesClick = {
                     dialogType = DialogType.PROFILE_IMAGE_DETAIL
                     showDialog = true
+                    onShowPicturesClick()
                 },
                 onAcceptClick = {
                     dialogType = DialogType.ACCEPT_MATCHING
                     showDialog = true
+                    onAcceptClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -221,8 +228,8 @@ private fun BackgroundImage(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(id = R.drawable.matchingdetail_bg),
             contentDescription = "basic info 배경화면",
-            modifier = Modifier.matchParentSize(),
             contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize(),
         )
     }
 }
@@ -231,11 +238,12 @@ private fun BackgroundImage(modifier: Modifier = Modifier) {
 private fun MatchingDetailContent(
     state: MatchingDetailState,
     onMoreClick: () -> Unit,
+    onDeclineClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (state.currentPage) {
-            MatchingDetailState.MatchingDetailPage.BasicInfoState -> {
+            MatchingDetailState.MatchingDetailPage.BasicInfoState ->
                 BasicInfoBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
@@ -247,24 +255,24 @@ private fun MatchingDetailContent(
                     occupation = state.occupation,
                     smokeStatue = state.smokeStatue,
                     onMoreClick = onMoreClick,
-                    modifier = Modifier.padding(horizontal = 20.dp)
+                    modifier = Modifier.padding(horizontal = 20.dp),
                 )
-            }
 
-            MatchingDetailState.MatchingDetailPage.ValueTalkState -> {
+            MatchingDetailState.MatchingDetailPage.ValueTalkState ->
                 ValueTalkBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     talkCards = state.talkCards,
-                    onMoreClick = onMoreClick
+                    onMoreClick = onMoreClick,
                 )
-            }
 
-            MatchingDetailState.MatchingDetailPage.ValuePickState -> {
+            MatchingDetailState.MatchingDetailPage.ValuePickState ->
                 ValuePickBody(
-                    pickCards = state.pickCards
+                    nickName = state.nickName,
+                    selfDescription = state.selfDescription,
+                    pickCards = state.pickCards,
+                    onDeclineClick = onDeclineClick,
                 )
-            }
         }
     }
 }
@@ -284,7 +292,7 @@ private fun MatchingDetailBottomBar(
     ) {
         if (currentPage == MatchingDetailPage.ValuePickState) {
             Image(
-                painter = painterResource(id = R.drawable.ic_profile_image_temp),
+                painter = painterResource(id = R.drawable.ic_profile_image),
                 contentDescription = "이전 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
@@ -342,6 +350,9 @@ private fun MatchingDetailScreenPreview() {
     PieceTheme {
         MatchingDetailScreen(
             MatchingDetailState(),
+            {},
+            {},
+            {},
             {},
             {},
             {},
