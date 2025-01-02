@@ -2,6 +2,7 @@ package com.puzzle.piece
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.navigation.NavigationHelper
@@ -12,6 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     internal val navigationHelper: NavigationHelper,
+    internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : ViewModel() {
 
