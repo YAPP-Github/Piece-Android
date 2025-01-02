@@ -36,12 +36,12 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.verticalScrollbar
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.contract.MatchingIntent
 import com.puzzle.matching.contract.MatchingState
-import com.puzzle.designsystem.R
 
 @Composable
 internal fun MatchingRoute(

@@ -18,25 +18,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.matching.ValueTalk
-import com.puzzle.matching.detail.component.ValueTalkHeader
+import com.puzzle.matching.detail.component.BasicInfoHeader
 
 @Composable
 internal fun ValueTalkBody(
@@ -48,7 +44,7 @@ internal fun ValueTalkBody(
 ) {
     val density = LocalDensity.current
     // 1) 고정 헤더 높이(105.dp)
-    val valueTalkHeaderHeight = 105.dp
+    val valueTalkHeaderHeight = 104.dp
     val valueTalkHeaderHeightPx = with(density) { valueTalkHeaderHeight.roundToPx() }
 
     // 2) 헤더가 얼마나 접혔는지(offset)를 관리해주는 NestedScrollConnection
@@ -71,44 +67,31 @@ internal fun ValueTalkBody(
 
     // 4) Box에 nestedScroll(connection)을 달아, 스크롤 이벤트가
     //    CollapsingHeaderNestedScrollConnection으로 전달되도록 함
-    Box(modifier = modifier.nestedScroll(connection)) {
+    Box(
+        modifier = modifier.nestedScroll(connection)
+    ) {
         // 5) Column: Spacer + LazyColumn을 세로로 배치
         //    헤더가 접힐수록 Spacer의 높이가 줄어들고, 그만큼 리스트가 위로 올라옴
         Column {
             // 5-1) 헤더 높이만큼 Spacer를 줘서 리스트가 '헤더 아래'에서 시작
             //      헤더 offset이 변하면, spaceHeight가 변해 리스트도 따라 위로 올라감
-            Spacer(Modifier.height(spaceHeight))
+            Spacer(
+                Modifier.height(spaceHeight)
+            )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(PieceTheme.colors.light3)
-                    .padding(horizontal = 20.dp),
-            ) {
-                itemsIndexed(talkCards) { idx, item ->
-                    Spacer(Modifier.height(20.dp))
-
-                    ValueTalkCard(
-                        item = item,
-                        idx = idx,
-                    )
-                }
-
-                item {
-                    Spacer(Modifier.height(60.dp))
-                }
-            }
+            ValueTalkCards(talkCards)
         }
 
         // 6) 실제 헤더 뷰
         //    offset을 통해 y축 이동 (headerOffset이 음수면 위로 올라가며 사라짐)
-        ValueTalkHeader(
+        BasicInfoHeader(
             nickName = nickName,
             selfDescription = selfDescription,
             onMoreClick = onMoreClick,
             modifier = Modifier
                 .offset { IntOffset(0, connection.headerOffset) }
                 .background(PieceTheme.colors.white)
+                .height(valueTalkHeaderHeight)
                 .padding(
                     vertical = 20.dp,
                     horizontal = 20.dp
@@ -125,32 +108,26 @@ internal fun ValueTalkBody(
     }
 }
 
-private class CollapsingHeaderNestedScrollConnection(
-    val headerHeight: Int
-) : NestedScrollConnection {
+@Composable
+private fun ValueTalkCards(talkCards: List<ValueTalk>) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PieceTheme.colors.light3)
+            .padding(horizontal = 20.dp),
+    ) {
+        itemsIndexed(talkCards) { idx, item ->
+            Spacer(Modifier.height(20.dp))
 
-    // 헤더 offset(픽셀 단위), 0이면 펼침, -headerHeight이면 완전 접힘
-    var headerOffset: Int by mutableIntStateOf(0)
-        private set
+            ValueTalkCard(
+                item = item,
+                idx = idx,
+            )
+        }
 
-    // 스크롤 이벤트가 오기 전, 먼저 얼마나 소모할지 계산
-    override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
-        // y축 델타(수직 스크롤 양)
-        val delta = available.y.toInt()
-
-        // 새 offset = 기존 offset + 스크롤 델타
-        val newOffset = headerOffset + delta
-        val previousOffset = headerOffset
-
-        // -headerHeight ~ 0 사이로 제한
-        //   -> 최소 -105: 완전히 접힘, 최대 0: 완전히 펼침
-        headerOffset = newOffset.coerceIn(-headerHeight, 0)
-
-        // 소비(consumed)된 스크롤 양 = (바뀐 offset - 기존 offset)
-        val consumed = headerOffset - previousOffset
-
-        // x축은 소비 안 함(0f), y축은 consumed만큼 소비했다고 반환
-        return Offset(0f, consumed.toFloat())
+        item {
+            Spacer(Modifier.height(60.dp))
+        }
     }
 }
 
@@ -192,7 +169,8 @@ private fun ValueTalkCard(
         Image(
             painter = painterResource(id = icons[idxInRange]),
             contentDescription = "basic info 배경화면",
-            modifier = Modifier.size(60.dp),
+            modifier = Modifier
+                .size(60.dp),
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -211,7 +189,6 @@ private fun ValueTalkCard(
         )
     }
 }
-
 
 @Preview
 @Composable

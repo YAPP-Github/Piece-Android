@@ -14,18 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-internal fun ValueTalkHeader(
+internal fun BasicInfoHeader(
     nickName: String,
     selfDescription: String,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier,
-    ) {
+    Column(modifier = modifier) {
         Text(
             text = selfDescription,
             style = PieceTheme.typography.bodyMR,
@@ -45,7 +44,7 @@ internal fun ValueTalkHeader(
             Spacer(modifier = Modifier.width(28.dp))
 
             Image(
-                painter = painterResource(id = com.puzzle.designsystem.R.drawable.ic_more),
+                painter = painterResource(id = R.drawable.ic_more),
                 contentDescription = "basic info 배경화면",
                 modifier = Modifier
                     .size(32.dp)

@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.matching.detail.component.ValueTalkHeader
+import com.puzzle.matching.detail.component.BasicInfoHeader
 
 @Composable
 internal fun BasicInfoBody(
@@ -64,7 +64,7 @@ private fun BasicInfoName(
     nickName: String,
     selfDescription: String,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         Text(
@@ -75,7 +75,7 @@ private fun BasicInfoName(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ValueTalkHeader(
+        BasicInfoHeader(
             nickName = nickName,
             selfDescription = selfDescription,
             onMoreClick = onMoreClick,
@@ -194,11 +194,11 @@ private fun InfoItem(
     text: @Composable () -> Unit? = {},
 ) {
     Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(PieceTheme.colors.white)
             .padding(vertical = 16.dp, horizontal = 12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = title,
