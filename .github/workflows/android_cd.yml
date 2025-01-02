@@ -33,6 +33,8 @@ jobs:
       - name: Set up local.properties
         run: |
           echo "KAKAO_APP_KEY=${{ secrets.KAKAO_APP_KEY }}" >> local.properties
+          echo "PIECE_DEV_BASE_URL=${{ secrets.PIECE_DEV_BASE_URL }}" >> local.properties
+          echo "PIECE_PROD_BASE_URL=${{ secrets.PIECE_PROD_BASE_URL }}" >> local.properties
 
       - name: Build with Gradle
         run: ./gradlew assembleDebug --build-cache --stacktrace
