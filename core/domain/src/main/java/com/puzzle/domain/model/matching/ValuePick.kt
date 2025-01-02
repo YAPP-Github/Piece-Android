@@ -1,4 +1,4 @@
-package com.puzzle.domain.model.pick
+package com.puzzle.domain.model.matching
 
 data class ValuePick(
     val category: String = "",

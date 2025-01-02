@@ -47,8 +47,8 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.pick.ValuePick
-import com.puzzle.domain.model.value.ValueTalk
+import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.matching.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.detail.contract.MatchingDetailState
 import com.puzzle.matching.detail.contract.MatchingDetailState.MatchingDetailPage
