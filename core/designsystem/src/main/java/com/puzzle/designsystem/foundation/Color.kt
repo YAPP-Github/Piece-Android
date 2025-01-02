@@ -20,6 +20,8 @@ private val Light2 = Color(0xFFE8EBF0)
 private val Light3 = Color(0xFFF4F6FA)
 private val White = Color(0xFFFFFFFF)
 
+private val Error = Color(0xFFFF3059)
+
 @Immutable
 data class PieceColors(
     val primaryDefault: Color = PrimaryDefault,
@@ -36,4 +38,5 @@ data class PieceColors(
     val light2: Color = Light2,
     val light3: Color = Light3,
     val white: Color = White,
+    val error: Color = Error,
 )

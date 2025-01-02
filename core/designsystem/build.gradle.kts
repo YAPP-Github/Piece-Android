@@ -7,4 +7,6 @@ android {
     namespace = "com.puzzle.designsystem"
 }
 
-dependencies {}
+dependencies {
+    implementation(libs.coil.compose)
+}
