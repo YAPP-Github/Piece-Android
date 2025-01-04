@@ -1,4 +1,4 @@
-package com.puzzle.domain.model.value
+package com.puzzle.domain.model.matching
 
 data class ValueTalk(
     val label: String = "",

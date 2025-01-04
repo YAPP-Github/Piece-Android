@@ -12,3 +12,4 @@ keystore.properties
 /.kotlin/
 /app/upload-keystore.jks
 /keystore.properties
+*/.DS_Store

@@ -37,6 +37,8 @@ import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.matching.detail.content.BasicInfoBody
 import com.puzzle.matching.detail.content.ValuePickBody
 import com.puzzle.matching.detail.content.ValueTalkBody
