@@ -68,6 +68,7 @@ data class PieceTypography(
     ),
     val bodyMR: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
+        fontWeight = FontWeight.W400,
         fontSize = 16.sp,
         lineHeight = 24.sp,
     ),
