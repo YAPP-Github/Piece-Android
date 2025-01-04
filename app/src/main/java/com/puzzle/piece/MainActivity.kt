@@ -21,6 +21,7 @@ import com.puzzle.navigation.NavigationEvent
 import com.puzzle.piece.ui.App
 import com.puzzle.piece.ui.rememberAppState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -42,17 +43,19 @@ class MainActivity : ComponentActivity() {
 
                 LaunchedEffect(Unit) {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        navigationHelper.navigationFlow.collect { event ->
-                            handleNavigationEvent(
-                                navController = navController,
-                                event = event,
-                            )
+                        launch {
+                            navigationHelper.navigationFlow.collect { event ->
+                                handleNavigationEvent(
+                                    navController = navController,
+                                    event = event,
+                                )
+                            }
                         }
-                    }
 
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
-                        eventHelper.eventFlow.collect { event ->
-                            handlePieceEvent(event)
+                        launch {
+                            eventHelper.eventFlow.collect { event ->
+                                handlePieceEvent(event)
+                            }
                         }
                     }
                 }
