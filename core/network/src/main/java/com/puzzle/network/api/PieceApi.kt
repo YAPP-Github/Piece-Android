@@ -11,11 +11,11 @@ import retrofit2.http.POST
 
 interface PieceApi {
     @POST("/api/login/oauth")
-    suspend fun loginOauth(@Body loginOauthRequest: LoginOauthRequest): Response<LoginOauthResponse>
+    suspend fun loginOauth(@Body loginOauthRequest: LoginOauthRequest): Result<LoginOauthResponse>
 
     @POST("/api/register/sms/auth/code")
-    suspend fun requestAuthCode(@Body requestAuthCodeRequest: RequestAuthCodeRequest): Response<LoginOauthResponse>
+    suspend fun requestAuthCode(@Body requestAuthCodeRequest: RequestAuthCodeRequest): Result<LoginOauthResponse>
 
     @POST("/api/register/sms/auth/code/verify")
-    suspend fun verifyAuthCode(@Body verifyAuthCodeRequest: VerifyAuthCodeRequest): Response<VerifyAuthCodeResponse>
+    suspend fun verifyAuthCode(@Body verifyAuthCodeRequest: VerifyAuthCodeRequest): Result<VerifyAuthCodeResponse>
 }

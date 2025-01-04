@@ -1,6 +1,7 @@
 package com.puzzle.network.di
 
 import com.puzzle.network.BuildConfig
+import com.puzzle.network.adapter.PieceCallAdapterFactory
 import com.puzzle.network.api.PieceApi
 import dagger.Module
 import dagger.Provides
@@ -40,9 +41,11 @@ object RetrofitModule {
     @Provides
     fun providesAuthApi(
         okHttpClient: OkHttpClient,
+        callAdapterFactory: PieceCallAdapterFactory,
     ): PieceApi = Retrofit.Builder()
         .client(okHttpClient)
         .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+        .addCallAdapterFactory(callAdapterFactory)
         .baseUrl(BuildConfig.PIECE_BASE_URL)
         .build()
         .create(PieceApi::class.java)
