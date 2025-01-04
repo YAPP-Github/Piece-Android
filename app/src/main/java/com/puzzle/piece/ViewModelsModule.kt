@@ -3,8 +3,8 @@ package com.puzzle.piece
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.MavericksViewModelComponent
 import com.airbnb.mvrx.hilt.ViewModelKey
-import com.puzzle.matching.MatchingViewModel
-import com.puzzle.matching.detail.MatchingDetailViewModel
+import com.puzzle.matching.page.main.MatchingViewModel
+import com.puzzle.matching.page.detail.MatchingDetailViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
