@@ -1,3 +1,7 @@
 package com.puzzle.auth.graph.registration.contract
 
-sealed class RegistrationIntent
+import com.puzzle.navigation.NavigationEvent
+
+sealed class RegistrationIntent {
+    data class Navigate(val navigationEvent: NavigationEvent) : RegistrationIntent()
+}
