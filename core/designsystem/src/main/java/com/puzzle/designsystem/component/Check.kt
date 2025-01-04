@@ -38,9 +38,11 @@ fun PieceCheck(
             color = if (checked) PieceTheme.colors.primaryDefault
             else PieceTheme.colors.light1,
         ),
-        modifier = modifier.clickable {
-            onCheckedChange(!checked)
-        },
+        modifier = modifier
+            .size(20.dp)
+            .clickable {
+                onCheckedChange(!checked)
+            },
     )
 }
 

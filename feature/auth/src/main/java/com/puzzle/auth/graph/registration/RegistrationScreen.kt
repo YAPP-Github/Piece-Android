@@ -18,6 +18,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationState
+import com.puzzle.designsystem.component.PieceCheckList
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -69,15 +70,41 @@ private fun RegistrationScreen(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(1f)
+                .weight(1f),
         )
 
+        PieceCheckList(
+            checked = false,
+            label = "약관 전체 동의",
+            containerColor = PieceTheme.colors.light3,
+            onCheckedChange = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
+        )
 
+        PieceCheckList(
+            checked = true,
+            showArrow = true,
+            label = "[필수] 서비스 이용약관 동의",
+            onCheckedChange = {},
+            onArrowClick = {},
+            modifier = Modifier.fillMaxWidth(),
+        )
+
+        PieceCheckList(
+            checked = true,
+            showArrow = true,
+            label = "[필수] 개인정보처리 방침 동의",
+            onCheckedChange = {},
+            onArrowClick = {},
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(2f)
+                .weight(2f),
         )
 
         PieceSolidButton(
