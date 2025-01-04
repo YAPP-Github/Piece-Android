@@ -1,16 +1,16 @@
 package com.puzzle.domain.model.error
 
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ErrorHelper @Inject constructor() {
-    private val _errorEvent = MutableSharedFlow<Throwable>(extraBufferCapacity = 1)
-    val errorEvent = _errorEvent.asSharedFlow()
+    private val _errorEvent = Channel<Throwable>(DEFAULT_BUFFER_SIZE)
+    val errorEvent = _errorEvent.receiveAsFlow()
 
     fun sendError(error: Throwable) {
-        _errorEvent.tryEmit(error)
+        _errorEvent.trySend(error)
     }
 }
