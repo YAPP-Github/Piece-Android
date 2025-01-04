@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.value.ValueTalk
+import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.matching.common.component.BasicInfoHeader
 
 @Composable

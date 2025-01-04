@@ -1,8 +1,8 @@
 package com.puzzle.matching.page.detail.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.pick.ValuePick
-import com.puzzle.domain.model.value.ValueTalk
+import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.matching.ValueTalk
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,

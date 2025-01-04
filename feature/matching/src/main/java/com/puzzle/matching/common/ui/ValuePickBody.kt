@@ -44,7 +44,7 @@ import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubButton
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.pick.ValuePick
+import com.puzzle.domain.model.matching.ValuePick
 import com.puzzle.matching.common.component.BasicInfoHeader
 
 @Composable
