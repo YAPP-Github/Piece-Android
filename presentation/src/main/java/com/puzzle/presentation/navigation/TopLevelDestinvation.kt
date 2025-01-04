@@ -1,10 +1,10 @@
-package com.puzzle.piece.navigation
+package com.puzzle.presentation.navigation
 
 import androidx.annotation.DrawableRes
-import com.puzzle.navigation.SettingRoute
+import com.puzzle.designsystem.R
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.MyPageRoute
-import com.puzzle.piece.R
+import com.puzzle.navigation.SettingRoute
 import kotlin.reflect.KClass
 
 enum class TopLevelDestination(

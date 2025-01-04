@@ -35,23 +35,9 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.ui)
-    implementation(libs.androidx.compose.navigation)
-    implementation(libs.kotlinx.serialization.json)
     implementation(libs.mavericks)
     implementation(libs.mavericks.hilt)
-
     implementation(libs.kakao.user)
 
-    implementation(projects.feature.auth)
-    implementation(projects.feature.setting)
-    implementation(projects.feature.matching)
-    implementation(projects.feature.mypage)
-
-    implementation(projects.core.designsystem)
-    implementation(projects.core.navigation)
-    implementation(projects.core.commonUi)
-    implementation(projects.core.domain)
+    implementation(projects.presentation)
 }
