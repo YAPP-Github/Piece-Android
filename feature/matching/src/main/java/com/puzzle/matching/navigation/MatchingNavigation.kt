@@ -3,8 +3,8 @@ package com.puzzle.matching.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.puzzle.matching.page.detail.MatchingDetailRoute
-import com.puzzle.matching.page.main.MatchingRoute
+import com.puzzle.matching.graph.detail.MatchingDetailRoute
+import com.puzzle.matching.graph.main.MatchingRoute
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
 
