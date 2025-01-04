@@ -28,7 +28,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 @Composable
 fun PieceCheck(
     checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Image(
@@ -40,9 +40,7 @@ fun PieceCheck(
         ),
         modifier = modifier
             .size(20.dp)
-            .clickable {
-                onCheckedChange(!checked)
-            },
+            .clickable { onCheckedChange() },
     )
 }
 
@@ -50,7 +48,7 @@ fun PieceCheck(
 fun PieceCheckList(
     checked: Boolean,
     label: String,
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
     showArrow: Boolean = false,
     containerColor: Color = PieceTheme.colors.white,

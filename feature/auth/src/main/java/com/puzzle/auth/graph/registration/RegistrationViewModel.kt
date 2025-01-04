@@ -4,8 +4,6 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
-import com.puzzle.auth.graph.login.contract.LoginIntent
-import com.puzzle.auth.graph.login.contract.LoginSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
@@ -43,6 +41,28 @@ class RegistrationViewModel @AssistedInject constructor(
     private fun processIntent(intent: RegistrationIntent) {
         when (intent) {
             is RegistrationIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
+            is RegistrationIntent.CheckPrivacyPolicy -> checkPrivacyPolicy()
+            is RegistrationIntent.CheckTermsOfUse -> checkTermsOfUse()
+            is RegistrationIntent.CheckAllTerms -> checkAllTerms()
+        }
+    }
+
+    private fun checkPrivacyPolicy() =
+        setState { copy(isPrivacyPolicyChecked = !isPrivacyPolicyChecked) }
+
+    private fun checkTermsOfUse() = setState { copy(isTermsOfUseChecked = !isTermsOfUseChecked) }
+
+    private fun checkAllTerms() = setState {
+        if (isTermsOfUseChecked && isPrivacyPolicyChecked) {
+            copy(
+                isTermsOfUseChecked = false,
+                isPrivacyPolicyChecked = false,
+            )
+        } else {
+            copy(
+                isTermsOfUseChecked = true,
+                isPrivacyPolicyChecked = true,
+            )
         }
     }
 

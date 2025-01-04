@@ -32,6 +32,9 @@ internal fun RegistrationRoute(
 
     RegistrationScreen(
         state = state,
+        checkAllTerms = { viewModel.onIntent(RegistrationIntent.CheckAllTerms) },
+        checkPrivacyAndPolicy = { viewModel.onIntent(RegistrationIntent.CheckPrivacyPolicy) },
+        checkTermsOfUse = { viewModel.onIntent(RegistrationIntent.CheckTermsOfUse) },
         navigate = { event -> viewModel.onIntent(RegistrationIntent.Navigate(event)) }
     )
 }
@@ -39,6 +42,9 @@ internal fun RegistrationRoute(
 @Composable
 private fun RegistrationScreen(
     state: RegistrationState,
+    checkAllTerms: () -> Unit,
+    checkPrivacyAndPolicy: () -> Unit,
+    checkTermsOfUse: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
     Column(
@@ -74,29 +80,29 @@ private fun RegistrationScreen(
         )
 
         PieceCheckList(
-            checked = false,
+            checked = state.agreeAllTerms,
             label = "약관 전체 동의",
             containerColor = PieceTheme.colors.light3,
-            onCheckedChange = {},
+            onCheckedChange = checkAllTerms,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 12.dp),
         )
 
         PieceCheckList(
-            checked = true,
+            checked = state.isTermsOfUseChecked,
             showArrow = true,
             label = "[필수] 서비스 이용약관 동의",
-            onCheckedChange = {},
+            onCheckedChange = checkTermsOfUse,
             onArrowClick = {},
             modifier = Modifier.fillMaxWidth(),
         )
 
         PieceCheckList(
-            checked = true,
+            checked = state.isPrivacyPolicyChecked,
             showArrow = true,
             label = "[필수] 개인정보처리 방침 동의",
-            onCheckedChange = {},
+            onCheckedChange = checkPrivacyAndPolicy,
             onArrowClick = {},
             modifier = Modifier.fillMaxWidth(),
         )
