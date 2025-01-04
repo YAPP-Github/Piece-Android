@@ -3,8 +3,11 @@ package com.puzzle.presentation.di
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.MavericksViewModelComponent
 import com.airbnb.mvrx.hilt.ViewModelKey
-import com.puzzle.matching.MatchingViewModel
-import com.puzzle.matching.detail.MatchingDetailViewModel
+import com.puzzle.auth.graph.main.AuthViewModel
+import com.puzzle.auth.graph.registration.AuthRegistrationViewModel
+import com.puzzle.auth.graph.verification.AuthVerificationViewModel
+import com.puzzle.matching.graph.detail.MatchingDetailViewModel
+import com.puzzle.matching.graph.main.MatchingViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -23,4 +26,19 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(MatchingDetailViewModel::class)
     fun matchingDetailViewModelFactory(factory: MatchingDetailViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MatchingDetailViewModel::class)
+    fun authViewModelFactory(factory: AuthViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MatchingDetailViewModel::class)
+    fun authRegistrationViewModelFactory(factory: AuthRegistrationViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(MatchingDetailViewModel::class)
+    fun authVerificationViewModelFactory(factory: AuthVerificationViewModel.Factory): AssistedViewModelFactory<*, *>
 }
