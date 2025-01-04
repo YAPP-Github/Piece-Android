@@ -1,7 +1,7 @@
-package com.puzzle.auth.graph.verification.contract
+package com.puzzle.auth.graph.registration.contract
 
 import com.airbnb.mvrx.MavericksState
 
-data class AuthVerficationState(
+data class RegistrationState(
     val a: Boolean = false,
 ) : MavericksState

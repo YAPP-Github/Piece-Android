@@ -1,12 +1,12 @@
-package com.puzzle.auth.graph.main
+package com.puzzle.auth.graph.login
 
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
-import com.puzzle.auth.graph.main.contract.AuthIntent
-import com.puzzle.auth.graph.main.contract.AuthSideEffect
-import com.puzzle.auth.graph.main.contract.AuthState
+import com.puzzle.auth.graph.login.contract.LoginIntent
+import com.puzzle.auth.graph.login.contract.LoginSideEffect
+import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -18,13 +18,13 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class AuthViewModel @AssistedInject constructor(
-    @Assisted initialState: AuthState,
+class LoginViewModel @AssistedInject constructor(
+    @Assisted initialState: LoginState,
     private val navigationHelper: NavigationHelper,
-) : MavericksViewModel<AuthState>(initialState) {
-    private val intents = Channel<AuthIntent>(BUFFERED)
+) : MavericksViewModel<LoginState>(initialState) {
+    private val intents = Channel<LoginIntent>(BUFFERED)
 
-    private val _sideEffect = Channel<AuthSideEffect>(BUFFERED)
+    private val _sideEffect = Channel<LoginSideEffect>(BUFFERED)
     val sideEffect = _sideEffect.receiveAsFlow()
 
     init {
@@ -33,27 +33,27 @@ class AuthViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
     }
 
-    internal fun onIntent(intent: AuthIntent) = viewModelScope.launch {
+    internal fun onIntent(intent: LoginIntent) = viewModelScope.launch {
         intents.send(intent)
     }
 
-    private fun processIntent(intent: AuthIntent) {
+    private fun processIntent(intent: LoginIntent) {
         when (intent) {
-            is AuthIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
+            is LoginIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
         }
     }
 
-    private fun handleSideEffect(sideEffect: AuthSideEffect) {
+    private fun handleSideEffect(sideEffect: LoginSideEffect) {
         when (sideEffect) {
             else -> Unit
         }
     }
 
     @AssistedFactory
-    interface Factory : AssistedViewModelFactory<AuthViewModel, AuthState> {
-        override fun create(state: AuthState): AuthViewModel
+    interface Factory : AssistedViewModelFactory<LoginViewModel, LoginState> {
+        override fun create(state: LoginState): LoginViewModel
     }
 
     companion object :
-        MavericksViewModelFactory<AuthViewModel, AuthState> by hiltMavericksViewModelFactory()
+        MavericksViewModelFactory<LoginViewModel, LoginState> by hiltMavericksViewModelFactory()
 }

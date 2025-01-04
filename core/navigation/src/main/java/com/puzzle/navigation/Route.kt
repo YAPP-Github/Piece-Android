@@ -9,13 +9,13 @@ data object AuthGraph : Route
 
 sealed class AuthGraphDest : Route {
     @Serializable
-    data object AuthRoute : AuthGraphDest()
+    data object LoginRoute : AuthGraphDest()
 
     @Serializable
-    data object AuthVerificationRoute : AuthGraphDest()
+    data object VerificationRoute : AuthGraphDest()
 
     @Serializable
-    data object AuthRegistrationRoute : AuthGraphDest()
+    data object RegistrationRoute : AuthGraphDest()
 }
 
 @Serializable

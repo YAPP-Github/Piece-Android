@@ -1,3 +1,3 @@
 package com.puzzle.auth.graph.registration.contract
 
-sealed class AuthRegistrationSideEffect
+sealed class RegistrationSideEffect

@@ -3,9 +3,9 @@ package com.puzzle.presentation.di
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.MavericksViewModelComponent
 import com.airbnb.mvrx.hilt.ViewModelKey
-import com.puzzle.auth.graph.main.AuthViewModel
-import com.puzzle.auth.graph.registration.AuthRegistrationViewModel
-import com.puzzle.auth.graph.verification.AuthVerificationViewModel
+import com.puzzle.auth.graph.login.LoginViewModel
+import com.puzzle.auth.graph.registration.RegistrationViewModel
+import com.puzzle.auth.graph.verification.VerificationViewModel
 import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
 import dagger.Binds
@@ -29,16 +29,16 @@ interface ViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(AuthViewModel::class)
-    fun authViewModelFactory(factory: AuthViewModel.Factory): AssistedViewModelFactory<*, *>
+    @ViewModelKey(LoginViewModel::class)
+    fun authViewModelFactory(factory: LoginViewModel.Factory): AssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap
-    @ViewModelKey(AuthRegistrationViewModel::class)
-    fun authRegistrationViewModelFactory(factory: AuthRegistrationViewModel.Factory): AssistedViewModelFactory<*, *>
+    @ViewModelKey(RegistrationViewModel::class)
+    fun authRegistrationViewModelFactory(factory: RegistrationViewModel.Factory): AssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap
-    @ViewModelKey(AuthVerificationViewModel::class)
-    fun authVerificationViewModelFactory(factory: AuthVerificationViewModel.Factory): AssistedViewModelFactory<*, *>
+    @ViewModelKey(VerificationViewModel::class)
+    fun authVerificationViewModelFactory(factory: VerificationViewModel.Factory): AssistedViewModelFactory<*, *>
 }
