@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 data class VerifyAuthCodeResponse(
     val status: String?,
     val message: String?,
-    val data: VerifyAuthCodeResponseData?,
-)
-
-@Serializable
-data class VerifyAuthCodeResponseData(
-    val smsVerified: Boolean?,
-    val registerCompleted: Boolean?,
-    val accessToken: String?,
-    val refreshToken: String?,
-)
+    val data: Data?,
+) {
+    @Serializable
+    data class Data(
+        val smsVerified: Boolean?,
+        val registerCompleted: Boolean?,
+        val accessToken: String?,
+        val refreshToken: String?,
+    )
+}
