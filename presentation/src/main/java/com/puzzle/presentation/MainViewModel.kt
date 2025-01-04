@@ -1,4 +1,4 @@
-package com.puzzle.piece
+package com.puzzle.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

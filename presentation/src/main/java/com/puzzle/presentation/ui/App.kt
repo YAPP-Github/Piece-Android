@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.puzzle.piece.ui
+package com.puzzle.presentation.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -41,9 +41,9 @@ import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.MyPageRoute
 import com.puzzle.navigation.Route
 import com.puzzle.navigation.SettingRoute
-import com.puzzle.piece.R
-import com.puzzle.piece.navigation.AppNavHost
-import com.puzzle.piece.navigation.TopLevelDestination
+import com.puzzle.designsystem.R
+import com.puzzle.presentation.navigation.AppNavHost
+import com.puzzle.presentation.navigation.TopLevelDestination
 import kotlin.reflect.KClass
 
 @Composable

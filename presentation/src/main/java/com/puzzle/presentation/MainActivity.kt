@@ -1,4 +1,4 @@
-package com.puzzle.piece
+package com.puzzle.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -18,15 +18,15 @@ import com.puzzle.common.event.PieceEvent
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
-import com.puzzle.piece.ui.App
-import com.puzzle.piece.ui.rememberAppState
+import com.puzzle.presentation.ui.App
+import com.puzzle.presentation.ui.rememberAppState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private lateinit var snackbarHostState: SnackbarHostState
+    private lateinit var snackBarHostState: SnackbarHostState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +39,7 @@ class MainActivity : ComponentActivity() {
             viewModel.apply {
                 val appState = rememberAppState()
                 val navController = rememberNavController()
-                snackbarHostState = remember { SnackbarHostState() }
+                snackBarHostState = remember { SnackbarHostState() }
 
                 LaunchedEffect(Unit) {
                     repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
                 PieceTheme {
                     App(
                         appState = appState,
-                        snackbarHostState = snackbarHostState,
+                        snackbarHostState = snackBarHostState,
                         navController = navController,
                         navigateToTopLevelDestination = { topLevelDestination ->
                             navigationHelper.navigate(
@@ -121,7 +121,7 @@ class MainActivity : ComponentActivity() {
 
     private suspend fun handlePieceEvent(event: PieceEvent) {
         when (event) {
-            is PieceEvent.ShowSnackbar -> snackbarHostState.showSnackbar(event.msg)
+            is PieceEvent.ShowSnackbar -> snackBarHostState.showSnackbar(event.msg)
         }
     }
 }
