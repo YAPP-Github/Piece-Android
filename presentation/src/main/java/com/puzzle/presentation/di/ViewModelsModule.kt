@@ -29,16 +29,16 @@ interface ViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(MatchingDetailViewModel::class)
+    @ViewModelKey(AuthViewModel::class)
     fun authViewModelFactory(factory: AuthViewModel.Factory): AssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap
-    @ViewModelKey(MatchingDetailViewModel::class)
+    @ViewModelKey(AuthRegistrationViewModel::class)
     fun authRegistrationViewModelFactory(factory: AuthRegistrationViewModel.Factory): AssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap
-    @ViewModelKey(MatchingDetailViewModel::class)
+    @ViewModelKey(AuthVerificationViewModel::class)
     fun authVerificationViewModelFactory(factory: AuthVerificationViewModel.Factory): AssistedViewModelFactory<*, *>
 }
