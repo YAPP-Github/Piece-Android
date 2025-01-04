@@ -7,7 +7,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 
 @Composable
 internal fun AuthVerificationRoute(
-    viewModel: AuthVerficationViewModel = mavericksViewModel()
+    viewModel: AuthVerificationViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
 }

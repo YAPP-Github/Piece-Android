@@ -10,15 +10,15 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 
-class AuthVerficationViewModel @AssistedInject constructor(
+class AuthVerificationViewModel @AssistedInject constructor(
     @Assisted initialState: AuthVerficationState,
     private val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<AuthVerficationState>(initialState) {
     @AssistedFactory
-    interface Factory : AssistedViewModelFactory<AuthVerficationViewModel, AuthVerficationState> {
-        override fun create(state: AuthVerficationState): AuthVerficationViewModel
+    interface Factory : AssistedViewModelFactory<AuthVerificationViewModel, AuthVerficationState> {
+        override fun create(state: AuthVerficationState): AuthVerificationViewModel
     }
 
     companion object :
-        MavericksViewModelFactory<AuthVerficationViewModel, AuthVerficationState> by hiltMavericksViewModelFactory()
+        MavericksViewModelFactory<AuthVerificationViewModel, AuthVerficationState> by hiltMavericksViewModelFactory()
 }
