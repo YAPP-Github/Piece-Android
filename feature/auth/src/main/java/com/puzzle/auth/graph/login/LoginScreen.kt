@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.main
+package com.puzzle.auth.graph.login
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -14,21 +14,21 @@ import androidx.compose.ui.unit.sp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.kakao.sdk.user.UserApiClient
-import com.puzzle.auth.graph.main.contract.AuthIntent.Navigate
-import com.puzzle.auth.graph.main.contract.AuthState
+import com.puzzle.auth.graph.login.contract.LoginIntent.Navigate
+import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
-fun AuthRoute(
-    viewModel: AuthViewModel = mavericksViewModel(),
+fun LoginRoute(
+    viewModel: LoginViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
     val context = LocalContext.current
 
-    AuthScreen(
+    LoginScreen(
         state = state,
         loginKakao = {
             UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
@@ -44,8 +44,8 @@ fun AuthRoute(
 }
 
 @Composable
-fun AuthScreen(
-    state: AuthState,
+fun LoginScreen(
+    state: LoginState,
     loginKakao: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
@@ -55,7 +55,7 @@ fun AuthScreen(
             .clickable {
                 navigate(
                     NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.AuthRegistrationRoute,
+                        route = AuthGraphDest.RegistrationRoute,
                         popUpTo = AuthGraph,
                     )
                 )
@@ -78,8 +78,8 @@ fun AuthScreen(
 @Composable
 fun PreviewAuthScreen() {
     PieceTheme {
-        AuthScreen(
-            state = AuthState(),
+        LoginScreen(
+            state = LoginState(),
             loginKakao = {},
             navigate = {},
         )
