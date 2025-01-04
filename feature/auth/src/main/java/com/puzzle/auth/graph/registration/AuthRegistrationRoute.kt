@@ -6,7 +6,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 
 @Composable
-internal fun AuthRegistrationScreen(
+internal fun AuthRegistrationRoute(
     viewModel: AuthRegistrationViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
