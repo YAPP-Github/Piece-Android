@@ -1,4 +1,4 @@
-package com.puzzle.piece.navigation
+package com.puzzle.presentation.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

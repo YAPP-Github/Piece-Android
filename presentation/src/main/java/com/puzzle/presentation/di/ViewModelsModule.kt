@@ -1,4 +1,4 @@
-package com.puzzle.piece
+package com.puzzle.presentation.di
 
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.MavericksViewModelComponent
