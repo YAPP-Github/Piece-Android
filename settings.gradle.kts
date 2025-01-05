@@ -24,16 +24,18 @@ dependencyResolutionManagement {
 
 rootProject.name = "Piece"
 include(":app")
-include(":feature:auth")
-include(":feature:mypage")
-include(":feature:matching")
-include(":feature:setting")
+
 include(":core:domain")
 include(":core:designsystem")
 include(":core:data")
 include(":core:network")
 include(":core:navigation")
 include(":core:common-ui")
-include(":presentation")
 include(":core:database")
 include(":core:common")
+
+include(":feature:auth")
+include(":feature:mypage")
+include(":feature:matching")
+include(":feature:setting")
+include(":presentation")

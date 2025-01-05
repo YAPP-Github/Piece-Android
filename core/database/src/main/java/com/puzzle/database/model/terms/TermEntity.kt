@@ -9,17 +9,17 @@ import java.time.LocalDateTime
 @Entity(tableName = "term")
 data class TermEntity(
     @PrimaryKey
-    @ColumnInfo(name = "term_id") val termId: Int?,
-    val title: String?,
-    val content: String?,
-    val required: Boolean?,
-    @ColumnInfo(name = "start_date") val startDate: LocalDateTime?,
+    @ColumnInfo(name = "term_id") val termId: Int,
+    val title: String,
+    val content: String,
+    val required: Boolean,
+    @ColumnInfo(name = "start_date") val startDate: LocalDateTime,
 ) {
     fun toDomain() = Term(
-        termId = termId ?: -1,
-        title = title ?: "UNKNOWN",
-        content = content ?: "UNKNOWN",
-        required = required ?: false,
-        startDate = startDate ?: LocalDateTime.MIN
+        termId = termId,
+        title = title,
+        content = content,
+        required = required,
+        startDate = startDate,
     )
 }
