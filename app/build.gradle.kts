@@ -40,4 +40,5 @@ dependencies {
     implementation(libs.kakao.user)
 
     implementation(projects.presentation)
+    implementation(projects.core.data)
 }

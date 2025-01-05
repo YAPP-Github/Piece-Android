@@ -1,14 +1,17 @@
 package com.puzzle.network.model.terms
 
 import com.puzzle.domain.model.terms.Term
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeParseException
 
+@Serializable
 data class LoadTermsResponse(
     val status: String?,
     val message: String?,
     val data: Data?,
 ) {
+    @Serializable
     data class Data(
         val response: List<TermResponse>?,
     ) {
@@ -16,6 +19,7 @@ data class LoadTermsResponse(
     }
 }
 
+@Serializable
 data class TermResponse(
     val termId: Int?,
     val title: String?,
