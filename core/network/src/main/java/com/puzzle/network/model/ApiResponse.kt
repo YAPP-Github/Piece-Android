@@ -8,3 +8,6 @@ data class ApiResponse<T>(
     val message: String?,
     val data: T?
 )
+
+const val UNKNOWN_INT = -1
+const val UNKNOWN_STRING = "UNKNOWN"
