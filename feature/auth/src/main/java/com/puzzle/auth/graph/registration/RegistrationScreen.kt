@@ -87,7 +87,7 @@ private fun RegistrationScreen(
                 .padding(bottom = 12.dp),
         )
 
-        state.termInfos.forEach { termInfo ->
+        state.terms.forEach { termInfo ->
             PieceCheckList(
                 checked = state.termsCheckedInfo.getOrDefault(termInfo.termId, false),
                 showArrow = true,

@@ -60,7 +60,7 @@ class RegistrationViewModel @AssistedInject constructor(
         } else {
             val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
 
-            termInfos.forEach { termInfo ->
+            terms.forEach { termInfo ->
                 updatedTermsCheckedInfo[termInfo.termId] = true
             }
 

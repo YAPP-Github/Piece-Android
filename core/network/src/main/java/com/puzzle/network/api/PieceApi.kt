@@ -5,8 +5,9 @@ import com.puzzle.network.model.auth.LoginOauthResponse
 import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
-import retrofit2.Response
+import com.puzzle.network.model.terms.LoadTermsResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface PieceApi {
@@ -18,4 +19,7 @@ interface PieceApi {
 
     @POST("/api/register/sms/auth/code/verify")
     suspend fun verifyAuthCode(@Body verifyAuthCodeRequest: VerifyAuthCodeRequest): Result<VerifyAuthCodeResponse>
+
+    @GET("/api/terms")
+    suspend fun loadTerms(): Result<LoadTermsResponse>
 }

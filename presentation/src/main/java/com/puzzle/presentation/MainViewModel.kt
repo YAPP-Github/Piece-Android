@@ -33,4 +33,8 @@ class MainViewModel @Inject constructor(
             }
         }
     }
+
+    private fun loadTerms() = viewModelScope.launch {
+
+    }
 }
