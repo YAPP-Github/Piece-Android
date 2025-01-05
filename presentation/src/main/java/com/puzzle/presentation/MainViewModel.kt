@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
+import com.puzzle.domain.usecase.terms.LoadTermsUseCase
 import com.puzzle.navigation.NavigationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -12,6 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val loadTermsUseCase: LoadTermsUseCase,
     internal val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
@@ -19,6 +21,7 @@ class MainViewModel @Inject constructor(
 
     init {
         handleError()
+        loadTerms()
     }
 
     private fun handleError() = viewModelScope.launch {
@@ -35,6 +38,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadTerms() = viewModelScope.launch {
-
+        loadTermsUseCase().onSuccess {
+            // Todo
+        }.onFailure {
+            errorHelper.sendError(it)
+        }
     }
 }
