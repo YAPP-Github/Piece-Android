@@ -6,9 +6,10 @@ import javax.inject.Inject
 
 class TermsRepositoryImpl @Inject constructor(
     private val termDataSource: TermDataSource,
+    private val localTermDataSource: TermDataSource,
 ) : TermsRepository {
-    override suspend fun loadTerms(): Result<Unit> {
-        termDataSource.loadTerms()
-        return Result.success(Unit)
+    override suspend fun loadTerms(): Result<Unit> = runCatching {
+        val terms = termDataSource.loadTerms().getOrThrow()
+        localTermDataSource
     }
 }

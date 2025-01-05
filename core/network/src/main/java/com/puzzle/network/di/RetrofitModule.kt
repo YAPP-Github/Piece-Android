@@ -19,7 +19,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
 
-    private val json = Json {
+    @Singleton
+    @Provides
+    fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
     }
 
@@ -40,6 +42,7 @@ object RetrofitModule {
     @Singleton
     @Provides
     fun providesAuthApi(
+        json: Json,
         okHttpClient: OkHttpClient,
         callAdapterFactory: PieceCallAdapterFactory,
     ): PieceApi = Retrofit.Builder()

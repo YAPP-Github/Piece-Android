@@ -7,16 +7,9 @@ import java.time.LocalDateTime
 
 @Serializable
 data class LoadTermsResponse(
-    val status: String?,
-    val message: String?,
-    val data: Data?,
+    val response: List<TermResponse>?,
 ) {
-    @Serializable
-    data class Data(
-        val response: List<TermResponse>?,
-    ) {
-        fun toDomain() = response?.map { it.toDomain() } ?: emptyList()
-    }
+    fun toDomain() = response?.map { it.toDomain() } ?: emptyList()
 }
 
 @Serializable

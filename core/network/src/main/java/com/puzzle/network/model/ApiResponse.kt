@@ -1,10 +1,10 @@
-package com.puzzle.network.model.auth
+package com.puzzle.network.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RequestAuthCodeResponse(
+data class ApiResponse<T>(
     val status: String?,
     val message: String?,
-    val data: String?,
+    val data: T?
 )
