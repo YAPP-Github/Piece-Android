@@ -41,28 +41,30 @@ class RegistrationViewModel @AssistedInject constructor(
     private fun processIntent(intent: RegistrationIntent) {
         when (intent) {
             is RegistrationIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
-            is RegistrationIntent.CheckPrivacyPolicy -> checkPrivacyPolicy()
-            is RegistrationIntent.CheckTermsOfUse -> checkTermsOfUse()
+            is RegistrationIntent.CheckTerm -> checkTerm(intent.termId)
             is RegistrationIntent.CheckAllTerms -> checkAllTerms()
         }
     }
 
-    private fun checkPrivacyPolicy() =
-        setState { copy(isPrivacyPolicyChecked = !isPrivacyPolicyChecked) }
+    private fun checkTerm(termId: Int) = setState {
+        val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap().apply {
+            this[termId] = !(this[termId] ?: false)
+        }
 
-    private fun checkTermsOfUse() = setState { copy(isTermsOfUseChecked = !isTermsOfUseChecked) }
+        copy(termsCheckedInfo = updatedTermsCheckedInfo)
+    }
 
     private fun checkAllTerms() = setState {
-        if (isTermsOfUseChecked && isPrivacyPolicyChecked) {
-            copy(
-                isTermsOfUseChecked = false,
-                isPrivacyPolicyChecked = false,
-            )
+        if (agreeAllTerms) {
+            copy(termsCheckedInfo = mutableMapOf())
         } else {
-            copy(
-                isTermsOfUseChecked = true,
-                isPrivacyPolicyChecked = true,
-            )
+            val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
+
+            termInfos.forEach { termInfo ->
+                updatedTermsCheckedInfo[termInfo.termId] = true
+            }
+
+            copy(termsCheckedInfo = updatedTermsCheckedInfo)
         }
     }
 
