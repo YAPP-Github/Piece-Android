@@ -19,6 +19,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":core:navigation"))
     implementation(project(":core:common-ui"))
+    implementation(project(":core:common"))
 //    implementation(project(":core:analytics"))
 
     val libs = project.extensions.libs

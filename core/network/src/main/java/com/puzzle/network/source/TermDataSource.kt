@@ -5,7 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TermsDataSource @Inject constructor(
+class TermDataSource @Inject constructor(
     private val pieceApi: PieceApi,
 ) {
     suspend fun loadTerms() = pieceApi.loadTerms()

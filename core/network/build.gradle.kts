@@ -35,6 +35,7 @@ android {
 
 dependencies {
     implementation(projects.core.domain)
+    implementation(projects.core.common)
 
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
