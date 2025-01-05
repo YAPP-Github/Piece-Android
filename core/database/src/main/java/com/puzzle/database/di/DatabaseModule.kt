@@ -15,7 +15,7 @@ import javax.inject.Singleton
 internal object DatabaseModule {
     @Provides
     @Singleton
-    fun providesNiaDatabase(
+    fun providesPieceDatabase(
         @ApplicationContext context: Context,
     ): PieceDatabase = Room.databaseBuilder(
         context,

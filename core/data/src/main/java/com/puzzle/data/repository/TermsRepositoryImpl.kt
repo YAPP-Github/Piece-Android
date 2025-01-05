@@ -1,6 +1,5 @@
 package com.puzzle.data.repository
 
-import android.util.Log
 import com.puzzle.database.model.terms.TermEntity
 import com.puzzle.database.source.term.LocalTermDataSource
 import com.puzzle.domain.model.terms.Term
@@ -14,14 +13,10 @@ class TermsRepositoryImpl @Inject constructor(
     private val localTermDataSource: LocalTermDataSource,
 ) : TermsRepository {
     override suspend fun loadTerms(): Result<Unit> = runCatching {
-        Log.d("test", "loadTerms 호출")
-
         val terms = termDataSource.loadTerms()
             .getOrThrow()
             .toDomain()
             .filter { it.termId != UNKNOWN_INT }
-
-        Log.d("test", terms.toString())
 
         val termsEntity = terms.map {
             TermEntity(
@@ -33,8 +28,6 @@ class TermsRepositoryImpl @Inject constructor(
             )
         }
 
-        Log.d("test", termsEntity.toString())
-        
         localTermDataSource.clearAndInsertTerms(termsEntity)
     }
 

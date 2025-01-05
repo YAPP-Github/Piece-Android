@@ -1,7 +1,7 @@
 package com.puzzle.database.di
 
 import com.puzzle.database.PieceDatabase
-import com.puzzle.database.dao.TermDao
+import com.puzzle.database.dao.TermsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,9 +9,9 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal object DaoModule {
+internal object DaosModule {
     @Provides
-    fun providesTopicsDao(
+    fun providesTermsDao(
         database: PieceDatabase,
-    ): TermDao = database.termDao()
+    ): TermsDao = database.termsDao()
 }

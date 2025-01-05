@@ -15,6 +15,10 @@ internal fun Project.configureJUnitAndroid() {
             unitTests.all { it.useJUnitPlatform() }
         }
 
+        defaultConfig {
+            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+
         val libs = extensions.libs
         dependencies {
             "androidTestImplementation"(libs.findLibrary("androidx.test.ext").get())

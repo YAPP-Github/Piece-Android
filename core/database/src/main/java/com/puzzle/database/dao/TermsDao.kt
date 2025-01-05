@@ -8,7 +8,7 @@ import androidx.room.Transaction
 import com.puzzle.database.model.terms.TermEntity
 
 @Dao
-interface TermDao {
+interface TermsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTerms(vararg terms: TermEntity)
 

@@ -2,7 +2,7 @@ package com.puzzle.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.puzzle.database.dao.TermDao
+import com.puzzle.database.dao.TermsDao
 import com.puzzle.database.model.terms.TermEntity
 
 @Database(
@@ -12,7 +12,7 @@ import com.puzzle.database.model.terms.TermEntity
     version = 1,
 )
 internal abstract class PieceDatabase : RoomDatabase() {
-    abstract fun termDao(): TermDao
+    abstract fun termsDao(): TermsDao
 
     companion object {
         internal const val NAME = "piece-database"
