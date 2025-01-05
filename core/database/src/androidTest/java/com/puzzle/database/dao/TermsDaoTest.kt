@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.puzzle.common.parseDateTime
 import com.puzzle.database.PieceDatabase
 import com.puzzle.database.model.terms.TermEntity
 import kotlinx.coroutines.test.runTest
@@ -34,11 +35,11 @@ class TermsDaoTest {
     }
 
     @Test
-    fun 약관을_삽입하고_조회한다() = runTest {
+    fun 약관을_삽입하고_조회할_수_있다() = runTest {
         // given
         val expected = listOf(
-            TermEntity(1, "이용약관", "내용1", true, "2024-01-01"),
-            TermEntity(2, "개인정보처리방침", "내용2", false, "2024-01-02")
+            TermEntity(1, "이용약관", "내용1", true, "2024-06-01T00:00:00".parseDateTime()),
+            TermEntity(2, "개인정보처리방침", "내용2", false, "2024-06-01T00:00:00".parseDateTime())
         )
 
         // when
@@ -50,11 +51,11 @@ class TermsDaoTest {
     }
 
     @Test
-    fun 약관을_모두_삭제한다() = runTest {
+    fun 약관을_모두_삭제할_수_있다() = runTest {
         // given
         val terms = listOf(
-            TermEntity(1, "이용약관", "내용1", true, "2024-01-01"),
-            TermEntity(2, "개인정보처리방침", "내용2", false, "2024-01-02")
+            TermEntity(1, "이용약관", "내용1", true, "2024-06-01T00:00:00".parseDateTime()),
+            TermEntity(2, "개인정보처리방침", "내용2", false, "2024-06-01T00:00:00".parseDateTime())
         )
         termsDao.insertTerms(*terms.toTypedArray())
 
@@ -68,16 +69,16 @@ class TermsDaoTest {
     }
 
     @Test
-    fun 약관을_삭제하고_다시_삽입한다() = runTest {
+    fun 이전_약관을_삭제하고_새로운_약관을_삽입할_수_있다() = runTest {
         // given
         val oldTerms = listOf(
-            TermEntity(1, "이전 약관", "이전 내용", true, "2024-01-01")
+            TermEntity(1, "이전 약관", "이전 내용", true, "2024-06-01T00:00:00".parseDateTime())
         )
         termsDao.insertTerms(*oldTerms.toTypedArray())
 
         // when
         val expected = listOf(
-            TermEntity(2, "새로운 약관", "새로운 내용", false, "2024-02-01")
+            TermEntity(2, "새로운 약관", "새로운 내용", false, "2024-06-01T00:00:00".parseDateTime())
         )
         termsDao.clearAndInsertTerms(*expected.toTypedArray())
         val actual = termsDao.getTerms()
