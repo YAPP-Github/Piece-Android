@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
+import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.usecase.terms.GetTermsUseCase
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -20,7 +22,9 @@ import kotlinx.coroutines.launch
 
 class RegistrationViewModel @AssistedInject constructor(
     @Assisted initialState: RegistrationState,
+    private val getTermsUseCase: GetTermsUseCase,
     private val navigationHelper: NavigationHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<RegistrationState>(initialState) {
 
     private val intents = Channel<RegistrationIntent>(BUFFERED)
@@ -29,9 +33,17 @@ class RegistrationViewModel @AssistedInject constructor(
     val sideEffect = _sideEffect.receiveAsFlow()
 
     init {
+        fetchTerms()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun fetchTerms() = viewModelScope.launch {
+        getTermsUseCase().onSuccess {
+            setState { copy(terms = it) }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     internal fun onIntent(intent: RegistrationIntent) = viewModelScope.launch {

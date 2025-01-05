@@ -38,9 +38,7 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadTerms() = viewModelScope.launch {
-        loadTermsUseCase().onSuccess {
-            // Todo
-        }.onFailure {
+        loadTermsUseCase().onFailure {
             errorHelper.sendError(it)
         }
     }
