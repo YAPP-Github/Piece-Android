@@ -24,7 +24,7 @@ class TermsRepositoryImpl @Inject constructor(
                 title = it.title,
                 content = it.content,
                 required = it.required,
-                startDate = it.startDate.toString(),
+                startDate = it.startDate,
             )
         }
 
