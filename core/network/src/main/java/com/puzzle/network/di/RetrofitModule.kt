@@ -41,7 +41,7 @@ object RetrofitModule {
 
     @Singleton
     @Provides
-    fun providesAuthApi(
+    fun providesPieceApi(
         json: Json,
         okHttpClient: OkHttpClient,
         callAdapterFactory: PieceCallAdapterFactory,

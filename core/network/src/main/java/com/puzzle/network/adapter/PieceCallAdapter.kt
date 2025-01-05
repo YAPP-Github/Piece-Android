@@ -11,17 +11,23 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PieceCallAdapterFactory : CallAdapter.Factory() {
+class PieceCallAdapterFactory @Inject constructor() : CallAdapter.Factory() {
     override fun get(
         type: Type,
         annotations: Array<Annotation>,
         retrofit: Retrofit
-    ): CallAdapter<*, *> {
+    ): CallAdapter<*, *>? {
+        // 반환 타입의 최상위 객체가 Result 객체인지 확인, 아닐 경우 null 반환
         val wrapperType = getParameterUpperBound(0, type as ParameterizedType)
-        return PieceCallAdapter(wrapperType)
+        if (getRawType(wrapperType) != Result::class.java) return null
+
+        // 해당 타입의 제네릭 타입을 가져옴 Result<T>의 T를 뜻함
+        val responseType = getParameterUpperBound(0, wrapperType as ParameterizedType)
+        return PieceCallAdapter(responseType)
     }
 }
 
@@ -62,13 +68,13 @@ private class PieceCall<T : Any>(
                         return Result.failure(
                             HttpResponseException(
                                 status = HttpResponseStatus.create(code()),
-                                msg = "", // Todo
+                                msg = "일시적인 서버 에러입니다. 계속해서 반복될 경우 문의 하기를 이용해주세요.",
                             )
                         )
                     } ?: return Result.failure(
                         HttpResponseException(
                             status = HttpResponseStatus.create(-1),
-                            msg = "알 수 없는 에러입니다."
+                            msg = "일시적인 서버 에러입니다. 계속해서 반복될 경우 문의 하기를 이용해주세요."
                         )
                     )
                 }
