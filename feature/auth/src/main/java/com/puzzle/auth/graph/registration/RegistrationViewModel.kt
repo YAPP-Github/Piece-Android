@@ -9,7 +9,7 @@ import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect.Navigate
 import com.puzzle.auth.graph.registration.contract.RegistrationState
 import com.puzzle.domain.model.error.ErrorHelper
-import com.puzzle.domain.usecase.terms.GetTermsUseCase
+import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class RegistrationViewModel @AssistedInject constructor(
     @Assisted initialState: RegistrationState,
-    private val getTermsUseCase: GetTermsUseCase,
+    private val termsRepository: TermsRepository,
     private val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<RegistrationState>(initialState) {
@@ -66,7 +66,7 @@ class RegistrationViewModel @AssistedInject constructor(
     }
 
     private fun fetchTerms() = viewModelScope.launch {
-        getTermsUseCase().onSuccess {
+        termsRepository.getTerms().onSuccess {
             setState { copy(terms = it) }
         }.onFailure { errorHelper.sendError(it) }
     }
