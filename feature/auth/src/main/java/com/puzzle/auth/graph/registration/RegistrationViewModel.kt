@@ -47,16 +47,15 @@ class RegistrationViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: RegistrationIntent) {
+    internal fun onSideEffect(sideEffect: RegistrationSideEffect) = viewModelScope.launch {
+        sideEffects.send(sideEffect)
+    }
+
+    private fun processIntent(intent: RegistrationIntent) {
         when (intent) {
-            is RegistrationIntent.Navigate -> onSideEffect(Navigate(intent.navigationEvent))
             is RegistrationIntent.CheckTerm -> checkTerm(intent.termId)
             is RegistrationIntent.CheckAllTerms -> checkAllTerms()
         }
-    }
-
-    private suspend fun onSideEffect(sideEffect: RegistrationSideEffect) {
-        sideEffects.send(sideEffect)
     }
 
     private fun handleSideEffect(sideEffect: RegistrationSideEffect) {

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
+import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
 import com.puzzle.designsystem.component.PieceCheckList
 import com.puzzle.designsystem.component.PieceSolidButton
@@ -34,7 +35,7 @@ internal fun RegistrationRoute(
         state = state,
         checkAllTerms = { viewModel.onIntent(RegistrationIntent.CheckAllTerms) },
         checkTerm = { viewModel.onIntent(RegistrationIntent.CheckTerm(it)) },
-        navigate = { event -> viewModel.onIntent(RegistrationIntent.Navigate(event)) }
+        navigate = { event -> viewModel.onSideEffect(RegistrationSideEffect.Navigate(event)) }
     )
 }
 
