@@ -58,7 +58,7 @@ class TermsRepositoryImplTest {
         coVerify(exactly = 1) {
             localTermDataSource.clearAndInsertTerms(
                 match {
-                    it.size == 1 && it.first().termId == validTerm.termId
+                    it.size == 1 && it.first().id == validTerm.termId
                 }
             )
         }
@@ -96,7 +96,7 @@ class TermsRepositoryImplTest {
                 match {
                     it.size == validTerms.size && it.all { entity ->
                         validTerms.any { term ->
-                            term.termId == entity.termId && term.title == entity.title
+                            term.termId == entity.id && term.title == entity.title
                         }
                     }
                 }

@@ -20,7 +20,7 @@ class TermsRepositoryImpl @Inject constructor(
 
         val termsEntity = terms.map {
             TermEntity(
-                termId = it.termId,
+                id = it.termId,
                 title = it.title,
                 content = it.content,
                 required = it.required,
