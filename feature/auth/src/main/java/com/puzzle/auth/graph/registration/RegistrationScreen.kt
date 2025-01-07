@@ -90,7 +90,7 @@ private fun RegistrationScreen(
         state.terms.forEach { termInfo ->
             PieceCheckList(
                 checked = state.termsCheckedInfo.getOrDefault(termInfo.termId, false),
-                showArrow = true,
+                arrowEnabled = true,
                 label = termInfo.title,
                 onCheckedChange = { checkTerm(termInfo.termId) },
                 onArrowClick = {},

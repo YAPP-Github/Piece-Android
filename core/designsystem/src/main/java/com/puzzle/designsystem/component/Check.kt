@@ -50,7 +50,7 @@ fun PieceCheckList(
     label: String,
     onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
-    showArrow: Boolean = false,
+    arrowEnabled: Boolean = false,
     containerColor: Color = PieceTheme.colors.white,
     onArrowClick: () -> Unit = {},
 ) {
@@ -76,7 +76,7 @@ fun PieceCheckList(
             modifier = Modifier.weight(1f),
         )
 
-        if (showArrow) {
+        if (arrowEnabled) {
             Image(
                 painter = painterResource(R.drawable.ic_arrow_right),
                 contentDescription = "",
@@ -127,7 +127,7 @@ fun PreviewPieceCheckList() {
 
             PieceCheckList(
                 checked = false,
-                showArrow = true,
+                arrowEnabled = true,
                 label = "약관 전체 동의",
                 onCheckedChange = {},
                 onArrowClick = {},
