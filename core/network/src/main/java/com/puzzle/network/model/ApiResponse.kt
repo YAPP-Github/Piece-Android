@@ -11,7 +11,7 @@ data class ApiResponse<T>(
     val data: T?,
 )
 
-internal fun <T> Result<ApiResponse<T>>.getResult(): Result<T> {
+internal fun <T> Result<ApiResponse<T>>.unwrapData(): Result<T> {
     return this.map { response ->
         response.data ?: return Result.failure(
             HttpResponseException(
