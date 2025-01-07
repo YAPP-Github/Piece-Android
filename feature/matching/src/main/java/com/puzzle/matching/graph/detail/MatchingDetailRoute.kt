@@ -178,7 +178,7 @@ private fun MatchingDetailScreen(
         PieceSubCloseTopBar(
             title = state.currentPage.title,
             onCloseClick = onCloseClick,
-            showCloseButton = !(showDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL),
+            closeButtonEnabled = !(showDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(topBarHeight)

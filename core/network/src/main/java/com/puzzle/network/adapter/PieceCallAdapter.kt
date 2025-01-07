@@ -18,7 +18,7 @@ import javax.inject.Singleton
 class PieceCallAdapterFactory @Inject constructor() : CallAdapter.Factory() {
     override fun get(
         type: Type,
-        annotations: Array<out Annotation>,
+        annotations: Array<Annotation>,
         retrofit: Retrofit
     ): CallAdapter<*, *>? {
         // 반환 타입의 최상위 객체가 Result 객체인지 확인, 아닐 경우 null 반환
@@ -68,13 +68,13 @@ private class PieceCall<T : Any>(
                         return Result.failure(
                             HttpResponseException(
                                 status = HttpResponseStatus.create(code()),
-                                msg = "", // Todo
+                                msg = "일시적인 서버 에러입니다. 계속해서 반복될 경우 문의 하기를 이용해주세요.",
                             )
                         )
                     } ?: return Result.failure(
                         HttpResponseException(
                             status = HttpResponseStatus.create(-1),
-                            msg = "알 수 없는 에러입니다."
+                            msg = "일시적인 서버 에러입니다. 계속해서 반복될 경우 문의 하기를 이용해주세요."
                         )
                     )
                 }
