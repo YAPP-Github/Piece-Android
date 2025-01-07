@@ -78,7 +78,7 @@ private fun RegistrationScreen(
         )
 
         PieceCheckList(
-            checked = state.agreeAllTerms,
+            checked = state.allTermsAgreed,
             label = "약관 전체 동의",
             containerColor = PieceTheme.colors.light3,
             onCheckedChange = checkAllTerms,

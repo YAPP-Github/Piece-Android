@@ -6,6 +6,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
+import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect.Navigate
 import com.puzzle.auth.graph.registration.contract.RegistrationState
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.usecase.terms.GetTermsUseCase
@@ -28,9 +29,7 @@ class RegistrationViewModel @AssistedInject constructor(
 ) : MavericksViewModel<RegistrationState>(initialState) {
 
     private val intents = Channel<RegistrationIntent>(BUFFERED)
-
-    private val _sideEffect = Channel<RegistrationSideEffect>(BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val sideEffects = Channel<RegistrationSideEffect>(BUFFERED)
 
     init {
         fetchTerms()
@@ -38,24 +37,38 @@ class RegistrationViewModel @AssistedInject constructor(
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
-    }
 
-    private fun fetchTerms() = viewModelScope.launch {
-        getTermsUseCase().onSuccess {
-            setState { copy(terms = it) }
-        }.onFailure { errorHelper.sendError(it) }
+        sideEffects.receiveAsFlow()
+            .onEach(::handleSideEffect)
+            .launchIn(viewModelScope)
     }
 
     internal fun onIntent(intent: RegistrationIntent) = viewModelScope.launch {
         intents.send(intent)
     }
 
-    private fun processIntent(intent: RegistrationIntent) {
+    private suspend fun processIntent(intent: RegistrationIntent) {
         when (intent) {
-            is RegistrationIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
+            is RegistrationIntent.Navigate -> onSideEffect(Navigate(intent.navigationEvent))
             is RegistrationIntent.CheckTerm -> checkTerm(intent.termId)
             is RegistrationIntent.CheckAllTerms -> checkAllTerms()
         }
+    }
+
+    private suspend fun onSideEffect(sideEffect: RegistrationSideEffect) {
+        sideEffects.send(sideEffect)
+    }
+
+    private fun handleSideEffect(sideEffect: RegistrationSideEffect) {
+        when (sideEffect) {
+            is Navigate -> navigationHelper.navigate(sideEffect.navigationEvent)
+        }
+    }
+
+    private fun fetchTerms() = viewModelScope.launch {
+        getTermsUseCase().onSuccess {
+            setState { copy(terms = it) }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     private fun checkTerm(termId: Int) = setState {
@@ -67,7 +80,7 @@ class RegistrationViewModel @AssistedInject constructor(
     }
 
     private fun checkAllTerms() = setState {
-        if (agreeAllTerms) {
+        if (allTermsAgreed) {
             copy(termsCheckedInfo = mutableMapOf())
         } else {
             val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
@@ -77,12 +90,6 @@ class RegistrationViewModel @AssistedInject constructor(
             }
 
             copy(termsCheckedInfo = updatedTermsCheckedInfo)
-        }
-    }
-
-    private fun handleSideEffect(sideEffect: RegistrationSideEffect) {
-        when (sideEffect) {
-            else -> Unit
         }
     }
 

@@ -7,5 +7,5 @@ data class RegistrationState(
     val terms: List<Term> = emptyList(),
     val termsCheckedInfo: MutableMap<Int, Boolean> = mutableMapOf(),
 ) : MavericksState {
-    val agreeAllTerms = terms.all { termsCheckedInfo.getOrDefault(it.termId, false) }
+    val allTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.termId, false) }
 }
