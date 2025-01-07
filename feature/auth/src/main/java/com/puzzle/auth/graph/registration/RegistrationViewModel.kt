@@ -1,5 +1,6 @@
 package com.puzzle.auth.graph.registration
 
+import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
@@ -66,6 +67,7 @@ class RegistrationViewModel @AssistedInject constructor(
 
     private fun fetchTerms() = viewModelScope.launch {
         termsRepository.getTerms().onSuccess {
+            Log.d("test", it.toString())
             setState { copy(terms = it) }
         }.onFailure { errorHelper.sendError(it) }
     }

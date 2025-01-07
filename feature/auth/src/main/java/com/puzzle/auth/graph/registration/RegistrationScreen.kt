@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -22,6 +24,7 @@ import com.puzzle.designsystem.component.PieceCheckList
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.terms.Term
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
@@ -29,13 +32,26 @@ internal fun RegistrationRoute(
     viewModel: RegistrationViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val (selectedTerm, setSelectedTerm) = remember { mutableStateOf<Term?>(null) }
 
-    RegistrationScreen(
-        state = state,
-        checkAllTerms = { viewModel.onIntent(RegistrationIntent.CheckAllTerms) },
-        checkTerm = { viewModel.onIntent(RegistrationIntent.CheckTerm(it)) },
-        navigate = { event -> viewModel.onSideEffect(RegistrationSideEffect.Navigate(event)) }
-    )
+    if (selectedTerm != null) {
+        RegistrationDetailScreen(
+            term = selectedTerm,
+            onBackClick = { setSelectedTerm(null) },
+            onAgreeClick = {
+                viewModel.onIntent(RegistrationIntent.CheckTerm(selectedTerm.termId))
+                setSelectedTerm(null)
+            }
+        )
+    } else {
+        RegistrationScreen(
+            state = state,
+            checkAllTerms = { viewModel.onIntent(RegistrationIntent.CheckAllTerms) },
+            checkTerm = { viewModel.onIntent(RegistrationIntent.CheckTerm(it)) },
+            showTermDetail = { setSelectedTerm(it) },
+            navigate = { event -> viewModel.onSideEffect(RegistrationSideEffect.Navigate(event)) }
+        )
+    }
 }
 
 @Composable
@@ -43,6 +59,7 @@ private fun RegistrationScreen(
     state: RegistrationState,
     checkAllTerms: () -> Unit,
     checkTerm: (Int) -> Unit,
+    showTermDetail: (Term) -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
     Column(
@@ -86,13 +103,13 @@ private fun RegistrationScreen(
                 .padding(bottom = 12.dp),
         )
 
-        state.terms.forEach { termInfo ->
+        state.terms.forEach { term ->
             PieceCheckList(
-                checked = state.termsCheckedInfo.getOrDefault(termInfo.termId, false),
+                checked = state.termsCheckedInfo.getOrDefault(term.termId, false),
                 arrowEnabled = true,
-                label = termInfo.title,
-                onCheckedChange = { checkTerm(termInfo.termId) },
-                onArrowClick = {},
+                label = term.title,
+                onCheckedChange = { checkTerm(term.termId) },
+                onArrowClick = { showTermDetail(term) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
