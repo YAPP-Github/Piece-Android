@@ -21,8 +21,6 @@ android {
         buildConfigField("String", "KAKAO_APP_KEY", "\"${localProperties["KAKAO_APP_KEY"]}\"")
     }
 
-    packaging { resources { excludes += "/META-INF/*" } }
-
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("debug")

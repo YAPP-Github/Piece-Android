@@ -9,7 +9,7 @@ import javax.inject.Singleton
 class LocalTermDataSource @Inject constructor(
     private val termsDao: TermsDao,
 ) {
-    suspend fun getTerms() = termsDao.getTerms()
+    suspend fun retrieveTerms() = termsDao.getTerms()
     suspend fun clearAndInsertTerms(terms: List<TermEntity>) =
         termsDao.clearAndInsertTerms(*terms.toTypedArray())
 }
