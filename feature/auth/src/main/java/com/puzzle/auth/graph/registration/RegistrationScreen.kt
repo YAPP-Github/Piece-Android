@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -19,10 +22,13 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
+import com.puzzle.auth.graph.registration.ui.TermDetailScreen
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceCheckList
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.terms.Term
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
@@ -30,11 +36,22 @@ internal fun RegistrationRoute(
     viewModel: RegistrationViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
+    var selectedTerm by remember { mutableStateOf<Term?>(null) }
 
-    RegistrationScreen(
+    selectedTerm?.let { term ->
+        TermDetailScreen(
+            term = term,
+            onBackClick = { selectedTerm = null },
+            onAgreeClick = {
+                viewModel.onIntent(RegistrationIntent.CheckTerm(term.id))
+                selectedTerm = null
+            }
+        )
+    } ?: RegistrationScreen(
         state = state,
         checkAllTerms = { viewModel.onIntent(RegistrationIntent.CheckAllTerms) },
         checkTerm = { viewModel.onIntent(RegistrationIntent.CheckTerm(it)) },
+        showTermDetail = { selectedTerm = it },
         navigate = { event -> viewModel.onSideEffect(RegistrationSideEffect.Navigate(event)) }
     )
 }
@@ -44,6 +61,7 @@ private fun RegistrationScreen(
     state: RegistrationState,
     checkAllTerms: () -> Unit,
     checkTerm: (Int) -> Unit,
+    showTermDetail: (Term) -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
     Column(
@@ -54,7 +72,6 @@ private fun RegistrationScreen(
         PieceSubBackTopBar(
             title = "",
             onBackClick = { navigate(NavigationEvent.NavigateUp) },
-            modifier = Modifier.height(60.dp),
         )
 
         Text(
@@ -80,7 +97,7 @@ private fun RegistrationScreen(
 
         PieceCheckList(
             checked = state.allTermsAgreed,
-            label = "약관 전체 동의",
+            label = stringResource(R.string.all_term_agree),
             containerColor = PieceTheme.colors.light3,
             onCheckedChange = checkAllTerms,
             modifier = Modifier
@@ -88,13 +105,13 @@ private fun RegistrationScreen(
                 .padding(bottom = 12.dp),
         )
 
-        state.terms.forEach { termInfo ->
+        state.terms.forEach { term ->
             PieceCheckList(
-                checked = state.termsCheckedInfo.getOrDefault(termInfo.termId, false),
+                checked = state.termsCheckedInfo.getOrDefault(term.id, false),
                 arrowEnabled = true,
-                label = termInfo.title,
-                onCheckedChange = { checkTerm(termInfo.termId) },
-                onArrowClick = {},
+                label = term.title,
+                onCheckedChange = { checkTerm(term.id) },
+                onArrowClick = { showTermDetail(term) },
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -106,7 +123,7 @@ private fun RegistrationScreen(
         )
 
         PieceSolidButton(
-            label = "다음",
+            label = stringResource(R.string.next),
             onClick = {},
             modifier = Modifier
                 .fillMaxWidth()

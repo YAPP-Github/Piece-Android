@@ -5,7 +5,19 @@ import com.puzzle.domain.model.terms.Term
 
 data class RegistrationState(
     val terms: List<Term> = emptyList(),
-    val termsCheckedInfo: MutableMap<Int, Boolean> = mutableMapOf(),
+    val termsCheckedInfo: Map<Int, Boolean> = emptyMap(),
 ) : MavericksState {
-    val allTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.termId, false) }
+    val allTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.id, false) }
+
+    enum class RegistrationPage() {
+        TermPage,
+        TermDetailPage,
+        AccessRightsPage,
+        AvoidAcquaintancesPage,
+        SignUpCompleted;
+
+        companion object {
+
+        }
+    }
 }

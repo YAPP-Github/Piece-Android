@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.dependencies
 internal fun Project.configureAndroidCompose() {
     with(plugins) {
         apply("org.jetbrains.kotlin.plugin.compose")
+        apply("org.jetbrains.kotlin.plugin.serialization")
     }
 
     val libs = extensions.libs

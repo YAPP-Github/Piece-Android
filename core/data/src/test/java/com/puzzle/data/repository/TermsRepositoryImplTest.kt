@@ -48,7 +48,7 @@ class TermsRepositoryImplTest {
 
         coEvery { termDataSource.loadTerms() } returns
                 Result.success(LoadTermsResponse(listOf(invalidTerm, validTerm)))
-        coEvery { localTermDataSource.clearAndInsertTerms(any()) } just Runs
+        coEvery { localTermDataSource.replaceTerms(any()) } just Runs
 
         // when
         val result = termsRepository.loadTerms()
@@ -56,7 +56,7 @@ class TermsRepositoryImplTest {
         // then
         assertTrue(result.isSuccess)
         coVerify(exactly = 1) {
-            localTermDataSource.clearAndInsertTerms(
+            localTermDataSource.replaceTerms(
                 match {
                     it.size == 1 && it.first().id == validTerm.termId
                 }
@@ -85,14 +85,14 @@ class TermsRepositoryImplTest {
         )
 
         coEvery { termDataSource.loadTerms() } returns Result.success(LoadTermsResponse(validTerms))
-        coEvery { localTermDataSource.clearAndInsertTerms(any()) } just Runs
+        coEvery { localTermDataSource.replaceTerms(any()) } just Runs
 
         // when
         termsRepository.loadTerms()
 
         // then
         coVerify(exactly = 1) {
-            localTermDataSource.clearAndInsertTerms(
+            localTermDataSource.replaceTerms(
                 match {
                     it.size == validTerms.size && it.all { entity ->
                         validTerms.any { term ->

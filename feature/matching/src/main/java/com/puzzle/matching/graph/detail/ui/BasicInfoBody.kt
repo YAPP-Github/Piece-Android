@@ -1,4 +1,4 @@
-package com.puzzle.matching.common.ui
+package com.puzzle.matching.graph.detail.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.matching.common.component.BasicInfoHeader
+import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
 internal fun BasicInfoBody(

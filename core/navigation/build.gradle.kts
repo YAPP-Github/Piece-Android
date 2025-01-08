@@ -1,5 +1,6 @@
 plugins {
     id("piece.android.library")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

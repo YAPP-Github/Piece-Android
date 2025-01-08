@@ -37,10 +37,10 @@ import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.matching.common.constant.DialogType
-import com.puzzle.matching.common.ui.BasicInfoBody
-import com.puzzle.matching.common.ui.ValuePickBody
-import com.puzzle.matching.common.ui.ValueTalkBody
+import com.puzzle.matching.graph.detail.common.constant.DialogType
+import com.puzzle.matching.graph.detail.ui.BasicInfoBody
+import com.puzzle.matching.graph.detail.ui.ValuePickBody
+import com.puzzle.matching.graph.detail.ui.ValueTalkBody
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState.MatchingDetailPage
@@ -149,7 +149,7 @@ private fun MatchingDetailScreen(
         modifier = modifier
             .fillMaxSize()
             .then(
-                if (state.currentPage != MatchingDetailPage.BasicInfoState) {
+                if (state.currentPage != MatchingDetailPage.BasicInfoPage) {
                     Modifier.background(PieceTheme.colors.light3)
                 } else {
                     Modifier
@@ -184,7 +184,7 @@ private fun MatchingDetailScreen(
                 .height(topBarHeight)
                 .align(Alignment.TopCenter)
                 .let {
-                    if (state.currentPage != MatchingDetailPage.BasicInfoState) {
+                    if (state.currentPage != MatchingDetailPage.BasicInfoPage) {
                         it.background(PieceTheme.colors.white)
                     } else {
                         it
@@ -243,7 +243,7 @@ private fun MatchingDetailContent(
 ) {
     Box(modifier = modifier.fillMaxSize()) {
         when (state.currentPage) {
-            MatchingDetailState.MatchingDetailPage.BasicInfoState ->
+            MatchingDetailState.MatchingDetailPage.BasicInfoPage ->
                 BasicInfoBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
@@ -258,7 +258,7 @@ private fun MatchingDetailContent(
                     modifier = Modifier.padding(horizontal = 20.dp),
                 )
 
-            MatchingDetailState.MatchingDetailPage.ValueTalkState ->
+            MatchingDetailState.MatchingDetailPage.ValueTalkPage ->
                 ValueTalkBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
@@ -266,7 +266,7 @@ private fun MatchingDetailContent(
                     onMoreClick = onMoreClick,
                 )
 
-            MatchingDetailState.MatchingDetailPage.ValuePickState ->
+            MatchingDetailState.MatchingDetailPage.ValuePickPage ->
                 ValuePickBody(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
@@ -290,7 +290,7 @@ private fun MatchingDetailBottomBar(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier,
     ) {
-        if (currentPage == MatchingDetailPage.ValuePickState) {
+        if (currentPage == MatchingDetailPage.ValuePickPage) {
             Image(
                 painter = painterResource(id = R.drawable.ic_profile_image),
                 contentDescription = "이전 페이지 버튼",
@@ -304,7 +304,7 @@ private fun MatchingDetailBottomBar(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        if (currentPage == MatchingDetailPage.BasicInfoState) {
+        if (currentPage == MatchingDetailPage.BasicInfoPage) {
             Image(
                 painter = painterResource(id = R.drawable.ic_left_disable),
                 contentDescription = "이전 페이지 버튼",
@@ -325,7 +325,7 @@ private fun MatchingDetailBottomBar(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        if (currentPage == MatchingDetailPage.ValuePickState) {
+        if (currentPage == MatchingDetailPage.ValuePickPage) {
             PieceRoundingButton(
                 label = stringResource(R.string.valuepick_bottom_bar_label),
                 onClick = onAcceptClick,
@@ -366,7 +366,7 @@ private fun MatchingDetailScreenPreview() {
 private fun BottomNavigationOnBasicInfoStatePreview() {
     PieceTheme {
         MatchingDetailBottomBar(
-            currentPage = MatchingDetailPage.BasicInfoState,
+            currentPage = MatchingDetailPage.BasicInfoPage,
             {},
             {},
             {},
@@ -380,7 +380,7 @@ private fun BottomNavigationOnBasicInfoStatePreview() {
 private fun BottomNavigationOnValueTalkStatePreview() {
     PieceTheme {
         MatchingDetailBottomBar(
-            currentPage = MatchingDetailPage.ValueTalkState,
+            currentPage = MatchingDetailPage.ValueTalkPage,
             {},
             {},
             {},
@@ -394,7 +394,7 @@ private fun BottomNavigationOnValueTalkStatePreview() {
 private fun BottomNavigationOnValuePickStatePreview() {
     PieceTheme {
         MatchingDetailBottomBar(
-            currentPage = MatchingDetailPage.ValuePickState,
+            currentPage = MatchingDetailPage.ValuePickPage,
             {},
             {},
             {},

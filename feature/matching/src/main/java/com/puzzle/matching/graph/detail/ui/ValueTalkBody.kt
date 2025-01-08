@@ -1,4 +1,4 @@
-package com.puzzle.matching.common.ui
+package com.puzzle.matching.graph.detail.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +32,7 @@ import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.matching.ValueTalk
-import com.puzzle.matching.common.component.BasicInfoHeader
+import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
 internal fun ValueTalkBody(
