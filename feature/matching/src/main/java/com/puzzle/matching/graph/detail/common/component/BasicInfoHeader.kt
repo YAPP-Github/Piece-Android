@@ -1,4 +1,4 @@
-package com.puzzle.matching.common.component
+package com.puzzle.matching.graph.detail.common.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

@@ -71,25 +71,21 @@ class RegistrationViewModel @AssistedInject constructor(
     }
 
     private fun checkTerm(termId: Int) = setState {
-        val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap().apply {
-            this[termId] = !(this[termId] ?: false)
-        }
+        val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
+            .apply { this[termId] = !(this[termId] ?: false) }
+            .toMap()
 
         copy(termsCheckedInfo = updatedTermsCheckedInfo)
     }
 
     private fun checkAllTerms() = setState {
-        if (allTermsAgreed) {
-            copy(termsCheckedInfo = mutableMapOf())
+        val updatedTermsCheckedInfo = if (allTermsAgreed) {
+            emptyMap()
         } else {
-            val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
-
-            terms.forEach { termInfo ->
-                updatedTermsCheckedInfo[termInfo.termId] = true
-            }
-
-            copy(termsCheckedInfo = updatedTermsCheckedInfo)
+            terms.associate { termInfo -> termInfo.id to true }
         }
+
+        copy(termsCheckedInfo = updatedTermsCheckedInfo)
     }
 
     @AssistedFactory

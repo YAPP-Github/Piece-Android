@@ -1,4 +1,4 @@
-package com.puzzle.matching.common.ui
+package com.puzzle.matching.graph.detail.common.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -45,7 +45,7 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.matching.ValuePick
-import com.puzzle.matching.common.component.BasicInfoHeader
+import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
 internal fun ValuePickBody(

@@ -80,7 +80,7 @@ class TermsDaoTest {
         val expected = listOf(
             TermEntity(2, "새로운 약관", "새로운 내용", false, "2024-06-01T00:00:00".parseDateTime())
         )
-        termsDao.clearAndInsertTerms(*expected.toTypedArray())
+        termsDao.replaceTerms(*expected.toTypedArray())
         val actual = termsDao.getTerms()
 
         // then

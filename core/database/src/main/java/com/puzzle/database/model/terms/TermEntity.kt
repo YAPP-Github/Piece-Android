@@ -16,7 +16,7 @@ data class TermEntity(
     @ColumnInfo(name = "start_date") val startDate: LocalDateTime,
 ) {
     fun toDomain() = Term(
-        termId = id,
+        id = id,
         title = title,
         content = content,
         required = required,
