@@ -17,11 +17,11 @@ class TermsRepositoryImpl @Inject constructor(
         val terms = termDataSource.loadTerms()
             .getOrThrow()
             .toDomain()
-            .filter { it.termId != UNKNOWN_INT }
+            .filter { it.id != UNKNOWN_INT }
 
         val termsEntity = terms.map {
             TermEntity(
-                id = it.termId,
+                id = it.id,
                 title = it.title,
                 content = it.content,
                 required = it.required,
@@ -29,11 +29,11 @@ class TermsRepositoryImpl @Inject constructor(
             )
         }
 
-        localTermDataSource.clearAndInsertTerms(termsEntity)
+        localTermDataSource.replaceTerms(termsEntity)
     }
 
-    override suspend fun getTerms(): Result<List<Term>> = suspendRunCatching {
-        localTermDataSource.getTerms()
+    override suspend fun getTerms(): Result<List<Term>> = runCatching {
+        localTermDataSource.retrieveTerms()
             .map(TermEntity::toDomain)
     }
 }

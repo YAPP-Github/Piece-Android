@@ -19,7 +19,7 @@ interface TermsDao {
     suspend fun clearTerms()
 
     @Transaction
-    suspend fun clearAndInsertTerms(vararg terms: TermEntity) {
+    suspend fun replaceTerms(vararg terms: TermEntity) {
         clearTerms()
         insertTerms(*terms)
     }

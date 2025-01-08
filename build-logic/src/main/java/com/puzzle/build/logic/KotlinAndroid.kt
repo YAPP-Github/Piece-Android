@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureKotlinAndroid() {
     pluginManager.apply("org.jetbrains.kotlin.android")
-    pluginManager.apply("org.jetbrains.kotlin.plugin.serialization")
 
     androidExtension.apply {
         compileSdk = 35
@@ -40,8 +39,6 @@ internal fun Project.configureKotlinAndroid() {
 //            add("implementation", libs.findLibrary("firebase-analytics").get())
 //            add("implementation", libs.findLibrary("firebase-crashlytics").get())
 //        }
-
-        packaging { resources.excludes.add("META-INF/*") }
     }
 
     configureKotlin()

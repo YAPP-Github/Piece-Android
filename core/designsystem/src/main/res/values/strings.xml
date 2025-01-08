@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!--Term-->
+    <string name="next">다음</string>
+    <string name="agree">동의하기</string>
+    <string name="all_term_agree">약관 전체 동의</string>
+
     <!--Matching-->
     <string name="matching_title">Matching</string>
     <string name="check_the_matching_pieces">매칭 조각을 확인해주세요!</string>
