@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.registration
+package com.puzzle.auth.graph.registration.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column

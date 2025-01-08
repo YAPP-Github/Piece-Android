@@ -85,7 +85,7 @@ class RegistrationViewModel @AssistedInject constructor(
             val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
 
             terms.forEach { termInfo ->
-                updatedTermsCheckedInfo[termInfo.termId] = true
+                updatedTermsCheckedInfo[termInfo.id] = true
             }
 
             copy(termsCheckedInfo = updatedTermsCheckedInfo)

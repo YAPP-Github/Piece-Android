@@ -1,4 +1,4 @@
-package com.puzzle.matching.common.constant
+package com.puzzle.matching.graph.detail.common.constant
 
 enum class DialogType {
     ACCEPT_MATCHING,

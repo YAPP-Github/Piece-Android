@@ -23,7 +23,7 @@ data class TermResponse(
     val startDate: String?,
 ) {
     fun toDomain(): Term = Term(
-        termId = termId ?: UNKNOWN_INT,
+        id = termId ?: UNKNOWN_INT,
         title = title ?: UNKNOWN_STRING,
         content = content ?: UNKNOWN_STRING,
         required = required ?: false,

@@ -16,11 +16,11 @@ class TermsRepositoryImpl @Inject constructor(
         val terms = termDataSource.loadTerms()
             .getOrThrow()
             .toDomain()
-            .filter { it.termId != UNKNOWN_INT }
+            .filter { it.id != UNKNOWN_INT }
 
         val termsEntity = terms.map {
             TermEntity(
-                id = it.termId,
+                id = it.id,
                 title = it.title,
                 content = it.content,
                 required = it.required,
