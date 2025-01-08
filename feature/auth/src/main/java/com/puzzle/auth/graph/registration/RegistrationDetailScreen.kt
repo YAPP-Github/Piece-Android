@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.component.PieceWebView
@@ -39,7 +41,7 @@ internal fun RegistrationDetailScreen(
         )
 
         PieceSolidButton(
-            label = "동의하기",
+            label = stringResource(R.string.agree),
             onClick = onAgreeClick,
             modifier = Modifier
                 .fillMaxWidth()

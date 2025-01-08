@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -20,6 +21,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceCheckList
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
@@ -95,7 +97,7 @@ private fun RegistrationScreen(
 
         PieceCheckList(
             checked = state.allTermsAgreed,
-            label = "약관 전체 동의",
+            label = stringResource(R.string.all_term_agree),
             containerColor = PieceTheme.colors.light3,
             onCheckedChange = checkAllTerms,
             modifier = Modifier
@@ -121,7 +123,7 @@ private fun RegistrationScreen(
         )
 
         PieceSolidButton(
-            label = "다음",
+            label = stringResource(R.string.next),
             onClick = {},
             modifier = Modifier
                 .fillMaxWidth()
