@@ -1,5 +1,6 @@
 package com.puzzle.data.repository
 
+import com.puzzle.common.suspendRunCatching
 import com.puzzle.database.model.terms.TermEntity
 import com.puzzle.database.source.term.LocalTermDataSource
 import com.puzzle.domain.model.terms.Term
@@ -12,7 +13,7 @@ class TermsRepositoryImpl @Inject constructor(
     private val termDataSource: TermDataSource,
     private val localTermDataSource: LocalTermDataSource,
 ) : TermsRepository {
-    override suspend fun loadTerms(): Result<Unit> = runCatching {
+    override suspend fun loadTerms(): Result<Unit> = suspendRunCatching {
         val terms = termDataSource.loadTerms()
             .getOrThrow()
             .toDomain()
@@ -33,6 +34,6 @@ class TermsRepositoryImpl @Inject constructor(
 
     override suspend fun getTerms(): Result<List<Term>> = runCatching {
         localTermDataSource.retrieveTerms()
-            .map { it.toDomain() }
+            .map(TermEntity::toDomain)
     }
 }

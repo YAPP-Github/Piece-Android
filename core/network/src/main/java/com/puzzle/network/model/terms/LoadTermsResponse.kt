@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 data class LoadTermsResponse(
     val responses: List<TermResponse>?,
 ) {
-    fun toDomain() = responses?.map { it.toDomain() } ?: emptyList()
+    fun toDomain() = responses?.map(TermResponse::toDomain) ?: emptyList()
 }
 
 @Serializable
