@@ -28,7 +28,7 @@ class TermsRepositoryImpl @Inject constructor(
             )
         }
 
-        localTermDataSource.clearAndInsertTerms(termsEntity)
+        localTermDataSource.replaceTerms(termsEntity)
     }
 
     override suspend fun getTerms(): Result<List<Term>> = runCatching {

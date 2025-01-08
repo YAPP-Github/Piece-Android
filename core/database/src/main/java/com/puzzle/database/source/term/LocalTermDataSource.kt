@@ -10,6 +10,5 @@ class LocalTermDataSource @Inject constructor(
     private val termsDao: TermsDao,
 ) {
     suspend fun retrieveTerms() = termsDao.getTerms()
-    suspend fun clearAndInsertTerms(terms: List<TermEntity>) =
-        termsDao.clearAndInsertTerms(*terms.toTypedArray())
+    suspend fun replaceTerms(terms: List<TermEntity>) = termsDao.replaceTerms(*terms.toTypedArray())
 }
