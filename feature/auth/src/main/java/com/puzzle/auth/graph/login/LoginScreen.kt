@@ -79,7 +79,7 @@ fun LoginScreen(
             .clickable {
                 navigate(
                     NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.RegistrationRoute,
+                        route = AuthGraphDest.VerificationRoute,
                         popUpTo = AuthGraph,
                     )
                 )

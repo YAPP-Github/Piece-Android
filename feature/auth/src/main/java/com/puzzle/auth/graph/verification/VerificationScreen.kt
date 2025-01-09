@@ -16,10 +16,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -32,14 +30,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.auth.graph.verification.contract.VerificationIntent
+import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
+import com.puzzle.auth.graph.verification.contract.VerificationState.VerificationCodeStatus
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
-import kotlinx.coroutines.delay
 
 @Composable
 internal fun VerificationRoute(
@@ -49,33 +49,30 @@ internal fun VerificationRoute(
 
     VerificationScreen(
         state = state,
-        navigate = {},
+        navigate = {
+            viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
+        },
+        onRequestVerificationCodeClick = {
+            viewModel.onIntent(VerificationIntent.RequestVerificationCode)
+        },
+        onVerifyClick = { code ->
+            viewModel.onIntent(VerificationIntent.VerifyCode(code))
+        },
+        onNextClick = {
+            viewModel.onIntent(VerificationIntent.CompleteVerification)
+        }
     )
 }
 
 @Composable
-fun VerificationScreen(
+private fun VerificationScreen(
     state: VerificationState,
+    onRequestVerificationCodeClick: () -> Unit,
+    onVerifyClick: (String) -> Unit,
+    onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // 전화번호, 인증번호는 회전 등에서 상태 유지를 위해 rememberSaveable 사용
-    var phoneNumber by rememberSaveable { mutableStateOf("") }
-    var verificationNumber by rememberSaveable { mutableStateOf("") }
-
-    // 타이머 상태를 별도 함수로 추출
-    val timerState = rememberTimerState(
-        totalSeconds = 300, // 5분
-        onTimerFinish = {
-            // 필요한 후처리가 있으면 여기서 처리
-        }
-    )
-
-    // 인증번호 받기 버튼/재전송 버튼 텍스트
-    // - 타이머가 한 번이라도 시작했으면 재전송 버튼으로, 아니면 받기 버튼으로
-    // - 혹은 'isTimerRunning' 상태에 맞추어서만 바꿔도 됨
-    val requestButtonLabel = if (timerState.hasStarted) "인증번호 재전송" else "인증번호 받기"
-
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -92,7 +89,9 @@ fun VerificationScreen(
     ) {
         PieceSubCloseTopBar(
             title = "",
-            onCloseClick = { /* 뒤로가기 혹은 close 동작 */ },
+            onCloseClick = {
+                navigate(NavigationEvent.NavigateUp)
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 14.dp),
@@ -124,118 +123,29 @@ fun VerificationScreen(
 
         Spacer(modifier = Modifier.height(70.dp))
 
-        // -----------------------------
-        // (1) 전화번호 입력 영역
-        // -----------------------------
-        Text(
-            text = "휴대폰 번호",
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
+        PhoneNumberBody(
+            hasStarted = state.hasStarted,
+            onRequestVerificationCodeClick = onRequestVerificationCodeClick
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // 기본 입력 필드
-            BasicTextField(
-                value = phoneNumber,
-                onValueChange = { phoneNumber = it },
-                textStyle = PieceTheme.typography.bodyMM,
-                modifier = Modifier
-                    .height(52.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(PieceTheme.colors.light3)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 14.dp,
-                    )
-                    .weight(1f),
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            // 인증번호 받기 / 재전송 버튼
-            PieceSolidButton(
-                label = requestButtonLabel,
-                onClick = {
-                    // 인증번호 API 호출 후 타이머 시작
-                    timerState.resendCode()
-                },
-                enabled = phoneNumber.isNotEmpty()
-            )
-        }
-
-        // -----------------------------
-        // (2) 인증번호 입력 & 타이머 노출
-        // -----------------------------
-        // 타이머가 0이 아니면 인증번호 입력 영역 노출
-        if (timerState.remainingTime > 0) {
+        if (state.hasStarted) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            Text(
-                text = "인증 번호",
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.dark3,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // 인증번호 입력 필드 + 남은 시간
-            BasicTextField(
-                value = verificationNumber,
-                onValueChange = { verificationNumber = it },
-                textStyle = PieceTheme.typography.bodyMM,
-                decorationBox = { innerTextField ->
-                    // 인증번호 입력 내부에 남은 시간을 표시
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        innerTextField()
-
-                        Text(
-                            text = formatTime(timerState.remainingTime),
-                            style = PieceTheme.typography.bodySM,
-                            color = PieceTheme.colors.primaryDefault,
-                            modifier = Modifier
-                                .align(Alignment.CenterEnd)
-                        )
-                    }
-                },
-                modifier = Modifier
-                    .height(52.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(PieceTheme.colors.light3)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 14.dp,
-                    )
-                    .fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "안전한 이용을 위해 타인과 절대 공유하지 마세요.",
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.dark3,
+            VerificationCodeBody(
+                remainingTimeInSec = state.remainingTimeInSec,
+                verificationCodeStatus = state.verificationCodeStatus,
+                onVerifyClick = onVerifyClick,
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // -----------------------------
-        // (3) 최종 인증 / 다음 버튼
-        // -----------------------------
         PieceSolidButton(
             label = "다음",
             onClick = {
-                // 실제 인증 로직 처리
-                // 예: navigate(AuthGraphDest.SomeNextRoute)
+                onNextClick()
             },
-            enabled = verificationNumber.isNotEmpty(),
+            enabled = state.isVerified,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -243,71 +153,140 @@ fun VerificationScreen(
     }
 }
 
-/**
- * [totalSeconds]만큼 카운트다운을 진행하는 타이머 상태를 기억하는 Composable.
- * 필요한 타이머 관련 로직을 캡슐화하여, UI 단에서는 상태만 받아서 사용.
- */
 @Composable
-fun rememberTimerState(
-    totalSeconds: Int,
-    onTimerFinish: () -> Unit = {},
-): TimerState {
-    // 남은 시간
-    var remainingTime by rememberSaveable { mutableStateOf(totalSeconds) }
+private fun VerificationCodeBody(
+    remainingTimeInSec: Int,
+    verificationCodeStatus: VerificationCodeStatus,
+    onVerifyClick: (String) -> Unit,
+) {
+    var verificationCode by rememberSaveable { mutableStateOf("") }
 
-    // 타이머 동작 여부
-    var isTimerRunning by rememberSaveable { mutableStateOf(false) }
+    val (verificationCodeStatusMessage, verificationCodeStatusColor) =
+        when (verificationCodeStatus) {
+            VerificationCodeStatus.DO_NOT_SHARE ->
+                "어떤 경우에도 타인에게 공유하지 마세요" to PieceTheme.colors.dark3
 
-    // 한 번이라도 타이머를 시작했는지 여부
-    var hasStarted by rememberSaveable { mutableStateOf(false) }
+            VerificationCodeStatus.VERIFIED ->
+                "전화번호 인증을 완료했어요" to PieceTheme.colors.primaryDefault
 
-    // 타이머가 동작 중이고, 남은 시간이 있을 때 1초마다 감소
-    if (isTimerRunning && remainingTime > 0) {
-        LaunchedEffect(remainingTime) {
-            delay(1000L)
-            remainingTime--
-            if (remainingTime <= 0) {
-                isTimerRunning = false
-                onTimerFinish()
-            }
+            VerificationCodeStatus.INVALID ->
+                "올바른 인증번호가 아니에요" to PieceTheme.colors.subDefault
+
+            VerificationCodeStatus.TIME_EXPIRED ->
+                "유효시간이 지났어요! ‘인증번호 재전송’을 눌러주세요" to PieceTheme.colors.subDefault
         }
+
+    val isVerifyButtonEnabled =
+        verificationCodeStatus == VerificationCodeStatus.DO_NOT_SHARE ||
+                verificationCodeStatus == VerificationCodeStatus.INVALID
+
+    Text(
+        text = "인증 번호",
+        style = PieceTheme.typography.bodySM,
+        color = PieceTheme.colors.dark3,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BasicTextField(
+            value = verificationCode,
+            onValueChange = { verificationCode = it },
+            textStyle = PieceTheme.typography.bodyMM,
+            decorationBox = { innerTextField ->
+                Box {
+                    innerTextField()
+
+                    Text(
+                        text = formatTime(remainingTimeInSec),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.primaryDefault,
+                        modifier = Modifier
+                            .align(Alignment.CenterEnd)
+                    )
+                }
+            },
+            modifier = Modifier
+                .height(52.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.light3)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 14.dp,
+                )
+                .weight(1f),
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        PieceSolidButton(
+            label = "확인",
+            onClick = {
+                onVerifyClick(verificationCode)
+            },
+            enabled = isVerifyButtonEnabled,
+        )
     }
 
-    // 타이머 시작 함수
-    fun startTimer() {
-        remainingTime = totalSeconds
-        isTimerRunning = true
-        hasStarted = true
-    }
+    Spacer(modifier = Modifier.height(8.dp))
 
-    // 인증번호 재전송 함수
-    fun resendCode() {
-        // 예: API 호출 등 인증번호 재발급 로직
-        startTimer()
-    }
+    Text(
+        text = verificationCodeStatusMessage,
+        style = PieceTheme.typography.bodySM,
+        color = verificationCodeStatusColor,
+    )
+}
 
-    return remember {
-        TimerState(
-            remainingTime = remainingTime,
-            isTimerRunning = isTimerRunning,
-            hasStarted = hasStarted,
-            startTimer = ::startTimer,
-            resendCode = ::resendCode,
+@Composable
+private fun PhoneNumberBody(
+    hasStarted: Boolean,
+    onRequestVerificationCodeClick: () -> Unit
+) {
+    var phoneNumber by rememberSaveable { mutableStateOf("") }
+
+    val requestButtonLabel = if (hasStarted) "인증번호 재전송" else "인증번호 받기"
+
+    Text(
+        text = "휴대폰 번호",
+        style = PieceTheme.typography.bodySM,
+        color = PieceTheme.colors.dark3,
+    )
+
+    Spacer(modifier = Modifier.height(8.dp))
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        BasicTextField(
+            value = phoneNumber,
+            onValueChange = { phoneNumber = it },
+            textStyle = PieceTheme.typography.bodyMM,
+            modifier = Modifier
+                .height(52.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.light3)
+                .padding(
+                    horizontal = 16.dp,
+                    vertical = 14.dp,
+                )
+                .weight(1f),
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        PieceSolidButton(
+            label = requestButtonLabel,
+            onClick = {
+                onRequestVerificationCodeClick()
+            },
+            enabled = phoneNumber.isNotEmpty()
         )
     }
 }
-
-/**
- * 타이머 관련 상태값을 담고 있는 자료 구조.
- * 상태는 람다로 보관해두고, 필요한 시점에만 읽기 위해 함수 형태로 둠.
- */
-data class TimerState(
-    val remainingTime: Int,
-    val isTimerRunning: Boolean,
-    val hasStarted: Boolean,
-    val startTimer: () -> Unit,
-    val resendCode: () -> Unit,
-)
 
 /**
  * 초 단위 [seconds]를 "mm:ss" 형태 문자열로 변환하는 함수
@@ -324,8 +303,16 @@ fun formatTime(seconds: Int): String {
 fun PreviewVerificationScreen() {
     PieceTheme {
         VerificationScreen(
-            state = VerificationState(),
+            state = VerificationState(
+                hasStarted = true,
+                remainingTimeInSec = 299,
+                isVerified = true,
+                verificationCodeStatus = VerificationState.VerificationCodeStatus.DO_NOT_SHARE,
+            ),
             navigate = {},
+            onRequestVerificationCodeClick = {},
+            onVerifyClick = {},
+            onNextClick = {},
         )
     }
 }
