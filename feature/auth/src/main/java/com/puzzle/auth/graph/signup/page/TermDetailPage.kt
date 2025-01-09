@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.signup.ui
+package com.puzzle.auth.graph.signup.page
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
@@ -21,7 +21,7 @@ import com.puzzle.domain.model.terms.Term
 import java.time.LocalDateTime
 
 @Composable
-internal fun ColumnScope.TermDetailBody(
+internal fun ColumnScope.TermDetailPage(
     term: Term,
     onBackClick: () -> Unit,
     onAgreeClick: () -> Unit,
@@ -52,14 +52,14 @@ internal fun ColumnScope.TermDetailBody(
 
 @Preview
 @Composable
-fun TermDetailBodyPreview() {
+fun TermDetailPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
         ) {
-            TermDetailBody(
+            TermDetailPage(
                 term = Term(1, "개인정보 처리방침", "https://naver.com", true, LocalDateTime.now()),
                 onBackClick = {},
                 onAgreeClick = {}

@@ -14,11 +14,11 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.signup.contract.SignUpIntent
 import com.puzzle.auth.graph.signup.contract.SignUpSideEffect
 import com.puzzle.auth.graph.signup.contract.SignUpState
-import com.puzzle.auth.graph.signup.ui.AccessRightsBody
-import com.puzzle.auth.graph.signup.ui.AvoidAcquaintancesBody
-import com.puzzle.auth.graph.signup.ui.SignUpCompletedBody
-import com.puzzle.auth.graph.signup.ui.TermBody
-import com.puzzle.auth.graph.signup.ui.TermDetailBody
+import com.puzzle.auth.graph.signup.page.AccessRightsPage
+import com.puzzle.auth.graph.signup.page.AvoidAcquaintancesPage
+import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
+import com.puzzle.auth.graph.signup.page.TermPage
+import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.domain.model.terms.Term
 import com.puzzle.navigation.NavigationEvent
 
@@ -59,7 +59,7 @@ private fun SignUpScreen(
             .padding(horizontal = 20.dp),
     ) {
         when (state.signUpPage) {
-            SignUpState.SignUpPage.TermPage -> TermBody(
+            SignUpState.SignUpPage.TermPage -> TermPage(
                 terms = state.terms,
                 termsCheckedInfo = state.termsCheckedInfo,
                 allTermsAgreed = state.allTermsAgreed,
@@ -73,25 +73,25 @@ private fun SignUpScreen(
                 onNextClick = onNextClick,
             )
 
-            SignUpState.SignUpPage.TermDetailPage -> TermDetailBody(
+            SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
                 term = selectedTerm!!,
                 onBackClick = onBackClick,
                 onAgreeClick = { agreeTerm(selectedTerm.id) },
             )
 
-            SignUpState.SignUpPage.AccessRightsPage -> AccessRightsBody(
+            SignUpState.SignUpPage.AccessRightsPage -> AccessRightsPage(
                 agreeCameraPermission = true,
                 onBackClick = onBackClick,
                 onNextClick = onNextClick,
             )
 
-            SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesBody(
+            SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesPage(
                 onBackClick = onBackClick,
                 onTryNextClick = onNextClick,
                 onAvoidAcquaintancesClick = onNextClick,
             )
 
-            SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedBody(
+            SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
                 onGenerateProfileClick = {},
             )
         }

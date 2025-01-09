@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.signup.ui
+package com.puzzle.auth.graph.signup.page
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -30,7 +30,7 @@ import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-internal fun ColumnScope.AccessRightsBody(
+internal fun ColumnScope.AccessRightsPage(
     agreeCameraPermission: Boolean,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -141,14 +141,14 @@ private fun PiecePermissionRow(
 
 @Preview
 @Composable
-fun AccessRightsBodyPreview() {
+fun AccessRightsPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
         ) {
-            AccessRightsBody(
+            AccessRightsPage(
                 agreeCameraPermission = true,
                 onBackClick = {},
                 onNextClick = {}

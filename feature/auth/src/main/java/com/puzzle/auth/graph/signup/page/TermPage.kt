@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.signup.ui
+package com.puzzle.auth.graph.signup.page
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -24,7 +24,7 @@ import com.puzzle.domain.model.terms.Term
 import java.time.LocalDateTime
 
 @Composable
-internal fun ColumnScope.TermBody(
+internal fun ColumnScope.TermPage(
     terms: List<Term>,
     termsCheckedInfo: Map<Int, Boolean>,
     allTermsAgreed: Boolean,
@@ -99,14 +99,14 @@ internal fun ColumnScope.TermBody(
 
 @Preview
 @Composable
-fun TermBodyPreview() {
+fun TermPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
         ) {
-            TermBody(
+            TermPage(
                 terms = listOf(
                     Term(1, "서비스 이용약관", "https://example.com/term1", false, LocalDateTime.now()),
                     Term(2, "위치정보 이용약관", "https://example.com/term2", false, LocalDateTime.now()),

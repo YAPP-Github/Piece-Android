@@ -1,8 +1,6 @@
-package com.puzzle.auth.graph.signup.ui
+package com.puzzle.auth.graph.signup.page
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -17,52 +15,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
-import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-internal fun ColumnScope.AvoidAcquaintancesBody(
-    onBackClick: () -> Unit,
-    onTryNextClick: () -> Unit,
-    onAvoidAcquaintancesClick: () -> Unit,
+internal fun ColumnScope.SignUpCompletedPage(
+    onGenerateProfileClick: () -> Unit,
 ) {
-    BackHandler { onBackClick() }
-
-    PieceSubBackTopBar(
-        title = "",
-        onBackClick = onBackClick,
-    )
-
     Text(
         text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                append("아는 사람")
+                append("Piece")
             }
 
-            append("에게는\n프로필이 노출되지 않아요")
+            append("에 가입하신 것을\n환영해요!")
         },
         style = PieceTheme.typography.headingLSB,
         color = PieceTheme.colors.black,
-        modifier = Modifier.padding(top = 20.dp),
-    )
-
-    Text(
-        text = "연락처에 등록된 번호로 가입한 사용자는\n매칭 대상에서 제외되어, 개인정보가 보호됩니다.",
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark3,
-        modifier = Modifier.padding(top = 12.dp),
+        modifier = Modifier.padding(top = 80.dp),
     )
 
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
-            .weight(0.7f),
+            .weight(1.2f),
     )
 
     Spacer(
@@ -75,41 +55,29 @@ internal fun ColumnScope.AvoidAcquaintancesBody(
     Spacer(
         modifier = Modifier
             .fillMaxWidth()
-            .weight(1.2f),
-    )
-
-    Text(
-        text = stringResource(R.string.try_next),
-        style = PieceTheme.typography.bodyMM.copy(textDecoration = TextDecoration.Underline),
-        color = PieceTheme.colors.dark3,
-        modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .padding(top = 12.dp)
-            .clickable { onTryNextClick() },
+            .weight(1.6f),
     )
 
     PieceSolidButton(
-        label = stringResource(R.string.avoid_acquaintances),
-        onClick = onAvoidAcquaintancesClick,
+        label = stringResource(R.string.generate_profile),
+        onClick = onGenerateProfileClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 20.dp, bottom = 10.dp),
+            .padding(top = 12.dp, bottom = 10.dp),
     )
 }
 
 @Preview
 @Composable
-fun AvoidAcquaintancesBodyPreview() {
+fun SignUpCompletedPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp),
         ) {
-            AvoidAcquaintancesBody(
-                onBackClick = {},
-                onTryNextClick = {},
-                onAvoidAcquaintancesClick = {}
+            SignUpCompletedPage(
+                onGenerateProfileClick = {}
             )
         }
     }

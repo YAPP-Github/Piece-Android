@@ -1,4 +1,4 @@
-package com.puzzle.matching.graph.detail.ui
+package com.puzzle.matching.graph.detail.page
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -48,7 +48,7 @@ import com.puzzle.domain.model.matching.ValuePick
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
-internal fun ValuePickBody(
+internal fun ValuePickPage(
     nickName: String,
     selfDescription: String,
     pickCards: List<ValuePick>,
@@ -314,9 +314,9 @@ private fun ValuePickCard(
 
 @Preview
 @Composable
-private fun ProfileValuePickBodyPreview() {
+private fun ProfileValuePickPagePreview() {
     PieceTheme {
-        ValuePickBody(
+        ValuePickPage(
             nickName = "nickName",
             selfDescription = "selfDescription",
             pickCards = listOf(
