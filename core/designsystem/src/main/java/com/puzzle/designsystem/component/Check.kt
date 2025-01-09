@@ -59,7 +59,8 @@ fun PieceCheckList(
         modifier = modifier
             .height(52.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(containerColor),
+            .background(containerColor)
+            .clickable { onCheckedChange() },
     ) {
         PieceCheck(
             checked = checked,

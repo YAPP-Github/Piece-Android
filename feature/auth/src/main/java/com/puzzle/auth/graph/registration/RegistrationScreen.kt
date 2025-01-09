@@ -16,6 +16,7 @@ import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
 import com.puzzle.auth.graph.registration.ui.AccessRightsBody
 import com.puzzle.auth.graph.registration.ui.AvoidAcquaintancesBody
+import com.puzzle.auth.graph.registration.ui.SignUpCompletedBody
 import com.puzzle.auth.graph.registration.ui.TermBody
 import com.puzzle.auth.graph.registration.ui.TermDetailBody
 import com.puzzle.domain.model.terms.Term
@@ -90,7 +91,9 @@ private fun RegistrationScreen(
                 onAvoidAcquaintancesClick = onNextClick,
             )
 
-            RegistrationState.RegistrationPage.SignUpCompleted -> {}
+            RegistrationState.RegistrationPage.SignUpCompleted -> SignUpCompletedBody(
+                onGenerateProfileClick = {},
+            )
         }
     }
 }

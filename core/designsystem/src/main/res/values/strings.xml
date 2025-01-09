@@ -6,6 +6,7 @@
     <string name="agree">동의하기</string>
     <string name="try_next">다음에 할래요</string>
     <string name="avoid_acquaintances">아는 사람 차단하기</string>
+    <string name="generate_profile">프로필 생성하기</string>
 
     <!--Matching-->
     <string name="matching_title">Matching</string>
