@@ -3,8 +3,10 @@ package com.puzzle.auth.graph.signup.ui
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,6 +19,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
@@ -92,4 +95,22 @@ internal fun ColumnScope.AvoidAcquaintancesBody(
             .fillMaxWidth()
             .padding(top = 20.dp, bottom = 10.dp),
     )
+}
+
+@Preview
+@Composable
+fun AvoidAcquaintancesBodyPreview() {
+    PieceTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+        ) {
+            AvoidAcquaintancesBody(
+                onBackClick = {},
+                onTryNextClick = {},
+                onAvoidAcquaintancesClick = {}
+            )
+        }
+    }
 }

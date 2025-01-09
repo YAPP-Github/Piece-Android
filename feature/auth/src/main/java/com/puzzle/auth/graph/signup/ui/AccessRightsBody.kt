@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
@@ -134,5 +136,36 @@ private fun PiecePermissionRow(
                 color = PieceTheme.colors.dark2,
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun AccessRightsBodyPreview() {
+    PieceTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 20.dp),
+        ) {
+            AccessRightsBody(
+                agreeCameraPermission = true,
+                onBackClick = {},
+                onNextClick = {}
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PiecePermissionRowPreview() {
+    PieceTheme {
+        PiecePermissionRow(
+            icon = R.drawable.ic_permission_camera,
+            label = "사진,카메라 [필수]",
+            description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
+            onClick = {}
+        )
     }
 }
