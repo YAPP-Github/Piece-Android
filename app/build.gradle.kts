@@ -11,7 +11,7 @@ android {
     defaultConfig {
         versionCode = 1
         versionName = "1.0.0"
-        targetSdk = 34
+        targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -20,8 +20,6 @@ android {
         manifestPlaceholders["KAKAO_APP_KEY"] = localProperties["KAKAO_APP_KEY"] as String
         buildConfigField("String", "KAKAO_APP_KEY", "\"${localProperties["KAKAO_APP_KEY"]}\"")
     }
-
-    packaging { resources { excludes += "/META-INF/*" } }
 
     buildTypes {
         release {
