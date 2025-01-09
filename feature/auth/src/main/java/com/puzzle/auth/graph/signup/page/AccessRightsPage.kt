@@ -141,7 +141,7 @@ private fun PiecePermissionRow(
 
 @Preview
 @Composable
-fun AccessRightsPagePreview() {
+private fun AccessRightsPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier
@@ -159,7 +159,7 @@ fun AccessRightsPagePreview() {
 
 @Preview
 @Composable
-fun PiecePermissionRowPreview() {
+private fun PiecePermissionRowPreview() {
     PieceTheme {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,

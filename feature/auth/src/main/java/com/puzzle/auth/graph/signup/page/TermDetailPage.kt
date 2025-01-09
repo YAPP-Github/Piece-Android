@@ -52,7 +52,7 @@ internal fun ColumnScope.TermDetailPage(
 
 @Preview
 @Composable
-fun TermDetailPagePreview() {
+private fun TermDetailPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier

@@ -99,7 +99,7 @@ internal fun ColumnScope.AvoidAcquaintancesPage(
 
 @Preview
 @Composable
-fun AvoidAcquaintancesPagePreview() {
+private fun AvoidAcquaintancesPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier

@@ -69,7 +69,7 @@ internal fun ColumnScope.SignUpCompletedPage(
 
 @Preview
 @Composable
-fun SignUpCompletedPagePreview() {
+private fun SignUpCompletedPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier

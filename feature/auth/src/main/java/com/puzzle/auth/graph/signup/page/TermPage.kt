@@ -99,7 +99,7 @@ internal fun ColumnScope.TermPage(
 
 @Preview
 @Composable
-fun TermPagePreview() {
+private fun TermPagePreview() {
     PieceTheme {
         Column(
             modifier = Modifier
