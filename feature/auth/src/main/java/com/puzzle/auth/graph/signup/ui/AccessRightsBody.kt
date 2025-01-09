@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.registration.ui
+package com.puzzle.auth.graph.signup.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes

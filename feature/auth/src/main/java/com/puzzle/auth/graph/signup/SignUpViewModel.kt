@@ -1,13 +1,13 @@
-package com.puzzle.auth.graph.registration
+package com.puzzle.auth.graph.signup
 
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
-import com.puzzle.auth.graph.registration.contract.RegistrationIntent
-import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
-import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect.Navigate
-import com.puzzle.auth.graph.registration.contract.RegistrationState
+import com.puzzle.auth.graph.signup.contract.SignUpIntent
+import com.puzzle.auth.graph.signup.contract.SignUpSideEffect
+import com.puzzle.auth.graph.signup.contract.SignUpSideEffect.Navigate
+import com.puzzle.auth.graph.signup.contract.SignUpState
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.navigation.NavigationHelper
@@ -21,15 +21,15 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class RegistrationViewModel @AssistedInject constructor(
-    @Assisted initialState: RegistrationState,
+class SignUpViewModel @AssistedInject constructor(
+    @Assisted initialState: SignUpState,
     private val termsRepository: TermsRepository,
     private val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
-) : MavericksViewModel<RegistrationState>(initialState) {
+) : MavericksViewModel<SignUpState>(initialState) {
 
-    private val intents = Channel<RegistrationIntent>(BUFFERED)
-    private val sideEffects = Channel<RegistrationSideEffect>(BUFFERED)
+    private val intents = Channel<SignUpIntent>(BUFFERED)
+    private val sideEffects = Channel<SignUpSideEffect>(BUFFERED)
 
     init {
         fetchTerms()
@@ -43,26 +43,26 @@ class RegistrationViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
     }
 
-    internal fun onIntent(intent: RegistrationIntent) = viewModelScope.launch {
+    internal fun onIntent(intent: SignUpIntent) = viewModelScope.launch {
         intents.send(intent)
     }
 
-    internal fun onSideEffect(sideEffect: RegistrationSideEffect) = viewModelScope.launch {
+    internal fun onSideEffect(sideEffect: SignUpSideEffect) = viewModelScope.launch {
         sideEffects.send(sideEffect)
     }
 
-    private fun processIntent(intent: RegistrationIntent) {
+    private fun processIntent(intent: SignUpIntent) {
         when (intent) {
-            is RegistrationIntent.CheckAllTerms -> checkAllTerms()
-            is RegistrationIntent.CheckTerm -> checkTerm(intent.termId)
-            is RegistrationIntent.AgreeTerm -> agreeTerm(intent.termId)
-            is RegistrationIntent.OnTermDetailClick -> onTermDetailClick()
-            is RegistrationIntent.OnBackClick -> onBackClick()
-            is RegistrationIntent.OnNextClick -> onNextClick()
+            is SignUpIntent.CheckAllTerms -> checkAllTerms()
+            is SignUpIntent.CheckTerm -> checkTerm(intent.termId)
+            is SignUpIntent.AgreeTerm -> agreeTerm(intent.termId)
+            is SignUpIntent.OnTermDetailClick -> onTermDetailClick()
+            is SignUpIntent.OnBackClick -> onBackClick()
+            is SignUpIntent.OnNextClick -> onNextClick()
         }
     }
 
-    private fun handleSideEffect(sideEffect: RegistrationSideEffect) {
+    private fun handleSideEffect(sideEffect: SignUpSideEffect) {
         when (sideEffect) {
             is Navigate -> navigationHelper.navigate(sideEffect.navigationEvent)
         }
@@ -89,7 +89,7 @@ class RegistrationViewModel @AssistedInject constructor(
 
         copy(
             termsCheckedInfo = updatedTermsCheckedInfo,
-            registrationPage = RegistrationState.RegistrationPage.TermPage,
+            signUpPage = SignUpState.SignUpPage.TermPage,
         )
     }
 
@@ -104,22 +104,22 @@ class RegistrationViewModel @AssistedInject constructor(
     }
 
     private fun onTermDetailClick() = setState {
-        copy(registrationPage = RegistrationState.RegistrationPage.TermDetailPage)
+        copy(signUpPage = SignUpState.SignUpPage.TermDetailPage)
     }
 
     private fun onBackClick() = setState {
-        copy(registrationPage = RegistrationState.RegistrationPage.getPreviousPage(registrationPage))
+        copy(signUpPage = SignUpState.SignUpPage.getPreviousPage(signUpPage))
     }
 
     private fun onNextClick() = setState {
-        copy(registrationPage = RegistrationState.RegistrationPage.getNextPage(registrationPage))
+        copy(signUpPage = SignUpState.SignUpPage.getNextPage(signUpPage))
     }
 
     @AssistedFactory
-    interface Factory : AssistedViewModelFactory<RegistrationViewModel, RegistrationState> {
-        override fun create(state: RegistrationState): RegistrationViewModel
+    interface Factory : AssistedViewModelFactory<SignUpViewModel, SignUpState> {
+        override fun create(state: SignUpState): SignUpViewModel
     }
 
     companion object :
-        MavericksViewModelFactory<RegistrationViewModel, RegistrationState> by hiltMavericksViewModelFactory()
+        MavericksViewModelFactory<SignUpViewModel, SignUpState> by hiltMavericksViewModelFactory()
 }

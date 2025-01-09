@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.registration.ui
+package com.puzzle.auth.graph.signup.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.ColumnScope

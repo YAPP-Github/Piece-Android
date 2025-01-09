@@ -1,4 +1,4 @@
-package com.puzzle.auth.graph.registration
+package com.puzzle.auth.graph.signup
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,38 +11,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
-import com.puzzle.auth.graph.registration.contract.RegistrationIntent
-import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
-import com.puzzle.auth.graph.registration.contract.RegistrationState
-import com.puzzle.auth.graph.registration.ui.AccessRightsBody
-import com.puzzle.auth.graph.registration.ui.AvoidAcquaintancesBody
-import com.puzzle.auth.graph.registration.ui.SignUpCompletedBody
-import com.puzzle.auth.graph.registration.ui.TermBody
-import com.puzzle.auth.graph.registration.ui.TermDetailBody
+import com.puzzle.auth.graph.signup.contract.SignUpIntent
+import com.puzzle.auth.graph.signup.contract.SignUpSideEffect
+import com.puzzle.auth.graph.signup.contract.SignUpState
+import com.puzzle.auth.graph.signup.ui.AccessRightsBody
+import com.puzzle.auth.graph.signup.ui.AvoidAcquaintancesBody
+import com.puzzle.auth.graph.signup.ui.SignUpCompletedBody
+import com.puzzle.auth.graph.signup.ui.TermBody
+import com.puzzle.auth.graph.signup.ui.TermDetailBody
 import com.puzzle.domain.model.terms.Term
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
-internal fun RegistrationRoute(
-    viewModel: RegistrationViewModel = mavericksViewModel()
+internal fun SignUpRoute(
+    viewModel: SignUpViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
 
-    RegistrationScreen(
+    SignUpScreen(
         state = state,
-        checkAllTerms = { viewModel.onIntent(RegistrationIntent.CheckAllTerms) },
-        checkTerm = { viewModel.onIntent(RegistrationIntent.CheckTerm(it)) },
-        agreeTerm = { viewModel.onIntent(RegistrationIntent.AgreeTerm(it)) },
-        onTermDetailClick = { viewModel.onIntent(RegistrationIntent.OnTermDetailClick) },
-        onBackClick = { viewModel.onIntent(RegistrationIntent.OnBackClick) },
-        onNextClick = { viewModel.onIntent(RegistrationIntent.OnNextClick) },
-        navigate = { event -> viewModel.onSideEffect(RegistrationSideEffect.Navigate(event)) }
+        checkAllTerms = { viewModel.onIntent(SignUpIntent.CheckAllTerms) },
+        checkTerm = { viewModel.onIntent(SignUpIntent.CheckTerm(it)) },
+        agreeTerm = { viewModel.onIntent(SignUpIntent.AgreeTerm(it)) },
+        onTermDetailClick = { viewModel.onIntent(SignUpIntent.OnTermDetailClick) },
+        onBackClick = { viewModel.onIntent(SignUpIntent.OnBackClick) },
+        onNextClick = { viewModel.onIntent(SignUpIntent.OnNextClick) },
+        navigate = { event -> viewModel.onSideEffect(SignUpSideEffect.Navigate(event)) }
     )
 }
 
 @Composable
-private fun RegistrationScreen(
-    state: RegistrationState,
+private fun SignUpScreen(
+    state: SignUpState,
     checkAllTerms: () -> Unit,
     checkTerm: (Int) -> Unit,
     agreeTerm: (Int) -> Unit,
@@ -58,8 +58,8 @@ private fun RegistrationScreen(
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
-        when (state.registrationPage) {
-            RegistrationState.RegistrationPage.TermPage -> TermBody(
+        when (state.signUpPage) {
+            SignUpState.SignUpPage.TermPage -> TermBody(
                 terms = state.terms,
                 termsCheckedInfo = state.termsCheckedInfo,
                 allTermsAgreed = state.allTermsAgreed,
@@ -73,25 +73,25 @@ private fun RegistrationScreen(
                 onNextClick = onNextClick,
             )
 
-            RegistrationState.RegistrationPage.TermDetailPage -> TermDetailBody(
+            SignUpState.SignUpPage.TermDetailPage -> TermDetailBody(
                 term = selectedTerm!!,
                 onBackClick = onBackClick,
                 onAgreeClick = { agreeTerm(selectedTerm.id) },
             )
 
-            RegistrationState.RegistrationPage.AccessRightsPage -> AccessRightsBody(
+            SignUpState.SignUpPage.AccessRightsPage -> AccessRightsBody(
                 agreeCameraPermission = true,
                 onBackClick = onBackClick,
                 onNextClick = onNextClick,
             )
 
-            RegistrationState.RegistrationPage.AvoidAcquaintancesPage -> AvoidAcquaintancesBody(
+            SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesBody(
                 onBackClick = onBackClick,
                 onTryNextClick = onNextClick,
                 onAvoidAcquaintancesClick = onNextClick,
             )
 
-            RegistrationState.RegistrationPage.SignUpCompleted -> SignUpCompletedBody(
+            SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedBody(
                 onGenerateProfileClick = {},
             )
         }

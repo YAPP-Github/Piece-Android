@@ -1,16 +1,16 @@
-package com.puzzle.auth.graph.registration.contract
+package com.puzzle.auth.graph.signup.contract
 
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.domain.model.terms.Term
 
-data class RegistrationState(
+data class SignUpState(
     val terms: List<Term> = emptyList(),
     val termsCheckedInfo: Map<Int, Boolean> = emptyMap(),
-    val registrationPage: RegistrationPage = RegistrationPage.TermPage,
+    val signUpPage: SignUpPage = SignUpPage.TermPage,
 ) : MavericksState {
     val allTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.id, false) }
 
-    enum class RegistrationPage {
+    enum class SignUpPage {
         TermPage,
         TermDetailPage,
         AccessRightsPage,
@@ -18,7 +18,7 @@ data class RegistrationState(
         SignUpCompleted;
 
         companion object {
-            fun getPreviousPage(currentPage: RegistrationPage): RegistrationPage {
+            fun getPreviousPage(currentPage: SignUpPage): SignUpPage {
                 return when (currentPage) {
                     TermDetailPage -> TermPage
                     AccessRightsPage -> TermPage
@@ -27,7 +27,7 @@ data class RegistrationState(
                 }
             }
 
-            fun getNextPage(currentPage: RegistrationPage): RegistrationPage {
+            fun getNextPage(currentPage: SignUpPage): SignUpPage {
                 return when (currentPage) {
                     TermPage -> AccessRightsPage
                     AccessRightsPage -> AvoidAcquaintancesPage
