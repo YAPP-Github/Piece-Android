@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
@@ -30,7 +31,9 @@ fun PieceMainTopBar(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp),
     ) {
         Text(
             text = title,
@@ -54,7 +57,9 @@ fun PieceSubTopBar(
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp),
     ) {
         Image(
             painter = painterResource(R.drawable.ic_arrow_left),
@@ -78,7 +83,11 @@ fun PieceSubBackTopBar(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp),
+    ) {
         Image(
             painter = painterResource(R.drawable.ic_arrow_left),
             contentDescription = "뒤로 가기 버튼",
@@ -102,10 +111,14 @@ fun PieceSubCloseTopBar(
     title: String,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showCloseButton: Boolean = true,
+    closeButtonEnabled: Boolean = true,
     contentColor: Color = PieceTheme.colors.black,
 ) {
-    Box(modifier = modifier.fillMaxWidth()) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(60.dp),
+    ) {
         Text(
             text = title,
             style = PieceTheme.typography.headingSSB,
@@ -113,7 +126,7 @@ fun PieceSubCloseTopBar(
             modifier = Modifier.align(Alignment.Center),
         )
 
-        if (showCloseButton) {
+        if (closeButtonEnabled) {
             Image(
                 painter = painterResource(R.drawable.ic_close),
                 contentDescription = "닫기 버튼",
@@ -176,9 +189,7 @@ fun PreviewPieceSubTopBar() {
                     modifier = Modifier.size(32.dp),
                 )
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 20.dp),
+            modifier = Modifier.padding(vertical = 20.dp),
         )
     }
 }

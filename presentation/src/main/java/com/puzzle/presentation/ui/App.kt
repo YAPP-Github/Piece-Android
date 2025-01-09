@@ -34,6 +34,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.puzzle.common.ui.NoRippleInteractionSource
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
@@ -41,7 +42,6 @@ import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.MyPageRoute
 import com.puzzle.navigation.Route
 import com.puzzle.navigation.SettingRoute
-import com.puzzle.designsystem.R
 import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
 import kotlin.reflect.KClass
@@ -59,6 +59,7 @@ fun App(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = PieceTheme.colors.white,
         bottomBar = {
             if (currentDestination?.shouldHideBottomNavigation() == false) {
                 AppBottomBar(

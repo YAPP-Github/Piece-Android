@@ -6,7 +6,7 @@ import com.puzzle.domain.model.matching.ValueTalk
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
-    val currentPage: MatchingDetailPage = MatchingDetailPage.BasicInfoState,
+    val currentPage: MatchingDetailPage = MatchingDetailPage.BasicInfoPage,
     // BasicInfoState
     val selfDescription: String = "",
     val nickName: String = "",
@@ -22,24 +22,24 @@ data class MatchingDetailState(
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {
-        BasicInfoState(title = ""),
-        ValueTalkState(title = "가치관 Talk"),
-        ValuePickState(title = "가치관 Pick");
+        BasicInfoPage(title = ""),
+        ValueTalkPage(title = "가치관 Talk"),
+        ValuePickPage(title = "가치관 Pick");
 
         companion object {
             fun getNextPage(currentPage: MatchingDetailPage): MatchingDetailPage {
                 return when (currentPage) {
-                    BasicInfoState -> ValueTalkState
-                    ValueTalkState -> ValuePickState
-                    ValuePickState -> ValuePickState
+                    BasicInfoPage -> ValueTalkPage
+                    ValueTalkPage -> ValuePickPage
+                    ValuePickPage -> ValuePickPage
                 }
             }
 
             fun getPreviousPage(currentPage: MatchingDetailPage): MatchingDetailPage {
                 return when (currentPage) {
-                    BasicInfoState -> BasicInfoState
-                    ValueTalkState -> BasicInfoState
-                    ValuePickState -> ValueTalkState
+                    BasicInfoPage -> BasicInfoPage
+                    ValueTalkPage -> BasicInfoPage
+                    ValuePickPage -> ValueTalkPage
                 }
             }
         }

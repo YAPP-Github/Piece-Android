@@ -29,6 +29,13 @@ private val PretendardMedium = FontFamily(
     ),
 )
 
+private val PretendardRegular = FontFamily(
+    Font(
+        resId = R.font.pretendard_medium,
+        weight = FontWeight.Normal,
+    ),
+)
+
 @Immutable
 data class PieceTypography(
     val headingXLSB: TextStyle = TextStyle(
@@ -67,7 +74,7 @@ data class PieceTypography(
         lineHeight = 24.sp,
     ),
     val bodyMR: TextStyle = TextStyle(
-        fontFamily = PretendardMedium,
+        fontFamily = PretendardRegular,
         fontSize = 16.sp,
         lineHeight = 24.sp,
     ),

@@ -1,7 +1,9 @@
 package com.puzzle.data.di
 
 import com.puzzle.data.repository.AuthRepositoryImpl
+import com.puzzle.data.repository.TermsRepositoryImpl
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.TermsRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,4 +20,10 @@ abstract class DataModule {
     abstract fun bindsAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl,
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsTermsRepository(
+        termsRepositoryImpl: TermsRepositoryImpl,
+    ): TermsRepository
 }

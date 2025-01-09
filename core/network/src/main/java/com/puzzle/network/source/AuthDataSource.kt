@@ -7,6 +7,7 @@ import com.puzzle.network.model.auth.LoginOauthResponse
 import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
+import com.puzzle.network.model.unwrapData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,10 +21,11 @@ class AuthDataSource @Inject constructor(
                 providerName = provider.apiValue,
                 token = token,
             )
-        )
+        ).unwrapData()
 
-    suspend fun requestAuthCode(phoneNumber: String): Result<LoginOauthResponse> =
+    suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
         pieceApi.requestAuthCode(RequestAuthCodeRequest(phoneNumber))
+            .unwrapData()
 
     suspend fun verifyAuthCode(phoneNumber: String, code: String): Result<VerifyAuthCodeResponse> =
         pieceApi.verifyAuthCode(
@@ -31,5 +33,5 @@ class AuthDataSource @Inject constructor(
                 phoneNumber = phoneNumber,
                 code = code,
             )
-        )
+        ).unwrapData()
 }
