@@ -28,7 +28,7 @@ import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-internal fun ColumnScope.AcessRightsBody(
+internal fun ColumnScope.AccessRightsBody(
     agreeCameraPermission: Boolean,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,

@@ -14,7 +14,8 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
-import com.puzzle.auth.graph.registration.ui.AcessRightsBody
+import com.puzzle.auth.graph.registration.ui.AccessRightsBody
+import com.puzzle.auth.graph.registration.ui.AvoidAcquaintancesBody
 import com.puzzle.auth.graph.registration.ui.TermBody
 import com.puzzle.auth.graph.registration.ui.TermDetailBody
 import com.puzzle.domain.model.terms.Term
@@ -77,13 +78,18 @@ private fun RegistrationScreen(
                 onAgreeClick = { agreeTerm(selectedTerm.id) },
             )
 
-            RegistrationState.RegistrationPage.AccessRightsPage -> AcessRightsBody(
-                agreeCameraPermission = false,
+            RegistrationState.RegistrationPage.AccessRightsPage -> AccessRightsBody(
+                agreeCameraPermission = true,
                 onBackClick = onBackClick,
                 onNextClick = onNextClick,
             )
 
-            RegistrationState.RegistrationPage.AvoidAcquaintancesPage -> {}
+            RegistrationState.RegistrationPage.AvoidAcquaintancesPage -> AvoidAcquaintancesBody(
+                onBackClick = onBackClick,
+                onTryNextClick = onNextClick,
+                onAvoidAcquaintancesClick = onNextClick,
+            )
+
             RegistrationState.RegistrationPage.SignUpCompleted -> {}
         }
     }

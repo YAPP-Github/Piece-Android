@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Term-->
+    <string name="all_term_agree">약관 전체 동의</string>
     <string name="next">다음</string>
     <string name="agree">동의하기</string>
-    <string name="all_term_agree">약관 전체 동의</string>
+    <string name="try_next">다음에 할래요</string>
+    <string name="avoid_acquaintances">아는 사람 차단하기</string>
 
     <!--Matching-->
     <string name="matching_title">Matching</string>
