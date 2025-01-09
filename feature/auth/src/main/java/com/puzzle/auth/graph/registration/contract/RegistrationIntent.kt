@@ -6,4 +6,5 @@ sealed class RegistrationIntent {
     data class AgreeTerm(val termId: Int) : RegistrationIntent()
     data object OnTermDetailClick : RegistrationIntent()
     data object OnBackClick : RegistrationIntent()
+    data object OnNextClick : RegistrationIntent()
 }

@@ -20,7 +20,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.terms.Term
 
 @Composable
-fun ColumnScope.TermBody(
+internal fun ColumnScope.TermBody(
     terms: List<Term>,
     termsCheckedInfo: Map<Int, Boolean>,
     allTermsAgreed: Boolean,
@@ -28,6 +28,7 @@ fun ColumnScope.TermBody(
     checkTerm: (Int) -> Unit,
     showTermDetail: (Term) -> Unit,
     onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
 ) {
     PieceSubBackTopBar(
         title = "",
@@ -84,7 +85,8 @@ fun ColumnScope.TermBody(
 
     PieceSolidButton(
         label = stringResource(R.string.next),
-        onClick = {},
+        onClick = onNextClick,
+        enabled = allTermsAgreed,
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 12.dp, bottom = 10.dp),

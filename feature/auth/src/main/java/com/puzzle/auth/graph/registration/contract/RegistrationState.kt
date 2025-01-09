@@ -26,6 +26,15 @@ data class RegistrationState(
                     else -> throw IllegalStateException("No previous page defined for $currentPage")
                 }
             }
+
+            fun getNextPage(currentPage: RegistrationPage): RegistrationPage {
+                return when (currentPage) {
+                    TermPage -> AccessRightsPage
+                    AccessRightsPage -> AvoidAcquaintancesPage
+                    AvoidAcquaintancesPage -> SignUpCompleted
+                    else -> throw IllegalStateException("No previous page defined for $currentPage")
+                }
+            }
         }
     }
 }

@@ -14,6 +14,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.registration.contract.RegistrationIntent
 import com.puzzle.auth.graph.registration.contract.RegistrationSideEffect
 import com.puzzle.auth.graph.registration.contract.RegistrationState
+import com.puzzle.auth.graph.registration.ui.AcessRightsBody
 import com.puzzle.auth.graph.registration.ui.TermBody
 import com.puzzle.auth.graph.registration.ui.TermDetailBody
 import com.puzzle.domain.model.terms.Term
@@ -32,6 +33,7 @@ internal fun RegistrationRoute(
         agreeTerm = { viewModel.onIntent(RegistrationIntent.AgreeTerm(it)) },
         onTermDetailClick = { viewModel.onIntent(RegistrationIntent.OnTermDetailClick) },
         onBackClick = { viewModel.onIntent(RegistrationIntent.OnBackClick) },
+        onNextClick = { viewModel.onIntent(RegistrationIntent.OnNextClick) },
         navigate = { event -> viewModel.onSideEffect(RegistrationSideEffect.Navigate(event)) }
     )
 }
@@ -44,6 +46,7 @@ private fun RegistrationScreen(
     agreeTerm: (Int) -> Unit,
     onTermDetailClick: () -> Unit,
     onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
     val (selectedTerm, setSelectedTerm) = remember { mutableStateOf<Term?>(null) }
@@ -65,6 +68,7 @@ private fun RegistrationScreen(
                     onTermDetailClick()
                 },
                 onBackClick = { navigate(NavigationEvent.NavigateUp) },
+                onNextClick = onNextClick,
             )
 
             RegistrationState.RegistrationPage.TermDetailPage -> TermDetailBody(
@@ -73,8 +77,13 @@ private fun RegistrationScreen(
                 onAgreeClick = { agreeTerm(selectedTerm.id) },
             )
 
+            RegistrationState.RegistrationPage.AccessRightsPage -> AcessRightsBody(
+                agreeCameraPermission = false,
+                onBackClick = onBackClick,
+                onNextClick = onNextClick,
+            )
+
             RegistrationState.RegistrationPage.AvoidAcquaintancesPage -> {}
-            RegistrationState.RegistrationPage.AccessRightsPage -> {}
             RegistrationState.RegistrationPage.SignUpCompleted -> {}
         }
     }

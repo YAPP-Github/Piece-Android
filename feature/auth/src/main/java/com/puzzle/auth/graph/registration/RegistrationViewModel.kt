@@ -58,6 +58,7 @@ class RegistrationViewModel @AssistedInject constructor(
             is RegistrationIntent.AgreeTerm -> agreeTerm(intent.termId)
             is RegistrationIntent.OnTermDetailClick -> onTermDetailClick()
             is RegistrationIntent.OnBackClick -> onBackClick()
+            is RegistrationIntent.OnNextClick -> onNextClick()
         }
     }
 
@@ -108,6 +109,10 @@ class RegistrationViewModel @AssistedInject constructor(
 
     private fun onBackClick() = setState {
         copy(registrationPage = RegistrationState.RegistrationPage.getPreviousPage(registrationPage))
+    }
+
+    private fun onNextClick() = setState {
+        copy(registrationPage = RegistrationState.RegistrationPage.getNextPage(registrationPage))
     }
 
     @AssistedFactory
