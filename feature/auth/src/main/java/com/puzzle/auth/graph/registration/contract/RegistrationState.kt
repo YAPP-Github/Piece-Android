@@ -9,7 +9,7 @@ data class RegistrationState(
 ) : MavericksState {
     val allTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.id, false) }
 
-    enum class RegistrationPage() {
+    enum class RegistrationPage {
         TermPage,
         TermDetailPage,
         AccessRightsPage,
@@ -17,7 +17,14 @@ data class RegistrationState(
         SignUpCompleted;
 
         companion object {
-
+            fun getPreviousPage(currentPage: RegistrationPage): RegistrationPage {
+                return when (currentPage) {
+                    TermDetailPage -> TermPage
+                    AccessRightsPage -> TermPage
+                    AvoidAcquaintancesPage -> AccessRightsPage
+                    else -> throw IllegalArgumentException("")
+                }
+            }
         }
     }
 }
