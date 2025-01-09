@@ -6,6 +6,7 @@ import com.puzzle.domain.model.terms.Term
 data class RegistrationState(
     val terms: List<Term> = emptyList(),
     val termsCheckedInfo: Map<Int, Boolean> = emptyMap(),
+    val registrationPage: RegistrationPage = RegistrationPage.TermPage,
 ) : MavericksState {
     val allTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.id, false) }
 
@@ -22,7 +23,7 @@ data class RegistrationState(
                     TermDetailPage -> TermPage
                     AccessRightsPage -> TermPage
                     AvoidAcquaintancesPage -> AccessRightsPage
-                    else -> throw IllegalArgumentException("")
+                    else -> throw IllegalStateException("No previous page defined for $currentPage")
                 }
             }
         }

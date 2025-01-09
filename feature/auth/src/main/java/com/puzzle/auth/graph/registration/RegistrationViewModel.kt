@@ -53,8 +53,11 @@ class RegistrationViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: RegistrationIntent) {
         when (intent) {
-            is RegistrationIntent.CheckTerm -> checkTerm(intent.termId)
             is RegistrationIntent.CheckAllTerms -> checkAllTerms()
+            is RegistrationIntent.CheckTerm -> checkTerm(intent.termId)
+            is RegistrationIntent.AgreeTerm -> agreeTerm(intent.termId)
+            is RegistrationIntent.OnTermDetailClick -> onTermDetailClick()
+            is RegistrationIntent.OnBackClick -> onBackClick()
         }
     }
 
@@ -78,6 +81,17 @@ class RegistrationViewModel @AssistedInject constructor(
         copy(termsCheckedInfo = updatedTermsCheckedInfo)
     }
 
+    private fun agreeTerm(termId: Int) = setState {
+        val updatedTermsCheckedInfo = termsCheckedInfo.toMutableMap()
+            .apply { this[termId] = true }
+            .toMap()
+
+        copy(
+            termsCheckedInfo = updatedTermsCheckedInfo,
+            registrationPage = RegistrationState.RegistrationPage.TermPage,
+        )
+    }
+
     private fun checkAllTerms() = setState {
         val updatedTermsCheckedInfo = if (allTermsAgreed) {
             emptyMap()
@@ -86,6 +100,14 @@ class RegistrationViewModel @AssistedInject constructor(
         }
 
         copy(termsCheckedInfo = updatedTermsCheckedInfo)
+    }
+
+    private fun onTermDetailClick() = setState {
+        copy(registrationPage = RegistrationState.RegistrationPage.TermDetailPage)
+    }
+
+    private fun onBackClick() = setState {
+        copy(registrationPage = RegistrationState.RegistrationPage.getPreviousPage(registrationPage))
     }
 
     @AssistedFactory
