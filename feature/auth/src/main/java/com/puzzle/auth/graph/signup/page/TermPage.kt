@@ -16,7 +16,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
-import com.puzzle.designsystem.component.PieceCheckList
+import com.puzzle.designsystem.component.PieceCheckRow
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -60,7 +60,7 @@ internal fun ColumnScope.TermPage(
             .weight(1f),
     )
 
-    PieceCheckList(
+    PieceCheckRow(
         checked = allTermsAgreed,
         label = stringResource(R.string.all_term_agree),
         containerColor = PieceTheme.colors.light3,
@@ -71,7 +71,7 @@ internal fun ColumnScope.TermPage(
     )
 
     terms.forEach { term ->
-        PieceCheckList(
+        PieceCheckRow(
             checked = termsCheckedInfo.getOrDefault(term.id, false),
             arrowEnabled = true,
             label = term.title,
