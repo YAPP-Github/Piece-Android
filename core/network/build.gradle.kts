@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     id("piece.android.library")
     id("piece.android.hilt")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {

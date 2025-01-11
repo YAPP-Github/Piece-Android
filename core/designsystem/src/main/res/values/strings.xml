@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--Term-->
+    <string name="all_term_agree">약관 전체 동의</string>
     <string name="next">다음</string>
     <string name="agree">동의하기</string>
-    <string name="all_term_agree">약관 전체 동의</string>
+    <string name="try_next">다음에 할래요</string>
+    <string name="avoid_acquaintances">아는 사람 차단하기</string>
+    <string name="generate_profile">프로필 생성하기</string>
+    <string name="avoid_acquaintances_description">연락처에 등록된 번호로 가입한 사용자는\n매칭 대상에서 제외되어, 개인정보가 보호됩니다.</string>
 
     <!--Matching-->
     <string name="matching_title">Matching</string>

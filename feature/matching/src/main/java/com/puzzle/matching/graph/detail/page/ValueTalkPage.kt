@@ -1,4 +1,4 @@
-package com.puzzle.matching.graph.detail.common.ui
+package com.puzzle.matching.graph.detail.page
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,7 +35,7 @@ import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
-internal fun ValueTalkBody(
+internal fun ValueTalkPage(
     nickName: String,
     selfDescription: String,
     talkCards: List<ValueTalk>,
@@ -192,9 +192,9 @@ private fun ValueTalkCard(
 
 @Preview
 @Composable
-private fun ProfileValueTalkBodyPreview() {
+private fun ProfileValueTalkPagePreview() {
     PieceTheme {
-        ValueTalkBody(
+        ValueTalkPage(
             nickName = "수줍은 수달",
             selfDescription = "음악과 요리를 좋아하는",
             onMoreClick = {},

@@ -4,7 +4,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.MavericksViewModelComponent
 import com.airbnb.mvrx.hilt.ViewModelKey
 import com.puzzle.auth.graph.login.LoginViewModel
-import com.puzzle.auth.graph.registration.RegistrationViewModel
+import com.puzzle.auth.graph.signup.SignUpViewModel
 import com.puzzle.auth.graph.verification.VerificationViewModel
 import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
@@ -34,8 +34,8 @@ interface ViewModelsModule {
 
     @Binds
     @IntoMap
-    @ViewModelKey(RegistrationViewModel::class)
-    fun authRegistrationViewModelFactory(factory: RegistrationViewModel.Factory): AssistedViewModelFactory<*, *>
+    @ViewModelKey(SignUpViewModel::class)
+    fun authRegistrationViewModelFactory(factory: SignUpViewModel.Factory): AssistedViewModelFactory<*, *>
 
     @Binds
     @IntoMap
