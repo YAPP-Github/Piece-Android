@@ -120,7 +120,7 @@ class VerificationViewModel @AssistedInject constructor(
             copy(
                 isAuthCodeRequested = true,
                 remainingTimeInSec = durationInSec,
-                authCodeStatus = VerificationState.AuthCodeStatus.DO_NOT_SHARE,
+                authCodeStatus = VerificationState.AuthCodeStatus.INIT,
             )
         }
 

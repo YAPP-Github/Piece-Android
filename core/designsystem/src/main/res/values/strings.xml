@@ -26,6 +26,7 @@
     <string name="verification_verifiaction_code">인증번호</string>
     <string name="verification_resend">인증번호 재전송</string>
     <string name="verification_request">인증번호 받기</string>
+    <string name="verification_phone_number_hint">- 없이 숫자만 입력해주세요</string>
     <string name="verification_phone_number">휴대폰 번호</string>
     <string name="verification_invalid_phone_number">올바른 전화번호가 아니에요</string>
 

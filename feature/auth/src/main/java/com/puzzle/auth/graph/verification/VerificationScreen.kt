@@ -165,18 +165,15 @@ private fun AuthCodeBody(
 ) {
     var authCode by rememberSaveable { mutableStateOf("") }
 
-    val (authCodeStatusMessage, authgCodeStatusColor) = when (authCodeStatus) {
-        AuthCodeStatus.DO_NOT_SHARE -> stringResource(R.string.verification_do_not_share) to PieceTheme.colors.dark3
-
-        AuthCodeStatus.VERIFIED -> stringResource(R.string.verification_verified) to PieceTheme.colors.primaryDefault
-
-        AuthCodeStatus.INVALID -> stringResource(R.string.verification_invalid_code) to PieceTheme.colors.subDefault
-
-        AuthCodeStatus.TIME_EXPIRED -> stringResource(R.string.verification_time_expired) to PieceTheme.colors.subDefault
+    val authgCodeStatusColor = when (authCodeStatus) {
+        AuthCodeStatus.INIT -> PieceTheme.colors.dark3
+        AuthCodeStatus.VERIFIED -> PieceTheme.colors.primaryDefault
+        AuthCodeStatus.INVALID -> PieceTheme.colors.subDefault
+        AuthCodeStatus.TIME_EXPIRED -> PieceTheme.colors.subDefault
     }
 
     val isVerifyButtonEnabled =
-        authCodeStatus == AuthCodeStatus.DO_NOT_SHARE || authCodeStatus == AuthCodeStatus.INVALID
+        authCodeStatus == AuthCodeStatus.INIT || authCodeStatus == AuthCodeStatus.INVALID
 
     Column(modifier = modifier) {
         Text(
@@ -232,7 +229,7 @@ private fun AuthCodeBody(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = authCodeStatusMessage,
+            text = stringResource(authCodeStatus.displayResId),
             style = PieceTheme.typography.bodySM,
             color = authgCodeStatusColor,
         )
@@ -268,6 +265,19 @@ private fun PhoneNumberBody(
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
                 textStyle = PieceTheme.typography.bodyMM,
+                decorationBox = { innerTextField ->
+                    Box {
+                        if (phoneNumber.isEmpty()) {
+                            Text(
+                                text = stringResource(id = R.string.verification_phone_number_hint),
+                                color = PieceTheme.colors.dark3,
+                                style = PieceTheme.typography.bodyMM,
+                            )
+                        }
+
+                        innerTextField()
+                    }
+                },
                 modifier = Modifier
                     .height(52.dp)
                     .clip(RoundedCornerShape(8.dp))
@@ -321,7 +331,7 @@ fun PreviewVerificationScreen() {
                 isAuthCodeRequested = true,
                 remainingTimeInSec = 299,
                 isVerified = true,
-                authCodeStatus = AuthCodeStatus.DO_NOT_SHARE,
+                authCodeStatus = AuthCodeStatus.INIT,
             ),
             navigate = {},
             onRequestAuthCodeClick = {},
