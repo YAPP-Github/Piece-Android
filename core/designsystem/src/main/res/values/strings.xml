@@ -11,6 +11,19 @@
     <string name="same_value_as_me">나와 같은 가치관</string>
     <string name="accept_matching">매칭 수락하기</string>
 
+    <!--Verification-->
+    <string name="verification_subtitle">신뢰도 높은 매칭과 안전한 커뮤니티를 위해\n휴대폰 번호로 인증해 주세요.</string>
+    <string name="verification_submit">확인</string>
+    <string name="verification_next">다음</string>
+    <string name="verification_do_not_share">어떤 경우에도 타인에게 공유하지 마세요</string>
+    <string name="verification_verified">전화번호 인증을 완료했어요</string>
+    <string name="verification_invalid">올바른 인증번호가 아니에요</string>
+    <string name="verification_time_expired">유효시간이 지났어요! ‘인증번호 재전송’을 눌러주세요</string>
+    <string name="verification_verifiaction_code">인증번호</string>
+    <string name="verification_resend">인증번호 재전송</string>
+    <string name="verification_request">인증번호 받기</string>
+    <string name="verification_phone_number">휴대폰 번호</string>
+
     <!--Matching Detail-->
     <string name="basicinfo_title" />
     <string name="valuetalk_title">가치관 Talk</string>

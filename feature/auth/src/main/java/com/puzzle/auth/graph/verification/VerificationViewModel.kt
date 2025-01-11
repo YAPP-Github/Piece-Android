@@ -7,6 +7,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
+import com.puzzle.domain.repository.VerificationCodeRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -26,6 +27,7 @@ import kotlinx.coroutines.launch
 class VerificationViewModel @AssistedInject constructor(
     @Assisted initialState: VerificationState,
     private val navigationHelper: NavigationHelper,
+    private val verificationCodeRepository: VerificationCodeRepository,
 ) : MavericksViewModel<VerificationState>(initialState) {
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<VerificationViewModel, VerificationState> {
@@ -56,9 +58,9 @@ class VerificationViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: VerificationIntent) {
         when (intent) {
-            VerificationIntent.RequestVerificationCode -> handleRequestVerificationCode()
-            is VerificationIntent.VerifyCode -> handleVerificateCode(intent.code)
-            VerificationIntent.CompleteVerification -> handleCompleteVerification()
+            is VerificationIntent.OnRequestVerificationCodeClick -> requestVerificationCode(intent.phoneNumber)
+            is VerificationIntent.OnVerifyClick -> verify(intent.code)
+            VerificationIntent.OnNextClick -> moveToNextPage()
         }
     }
 
@@ -68,7 +70,7 @@ class VerificationViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleCompleteVerification() {
+    private fun moveToNextPage() {
         navigationHelper.navigate(
             NavigationEvent.NavigateTo(
                 route = AuthGraphDest.RegistrationRoute,
@@ -77,25 +79,29 @@ class VerificationViewModel @AssistedInject constructor(
         )
     }
 
-    private fun handleRequestVerificationCode() {
-        startCodeExpiryTimer(5)
+    private fun requestVerificationCode(phoneNumber: String) {
+        viewModelScope.launch {
+            verificationCodeRepository.requestVerificationCode(phoneNumber)
+
+            startCodeExpiryTimer(5)
+        }
     }
 
-    private fun handleVerificateCode(code: String) {
-        // TODO : code 검증 api, 결과에 따라 분기 처리
-        val result = true
-
-        setState {
-            copy(
-                isVerified = result,
-                remainingTimeInSec = 0,
-                verificationCodeStatus = if (result) {
-                    timerJob?.cancel()
-                    VerificationState.VerificationCodeStatus.VERIFIED
-                } else {
-                    VerificationState.VerificationCodeStatus.INVALID
-                },
-            )
+    private fun verify(code: String) {
+        viewModelScope.launch {
+            val result = verificationCodeRepository.verify(code)
+            setState {
+                copy(
+                    isVerified = result,
+                    remainingTimeInSec = 0,
+                    verificationCodeStatus = if (result) {
+                        timerJob?.cancel()
+                        VerificationState.VerificationCodeStatus.VERIFIED
+                    } else {
+                        VerificationState.VerificationCodeStatus.INVALID
+                    },
+                )
+            }
         }
     }
 

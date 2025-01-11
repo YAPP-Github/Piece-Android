@@ -23,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -34,6 +35,7 @@ import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.auth.graph.verification.contract.VerificationState.VerificationCodeStatus
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -52,14 +54,14 @@ internal fun VerificationRoute(
         navigate = {
             viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
         },
-        onRequestVerificationCodeClick = {
-            viewModel.onIntent(VerificationIntent.RequestVerificationCode)
+        onRequestVerificationCodeClick = { phoneNumber ->
+            viewModel.onIntent(VerificationIntent.OnRequestVerificationCodeClick(phoneNumber))
         },
         onVerifyClick = { code ->
-            viewModel.onIntent(VerificationIntent.VerifyCode(code))
+            viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
         },
         onNextClick = {
-            viewModel.onIntent(VerificationIntent.CompleteVerification)
+            viewModel.onIntent(VerificationIntent.OnNextClick)
         }
     )
 }
@@ -67,7 +69,7 @@ internal fun VerificationRoute(
 @Composable
 private fun VerificationScreen(
     state: VerificationState,
-    onRequestVerificationCodeClick: () -> Unit,
+    onRequestVerificationCodeClick: (String) -> Unit,
     onVerifyClick: (String) -> Unit,
     onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
@@ -114,8 +116,7 @@ private fun VerificationScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "신뢰도 높은 매칭과 안전한 커뮤니티를 위해 \n" +
-                    "휴대폰 번호로 인증해 주세요.",
+            text = stringResource(R.string.verification_subtitle),
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark3,
             modifier = Modifier.fillMaxWidth(),
@@ -125,7 +126,7 @@ private fun VerificationScreen(
 
         PhoneNumberBody(
             hasStarted = state.hasStarted,
-            onRequestVerificationCodeClick = onRequestVerificationCodeClick
+            onRequestVerificationCodeClick = onRequestVerificationCodeClick,
         )
 
         if (state.hasStarted) {
@@ -141,12 +142,12 @@ private fun VerificationScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         PieceSolidButton(
-            label = "다음",
+            label = stringResource(R.string.verification_submit),
             onClick = {
                 onNextClick()
             },
             enabled = state.isVerified,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -164,16 +165,16 @@ private fun VerificationCodeBody(
     val (verificationCodeStatusMessage, verificationCodeStatusColor) =
         when (verificationCodeStatus) {
             VerificationCodeStatus.DO_NOT_SHARE ->
-                "어떤 경우에도 타인에게 공유하지 마세요" to PieceTheme.colors.dark3
+                stringResource(R.string.verification_do_not_share) to PieceTheme.colors.dark3
 
             VerificationCodeStatus.VERIFIED ->
-                "전화번호 인증을 완료했어요" to PieceTheme.colors.primaryDefault
+                stringResource(R.string.verification_verified) to PieceTheme.colors.primaryDefault
 
             VerificationCodeStatus.INVALID ->
-                "올바른 인증번호가 아니에요" to PieceTheme.colors.subDefault
+                stringResource(R.string.verification_invalid) to PieceTheme.colors.subDefault
 
             VerificationCodeStatus.TIME_EXPIRED ->
-                "유효시간이 지났어요! ‘인증번호 재전송’을 눌러주세요" to PieceTheme.colors.subDefault
+                stringResource(R.string.verification_time_expired) to PieceTheme.colors.subDefault
         }
 
     val isVerifyButtonEnabled =
@@ -181,7 +182,7 @@ private fun VerificationCodeBody(
                 verificationCodeStatus == VerificationCodeStatus.INVALID
 
     Text(
-        text = "인증 번호",
+        text = stringResource(R.string.verification_verifiaction_code),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark3,
     )
@@ -205,7 +206,7 @@ private fun VerificationCodeBody(
                         style = PieceTheme.typography.bodySM,
                         color = PieceTheme.colors.primaryDefault,
                         modifier = Modifier
-                            .align(Alignment.CenterEnd)
+                            .align(Alignment.CenterEnd),
                     )
                 }
             },
@@ -223,7 +224,7 @@ private fun VerificationCodeBody(
         Spacer(modifier = Modifier.width(8.dp))
 
         PieceSolidButton(
-            label = "확인",
+            label = stringResource(R.string.verification_submit),
             onClick = {
                 onVerifyClick(verificationCode)
             },
@@ -243,14 +244,15 @@ private fun VerificationCodeBody(
 @Composable
 private fun PhoneNumberBody(
     hasStarted: Boolean,
-    onRequestVerificationCodeClick: () -> Unit
+    onRequestVerificationCodeClick: (String) -> Unit
 ) {
     var phoneNumber by rememberSaveable { mutableStateOf("") }
 
-    val requestButtonLabel = if (hasStarted) "인증번호 재전송" else "인증번호 받기"
+    val requestButtonLabel =
+        if (hasStarted) stringResource(R.string.verification_resend) else stringResource(R.string.verification_request)
 
     Text(
-        text = "휴대폰 번호",
+        text = stringResource(R.string.verification_phone_number),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark3,
     )
@@ -281,9 +283,9 @@ private fun PhoneNumberBody(
         PieceSolidButton(
             label = requestButtonLabel,
             onClick = {
-                onRequestVerificationCodeClick()
+                onRequestVerificationCodeClick(phoneNumber)
             },
-            enabled = phoneNumber.isNotEmpty()
+            enabled = phoneNumber.isNotEmpty(),
         )
     }
 }
@@ -307,7 +309,7 @@ fun PreviewVerificationScreen() {
                 hasStarted = true,
                 remainingTimeInSec = 299,
                 isVerified = true,
-                verificationCodeStatus = VerificationState.VerificationCodeStatus.DO_NOT_SHARE,
+                verificationCodeStatus = VerificationCodeStatus.DO_NOT_SHARE,
             ),
             navigate = {},
             onRequestVerificationCodeClick = {},
