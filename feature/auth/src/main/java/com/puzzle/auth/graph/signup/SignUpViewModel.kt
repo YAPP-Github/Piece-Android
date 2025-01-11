@@ -94,7 +94,7 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun checkAllTerms() = setState {
-        val updatedTermsCheckedInfo = if (allTermsAgreed) {
+        val updatedTermsCheckedInfo = if (isAllTermsAgreed) {
             emptyMap()
         } else {
             terms.associate { termInfo -> termInfo.id to true }
