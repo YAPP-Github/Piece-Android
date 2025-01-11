@@ -62,7 +62,7 @@ private fun SignUpScreen(
             SignUpState.SignUpPage.TermPage -> TermPage(
                 terms = state.terms,
                 termsCheckedInfo = state.termsCheckedInfo,
-                allTermsAgreed = state.allTermsAgreed,
+                allTermsAgreed = state.areAllTermsAgreed,
                 checkAllTerms = checkAllTerms,
                 checkTerm = checkTerm,
                 showTermDetail = {
@@ -76,7 +76,7 @@ private fun SignUpScreen(
             SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
                 term = selectedTerm!!,
                 onBackClick = onBackClick,
-                onAgreeClick = { agreeTerm(selectedTerm.id) },
+                onAgreeClick = agreeTerm,
             )
 
             SignUpState.SignUpPage.AccessRightsPage -> AccessRightsPage(

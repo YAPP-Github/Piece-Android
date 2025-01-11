@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 internal fun ColumnScope.TermDetailPage(
     term: Term,
     onBackClick: () -> Unit,
-    onAgreeClick: () -> Unit,
+    onAgreeClick: (Int) -> Unit,
 ) {
     BackHandler { onBackClick() }
 
@@ -43,7 +43,7 @@ internal fun ColumnScope.TermDetailPage(
 
     PieceSolidButton(
         label = stringResource(R.string.agree),
-        onClick = onAgreeClick,
+        onClick = { onAgreeClick(term.id) },
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 12.dp, bottom = 10.dp),

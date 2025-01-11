@@ -53,7 +53,7 @@ internal fun ColumnScope.AvoidAcquaintancesPage(
     )
 
     Text(
-        text = "연락처에 등록된 번호로 가입한 사용자는\n매칭 대상에서 제외되어, 개인정보가 보호됩니다.",
+        text = stringResource(R.string.avoid_acquaintances_description),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark3,
         modifier = Modifier.padding(top = 12.dp),
