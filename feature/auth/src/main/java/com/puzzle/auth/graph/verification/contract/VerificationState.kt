@@ -4,7 +4,7 @@ import com.airbnb.mvrx.MavericksState
 
 data class VerificationState(
     val isValidPhoneNumber: Boolean = true,
-    val hasStarted: Boolean = false,
+    val isAuthCodeRequested: Boolean = false,
     val remainingTimeInSec: Int = 0,
     val authCodeStatus: AuthCodeStatus = AuthCodeStatus.DO_NOT_SHARE,
     val isVerified: Boolean = false,

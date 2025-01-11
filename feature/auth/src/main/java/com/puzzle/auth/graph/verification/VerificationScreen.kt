@@ -49,21 +49,15 @@ internal fun VerificationRoute(
 ) {
     val state by viewModel.collectAsState()
 
-    VerificationScreen(
-        state = state,
-        navigate = {
-            viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
-        },
-        onRequestAuthCodeClick = { phoneNumber ->
-            viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
-        },
-        onVerifyClick = { code ->
-            viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
-        },
-        onNextClick = {
-            viewModel.onIntent(VerificationIntent.OnNextClick)
-        }
-    )
+    VerificationScreen(state = state, navigate = {
+        viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
+    }, onRequestAuthCodeClick = { phoneNumber ->
+        viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
+    }, onVerifyClick = { code ->
+        viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
+    }, onNextClick = {
+        viewModel.onIntent(VerificationIntent.OnNextClick)
+    })
 }
 
 @Composable
@@ -99,8 +93,46 @@ private fun VerificationScreen(
                 .padding(vertical = 14.dp),
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        VerificationHeader(
+            modifier = Modifier.padding(top = 20.dp)
+        )
 
+        PhoneNumberBody(
+            isValidPhoneNumber = state.isValidPhoneNumber,
+            isAuthCodeRequested = state.isAuthCodeRequested,
+            onRequestAuthCodeClick = onRequestAuthCodeClick,
+            modifier = Modifier.padding(top = 68.dp)
+        )
+
+        if (state.isAuthCodeRequested) {
+            AuthCodeBody(
+                remainingTimeInSec = state.remainingTimeInSec,
+                authCodeStatus = state.authCodeStatus,
+                onVerifyClick = onVerifyClick,
+                modifier = Modifier.padding(top = 32.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        PieceSolidButton(
+            label = stringResource(R.string.verification_submit),
+            onClick = {
+                onNextClick()
+            },
+            enabled = state.isVerified,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp),
+        )
+    }
+}
+
+@Composable
+private fun VerificationHeader(
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier.padding(top = 20.dp)) {
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
@@ -121,37 +153,6 @@ private fun VerificationScreen(
             color = PieceTheme.colors.dark3,
             modifier = Modifier.fillMaxWidth(),
         )
-
-        Spacer(modifier = Modifier.height(70.dp))
-
-        PhoneNumberBody(
-            isValidPhoneNumber = state.isValidPhoneNumber,
-            hasStarted = state.hasStarted,
-            onRequestAuthCodeClick = onRequestAuthCodeClick,
-        )
-
-        if (state.hasStarted) {
-            Spacer(modifier = Modifier.height(32.dp))
-
-            AuthCodeBody(
-                remainingTimeInSec = state.remainingTimeInSec,
-                authCodeStatus = state.authCodeStatus,
-                onVerifyClick = onVerifyClick,
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        PieceSolidButton(
-            label = stringResource(R.string.verification_submit),
-            onClick = {
-                onNextClick()
-            },
-            enabled = state.isVerified,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
@@ -160,145 +161,144 @@ private fun AuthCodeBody(
     remainingTimeInSec: Int,
     authCodeStatus: AuthCodeStatus,
     onVerifyClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var authCode by rememberSaveable { mutableStateOf("") }
 
-    val (authCodeStatusMessage, authgCodeStatusColor) =
-        when (authCodeStatus) {
-            AuthCodeStatus.DO_NOT_SHARE ->
-                stringResource(R.string.verification_do_not_share) to PieceTheme.colors.dark3
+    val (authCodeStatusMessage, authgCodeStatusColor) = when (authCodeStatus) {
+        AuthCodeStatus.DO_NOT_SHARE -> stringResource(R.string.verification_do_not_share) to PieceTheme.colors.dark3
 
-            AuthCodeStatus.VERIFIED ->
-                stringResource(R.string.verification_verified) to PieceTheme.colors.primaryDefault
+        AuthCodeStatus.VERIFIED -> stringResource(R.string.verification_verified) to PieceTheme.colors.primaryDefault
 
-            AuthCodeStatus.INVALID ->
-                stringResource(R.string.verification_invalid_code) to PieceTheme.colors.subDefault
+        AuthCodeStatus.INVALID -> stringResource(R.string.verification_invalid_code) to PieceTheme.colors.subDefault
 
-            AuthCodeStatus.TIME_EXPIRED ->
-                stringResource(R.string.verification_time_expired) to PieceTheme.colors.subDefault
-        }
-
-    val isVerifyButtonEnabled =
-        authCodeStatus == AuthCodeStatus.DO_NOT_SHARE ||
-                authCodeStatus == AuthCodeStatus.INVALID
-
-    Text(
-        text = stringResource(R.string.verification_verifiaction_code),
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark3,
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        BasicTextField(
-            value = authCode,
-            onValueChange = { authCode = it },
-            textStyle = PieceTheme.typography.bodyMM,
-            decorationBox = { innerTextField ->
-                Box {
-                    innerTextField()
-
-                    Text(
-                        text = formatTime(remainingTimeInSec),
-                        style = PieceTheme.typography.bodySM,
-                        color = PieceTheme.colors.primaryDefault,
-                        modifier = Modifier
-                            .align(Alignment.CenterEnd),
-                    )
-                }
-            },
-            modifier = Modifier
-                .height(52.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(PieceTheme.colors.light3)
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 14.dp,
-                )
-                .weight(1f),
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
-        PieceSolidButton(
-            label = stringResource(R.string.verification_submit),
-            onClick = {
-                onVerifyClick(authCode)
-            },
-            enabled = isVerifyButtonEnabled,
-        )
+        AuthCodeStatus.TIME_EXPIRED -> stringResource(R.string.verification_time_expired) to PieceTheme.colors.subDefault
     }
 
-    Spacer(modifier = Modifier.height(8.dp))
+    val isVerifyButtonEnabled =
+        authCodeStatus == AuthCodeStatus.DO_NOT_SHARE || authCodeStatus == AuthCodeStatus.INVALID
 
-    Text(
-        text = authCodeStatusMessage,
-        style = PieceTheme.typography.bodySM,
-        color = authgCodeStatusColor,
-    )
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.verification_verifiaction_code),
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark3,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicTextField(
+                value = authCode,
+                onValueChange = { authCode = it },
+                textStyle = PieceTheme.typography.bodyMM,
+                decorationBox = { innerTextField ->
+                    Box {
+                        innerTextField()
+
+                        Text(
+                            text = formatTime(remainingTimeInSec),
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.primaryDefault,
+                            modifier = Modifier.align(Alignment.CenterEnd),
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .height(52.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(PieceTheme.colors.light3)
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 14.dp,
+                    )
+                    .weight(1f),
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            PieceSolidButton(
+                label = stringResource(R.string.verification_submit),
+                onClick = {
+                    onVerifyClick(authCode)
+                },
+                enabled = isVerifyButtonEnabled,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = authCodeStatusMessage,
+            style = PieceTheme.typography.bodySM,
+            color = authgCodeStatusColor,
+        )
+    }
 }
 
 @Composable
 private fun PhoneNumberBody(
-    hasStarted: Boolean,
+    isAuthCodeRequested: Boolean,
     isValidPhoneNumber: Boolean,
-    onRequestAuthCodeClick: (String) -> Unit
+    onRequestAuthCodeClick: (String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var phoneNumber by rememberSaveable { mutableStateOf("") }
 
     val requestButtonLabel =
-        if (hasStarted) stringResource(R.string.verification_resend) else stringResource(R.string.verification_request)
+        if (isAuthCodeRequested) stringResource(R.string.verification_resend) else stringResource(R.string.verification_request)
 
-    Text(
-        text = stringResource(R.string.verification_phone_number),
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark3,
-    )
-
-    Spacer(modifier = Modifier.height(8.dp))
-
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        BasicTextField(
-            value = phoneNumber,
-            onValueChange = { phoneNumber = it },
-            textStyle = PieceTheme.typography.bodyMM,
-            modifier = Modifier
-                .height(52.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(PieceTheme.colors.light3)
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 14.dp,
-                )
-                .weight(1f),
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(R.string.verification_phone_number),
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark3,
         )
 
-        Spacer(modifier = Modifier.width(8.dp))
-
-        PieceSolidButton(
-            label = requestButtonLabel,
-            onClick = {
-                onRequestAuthCodeClick(phoneNumber)
-            },
-            enabled = phoneNumber.isNotEmpty(),
-        )
-    }
-
-    if (!isValidPhoneNumber) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = stringResource(R.string.verification_invalid_phone_number),
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.subDefault,
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BasicTextField(
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
+                textStyle = PieceTheme.typography.bodyMM,
+                modifier = Modifier
+                    .height(52.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(PieceTheme.colors.light3)
+                    .padding(
+                        horizontal = 16.dp,
+                        vertical = 14.dp,
+                    )
+                    .weight(1f),
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            PieceSolidButton(
+                label = requestButtonLabel,
+                onClick = {
+                    onRequestAuthCodeClick(phoneNumber)
+                },
+                enabled = phoneNumber.isNotEmpty(),
+            )
+        }
+
+        if (!isValidPhoneNumber) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(R.string.verification_invalid_phone_number),
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.subDefault,
+            )
+        }
     }
 }
 
@@ -318,7 +318,7 @@ fun PreviewVerificationScreen() {
     PieceTheme {
         VerificationScreen(
             state = VerificationState(
-                hasStarted = true,
+                isAuthCodeRequested = true,
                 remainingTimeInSec = 299,
                 isVerified = true,
                 authCodeStatus = AuthCodeStatus.DO_NOT_SHARE,
