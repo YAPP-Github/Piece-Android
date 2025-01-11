@@ -38,12 +38,12 @@ import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.detail.common.constant.DialogType
-import com.puzzle.matching.graph.detail.page.BasicInfoPage
-import com.puzzle.matching.graph.detail.page.ValuePickPage
-import com.puzzle.matching.graph.detail.page.ValueTalkPage
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState.MatchingDetailPage
+import com.puzzle.matching.graph.detail.page.BasicInfoPage
+import com.puzzle.matching.graph.detail.page.ValuePickPage
+import com.puzzle.matching.graph.detail.page.ValueTalkPage
 import com.skydoves.cloudy.cloudy
 
 @Composable
@@ -336,9 +336,7 @@ private fun MatchingDetailBottomBar(
                 contentDescription = "다음 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
-                    .clickable {
-                        onNextPageClick()
-                    },
+                    .clickable { onNextPageClick() },
             )
         }
     }
