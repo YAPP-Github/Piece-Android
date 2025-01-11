@@ -166,7 +166,7 @@ private fun PiecePermissionRow(
             ) {
                 Text(
                     text = label,
-                    style = PieceTheme.typography.bodyMM,
+                    style = PieceTheme.typography.bodyMSB,
                     color = PieceTheme.colors.black,
                     modifier = Modifier.weight(1f),
                 )
