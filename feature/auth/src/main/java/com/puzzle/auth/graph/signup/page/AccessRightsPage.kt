@@ -3,8 +3,11 @@ package com.puzzle.auth.graph.signup.page
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_CONTACTS
+import android.content.Intent
+import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.TIRAMISU
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -23,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
@@ -45,6 +50,7 @@ internal fun ColumnScope.AccessRightsPage(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
+    val context = LocalContext.current
     val permissionList = rememberMultiplePermissionsState(
         listOfNotNull(
             CAMERA,
@@ -98,8 +104,17 @@ internal fun ColumnScope.AccessRightsPage(
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
             checked = cameraPermission?.status == PermissionStatus.Granted,
             onCheckedChange = {
-                if (cameraPermission?.status != PermissionStatus.Granted) {
-                    cameraPermission?.launchPermissionRequest()
+                cameraPermission?.let {
+                    if (it.status != PermissionStatus.Granted) {
+                        if (!it.status.shouldShowRationale) {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                            context.startActivity(intent)
+                        } else {
+                            cameraPermission.launchPermissionRequest()
+                        }
+                    }
                 }
             },
         )
@@ -110,8 +125,18 @@ internal fun ColumnScope.AccessRightsPage(
             description = "매칭 현황 등 중요 메시지 수신을 위해 필요해요.",
             checked = notificationPermission?.status == PermissionStatus.Granted,
             onCheckedChange = {
-                if (notificationPermission?.status != PermissionStatus.Granted) {
-                    notificationPermission?.launchPermissionRequest()
+                notificationPermission?.let {
+                    if (it.status != PermissionStatus.Granted) {
+                        if (!it.status.shouldShowRationale) {
+                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                            context.startActivity(intent)
+                        } else {
+                            it.launchPermissionRequest()
+                        }
+                    }
                 }
             },
         )
@@ -122,8 +147,17 @@ internal fun ColumnScope.AccessRightsPage(
             description = "지인을 수집하기 위해 필요해요.",
             checked = contactsPermission?.status == PermissionStatus.Granted,
             onCheckedChange = {
-                if (contactsPermission?.status != PermissionStatus.Granted) {
-                    contactsPermission?.launchPermissionRequest()
+                contactsPermission?.let {
+                    if (it.status != PermissionStatus.Granted) {
+                        if (!it.status.shouldShowRationale) {
+                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", context.packageName, null)
+                            }
+                            context.startActivity(intent)
+                        } else {
+                            it.launchPermissionRequest()
+                        }
+                    }
                 }
             },
         )
