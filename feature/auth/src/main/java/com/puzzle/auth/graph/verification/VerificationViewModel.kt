@@ -101,7 +101,11 @@ class VerificationViewModel @AssistedInject constructor(
             setState {
                 copy(
                     isVerified = result,
-                    remainingTimeInSec = 0,
+                    remainingTimeInSec = if (result) {
+                        0
+                    } else {
+                        this.remainingTimeInSec
+                    },
                     authCodeStatus = if (result) {
                         timerJob?.cancel()
                         VerificationState.AuthCodeStatus.VERIFIED
