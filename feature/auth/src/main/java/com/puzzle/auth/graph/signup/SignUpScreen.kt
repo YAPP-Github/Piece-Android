@@ -62,7 +62,7 @@ private fun SignUpScreen(
             SignUpState.SignUpPage.TermPage -> TermPage(
                 terms = state.terms,
                 termsCheckedInfo = state.termsCheckedInfo,
-                allTermsAgreed = state.isAllTermsAgreed,
+                allTermsAgreed = state.areAllTermsAgreed,
                 checkAllTerms = checkAllTerms,
                 checkTerm = checkTerm,
                 showTermDetail = {
