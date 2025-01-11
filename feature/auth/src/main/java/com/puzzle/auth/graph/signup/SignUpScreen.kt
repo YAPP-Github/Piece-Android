@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
@@ -51,7 +51,7 @@ private fun SignUpScreen(
     onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
-    val (selectedTerm, setSelectedTerm) = remember { mutableStateOf<Term?>(null) }
+    val (selectedTerm, setSelectedTerm) = rememberSaveable { mutableStateOf<Term?>(null) }
 
     Column(
         modifier = Modifier
