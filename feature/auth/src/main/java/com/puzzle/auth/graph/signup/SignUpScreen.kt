@@ -17,8 +17,8 @@ import com.puzzle.auth.graph.signup.contract.SignUpState
 import com.puzzle.auth.graph.signup.page.AccessRightsPage
 import com.puzzle.auth.graph.signup.page.AvoidAcquaintancesPage
 import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
-import com.puzzle.auth.graph.signup.page.TermPage
 import com.puzzle.auth.graph.signup.page.TermDetailPage
+import com.puzzle.auth.graph.signup.page.TermPage
 import com.puzzle.domain.model.terms.Term
 import com.puzzle.navigation.NavigationEvent
 
@@ -76,7 +76,7 @@ private fun SignUpScreen(
             SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
                 term = selectedTerm!!,
                 onBackClick = onBackClick,
-                onAgreeClick = { agreeTerm(selectedTerm.id) },
+                onAgreeClick = agreeTerm,
             )
 
             SignUpState.SignUpPage.AccessRightsPage -> AccessRightsPage(
