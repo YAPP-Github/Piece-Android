@@ -7,7 +7,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
-import com.puzzle.domain.repository.VerificationCodeRepository
+import com.puzzle.domain.repository.AuthCodeRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 class VerificationViewModel @AssistedInject constructor(
     @Assisted initialState: VerificationState,
     private val navigationHelper: NavigationHelper,
-    private val verificationCodeRepository: VerificationCodeRepository,
+    private val authCodeRepository: AuthCodeRepository,
 ) : MavericksViewModel<VerificationState>(initialState) {
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<VerificationViewModel, VerificationState> {
@@ -58,8 +58,8 @@ class VerificationViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: VerificationIntent) {
         when (intent) {
-            is VerificationIntent.OnRequestVerificationCodeClick -> requestVerificationCode(intent.phoneNumber)
-            is VerificationIntent.OnVerifyClick -> verify(intent.code)
+            is VerificationIntent.OnRequestAuthCodeClick -> requestAuthCode(intent.phoneNumber)
+            is VerificationIntent.OnVerifyClick -> verifyAuthCode(intent.code)
             VerificationIntent.OnNextClick -> moveToNextPage()
         }
     }
@@ -79,9 +79,9 @@ class VerificationViewModel @AssistedInject constructor(
         )
     }
 
-    private fun requestVerificationCode(phoneNumber: String) {
+    private fun requestAuthCode(phoneNumber: String) {
         viewModelScope.launch {
-            val result = verificationCodeRepository.requestVerificationCode(phoneNumber)
+            val result = authCodeRepository.requestAuthCode(phoneNumber)
 
             setState {
                 copy(
@@ -95,18 +95,18 @@ class VerificationViewModel @AssistedInject constructor(
         }
     }
 
-    private fun verify(code: String) {
+    private fun verifyAuthCode(code: String) {
         viewModelScope.launch {
-            val result = verificationCodeRepository.verify(code)
+            val result = authCodeRepository.verify(code)
             setState {
                 copy(
                     isVerified = result,
                     remainingTimeInSec = 0,
-                    verificationCodeStatus = if (result) {
+                    authCodeStatus = if (result) {
                         timerJob?.cancel()
-                        VerificationState.VerificationCodeStatus.VERIFIED
+                        VerificationState.AuthCodeStatus.VERIFIED
                     } else {
-                        VerificationState.VerificationCodeStatus.INVALID
+                        VerificationState.AuthCodeStatus.INVALID
                     },
                 )
             }
@@ -120,7 +120,7 @@ class VerificationViewModel @AssistedInject constructor(
             copy(
                 hasStarted = true,
                 remainingTimeInSec = durationInSec,
-                verificationCodeStatus = VerificationState.VerificationCodeStatus.DO_NOT_SHARE,
+                authCodeStatus = VerificationState.AuthCodeStatus.DO_NOT_SHARE,
             )
         }
 
@@ -132,7 +132,7 @@ class VerificationViewModel @AssistedInject constructor(
                         setState {
                             copy(
                                 remainingTimeInSec = 0,
-                                verificationCodeStatus = VerificationState.VerificationCodeStatus.TIME_EXPIRED,
+                                authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED,
                             )
                         }
                         return@withState

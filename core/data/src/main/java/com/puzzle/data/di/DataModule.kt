@@ -2,10 +2,10 @@ package com.puzzle.data.di
 
 import com.puzzle.data.repository.AuthRepositoryImpl
 import com.puzzle.data.repository.TermsRepositoryImpl
-import com.puzzle.data.repository.VerificationCodeRepositoryImpl
+import com.puzzle.data.repository.AuthCodeRepositoryImpl
 import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.domain.repository.TermsRepository
-import com.puzzle.domain.repository.VerificationCodeRepository
+import com.puzzle.domain.repository.AuthCodeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -31,7 +31,7 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindsVerificationCodeRepository(
-        verificationCodeRepositoryImpl: VerificationCodeRepositoryImpl,
-    ): VerificationCodeRepository
+    abstract fun bindsAuthCodeRepository(
+        authCodeRepositoryImpl: AuthCodeRepositoryImpl,
+    ): AuthCodeRepository
 }

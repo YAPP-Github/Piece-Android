@@ -34,7 +34,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
-import com.puzzle.auth.graph.verification.contract.VerificationState.VerificationCodeStatus
+import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
@@ -54,8 +54,8 @@ internal fun VerificationRoute(
         navigate = {
             viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
         },
-        onRequestVerificationCodeClick = { phoneNumber ->
-            viewModel.onIntent(VerificationIntent.OnRequestVerificationCodeClick(phoneNumber))
+        onRequestAuthCodeClick = { phoneNumber ->
+            viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
         },
         onVerifyClick = { code ->
             viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
@@ -69,7 +69,7 @@ internal fun VerificationRoute(
 @Composable
 private fun VerificationScreen(
     state: VerificationState,
-    onRequestVerificationCodeClick: (String) -> Unit,
+    onRequestAuthCodeClick: (String) -> Unit,
     onVerifyClick: (String) -> Unit,
     onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
@@ -127,15 +127,15 @@ private fun VerificationScreen(
         PhoneNumberBody(
             isValidPhoneNumber = state.isValidPhoneNumber,
             hasStarted = state.hasStarted,
-            onRequestVerificationCodeClick = onRequestVerificationCodeClick,
+            onRequestAuthCodeClick = onRequestAuthCodeClick,
         )
 
         if (state.hasStarted) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            VerificationCodeBody(
+            AuthCodeBody(
                 remainingTimeInSec = state.remainingTimeInSec,
-                verificationCodeStatus = state.verificationCodeStatus,
+                authCodeStatus = state.authCodeStatus,
                 onVerifyClick = onVerifyClick,
             )
         }
@@ -156,31 +156,31 @@ private fun VerificationScreen(
 }
 
 @Composable
-private fun VerificationCodeBody(
+private fun AuthCodeBody(
     remainingTimeInSec: Int,
-    verificationCodeStatus: VerificationCodeStatus,
+    authCodeStatus: AuthCodeStatus,
     onVerifyClick: (String) -> Unit,
 ) {
-    var verificationCode by rememberSaveable { mutableStateOf("") }
+    var authCode by rememberSaveable { mutableStateOf("") }
 
-    val (verificationCodeStatusMessage, verificationCodeStatusColor) =
-        when (verificationCodeStatus) {
-            VerificationCodeStatus.DO_NOT_SHARE ->
+    val (authCodeStatusMessage, authgCodeStatusColor) =
+        when (authCodeStatus) {
+            AuthCodeStatus.DO_NOT_SHARE ->
                 stringResource(R.string.verification_do_not_share) to PieceTheme.colors.dark3
 
-            VerificationCodeStatus.VERIFIED ->
+            AuthCodeStatus.VERIFIED ->
                 stringResource(R.string.verification_verified) to PieceTheme.colors.primaryDefault
 
-            VerificationCodeStatus.INVALID ->
+            AuthCodeStatus.INVALID ->
                 stringResource(R.string.verification_invalid_code) to PieceTheme.colors.subDefault
 
-            VerificationCodeStatus.TIME_EXPIRED ->
+            AuthCodeStatus.TIME_EXPIRED ->
                 stringResource(R.string.verification_time_expired) to PieceTheme.colors.subDefault
         }
 
     val isVerifyButtonEnabled =
-        verificationCodeStatus == VerificationCodeStatus.DO_NOT_SHARE ||
-                verificationCodeStatus == VerificationCodeStatus.INVALID
+        authCodeStatus == AuthCodeStatus.DO_NOT_SHARE ||
+                authCodeStatus == AuthCodeStatus.INVALID
 
     Text(
         text = stringResource(R.string.verification_verifiaction_code),
@@ -195,8 +195,8 @@ private fun VerificationCodeBody(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         BasicTextField(
-            value = verificationCode,
-            onValueChange = { verificationCode = it },
+            value = authCode,
+            onValueChange = { authCode = it },
             textStyle = PieceTheme.typography.bodyMM,
             decorationBox = { innerTextField ->
                 Box {
@@ -227,7 +227,7 @@ private fun VerificationCodeBody(
         PieceSolidButton(
             label = stringResource(R.string.verification_submit),
             onClick = {
-                onVerifyClick(verificationCode)
+                onVerifyClick(authCode)
             },
             enabled = isVerifyButtonEnabled,
         )
@@ -236,9 +236,9 @@ private fun VerificationCodeBody(
     Spacer(modifier = Modifier.height(8.dp))
 
     Text(
-        text = verificationCodeStatusMessage,
+        text = authCodeStatusMessage,
         style = PieceTheme.typography.bodySM,
-        color = verificationCodeStatusColor,
+        color = authgCodeStatusColor,
     )
 }
 
@@ -246,7 +246,7 @@ private fun VerificationCodeBody(
 private fun PhoneNumberBody(
     hasStarted: Boolean,
     isValidPhoneNumber: Boolean,
-    onRequestVerificationCodeClick: (String) -> Unit
+    onRequestAuthCodeClick: (String) -> Unit
 ) {
     var phoneNumber by rememberSaveable { mutableStateOf("") }
 
@@ -285,7 +285,7 @@ private fun PhoneNumberBody(
         PieceSolidButton(
             label = requestButtonLabel,
             onClick = {
-                onRequestVerificationCodeClick(phoneNumber)
+                onRequestAuthCodeClick(phoneNumber)
             },
             enabled = phoneNumber.isNotEmpty(),
         )
@@ -321,10 +321,10 @@ fun PreviewVerificationScreen() {
                 hasStarted = true,
                 remainingTimeInSec = 299,
                 isVerified = true,
-                verificationCodeStatus = VerificationCodeStatus.DO_NOT_SHARE,
+                authCodeStatus = AuthCodeStatus.DO_NOT_SHARE,
             ),
             navigate = {},
-            onRequestVerificationCodeClick = {},
+            onRequestAuthCodeClick = {},
             onVerifyClick = {},
             onNextClick = {},
         )

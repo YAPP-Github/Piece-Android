@@ -6,11 +6,11 @@ data class VerificationState(
     val isValidPhoneNumber: Boolean = true,
     val hasStarted: Boolean = false,
     val remainingTimeInSec: Int = 0,
-    val verificationCodeStatus: VerificationCodeStatus = VerificationCodeStatus.DO_NOT_SHARE,
+    val authCodeStatus: AuthCodeStatus = AuthCodeStatus.DO_NOT_SHARE,
     val isVerified: Boolean = false,
 ) : MavericksState {
 
-    enum class VerificationCodeStatus {
+    enum class AuthCodeStatus {
         DO_NOT_SHARE, // "어떤 경우에도 타인에게 공유하지 마세요"
         VERIFIED, // "전화번호 인증을 완료했어요"
         INVALID, // "올바른 인증번호가 아니에요"
