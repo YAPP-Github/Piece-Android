@@ -3,6 +3,7 @@ package com.puzzle.auth.graph.verification.contract
 import com.airbnb.mvrx.MavericksState
 
 data class VerificationState(
+    val isValidPhoneNumber: Boolean = true,
     val hasStarted: Boolean = false,
     val remainingTimeInSec: Int = 0,
     val verificationCodeStatus: VerificationCodeStatus = VerificationCodeStatus.DO_NOT_SHARE,

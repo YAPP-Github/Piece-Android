@@ -81,7 +81,15 @@ class VerificationViewModel @AssistedInject constructor(
 
     private fun requestVerificationCode(phoneNumber: String) {
         viewModelScope.launch {
-            verificationCodeRepository.requestVerificationCode(phoneNumber)
+            val result = verificationCodeRepository.requestVerificationCode(phoneNumber)
+
+            setState {
+                copy(
+                    isValidPhoneNumber = result
+                )
+            }
+
+            if (!result) return@launch
 
             startCodeExpiryTimer(5)
         }

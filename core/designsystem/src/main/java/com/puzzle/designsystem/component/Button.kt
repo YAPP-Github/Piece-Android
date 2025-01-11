@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -40,7 +41,9 @@ fun PieceSolidButton(
             disabledContainerColor = PieceTheme.colors.light1,
             disabledContentColor = PieceTheme.colors.white,
         ),
-        modifier = modifier.height(52.dp),
+        modifier = modifier
+            .height(52.dp)
+            .widthIn(min = 100.dp),
     ) {
         Text(
             text = label,
@@ -67,7 +70,9 @@ fun PieceOutlinedButton(
             disabledContainerColor = PieceTheme.colors.light1,
             disabledContentColor = PieceTheme.colors.primaryDefault,
         ),
-        modifier = modifier.height(52.dp),
+        modifier = modifier
+            .height(52.dp)
+            .widthIn(min = 100.dp),
     ) {
         Text(
             text = label,
@@ -93,7 +98,9 @@ fun PieceSubButton(
             disabledContainerColor = PieceTheme.colors.light3,
             disabledContentColor = PieceTheme.colors.dark2,
         ),
-        modifier = modifier.height(52.dp),
+        modifier = modifier
+            .height(52.dp)
+            .widthIn(min = 100.dp),
     ) {
         Text(
             text = label,
@@ -120,7 +127,9 @@ fun PieceIconButton(
             disabledContainerColor = PieceTheme.colors.light1,
             disabledContentColor = PieceTheme.colors.white,
         ),
-        modifier = modifier.height(52.dp),
+        modifier = modifier
+            .height(52.dp)
+            .widthIn(min = 100.dp),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

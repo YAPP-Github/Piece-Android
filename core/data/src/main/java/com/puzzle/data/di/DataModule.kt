@@ -31,7 +31,7 @@ abstract class DataModule {
 
     @Binds
     @Singleton
-    abstract fun bindsTermsRepository(
+    abstract fun bindsVerificationCodeRepository(
         verificationCodeRepositoryImpl: VerificationCodeRepositoryImpl,
     ): VerificationCodeRepository
 }

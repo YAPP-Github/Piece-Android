@@ -125,6 +125,7 @@ private fun VerificationScreen(
         Spacer(modifier = Modifier.height(70.dp))
 
         PhoneNumberBody(
+            isValidPhoneNumber = state.isValidPhoneNumber,
             hasStarted = state.hasStarted,
             onRequestVerificationCodeClick = onRequestVerificationCodeClick,
         )
@@ -171,7 +172,7 @@ private fun VerificationCodeBody(
                 stringResource(R.string.verification_verified) to PieceTheme.colors.primaryDefault
 
             VerificationCodeStatus.INVALID ->
-                stringResource(R.string.verification_invalid) to PieceTheme.colors.subDefault
+                stringResource(R.string.verification_invalid_code) to PieceTheme.colors.subDefault
 
             VerificationCodeStatus.TIME_EXPIRED ->
                 stringResource(R.string.verification_time_expired) to PieceTheme.colors.subDefault
@@ -244,6 +245,7 @@ private fun VerificationCodeBody(
 @Composable
 private fun PhoneNumberBody(
     hasStarted: Boolean,
+    isValidPhoneNumber: Boolean,
     onRequestVerificationCodeClick: (String) -> Unit
 ) {
     var phoneNumber by rememberSaveable { mutableStateOf("") }
@@ -286,6 +288,16 @@ private fun PhoneNumberBody(
                 onRequestVerificationCodeClick(phoneNumber)
             },
             enabled = phoneNumber.isNotEmpty(),
+        )
+    }
+
+    if (!isValidPhoneNumber) {
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = stringResource(R.string.verification_invalid_phone_number),
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.subDefault,
         )
     }
 }
