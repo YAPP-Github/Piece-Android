@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,7 +23,10 @@ fun PieceToggle(
     onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.size(width = 40.dp, height = 32.dp)) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.size(width = 40.dp, height = 32.dp),
+    ) {
         Switch(
             checked = checked,
             onCheckedChange = { onCheckedChange() },
@@ -42,7 +46,7 @@ fun PieceToggle(
                         .background(PieceTheme.colors.white)
                 )
             },
-            modifier = Modifier.padding(horizontal = 3.dp, vertical = 6.dp),
+            modifier = Modifier.size(width = 34.dp, height = 20.dp),
         )
     }
 }

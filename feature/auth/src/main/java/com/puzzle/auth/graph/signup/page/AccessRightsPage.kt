@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
+import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
@@ -68,21 +69,24 @@ internal fun ColumnScope.AccessRightsPage(
             icon = R.drawable.ic_permission_camera,
             label = "사진,카메라 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
-            onClick = {},
+            checked = true,
+            onCheckedChange = {},
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_alarm,
             label = "알림 [선택]",
             description = "매칭 현황 등 중요 메세지 수신을 위해 필요해요.",
-            onClick = {},
+            checked = true,
+            onCheckedChange = {},
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_call,
             label = "연락처 [선택]",
             description = "지인을 수집하기 위해 필요해요.",
-            onClick = {},
+            checked = true,
+            onCheckedChange = {},
         )
     }
 
@@ -104,17 +108,18 @@ internal fun ColumnScope.AccessRightsPage(
 
 @Composable
 private fun PiecePermissionRow(
+    @DrawableRes icon: Int,
     label: String,
     description: String,
-    @DrawableRes icon: Int,
-    onClick: () -> Unit,
+    checked: Boolean,
+    onCheckedChange: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { onCheckedChange() }
             .padding(vertical = 16.dp)
     ) {
         Image(
@@ -124,11 +129,22 @@ private fun PiecePermissionRow(
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                text = label,
-                style = PieceTheme.typography.bodyMM,
-                color = PieceTheme.colors.black,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = label,
+                    style = PieceTheme.typography.bodyMM,
+                    color = PieceTheme.colors.black,
+                    modifier = Modifier.weight(1f),
+                )
+
+                PieceToggle(
+                    checked = checked,
+                    onCheckedChange = onCheckedChange,
+                )
+            }
 
             Text(
                 text = description,
@@ -136,8 +152,6 @@ private fun PiecePermissionRow(
                 color = PieceTheme.colors.dark2,
             )
         }
-
-
     }
 }
 
@@ -167,7 +181,8 @@ private fun PiecePermissionRowPreview() {
             icon = R.drawable.ic_permission_camera,
             label = "사진,카메라 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
-            onClick = {}
+            checked = true,
+            onCheckedChange = {}
         )
     }
 }
