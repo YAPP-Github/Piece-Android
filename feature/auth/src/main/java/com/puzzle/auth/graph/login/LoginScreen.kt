@@ -1,6 +1,5 @@
 package com.puzzle.auth.graph.login
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -54,9 +53,9 @@ fun LoginRoute(
         loginKakao = {
             UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
                 if (error != null) {
-                    Log.e("test", "로그인 실패", error)
+//                    Log.e("test", "로그인 실패", error)
                 } else if (token != null) {
-                    Log.i("test", "로그인 성공 ${token.accessToken}")
+//                    Log.i("test", "로그인 성공 ${token.accessToken}")
                 }
             }
         },

@@ -1,8 +1,8 @@
 package com.puzzle.network.source
 
 import com.puzzle.network.api.PieceApi
-import com.puzzle.network.model.unwrapData
 import com.puzzle.network.model.terms.LoadTermsResponse
+import com.puzzle.network.model.unwrapData
 import javax.inject.Inject
 import javax.inject.Singleton
 
