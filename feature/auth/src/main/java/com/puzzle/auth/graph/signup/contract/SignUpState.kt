@@ -8,7 +8,8 @@ data class SignUpState(
     val termsCheckedInfo: Map<Int, Boolean> = emptyMap(),
     val signUpPage: SignUpPage = SignUpPage.TermPage,
 ) : MavericksState {
-    val areAllTermsAgreed = terms.all { termsCheckedInfo.getOrDefault(it.id, false) }
+    val areAllTermsAgreed = terms.filter { it.required }
+        .all { termsCheckedInfo.getOrDefault(it.id, false) }
 
     enum class SignUpPage {
         TermPage,
