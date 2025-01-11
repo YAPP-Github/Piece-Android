@@ -4,9 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -35,6 +32,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent.Navigate
 import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceLoginButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
@@ -128,76 +126,29 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Button(
-            onClick = loginKakao,
-            enabled = true,
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color(0xFFFFE812),
-                contentColor = PieceTheme.colors.white,
-                disabledContainerColor = PieceTheme.colors.light1,
-                disabledContentColor = PieceTheme.colors.white,
-            ),
-            modifier = Modifier
-                .height(52.dp)
-                .fillMaxWidth(),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_kakao_login),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-
-                Text(
-                    text = "카카오로 시작하기",
-                    style = PieceTheme.typography.bodyMSB,
-                    color = PieceTheme.colors.black,
-                )
-            }
-        }
+        PieceLoginButton(
+            label = stringResource(R.string.kakao_login),
+            imageId = R.drawable.ic_kakao_login,
+            onClick = {},
+            containerColor = Color(0xFFFFE812),
+            modifier = Modifier.fillMaxWidth()
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
 
-        Button(
-            onClick = loginKakao,
-            enabled = true,
-            shape = RoundedCornerShape(8.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = PieceTheme.colors.white,
-                contentColor = PieceTheme.colors.white,
-                disabledContainerColor = PieceTheme.colors.light1,
-                disabledContentColor = PieceTheme.colors.white,
-            ),
+        PieceLoginButton(
+            label = stringResource(R.string.google_login),
+            imageId = R.drawable.ic_google_login,
+            onClick = {},
+            containerColor = PieceTheme.colors.white,
             modifier = Modifier
-                .height(52.dp)
                 .fillMaxWidth()
                 .border(
                     width = 1.dp,
                     color = PieceTheme.colors.light1,
                     shape = RoundedCornerShape(8.dp)
                 ),
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_google_login),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-
-                Text(
-                    text = "구글로 시작하기",
-                    style = PieceTheme.typography.bodyMSB,
-                    color = PieceTheme.colors.black,
-                )
-            }
-        }
+        )
 
         Spacer(modifier = Modifier.height(10.dp))
     }

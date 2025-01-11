@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -112,17 +113,18 @@ fun PieceSubButton(
 @Composable
 fun PieceIconButton(
     label: String,
-    @DrawableRes id: Int,
+    @DrawableRes imageId: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    containerColor: Color = PieceTheme.colors.primaryDefault,
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = PieceTheme.colors.primaryDefault,
+            containerColor = containerColor,
             contentColor = PieceTheme.colors.white,
             disabledContainerColor = PieceTheme.colors.light1,
             disabledContentColor = PieceTheme.colors.white,
@@ -136,7 +138,7 @@ fun PieceIconButton(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Image(
-                painter = painterResource(id),
+                painter = painterResource(imageId),
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
             )
@@ -144,6 +146,49 @@ fun PieceIconButton(
             Text(
                 text = label,
                 style = PieceTheme.typography.bodyMSB,
+            )
+        }
+    }
+}
+
+@Composable
+fun PieceLoginButton(
+    label: String,
+    @DrawableRes imageId: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    containerColor: Color = PieceTheme.colors.primaryDefault,
+    labelColor: Color = PieceTheme.colors.black
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = PieceTheme.colors.white,
+            disabledContainerColor = PieceTheme.colors.light1,
+            disabledContentColor = PieceTheme.colors.white,
+        ),
+        modifier = modifier
+            .height(52.dp)
+            .widthIn(min = 100.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Image(
+                painter = painterResource(imageId),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+            )
+
+            Text(
+                text = label,
+                style = PieceTheme.typography.bodyMSB,
+                color = labelColor,
             )
         }
     }
@@ -242,7 +287,7 @@ fun PreviewPieceIconButton() {
     PieceTheme {
         PieceIconButton(
             label = "Label",
-            id = R.drawable.ic_alarm,
+            imageId = R.drawable.ic_alarm,
             onClick = {},
             modifier = Modifier
                 .fillMaxWidth()
@@ -257,6 +302,21 @@ fun PreviewPieceRoundingButton() {
     PieceTheme {
         PieceRoundingButton(
             label = "Label",
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPieceLoginButton() {
+    PieceTheme {
+        PieceLoginButton(
+            label = "Label",
+            imageId = R.drawable.ic_alarm,
             onClick = {},
             modifier = Modifier
                 .fillMaxWidth()

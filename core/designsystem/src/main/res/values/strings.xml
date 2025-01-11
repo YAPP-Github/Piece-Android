@@ -11,6 +11,10 @@
     <string name="same_value_as_me">나와 같은 가치관</string>
     <string name="accept_matching">매칭 수락하기</string>
 
+    <!--login-->
+    <string name="kakao_login">카카오로 시작하기</string>
+    <string name="google_login">구글로 시작하기</string>
+
     <!--Verification-->
     <string name="verification_subtitle">신뢰도 높은 매칭과 안전한 커뮤니티를 위해\n휴대폰 번호로 인증해 주세요.</string>
     <string name="verification_submit">확인</string>
