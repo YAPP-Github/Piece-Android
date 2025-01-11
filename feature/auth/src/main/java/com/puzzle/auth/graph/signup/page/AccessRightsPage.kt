@@ -3,6 +3,7 @@ package com.puzzle.auth.graph.signup.page
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_CONTACTS
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.shouldShowRationale
@@ -51,6 +53,7 @@ internal fun ColumnScope.AccessRightsPage(
     onNextClick: () -> Unit,
 ) {
     val context = LocalContext.current
+
     val permissionList = rememberMultiplePermissionsState(
         listOfNotNull(
             CAMERA,
@@ -58,18 +61,18 @@ internal fun ColumnScope.AccessRightsPage(
             READ_CONTACTS,
         )
     )
+    val cameraPermission = permissionList.permissions
+        .find { it.permission == CAMERA }
+    val notificationPermission = permissionList.permissions
+        .find { if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true }
+    val contactsPermission = permissionList.permissions
+        .find { it.permission == READ_CONTACTS }
 
-    val cameraPermission = permissionList.permissions.find { it.permission == CAMERA }
-    val notificationPermission = permissionList.permissions.find {
-        if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true
-    }
-    val contactsPermission = permissionList.permissions.find { it.permission == READ_CONTACTS }
+    BackHandler { onBackClick() }
 
     LaunchedEffect(permissionList) {
         permissionList.launchMultiplePermissionRequest()
     }
-
-    BackHandler { onBackClick() }
 
     PieceSubBackTopBar(
         title = "",
@@ -103,20 +106,7 @@ internal fun ColumnScope.AccessRightsPage(
             label = "사진,카메라 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
             checked = cameraPermission?.status == PermissionStatus.Granted,
-            onCheckedChange = {
-                cameraPermission?.let {
-                    if (it.status != PermissionStatus.Granted) {
-                        if (!it.status.shouldShowRationale) {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
-                            }
-                            context.startActivity(intent)
-                        } else {
-                            cameraPermission.launchPermissionRequest()
-                        }
-                    }
-                }
-            },
+            onCheckedChange = { handlePermission(context, cameraPermission) },
         )
 
         PiecePermissionRow(
@@ -124,21 +114,7 @@ internal fun ColumnScope.AccessRightsPage(
             label = "알림 [선택]",
             description = "매칭 현황 등 중요 메시지 수신을 위해 필요해요.",
             checked = notificationPermission?.status == PermissionStatus.Granted,
-            onCheckedChange = {
-                notificationPermission?.let {
-                    if (it.status != PermissionStatus.Granted) {
-                        if (!it.status.shouldShowRationale) {
-                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                                data = Uri.fromParts("package", context.packageName, null)
-                            }
-                            context.startActivity(intent)
-                        } else {
-                            it.launchPermissionRequest()
-                        }
-                    }
-                }
-            },
+            onCheckedChange = { handlePermission(context, notificationPermission) },
         )
 
         PiecePermissionRow(
@@ -146,20 +122,7 @@ internal fun ColumnScope.AccessRightsPage(
             label = "연락처 [선택]",
             description = "지인을 수집하기 위해 필요해요.",
             checked = contactsPermission?.status == PermissionStatus.Granted,
-            onCheckedChange = {
-                contactsPermission?.let {
-                    if (it.status != PermissionStatus.Granted) {
-                        if (!it.status.shouldShowRationale) {
-                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                                data = Uri.fromParts("package", context.packageName, null)
-                            }
-                            context.startActivity(intent)
-                        } else {
-                            it.launchPermissionRequest()
-                        }
-                    }
-                }
-            },
+            onCheckedChange = { handlePermission(context, contactsPermission) },
         )
     }
 
@@ -224,6 +187,22 @@ private fun PiecePermissionRow(
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark2,
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private fun handlePermission(context: Context, permission: PermissionState?) {
+    permission?.let {
+        if (it.status != PermissionStatus.Granted) {
+            if (!it.status.shouldShowRationale) {
+                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = Uri.fromParts("package", context.packageName, null)
+                }
+                context.startActivity(intent)
+            } else {
+                it.launchPermissionRequest()
+            }
         }
     }
 }
