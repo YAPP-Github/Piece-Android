@@ -1,5 +1,10 @@
 package com.puzzle.auth.graph.signup.page
 
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.Manifest.permission.READ_CONTACTS
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -15,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -24,18 +30,39 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun ColumnScope.AccessRightsPage(
-    agreeCameraPermission: Boolean,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
+    val permissionList = rememberMultiplePermissionsState(
+        listOfNotNull(
+            CAMERA,
+            if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null,
+            READ_CONTACTS,
+        )
+    )
+
+    val cameraPermission = permissionList.permissions.find { it.permission == CAMERA }
+    val notificationPermission = permissionList.permissions.find {
+        if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true
+    }
+    val contactsPermission = permissionList.permissions.find { it.permission == READ_CONTACTS }
+
+    LaunchedEffect(permissionList) {
+        permissionList.launchMultiplePermissionRequest()
+    }
+
     BackHandler { onBackClick() }
 
     PieceSubBackTopBar(
@@ -69,24 +96,36 @@ internal fun ColumnScope.AccessRightsPage(
             icon = R.drawable.ic_permission_camera,
             label = "사진,카메라 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
-            checked = true,
-            onCheckedChange = {},
+            checked = cameraPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = {
+                if (cameraPermission?.status != PermissionStatus.Granted) {
+                    cameraPermission?.launchPermissionRequest()
+                }
+            },
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_alarm,
             label = "알림 [선택]",
-            description = "매칭 현황 등 중요 메세지 수신을 위해 필요해요.",
-            checked = true,
-            onCheckedChange = {},
+            description = "매칭 현황 등 중요 메시지 수신을 위해 필요해요.",
+            checked = notificationPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = {
+                if (notificationPermission?.status != PermissionStatus.Granted) {
+                    notificationPermission?.launchPermissionRequest()
+                }
+            },
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_call,
             label = "연락처 [선택]",
             description = "지인을 수집하기 위해 필요해요.",
-            checked = true,
-            onCheckedChange = {},
+            checked = contactsPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = {
+                if (contactsPermission?.status != PermissionStatus.Granted) {
+                    contactsPermission?.launchPermissionRequest()
+                }
+            },
         )
     }
 
@@ -98,7 +137,7 @@ internal fun ColumnScope.AccessRightsPage(
 
     PieceSolidButton(
         label = stringResource(R.string.next),
-        enabled = agreeCameraPermission,
+        enabled = cameraPermission?.status == PermissionStatus.Granted,
         onClick = onNextClick,
         modifier = Modifier
             .fillMaxWidth()
@@ -165,7 +204,6 @@ private fun AccessRightsPagePreview() {
                 .padding(horizontal = 20.dp),
         ) {
             AccessRightsPage(
-                agreeCameraPermission = true,
                 onBackClick = {},
                 onNextClick = {}
             )
