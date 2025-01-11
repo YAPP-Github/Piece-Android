@@ -53,13 +53,8 @@ internal fun ColumnScope.AccessRightsPage(
     onNextClick: () -> Unit,
 ) {
     val context = LocalContext.current
-
     val permissionList = rememberMultiplePermissionsState(
-        listOfNotNull(
-            CAMERA,
-            if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null,
-            READ_CONTACTS,
-        )
+        listOfNotNull(CAMERA, if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null, READ_CONTACTS)
     )
     val cameraPermission = permissionList.permissions
         .find { it.permission == CAMERA }
@@ -103,24 +98,24 @@ internal fun ColumnScope.AccessRightsPage(
     Column(modifier = Modifier.fillMaxWidth()) {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,
-            label = "사진,카메라 [필수]",
-            description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
+            label = stringResource(R.string.permission_camera),
+            description = stringResource(R.string.permission_camera_description),
             checked = cameraPermission?.status == PermissionStatus.Granted,
             onCheckedChange = { handlePermission(context, cameraPermission) },
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_alarm,
-            label = "알림 [선택]",
-            description = "매칭 현황 등 중요 메시지 수신을 위해 필요해요.",
+            label = stringResource(R.string.permission_notification),
+            description = stringResource(R.string.permission_notification_description),
             checked = notificationPermission?.status == PermissionStatus.Granted,
             onCheckedChange = { handlePermission(context, notificationPermission) },
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_call,
-            label = "연락처 [선택]",
-            description = "지인을 수집하기 위해 필요해요.",
+            label = stringResource(R.string.permission_contacts),
+            description = stringResource(R.string.permission_contacts_description),
             checked = contactsPermission?.status == PermissionStatus.Granted,
             onCheckedChange = { handlePermission(context, contactsPermission) },
         )
