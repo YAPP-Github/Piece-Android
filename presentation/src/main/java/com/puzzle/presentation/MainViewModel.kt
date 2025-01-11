@@ -1,5 +1,6 @@
 package com.puzzle.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
@@ -26,6 +27,8 @@ class MainViewModel @Inject constructor(
 
     private fun handleError() = viewModelScope.launch {
         errorHelper.errorEvent.collect { exception ->
+            Log.e("Piece", exception.stackTraceToString())
+
             when (exception) {
                 is HttpResponseException -> {
                     // Todo : HTTP 호출 에러
