@@ -15,7 +15,7 @@ sealed class AuthGraphDest : Route {
     data object VerificationRoute : AuthGraphDest()
 
     @Serializable
-    data object RegistrationRoute : AuthGraphDest()
+    data object SignUpRoute : AuthGraphDest()
 }
 
 @Serializable

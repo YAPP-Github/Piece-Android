@@ -1,4 +1,4 @@
-package com.puzzle.matching.graph.detail.common.ui
+package com.puzzle.matching.graph.detail.page
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +24,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
-internal fun BasicInfoBody(
+internal fun BasicInfoPage(
     nickName: String,
     selfDescription: String,
     birthYear: String,
@@ -222,9 +222,9 @@ private fun InfoItem(
 
 @Preview
 @Composable
-private fun ProfileBasicInfoBodyPreview() {
+private fun ProfileBasicInfoPagePreview() {
     PieceTheme {
-        BasicInfoBody(
+        BasicInfoPage(
             nickName = "수줍은 수달",
             selfDescription = "음악과 요리를 좋아하는",
             birthYear = "1994",

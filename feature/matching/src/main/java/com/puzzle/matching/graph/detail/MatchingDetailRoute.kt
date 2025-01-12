@@ -38,9 +38,9 @@ import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.detail.common.constant.DialogType
-import com.puzzle.matching.graph.detail.common.ui.BasicInfoBody
-import com.puzzle.matching.graph.detail.common.ui.ValuePickBody
-import com.puzzle.matching.graph.detail.common.ui.ValueTalkBody
+import com.puzzle.matching.graph.detail.page.BasicInfoPage
+import com.puzzle.matching.graph.detail.page.ValuePickPage
+import com.puzzle.matching.graph.detail.page.ValueTalkPage
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState.MatchingDetailPage
@@ -244,7 +244,7 @@ private fun MatchingDetailContent(
     Box(modifier = modifier.fillMaxSize()) {
         when (state.currentPage) {
             MatchingDetailState.MatchingDetailPage.BasicInfoPage ->
-                BasicInfoBody(
+                BasicInfoPage(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     birthYear = state.birthYear,
@@ -259,7 +259,7 @@ private fun MatchingDetailContent(
                 )
 
             MatchingDetailState.MatchingDetailPage.ValueTalkPage ->
-                ValueTalkBody(
+                ValueTalkPage(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     talkCards = state.talkCards,
@@ -267,7 +267,7 @@ private fun MatchingDetailContent(
                 )
 
             MatchingDetailState.MatchingDetailPage.ValuePickPage ->
-                ValuePickBody(
+                ValuePickPage(
                     nickName = state.nickName,
                     selfDescription = state.selfDescription,
                     pickCards = state.pickCards,

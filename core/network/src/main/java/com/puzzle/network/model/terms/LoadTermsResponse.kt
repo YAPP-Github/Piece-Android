@@ -7,6 +7,7 @@ import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
+@Suppress("PLUGIN_IS_NOT_ENABLED")
 @Serializable
 data class LoadTermsResponse(
     val responses: List<TermResponse>?,

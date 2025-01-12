@@ -45,7 +45,7 @@ fun PieceCheck(
 }
 
 @Composable
-fun PieceCheckList(
+fun PieceCheckRow(
     checked: Boolean,
     label: String,
     onCheckedChange: () -> Unit,
@@ -59,7 +59,8 @@ fun PieceCheckList(
         modifier = modifier
             .height(52.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(containerColor),
+            .background(containerColor)
+            .clickable { onCheckedChange() },
     ) {
         PieceCheck(
             checked = checked,
@@ -109,7 +110,7 @@ fun PreviewPieceCheck() {
 
 @Preview
 @Composable
-fun PreviewPieceCheckList() {
+fun PreviewPieceCheckRow() {
     PieceTheme {
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -117,7 +118,7 @@ fun PreviewPieceCheckList() {
                 .background(PieceTheme.colors.black)
                 .padding(20.dp),
         ) {
-            PieceCheckList(
+            PieceCheckRow(
                 checked = true,
                 label = "약관 전체 동의",
                 onCheckedChange = {},
@@ -125,7 +126,7 @@ fun PreviewPieceCheckList() {
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            PieceCheckList(
+            PieceCheckRow(
                 checked = false,
                 arrowEnabled = true,
                 label = "약관 전체 동의",
