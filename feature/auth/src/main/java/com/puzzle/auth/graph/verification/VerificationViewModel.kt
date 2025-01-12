@@ -72,7 +72,7 @@ class VerificationViewModel @AssistedInject constructor(
     private fun moveToNextPage() {
         navigationHelper.navigate(
             NavigationEvent.NavigateTo(
-                route = AuthGraphDest.RegistrationRoute,
+                route = AuthGraphDest.SignUpRoute,
                 popUpTo = AuthGraph,
             )
         )

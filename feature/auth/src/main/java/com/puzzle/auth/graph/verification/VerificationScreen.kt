@@ -49,15 +49,21 @@ internal fun VerificationRoute(
 ) {
     val state by viewModel.collectAsState()
 
-    VerificationScreen(state = state, navigate = {
-        viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
-    }, onRequestAuthCodeClick = { phoneNumber ->
-        viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
-    }, onVerifyClick = { code ->
-        viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
-    }, onNextClick = {
-        viewModel.onIntent(VerificationIntent.OnNextClick)
-    })
+    VerificationScreen(
+        state = state,
+        navigate = {
+            viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
+        },
+        onRequestAuthCodeClick = { phoneNumber ->
+            viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
+        },
+        onVerifyClick = { code ->
+            viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
+        },
+        onNextClick = {
+            viewModel.onIntent(VerificationIntent.OnNextClick)
+        }
+    )
 }
 
 @Composable
@@ -77,7 +83,7 @@ private fun VerificationScreen(
             .clickable {
                 navigate(
                     NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.RegistrationRoute,
+                        route = AuthGraphDest.SignUpRoute,
                         popUpTo = AuthGraph,
                     )
                 )
