@@ -6,17 +6,18 @@ import javax.inject.Inject
 
 class VerifyAuthCodeUseCase @Inject constructor(
     private val authCodeRepository: AuthCodeRepository,
+    private val timerManager: TimerManager,
 ) {
     suspend operator fun invoke(
         code: String,
         callback: Callback
     ) {
-        if (!TimerManager.isTimeRemaining()) return
+        if (!timerManager.isTimeRemaining()) return
 
         val result = authCodeRepository.verify(code)
 
         if (result) {
-            TimerManager.stopTimer()
+            timerManager.stopTimer()
 
             callback.onVerificationCompleted()
         } else {

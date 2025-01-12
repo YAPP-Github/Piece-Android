@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 class RequestAuthCodeUseCase @Inject constructor(
     private val authCodeRepository: AuthCodeRepository,
+    private val timerManager: TimerManager,
 ) {
     suspend operator fun invoke(
         phoneNumber: String,
@@ -22,7 +23,7 @@ class RequestAuthCodeUseCase @Inject constructor(
 
         callback.onRequestSuccess()
 
-        TimerManager.startTimer(
+        timerManager.startTimer(
             durationInSec = DURATION_IN_SEC,
             onTick = { remaining ->
                 callback.onTick(remaining)
