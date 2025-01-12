@@ -108,13 +108,13 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "서로의 빈 곳을 채우며 맞물리는 퍼즐처럼.\n서로의 가치관과 마음이 연결되는 순간을 만들어갑니다.",
+            text = stringResource(R.string.login_description),
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark3,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 70.dp),
         )
-
-        Spacer(modifier = Modifier.height(70.dp))
 
         Image(
             painter = painterResource(R.drawable.ic_puzzle1),
