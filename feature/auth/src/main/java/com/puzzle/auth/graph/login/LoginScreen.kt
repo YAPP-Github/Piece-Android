@@ -174,6 +174,7 @@ private fun loginKakao(
 ) {
     UserApiClient.instance.apply {
         if (isKakaoTalkLoginAvailable(context)) {
+            // 카카오톡 로그인
             loginWithKakaoAccount(context) { token, error ->
                 if (error != null) {
                     onFailure(error)
@@ -182,6 +183,7 @@ private fun loginKakao(
                 }
             }
         } else {
+            // 카카오 계정 로그인 (웹)
             loginWithKakaoAccount(context) { token, error ->
                 if (error != null) {
                     onFailure(error)
