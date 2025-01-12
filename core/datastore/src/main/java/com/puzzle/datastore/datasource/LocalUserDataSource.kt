@@ -13,17 +13,17 @@ import javax.inject.Named
 class LocalUserDataSource @Inject constructor(
     @Named("user") private val dataStore: DataStore<Preferences>
 ) {
-    val userType: Flow<String> = dataStore.getValue(USER_TYPE, "")
+    val userRole: Flow<String> = dataStore.getValue(USER_ROLE, "")
 
-    suspend fun setUserType(userRole: String) {
-        dataStore.setValue(USER_TYPE, userRole)
+    suspend fun setUserRole(userRole: String) {
+        dataStore.setValue(USER_ROLE, userRole)
     }
 
-    suspend fun clearUserType() {
-        dataStore.clear(USER_TYPE)
+    suspend fun clearUserRole() {
+        dataStore.clear(USER_ROLE)
     }
 
     companion object {
-        private val USER_TYPE = stringPreferencesKey("USER_TYPE")
+        private val USER_ROLE = stringPreferencesKey("USER_ROLE")
     }
 }
