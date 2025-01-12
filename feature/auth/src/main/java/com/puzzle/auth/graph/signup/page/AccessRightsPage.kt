@@ -228,7 +228,7 @@ private fun PiecePermissionRowPreview() {
             label = "사진,카메라 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
             checked = true,
-            onCheckedChange = {}
+            onCheckedChange = {},
         )
     }
 }
