@@ -96,6 +96,7 @@ accompanist = "0.37.0"
 ## Amplitude
 # https://amplitude.com/docs/sdks/analytics/android
 amplitudeAnalytics = "1.16.8"
+uiDesktop = "1.7.0"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -175,6 +176,7 @@ mavericks-compose = { module = "com.airbnb.android:mavericks-compose", version.r
 mavericks-hilt = { module = "com.airbnb.android:mavericks-hilt", version.ref = "mavericks" }
 
 accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+androidx-ui-desktop = { group = "androidx.compose.ui", name = "ui-desktop", version.ref = "uiDesktop" }
 
 [bundles]
 

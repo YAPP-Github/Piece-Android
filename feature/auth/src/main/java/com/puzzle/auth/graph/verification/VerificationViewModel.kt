@@ -7,6 +7,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
+import com.puzzle.domain.model.auth.Timer
 import com.puzzle.domain.usecase.RequestAuthCodeUseCase
 import com.puzzle.domain.usecase.VerifyAuthCodeUseCase
 import com.puzzle.navigation.AuthGraph
@@ -36,6 +37,7 @@ class VerificationViewModel @AssistedInject constructor(
 
     private val intents = Channel<VerificationIntent>(BUFFERED)
     private val sideEffects = Channel<VerificationSideEffect>(BUFFERED)
+    private val timer = Timer()
 
     init {
         intents.receiveAsFlow()
@@ -82,6 +84,7 @@ class VerificationViewModel @AssistedInject constructor(
         viewModelScope.launch {
             requestAuthCodeUseCase(
                 phoneNumber = phoneNumber,
+                timer = timer,
                 object : RequestAuthCodeUseCase.Callback {
                     override fun onRequestSuccess() {
                         setState {
@@ -117,7 +120,6 @@ class VerificationViewModel @AssistedInject constructor(
                             )
                         }
                     }
-
                 }
             )
         }
@@ -127,6 +129,7 @@ class VerificationViewModel @AssistedInject constructor(
         viewModelScope.launch {
             verifyAuthCodeUseCase(
                 code = code,
+                timer = timer,
                 object : VerifyAuthCodeUseCase.Callback {
                     override fun onVerificationCompleted() {
                         setState {

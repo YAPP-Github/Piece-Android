@@ -1,26 +1,30 @@
 package com.puzzle.domain.usecase
 
-import com.puzzle.domain.repository.AuthCodeRepository
-import com.puzzle.domain.util.TimerManager
+import com.puzzle.domain.model.auth.Timer
+import com.puzzle.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class VerifyAuthCodeUseCase @Inject constructor(
-    private val authCodeRepository: AuthCodeRepository,
-    private val timerManager: TimerManager,
+    private val authRepository: AuthRepository,
 ) {
     suspend operator fun invoke(
         code: String,
-        callback: Callback
+        timer: Timer,
+        callback: Callback,
     ) {
-        if (!timerManager.isTimeRemaining()) return
+        if (!timer.isTimeRemaining()) return
 
-        val result = authCodeRepository.verify(code)
+        timer.pauseTimer()
+
+        val result = authRepository.verifyAuthCode(code)
 
         if (result) {
-            timerManager.stopTimer()
+            timer.stopTimer()
 
             callback.onVerificationCompleted()
         } else {
+            timer.resumeTimer()
+
             callback.onVerificationFailed(
                 IllegalArgumentException("Invalid code: $code")
             )

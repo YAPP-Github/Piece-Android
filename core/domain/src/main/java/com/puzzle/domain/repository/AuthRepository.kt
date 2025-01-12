@@ -1,3 +1,6 @@
 package com.puzzle.domain.repository
 
-interface AuthRepository
+interface AuthRepository {
+    suspend fun requestAuthCode(phoneNumber: String): Boolean
+    suspend fun verifyAuthCode(code: String): Boolean
+}

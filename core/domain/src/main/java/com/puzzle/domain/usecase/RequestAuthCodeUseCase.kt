@@ -1,18 +1,18 @@
 package com.puzzle.domain.usecase
 
-import com.puzzle.domain.repository.AuthCodeRepository
-import com.puzzle.domain.util.TimerManager
+import com.puzzle.domain.model.auth.Timer
+import com.puzzle.domain.repository.AuthRepository
 import javax.inject.Inject
 
 class RequestAuthCodeUseCase @Inject constructor(
-    private val authCodeRepository: AuthCodeRepository,
-    private val timerManager: TimerManager,
+    private val authRepository: AuthRepository,
 ) {
     suspend operator fun invoke(
         phoneNumber: String,
-        callback: Callback
+        timer: Timer,
+        callback: Callback,
     ) {
-        val result = authCodeRepository.requestAuthCode(phoneNumber)
+        val result = authRepository.requestAuthCode(phoneNumber)
 
         if (!result) {
             callback.onRequestFail(
@@ -23,8 +23,7 @@ class RequestAuthCodeUseCase @Inject constructor(
 
         callback.onRequestSuccess()
 
-        timerManager.startTimer(
-            durationInSec = DURATION_IN_SEC,
+        timer.startTimer(
             onTick = { remaining ->
                 callback.onTick(remaining)
             },
@@ -32,10 +31,6 @@ class RequestAuthCodeUseCase @Inject constructor(
                 callback.onTimeExpired()
             }
         )
-    }
-
-    private companion object {
-        const val DURATION_IN_SEC = 3
     }
 
     interface Callback {
