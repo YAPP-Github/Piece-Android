@@ -189,15 +189,15 @@ private fun PiecePermissionRow(
 @OptIn(ExperimentalPermissionsApi::class)
 private fun handlePermission(context: Context, permission: PermissionState?) {
     permission?.let {
-        if (it.status != PermissionStatus.Granted) {
-            if (!it.status.shouldShowRationale) {
-                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = Uri.fromParts("package", context.packageName, null)
-                }
-                context.startActivity(intent)
-            } else {
-                it.launchPermissionRequest()
+        if (it.status == PermissionStatus.Granted) return@let
+
+        if (!it.status.shouldShowRationale) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", context.packageName, null)
             }
+            context.startActivity(intent)
+        } else {
+            it.launchPermissionRequest()
         }
     }
 }
