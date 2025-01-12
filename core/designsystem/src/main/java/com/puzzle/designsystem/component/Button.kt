@@ -158,6 +158,7 @@ fun PieceLoginButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    border: BorderStroke? = null,
     containerColor: Color = PieceTheme.colors.primaryDefault,
     labelColor: Color = PieceTheme.colors.black
 ) {
@@ -165,6 +166,7 @@ fun PieceLoginButton(
         onClick = onClick,
         enabled = enabled,
         shape = RoundedCornerShape(8.dp),
+        border = border,
         colors = ButtonDefaults.buttonColors(
             containerColor = containerColor,
             contentColor = PieceTheme.colors.white,

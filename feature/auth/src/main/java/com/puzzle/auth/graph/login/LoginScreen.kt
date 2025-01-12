@@ -1,17 +1,15 @@
 package com.puzzle.auth.graph.login
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -85,12 +83,8 @@ fun LoginScreen(
         PieceSubCloseTopBar(
             title = "",
             onCloseClick = { },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 14.dp),
+            modifier = Modifier.fillMaxWidth(),
         )
-
-        Spacer(modifier = Modifier.height(20.dp))
 
         Text(
             text = buildAnnotatedString {
@@ -102,10 +96,10 @@ fun LoginScreen(
             },
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp, bottom = 12.dp),
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(R.string.login_description),
@@ -129,28 +123,24 @@ fun LoginScreen(
         PieceLoginButton(
             label = stringResource(R.string.kakao_login),
             imageId = R.drawable.ic_kakao_login,
-            onClick = {},
+            onClick = loginKakao,
             containerColor = Color(0xFFFFE812),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
-
-        Spacer(modifier = Modifier.height(10.dp))
 
         PieceLoginButton(
             label = stringResource(R.string.google_login),
             imageId = R.drawable.ic_google_login,
             onClick = {},
             containerColor = PieceTheme.colors.white,
+            border = BorderStroke(
+                width = 1.dp,
+                color = PieceTheme.colors.light1,
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .border(
-                    width = 1.dp,
-                    color = PieceTheme.colors.light1,
-                    shape = RoundedCornerShape(8.dp)
-                ),
+                .padding(vertical = 10.dp),
         )
-
-        Spacer(modifier = Modifier.height(10.dp))
     }
 }
 
