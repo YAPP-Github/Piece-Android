@@ -9,4 +9,5 @@ android {
 dependencies {
     implementation(projects.core.common)
     implementation(libs.kakao.user)
+    implementation(libs.accompanist.permission)
 }

@@ -89,6 +89,10 @@ kakao = "2.20.6"
 # https://airbnb.io/mavericks/#/setup
 mavericks = "3.0.9"
 
+## Accompanist
+# https://github.com/google/accompanist
+accompanist = "0.37.0"
+
 ## Amplitude
 # https://amplitude.com/docs/sdks/analytics/android
 amplitudeAnalytics = "1.16.8"
@@ -169,6 +173,8 @@ kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 mavericks = { module = "com.airbnb.android:mavericks", version.ref = "mavericks" }
 mavericks-compose = { module = "com.airbnb.android:mavericks-compose", version.ref = "mavericks" }
 mavericks-hilt = { module = "com.airbnb.android:mavericks-hilt", version.ref = "mavericks" }
+
+accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
 [bundles]
 

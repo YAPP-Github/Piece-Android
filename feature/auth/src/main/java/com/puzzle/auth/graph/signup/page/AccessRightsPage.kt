@@ -1,5 +1,14 @@
 package com.puzzle.auth.graph.signup.page
 
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.Manifest.permission.READ_CONTACTS
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.TIRAMISU
+import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -15,8 +24,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -24,18 +35,39 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
+import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun ColumnScope.AccessRightsPage(
-    agreeCameraPermission: Boolean,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val permissionList = rememberMultiplePermissionsState(
+        listOfNotNull(CAMERA, if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null, READ_CONTACTS)
+    )
+    val cameraPermission = permissionList.permissions
+        .find { it.permission == CAMERA }
+    val notificationPermission = permissionList.permissions
+        .find { if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true }
+    val contactsPermission = permissionList.permissions
+        .find { it.permission == READ_CONTACTS }
+
     BackHandler { onBackClick() }
+
+    LaunchedEffect(permissionList) {
+        permissionList.launchMultiplePermissionRequest()
+    }
 
     PieceSubBackTopBar(
         title = "",
@@ -66,23 +98,26 @@ internal fun ColumnScope.AccessRightsPage(
     Column(modifier = Modifier.fillMaxWidth()) {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,
-            label = "사진,카메라 [필수]",
-            description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
-            onClick = {},
+            label = stringResource(R.string.permission_camera),
+            description = stringResource(R.string.permission_camera_description),
+            checked = cameraPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = { handlePermission(context, cameraPermission) },
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_alarm,
-            label = "알림 [선택]",
-            description = "매칭 현황 등 중요 메세지 수신을 위해 필요해요.",
-            onClick = {},
+            label = stringResource(R.string.permission_notification),
+            description = stringResource(R.string.permission_notification_description),
+            checked = notificationPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = { handlePermission(context, notificationPermission) },
         )
 
         PiecePermissionRow(
             icon = R.drawable.ic_permission_call,
-            label = "연락처 [선택]",
-            description = "지인을 수집하기 위해 필요해요.",
-            onClick = {},
+            label = stringResource(R.string.permission_contacts),
+            description = stringResource(R.string.permission_contacts_description),
+            checked = contactsPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = { handlePermission(context, contactsPermission) },
         )
     }
 
@@ -94,7 +129,7 @@ internal fun ColumnScope.AccessRightsPage(
 
     PieceSolidButton(
         label = stringResource(R.string.next),
-        enabled = agreeCameraPermission,
+        enabled = cameraPermission?.status == PermissionStatus.Granted,
         onClick = onNextClick,
         modifier = Modifier
             .fillMaxWidth()
@@ -104,17 +139,18 @@ internal fun ColumnScope.AccessRightsPage(
 
 @Composable
 private fun PiecePermissionRow(
+    @DrawableRes icon: Int,
     label: String,
     description: String,
-    @DrawableRes icon: Int,
-    onClick: () -> Unit,
+    checked: Boolean,
+    onCheckedChange: () -> Unit,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick() }
+            .clickable { onCheckedChange() }
             .padding(vertical = 16.dp)
     ) {
         Image(
@@ -124,17 +160,44 @@ private fun PiecePermissionRow(
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                text = label,
-                style = PieceTheme.typography.bodyMM,
-                color = PieceTheme.colors.black,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = label,
+                    style = PieceTheme.typography.bodyMSB,
+                    color = PieceTheme.colors.black,
+                    modifier = Modifier.weight(1f),
+                )
+
+                PieceToggle(
+                    checked = checked,
+                    onCheckedChange = onCheckedChange,
+                )
+            }
 
             Text(
                 text = description,
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark2,
             )
+        }
+    }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+private fun handlePermission(context: Context, permission: PermissionState?) {
+    permission?.let {
+        if (it.status == PermissionStatus.Granted) return@let
+
+        if (!it.status.shouldShowRationale) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", context.packageName, null)
+            }
+            context.startActivity(intent)
+        } else {
+            it.launchPermissionRequest()
         }
     }
 }
@@ -149,7 +212,6 @@ private fun AccessRightsPagePreview() {
                 .padding(horizontal = 20.dp),
         ) {
             AccessRightsPage(
-                agreeCameraPermission = true,
                 onBackClick = {},
                 onNextClick = {}
             )
@@ -165,7 +227,8 @@ private fun PiecePermissionRowPreview() {
             icon = R.drawable.ic_permission_camera,
             label = "사진,카메라 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
-            onClick = {}
+            checked = true,
+            onCheckedChange = {},
         )
     }
 }
