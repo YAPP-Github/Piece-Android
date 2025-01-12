@@ -9,12 +9,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
@@ -42,7 +41,7 @@ class MainActivity : ComponentActivity() {
                 snackBarHostState = remember { SnackbarHostState() }
 
                 LaunchedEffect(Unit) {
-                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    repeatOnStarted {
                         launch {
                             navigationHelper.navigationFlow.collect { event ->
                                 handleNavigationEvent(
