@@ -148,10 +148,10 @@ private fun VerificationHeader(
             },
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 12.dp),
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(R.string.verification_subtitle),
@@ -188,11 +188,11 @@ private fun AuthCodeBody(
             color = PieceTheme.colors.dark3,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         Row(
-            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
         ) {
             BasicTextField(
                 value = authCode,
@@ -221,18 +221,15 @@ private fun AuthCodeBody(
                     .weight(1f),
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
             PieceSolidButton(
                 label = stringResource(R.string.verification_submit),
                 onClick = {
                     onVerifyClick(authCode)
                 },
                 enabled = isVerifyButtonEnabled,
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = stringResource(authCodeStatus.displayResId),
@@ -261,11 +258,11 @@ private fun PhoneNumberBody(
             color = PieceTheme.colors.dark3,
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
-
         Row(
-            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp),
         ) {
             BasicTextField(
                 value = phoneNumber,
@@ -295,24 +292,22 @@ private fun PhoneNumberBody(
                     .weight(1f),
             )
 
-            Spacer(modifier = Modifier.width(8.dp))
-
             PieceSolidButton(
                 label = requestButtonLabel,
                 onClick = {
                     onRequestAuthCodeClick(phoneNumber)
                 },
                 enabled = phoneNumber.isNotEmpty(),
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
 
         if (!isValidPhoneNumber) {
-            Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = stringResource(R.string.verification_invalid_phone_number),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.subDefault,
+                modifier = Modifier.padding(top = 8.dp)
             )
         }
     }
