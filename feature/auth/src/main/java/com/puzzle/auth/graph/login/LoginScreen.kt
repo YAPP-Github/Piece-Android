@@ -31,6 +31,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent.Navigate
+import com.puzzle.auth.graph.login.contract.LoginSideEffect
 import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
@@ -51,14 +52,17 @@ internal fun LoginRoute(
 
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffect.collect {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is LoginSideEffect.LoginKakao -> loginKakao(context)
+                }
             }
         }
     }
 
     LoginScreen(
         state = state,
-        loginKakao = { loginKakao(context) },
+        loginKakao = { viewModel.onSideEffect(LoginSideEffect.LoginKakao) },
         navigate = { viewModel.onIntent(Navigate(it)) },
     )
 }
@@ -149,11 +153,23 @@ private fun LoginScreen(
 }
 
 private fun loginKakao(context: Context) {
-    UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
-        if (error != null) {
+    UserApiClient.instance.apply {
+        if (isKakaoTalkLoginAvailable(context)) {
+            loginWithKakaoAccount(context) { token, error ->
+                if (error != null) {
 //                    Log.e("test", "로그인 실패", error)
-        } else if (token != null) {
+                } else if (token != null) {
+                //                    Log.i("test", "로그인 성공 ${token.accessToken}")
+                }
+            }
+        } else {
+            loginWithKakaoAccount(context) { token, error ->
+                if (error != null) {
+//                    Log.e("test", "로그인 실패", error)
+                } else if (token != null) {
 //                    Log.i("test", "로그인 성공 ${token.accessToken}")
+                }
+            }
         }
     }
 }

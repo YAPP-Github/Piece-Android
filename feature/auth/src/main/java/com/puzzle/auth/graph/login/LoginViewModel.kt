@@ -24,8 +24,8 @@ class LoginViewModel @AssistedInject constructor(
 ) : MavericksViewModel<LoginState>(initialState) {
     private val intents = Channel<LoginIntent>(BUFFERED)
 
-    private val _sideEffect = Channel<LoginSideEffect>(BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val _sideEffects = Channel<LoginSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         intents.receiveAsFlow()
@@ -43,10 +43,8 @@ class LoginViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleSideEffect(sideEffect: LoginSideEffect) {
-        when (sideEffect) {
-            else -> Unit
-        }
+    internal fun onSideEffect(sideEffect: LoginSideEffect) = viewModelScope.launch {
+        _sideEffects.send(sideEffect)
     }
 
     @AssistedFactory
