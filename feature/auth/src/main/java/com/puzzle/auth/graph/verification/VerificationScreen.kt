@@ -267,19 +267,6 @@ private fun PhoneNumberBody(
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
                 textStyle = PieceTheme.typography.bodyMM,
-                decorationBox = { innerTextField ->
-                    Box {
-                        if (phoneNumber.isEmpty()) {
-                            Text(
-                                text = stringResource(id = R.string.verification_phone_number_hint),
-                                color = PieceTheme.colors.dark3,
-                                style = PieceTheme.typography.bodyMM,
-                            )
-                        }
-
-                        innerTextField()
-                    }
-                },
                 modifier = Modifier
                     .height(52.dp)
                     .clip(RoundedCornerShape(8.dp))
@@ -301,14 +288,20 @@ private fun PhoneNumberBody(
             )
         }
 
-        if (!isValidPhoneNumber) {
-            Text(
-                text = stringResource(R.string.verification_invalid_phone_number),
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.subDefault,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
+        Text(
+            text = if (!isValidPhoneNumber) {
+                stringResource(R.string.verification_invalid_phone_number)
+            } else {
+                stringResource(id = R.string.verification_phone_number_hint)
+            },
+            style = PieceTheme.typography.bodySM,
+            color = if (!isValidPhoneNumber) {
+                PieceTheme.colors.subDefault
+            } else {
+                PieceTheme.colors.dark3
+            },
+            modifier = Modifier.padding(top = 8.dp)
+        )
     }
 }
 
