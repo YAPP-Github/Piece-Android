@@ -108,7 +108,7 @@ class VerificationViewModel @AssistedInject constructor(
                         setState {
                             copy(
                                 authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED,
-                                remainingTimeInSec = 0,
+                                _remainingTimeInSec = 0,
                             )
                         }
                     }
@@ -116,7 +116,7 @@ class VerificationViewModel @AssistedInject constructor(
                     override fun onTick(remainingTimeInSec: Int) {
                         setState {
                             copy(
-                                remainingTimeInSec = remainingTimeInSec,
+                                _remainingTimeInSec = remainingTimeInSec,
                             )
                         }
                     }
@@ -136,7 +136,7 @@ class VerificationViewModel @AssistedInject constructor(
                             copy(
                                 authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED,
                                 isVerified = true,
-                                remainingTimeInSec = 0
+                                _remainingTimeInSec = 0
                             )
                         }
                     }

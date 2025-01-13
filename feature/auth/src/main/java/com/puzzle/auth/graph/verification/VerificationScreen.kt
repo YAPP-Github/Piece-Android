@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
@@ -164,7 +163,7 @@ private fun VerificationHeader(
 
 @Composable
 private fun AuthCodeBody(
-    remainingTimeInSec: Int,
+    remainingTimeInSec: String,
     authCodeStatus: AuthCodeStatus,
     onVerifyClick: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -203,7 +202,7 @@ private fun AuthCodeBody(
                         innerTextField()
 
                         Text(
-                            text = formatTime(remainingTimeInSec),
+                            text = remainingTimeInSec,
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.primaryDefault,
                             modifier = Modifier.align(Alignment.CenterEnd),
@@ -330,7 +329,7 @@ fun PreviewVerificationScreen() {
         VerificationScreen(
             state = VerificationState(
                 isAuthCodeRequested = true,
-                remainingTimeInSec = 299,
+                _remainingTimeInSec = 299,
                 isVerified = true,
                 authCodeStatus = AuthCodeStatus.INIT,
             ),
