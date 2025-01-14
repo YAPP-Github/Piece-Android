@@ -1,6 +1,5 @@
 package com.puzzle.auth.graph.verification
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -303,16 +302,6 @@ private fun PhoneNumberBody(
             modifier = Modifier.padding(top = 8.dp)
         )
     }
-}
-
-/**
- * 초 단위 [seconds]를 "mm:ss" 형태 문자열로 변환하는 함수
- */
-@SuppressLint("DefaultLocale")
-fun formatTime(seconds: Int): String {
-    val minutes = seconds / 60
-    val secs = seconds % 60
-    return String.format("%02d:%02d", minutes, secs)
 }
 
 @Preview

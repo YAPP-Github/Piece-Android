@@ -2,6 +2,7 @@ package com.puzzle.auth.graph.verification.contract
 
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.designsystem.R
+import java.util.Locale
 
 data class VerificationState(
     val isValidPhoneNumber: Boolean = true,
@@ -16,7 +17,7 @@ data class VerificationState(
     private fun formatTime(seconds: Int): String {
         val minutes = seconds / 60
         val secs = seconds % 60
-        return String.format("%02d:%02d", minutes, secs)
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)
     }
 
     enum class AuthCodeStatus(val displayResId: Int) {
