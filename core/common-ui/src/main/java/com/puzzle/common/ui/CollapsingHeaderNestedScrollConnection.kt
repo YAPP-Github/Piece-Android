@@ -8,7 +8,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 
 class CollapsingHeaderNestedScrollConnection(
-    val headerHeight: Int
+    private val headerHeight: Int
 ) : NestedScrollConnection {
 
     // 헤더 offset(픽셀 단위), 0이면 펼침, -headerHeight이면 완전 접힘

@@ -279,9 +279,7 @@ private fun PhoneNumberBody(
 
             PieceSolidButton(
                 label = requestButtonLabel,
-                onClick = {
-                    onRequestAuthCodeClick(phoneNumber)
-                },
+                onClick = { onRequestAuthCodeClick(phoneNumber) },
                 enabled = phoneNumber.isNotEmpty(),
                 modifier = Modifier.padding(start = 8.dp)
             )

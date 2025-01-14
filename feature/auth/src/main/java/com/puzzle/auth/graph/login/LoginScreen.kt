@@ -30,6 +30,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.kakao.sdk.user.UserApiClient
+import com.puzzle.auth.graph.login.contract.LoginIntent
 import com.puzzle.auth.graph.login.contract.LoginIntent.Navigate
 import com.puzzle.auth.graph.login.contract.LoginSideEffect
 import com.puzzle.auth.graph.login.contract.LoginState
@@ -38,6 +39,7 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceLoginButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -54,7 +56,18 @@ internal fun LoginRoute(
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
                 when (sideEffect) {
-                    is LoginSideEffect.LoginKakao -> loginKakao(context)
+                    is LoginSideEffect.LoginKakao -> loginKakao(
+                        context = context,
+                        onFailure = { viewModel.loginFailure(it) },
+                        onSuccess = {
+                            viewModel.loginOAuth(
+                                oAuthProvider = OAuthProvider.KAKAO,
+                                token = it,
+                            )
+                        },
+                    )
+
+                    is LoginSideEffect.LoginGoogle -> {}
                 }
             }
         }
@@ -62,7 +75,8 @@ internal fun LoginRoute(
 
     LoginScreen(
         state = state,
-        loginKakao = { viewModel.onSideEffect(LoginSideEffect.LoginKakao) },
+        loginKakao = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.KAKAO)) },
+        loginGoogle = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.GOOGLE)) },
         navigate = { viewModel.onIntent(Navigate(it)) },
     )
 }
@@ -71,6 +85,7 @@ internal fun LoginRoute(
 private fun LoginScreen(
     state: LoginState,
     loginKakao: () -> Unit,
+    loginGoogle: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -144,7 +159,7 @@ private fun LoginScreen(
                 width = 1.dp,
                 color = PieceTheme.colors.light1,
             ),
-            onClick = {},
+            onClick = loginGoogle,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 10.dp),
@@ -152,22 +167,28 @@ private fun LoginScreen(
     }
 }
 
-private fun loginKakao(context: Context) {
+private fun loginKakao(
+    context: Context,
+    onFailure: (Throwable) -> Unit,
+    onSuccess: (String) -> Unit,
+) {
     UserApiClient.instance.apply {
         if (isKakaoTalkLoginAvailable(context)) {
+            // 카카오톡 로그인
             loginWithKakaoAccount(context) { token, error ->
                 if (error != null) {
-//                    Log.e("test", "로그인 실패", error)
+                    onFailure(error)
                 } else if (token != null) {
-                //                    Log.i("test", "로그인 성공 ${token.accessToken}")
+                    onSuccess(token.accessToken)
                 }
             }
         } else {
+            // 카카오 계정 로그인 (웹)
             loginWithKakaoAccount(context) { token, error ->
                 if (error != null) {
-//                    Log.e("test", "로그인 실패", error)
+                    onFailure(error)
                 } else if (token != null) {
-//                    Log.i("test", "로그인 성공 ${token.accessToken}")
+                    onSuccess(token.accessToken)
                 }
             }
         }
@@ -181,6 +202,7 @@ private fun PreviewAuthScreen() {
         LoginScreen(
             state = LoginState(),
             loginKakao = {},
+            loginGoogle = {},
             navigate = {},
         )
     }
