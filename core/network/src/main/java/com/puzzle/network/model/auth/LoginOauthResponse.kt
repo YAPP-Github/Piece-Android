@@ -4,8 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class LoginOauthResponse(
-    val smsVerified: Boolean?,
-    val registerCompleted: Boolean?,
+    val role: String?,
     val accessToken: String?,
     val refreshToken: String?,
 )
