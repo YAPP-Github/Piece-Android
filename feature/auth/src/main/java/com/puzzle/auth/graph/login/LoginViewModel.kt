@@ -48,6 +48,7 @@ class LoginViewModel @AssistedInject constructor(
         when (intent) {
             is LoginIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
             is LoginIntent.LoginOAuth -> {
+                setState { copy(isLoading = true) }
                 when (intent.oAuthProvider) {
                     OAuthProvider.KAKAO -> _sideEffects.send(LoginSideEffect.LoginKakao)
                     OAuthProvider.GOOGLE -> _sideEffects.send(LoginSideEffect.LoginGoogle)
@@ -68,9 +69,11 @@ class LoginViewModel @AssistedInject constructor(
                 )
             )
         }.onFailure { errorHelper.sendError(it) }
+            .also { setState { copy(isLoading = false) } }
     }
 
     internal fun loginFailure(throwable: Throwable) {
+        setState { copy(isLoading = false) }
         errorHelper.sendError(throwable)
     }
 
