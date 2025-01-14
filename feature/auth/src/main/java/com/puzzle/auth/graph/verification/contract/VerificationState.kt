@@ -21,9 +21,9 @@ data class VerificationState(
     }
 
     enum class AuthCodeStatus(val displayResId: Int) {
-        INIT(displayResId = R.string.verification_do_not_share), // "어떤 경우에도 타인에게 공유하지 마세요"
-        VERIFIED(displayResId = R.string.verification_verified), // "전화번호 인증을 완료했어요"
-        INVALID(displayResId = R.string.verification_invalid_code), // "올바른 인증번호가 아니에요"
-        TIME_EXPIRED(displayResId = R.string.verification_time_expired), // "유효시간이 지났어요! ‘인증번호 재전송’을 눌러주세요"
+        INIT(displayResId = R.string.verification_do_not_share),
+        VERIFIED(displayResId = R.string.verification_verified),
+        INVALID(displayResId = R.string.verification_invalid_code),
+        TIME_EXPIRED(displayResId = R.string.verification_time_expired),
     }
 }
