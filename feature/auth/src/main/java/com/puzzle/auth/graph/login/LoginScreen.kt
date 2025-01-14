@@ -59,7 +59,7 @@ internal fun LoginRoute(
     ) { task ->
         handleGoogleSignIn(
             task = task,
-            onSuccess = { viewModel.loginOAuth(OAuthProvider.GOOGLE, it) },
+            onSuccess = { accessToken -> viewModel.loginOAuth(OAuthProvider.GOOGLE, accessToken) },
             onFailure = { viewModel.loginFailure(it) },
         )
     }
