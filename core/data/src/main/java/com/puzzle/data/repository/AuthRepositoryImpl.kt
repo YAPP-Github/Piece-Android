@@ -8,11 +8,11 @@ class AuthRepositoryImpl @Inject constructor(
     private val authDataSource: AuthDataSource,
 ) : AuthRepository {
 
-    override suspend fun requestAuthCode(phoneNumber: String): Boolean {
-        return true
+    override suspend fun requestAuthCode(phoneNumber: String): Result<Boolean> {
+        return Result.success(true)
     }
 
-    override suspend fun verifyAuthCode(code: String): Boolean {
-        return true
+    override suspend fun verifyAuthCode(code: String): Result<Boolean> {
+        return Result.success(true)
     }
 }

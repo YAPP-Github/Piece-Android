@@ -1,76 +1,27 @@
 package com.puzzle.domain.model.auth
 
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.concurrent.atomic.AtomicBoolean
-import java.util.concurrent.atomic.AtomicInteger
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class Timer(
-    private val timerScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
+    private val durationInSec: Int = DEFAULT_DURATION_IN_SEC,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
-    private var timerJob: Job? = null
-
-    private val remainingTime = AtomicInteger(0)
-
-    private val isPaused = AtomicBoolean(false)
-
-    fun startTimer(
-        onTick: (remainingSec: Int) -> Unit,
-        onTimeExpired: () -> Unit,
-        durationInSec: Int = DURATION_IN_SEC
-    ) {
-        stopTimer()
-
-        remainingTime.set(durationInSec)
-        isPaused.set(false)
-
-        timerJob = timerScope.launch {
-            while (remainingTime.get() > 0) {
-                if (!isPaused.get()) {
-                    withContext(Dispatchers.Main) {
-                        onTick(remainingTime.get())
-                    }
-                    delay(1000L)
-                    remainingTime.decrementAndGet()
-                } else {
-                    // 일시정지 상태일 때는 0.2초 정도 대기
-                    delay(200L)
-                }
-            }
-
-            withContext(Dispatchers.Main) {
-                onTimeExpired()
-            }
+    fun startTimer(): Flow<Int> = flow {
+        var remainingTime = durationInSec
+        while (remainingTime > 0) {
+            emit(remainingTime)
+            delay(1000L)
+            remainingTime--
         }
-    }
-
-    fun stopTimer() {
-        timerJob?.cancel()
-        timerJob = null
-        remainingTime.set(0)
-        isPaused.set(false)
-    }
-
-    fun pauseTimer() {
-        isPaused.set(true)
-    }
-
-    fun resumeTimer() {
-        if (remainingTime.get() > 0 && isPaused.get()) {
-            isPaused.set(false)
-        }
-    }
-
-    fun isTimeRemaining(): Boolean {
-        return remainingTime.get() > 0
-    }
+        emit(0) // 타이머 만료 시 0을 방출
+    }.flowOn(dispatcher)
 
     private companion object {
-        const val DURATION_IN_SEC = 3
+        const val DEFAULT_DURATION_IN_SEC = 300
     }
 }

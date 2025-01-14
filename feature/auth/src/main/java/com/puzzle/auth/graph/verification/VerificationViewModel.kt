@@ -8,8 +8,7 @@ import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.domain.model.auth.Timer
-import com.puzzle.domain.usecase.RequestAuthCodeUseCase
-import com.puzzle.domain.usecase.VerifyAuthCodeUseCase
+import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -17,6 +16,7 @@ import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.launchIn
@@ -27,8 +27,7 @@ import kotlinx.coroutines.launch
 class VerificationViewModel @AssistedInject constructor(
     @Assisted initialState: VerificationState,
     private val navigationHelper: NavigationHelper,
-    private val requestAuthCodeUseCase: RequestAuthCodeUseCase,
-    private val verifyAuthCodeUseCase: VerifyAuthCodeUseCase,
+    private val authRepository: AuthRepository,
 ) : MavericksViewModel<VerificationState>(initialState) {
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<VerificationViewModel, VerificationState> {
@@ -37,7 +36,8 @@ class VerificationViewModel @AssistedInject constructor(
 
     private val intents = Channel<VerificationIntent>(BUFFERED)
     private val sideEffects = Channel<VerificationSideEffect>(BUFFERED)
-    private val timer = Timer()
+    private var timerJob: Job? = null
+    private var timer = Timer()
 
     init {
         intents.receiveAsFlow()
@@ -82,75 +82,86 @@ class VerificationViewModel @AssistedInject constructor(
 
     private fun requestAuthCode(phoneNumber: String) {
         viewModelScope.launch {
-            requestAuthCodeUseCase(
-                phoneNumber = phoneNumber,
-                timer = timer,
-                object : RequestAuthCodeUseCase.Callback {
-                    override fun onRequestSuccess() {
-                        setState {
-                            copy(
-                                isValidPhoneNumber = true,
-                                isAuthCodeRequested = true,
-                                authCodeStatus = VerificationState.AuthCodeStatus.INIT,
-                            )
-                        }
+            authRepository.requestAuthCode(phoneNumber).fold(
+                onSuccess = {
+                    setState {
+                        copy(
+                            isValidPhoneNumber = true,
+                            isAuthCodeRequested = true,
+                            authCodeStatus = VerificationState.AuthCodeStatus.INIT,
+                        )
                     }
-
-                    override fun onRequestFail(e: Throwable) {
-                        setState {
-                            copy(
-                                authCodeStatus = VerificationState.AuthCodeStatus.INVALID,
-                            )
-                        }
+                    timer = Timer()
+                    startTimer()
+                },
+                onFailure = {
+                    setState {
+                        copy(isValidPhoneNumber = false)
                     }
-
-                    override fun onTimeExpired() {
-                        setState {
-                            copy(
-                                authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED,
-                                _remainingTimeInSec = 0,
-                            )
-                        }
-                    }
-
-                    override fun onTick(remainingTimeInSec: Int) {
-                        setState {
-                            copy(
-                                _remainingTimeInSec = remainingTimeInSec,
-                            )
-                        }
-                    }
-                }
+                },
             )
         }
     }
 
     private fun verifyAuthCode(code: String) {
+        pauseTimer()
         viewModelScope.launch {
-            verifyAuthCodeUseCase(
-                code = code,
-                timer = timer,
-                object : VerifyAuthCodeUseCase.Callback {
-                    override fun onVerificationCompleted() {
-                        setState {
-                            copy(
-                                authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED,
-                                isVerified = true,
-                                _remainingTimeInSec = 0
-                            )
-                        }
+            authRepository.verifyAuthCode(code).fold(
+                onSuccess = {
+                    stopTimer()
+                    setState {
+                        copy(
+                            _remainingTimeInSec = 0,
+                            authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED,
+                            isVerified = true,
+                        )
                     }
-
-                    override fun onVerificationFailed(e: Throwable) {
-                        setState {
-                            copy(
-                                authCodeStatus = VerificationState.AuthCodeStatus.INVALID,
-                            )
-                        }
+                },
+                onFailure = {
+                    startTimer()
+                    setState {
+                        copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID)
                     }
-                }
+                },
             )
         }
+    }
+
+    private fun startTimer() {
+        timerJob?.cancel()
+        timerJob = viewModelScope.launch {
+            timer.startTimer().collect { remaining ->
+                setState {
+                    copy(_remainingTimeInSec = remaining)
+                }
+                timer = Timer(remaining)
+                if (remaining == 0) {
+                    setState {
+                        copy(authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED)
+                    }
+                    timerJob?.cancel()
+                }
+            }
+        }
+    }
+
+    private fun pauseTimer() {
+        timerJob?.cancel()
+    }
+
+    private fun stopTimer() {
+        timerJob?.cancel()
+        setState {
+            copy(
+                _remainingTimeInSec = 0,
+                authCodeStatus = VerificationState.AuthCodeStatus.INIT,
+            )
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        timerJob?.cancel()
     }
 
     companion object :

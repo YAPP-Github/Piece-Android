@@ -1,6 +1,5 @@
 package com.puzzle.auth.graph.verification.contract
 
-import android.annotation.SuppressLint
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.designsystem.R
 
@@ -14,7 +13,6 @@ data class VerificationState(
 
     val remainingTimeInSec: String = formatTime(_remainingTimeInSec)
 
-    @SuppressLint("DefaultLocale")
     private fun formatTime(seconds: Int): String {
         val minutes = seconds / 60
         val secs = seconds % 60
