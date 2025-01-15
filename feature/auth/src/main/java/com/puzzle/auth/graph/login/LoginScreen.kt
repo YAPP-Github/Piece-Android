@@ -79,7 +79,7 @@ internal fun LoginRoute(
                         },
                     )
 
-                    is LoginSideEffect.LoginGoogle -> authResultLauncher.launch(1)
+                    is LoginSideEffect.LoginGoogle -> authResultLauncher.launch(Unit)
                 }
             }
         }

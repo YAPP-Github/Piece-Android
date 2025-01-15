@@ -10,8 +10,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.puzzle.auth.BuildConfig
 
-internal class GoogleApiContract : ActivityResultContract<Int, Task<GoogleSignInAccount>?>() {
-    override fun createIntent(context: Context, input: Int): Intent {
+internal class GoogleApiContract : ActivityResultContract<Unit, Task<GoogleSignInAccount>?>() {
+    override fun createIntent(context: Context, input: Unit): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID)
             .requestId()
