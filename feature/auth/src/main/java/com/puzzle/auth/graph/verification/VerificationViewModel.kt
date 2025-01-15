@@ -109,6 +109,7 @@ class VerificationViewModel @AssistedInject constructor(
             authRepository.verifyAuthCode(code).fold(
                 onSuccess = {
                     stopTimer()
+
                     setState {
                         copy(
                             _remainingTimeInSec = 0,
@@ -116,9 +117,17 @@ class VerificationViewModel @AssistedInject constructor(
                             isVerified = true,
                         )
                     }
+
+                    navigationHelper.navigate(
+                        NavigationEvent.NavigateTo(
+                            route = AuthGraphDest.SignUpRoute,
+                            popUpTo = AuthGraph,
+                        )
+                    )
                 },
                 onFailure = {
                     startTimer()
+
                     setState {
                         copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID)
                     }
@@ -130,18 +139,19 @@ class VerificationViewModel @AssistedInject constructor(
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
-            timer.startTimer().collect { remaining ->
-                setState {
-                    copy(_remainingTimeInSec = remaining)
-                }
-                timer = Timer(remaining)
-                if (remaining == 0) {
+            timer.startTimer()
+                .collect { remaining ->
                     setState {
-                        copy(authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED)
+                        copy(_remainingTimeInSec = remaining)
                     }
-                    timerJob?.cancel()
+                    timer = Timer(remaining)
+                    if (remaining == 0) {
+                        setState {
+                            copy(authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED)
+                        }
+                        timerJob?.cancel()
+                    }
                 }
-            }
         }
     }
 

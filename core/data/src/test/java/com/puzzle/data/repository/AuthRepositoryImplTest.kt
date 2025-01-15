@@ -41,14 +41,14 @@ class AuthRepositoryImplTest {
 
     @Test
     fun `유저가 회원가입에 성공했을 경우 토큰과 유저 상태를 저장한다`() = runTest {
-        // Given
+        // given
         val tokenResponse = LoginOauthResponse("NONE", "accessToken", "refreshToken")
         coEvery { authDataSource.loginOauth(any(), any()) } returns Result.success(tokenResponse)
 
-        // When
+        // when
         val result = authRepository.loginOauth(OAuthProvider.KAKAO, "OAuthClientToken")
 
-        // Then
+        // then
         assertTrue(result.isSuccess)
         coVerify { tokenDataSource.setAccessToken("accessToken") }
         coVerify { tokenDataSource.setRefreshToken("refreshToken") }

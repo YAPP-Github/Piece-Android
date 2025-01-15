@@ -1,7 +1,6 @@
 package com.puzzle.auth.graph.verification
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,8 +36,6 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.navigation.AuthGraph
-import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
@@ -49,18 +46,12 @@ internal fun VerificationRoute(
 
     VerificationScreen(
         state = state,
-        navigate = {
-            viewModel.onSideEffect(VerificationSideEffect.Navigate(it))
-        },
         onRequestAuthCodeClick = { phoneNumber ->
             viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
         },
-        onVerifyClick = { code ->
-            viewModel.onIntent(VerificationIntent.OnVerifyClick(code))
-        },
-        onNextClick = {
-            viewModel.onIntent(VerificationIntent.OnNextClick)
-        }
+        onVerifyClick = { code -> viewModel.onIntent(VerificationIntent.OnVerifyClick(code)) },
+        onNextClick = { viewModel.onIntent(VerificationIntent.OnNextClick) },
+        navigate = { viewModel.onSideEffect(VerificationSideEffect.Navigate(it)) },
     )
 }
 
@@ -77,21 +68,11 @@ private fun VerificationScreen(
         modifier = modifier
             .fillMaxSize()
             .background(PieceTheme.colors.white)
-            .padding(horizontal = 20.dp)
-            .clickable {
-                navigate(
-                    NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.SignUpRoute,
-                        popUpTo = AuthGraph,
-                    )
-                )
-            },
+            .padding(horizontal = 20.dp),
     ) {
         PieceSubCloseTopBar(
             title = "",
-            onCloseClick = {
-                navigate(NavigationEvent.NavigateUp)
-            },
+            onCloseClick = { navigate(NavigationEvent.NavigateUp) },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 14.dp),
