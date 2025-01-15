@@ -16,11 +16,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -84,6 +89,14 @@ private fun VerificationScreen(
     navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(state.isAuthCodeRequested) {
+        if (state.isAuthCodeRequested) {
+            focusManager.moveFocus(FocusDirection.Down)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -248,6 +261,12 @@ private fun PhoneNumberBody(
     onRequestAuthCodeClick: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
     var phoneNumber by rememberSaveable { mutableStateOf("") }
 
     val requestButtonLabel =
@@ -271,6 +290,7 @@ private fun PhoneNumberBody(
                 onValueChange = { phoneNumber = it },
                 textStyle = PieceTheme.typography.bodyMM,
                 modifier = Modifier
+                    .focusRequester(focusRequester)
                     .height(52.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(PieceTheme.colors.light3)
