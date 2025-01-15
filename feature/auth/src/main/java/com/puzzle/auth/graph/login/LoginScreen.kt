@@ -1,6 +1,7 @@
 package com.puzzle.auth.graph.login
 
 import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent
 import com.puzzle.auth.graph.login.contract.LoginIntent.Navigate
@@ -51,6 +54,15 @@ internal fun LoginRoute(
     val state by viewModel.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val authResultLauncher = rememberLauncherForActivityResult(
+        contract = GoogleApiContract()
+    ) { task ->
+        handleGoogleSignIn(
+            task = task,
+            onSuccess = { accessToken -> viewModel.loginOAuth(OAuthProvider.GOOGLE, accessToken) },
+            onFailure = { viewModel.loginFailure(it) },
+        )
+    }
 
     LaunchedEffect(Unit) {
         lifecycleOwner.repeatOnStarted {
@@ -59,15 +71,15 @@ internal fun LoginRoute(
                     is LoginSideEffect.LoginKakao -> loginKakao(
                         context = context,
                         onFailure = { viewModel.loginFailure(it) },
-                        onSuccess = {
+                        onSuccess = { accessToken ->
                             viewModel.loginOAuth(
                                 oAuthProvider = OAuthProvider.KAKAO,
-                                token = it,
+                                token = accessToken,
                             )
                         },
                     )
 
-                    is LoginSideEffect.LoginGoogle -> {}
+                    is LoginSideEffect.LoginGoogle -> authResultLauncher.launch(Unit)
                 }
             }
         }
@@ -169,8 +181,8 @@ private fun LoginScreen(
 
 private fun loginKakao(
     context: Context,
-    onFailure: (Throwable) -> Unit,
     onSuccess: (String) -> Unit,
+    onFailure: (Throwable) -> Unit,
 ) {
     UserApiClient.instance.apply {
         if (isKakaoTalkLoginAvailable(context)) {
@@ -192,6 +204,33 @@ private fun loginKakao(
                 }
             }
         }
+    }
+}
+
+fun handleGoogleSignIn(
+    task: Task<GoogleSignInAccount>?,
+    onSuccess: (String) -> Unit,
+    onFailure: (Throwable) -> Unit,
+) {
+    if (task == null) {
+        onFailure(IllegalStateException("Google sign-in task is null"))
+        return
+    }
+
+    try {
+        val account = task.result
+        if (account != null) {
+            val idToken = account.idToken
+            if (!idToken.isNullOrEmpty()) {
+                onSuccess(idToken)
+            } else {
+                onFailure(IllegalStateException("ID Token is null or empty"))
+            }
+        } else {
+            onFailure(IllegalStateException("GoogleSignInAccount is null"))
+        }
+    } catch (e: Exception) {
+        onFailure(e)
     }
 }
 
