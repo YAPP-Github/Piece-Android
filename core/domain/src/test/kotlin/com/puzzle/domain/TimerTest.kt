@@ -14,7 +14,7 @@ class TimerTest {
 
     @BeforeEach
     fun setUp() {
-        timer = Timer(durationInSec = 5)
+        timer = Timer()
     }
 
     @Test
@@ -23,7 +23,7 @@ class TimerTest {
         val expected = listOf(5, 4, 3, 2, 1, END_TIMER_FLAG)
 
         // when
-        val flow = timer.startTimer()
+        val flow = timer.startTimer(5)
 
         // then
         val actual = flow.toList()
@@ -36,7 +36,7 @@ class TimerTest {
         val expected = listOf(1, END_TIMER_FLAG)
 
         // when
-        val flow = Timer(1).startTimer()
+        val flow = Timer().startTimer(1)
 
         // then
         val actual = flow.toList()

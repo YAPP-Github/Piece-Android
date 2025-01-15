@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -26,12 +27,14 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
@@ -45,6 +48,23 @@ internal fun VerificationRoute(
     viewModel: VerificationViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel) {
+        lifecycleOwner.repeatOnStarted {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is VerificationSideEffect.RequestAuthCode -> viewModel.requestAuthCode(
+                        sideEffect.phoneNumber
+                    )
+
+                    is VerificationSideEffect.VerifyAuthCode -> viewModel.verifyAuthCode(sideEffect.code)
+                    is VerificationSideEffect.Navigate -> viewModel.navigationHelper
+                        .navigate(sideEffect.navigationEvent)
+                }
+            }
+        }
+    }
 
     VerificationScreen(
         state = state,
@@ -52,7 +72,7 @@ internal fun VerificationRoute(
             viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
         },
         onVerifyClick = { code -> viewModel.onIntent(VerificationIntent.OnVerifyClick(code)) },
-        navigate = { viewModel.onSideEffect(VerificationSideEffect.Navigate(it)) },
+        navigate = { viewModel.onIntent(VerificationIntent.Navigate(it)) },
     )
 }
 
@@ -91,7 +111,7 @@ private fun VerificationScreen(
 
         if (state.isAuthCodeRequested) {
             AuthCodeBody(
-                remainingTimeInSec = state.remainingTimeInSec,
+                remainingTimeInSec = state.formattedRemainingTimeInSec,
                 authCodeStatus = state.authCodeStatus,
                 onVerifyClick = onVerifyClick,
                 modifier = Modifier.padding(top = 32.dp)
@@ -110,7 +130,7 @@ private fun VerificationScreen(
                     )
                 )
             },
-            enabled = state.isVerified,
+            enabled = state.authCodeStatus == AuthCodeStatus.VERIFIED,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
@@ -295,8 +315,7 @@ fun PreviewVerificationScreen() {
         VerificationScreen(
             state = VerificationState(
                 isAuthCodeRequested = true,
-                _remainingTimeInSec = 299,
-                isVerified = true,
+                remainingTimeInSec = 299,
                 authCodeStatus = AuthCodeStatus.INIT,
             ),
             navigate = {},

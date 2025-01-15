@@ -5,10 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class Timer @Inject constructor(
-    private val durationInSec: Int = DEFAULT_DURATION_IN_SEC,
-) {
-    fun startTimer(): Flow<Int> = flow {
+class Timer @Inject constructor() {
+    fun startTimer(durationInSec: Int = DEFAULT_DURATION_IN_SEC): Flow<Int> = flow {
         var remainingTime = durationInSec
 
         while (remainingTime > 0) {
@@ -21,8 +19,8 @@ class Timer @Inject constructor(
     }
 
     companion object {
-        private const val DEFAULT_DURATION_IN_SEC = 300
-        private const val TIMER_TICK = 1000L
+        const val DEFAULT_DURATION_IN_SEC = 300
         const val END_TIMER_FLAG = -1
+        private const val TIMER_TICK = 1000L
     }
 }

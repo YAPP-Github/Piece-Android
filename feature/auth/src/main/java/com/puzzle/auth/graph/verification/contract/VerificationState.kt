@@ -2,17 +2,17 @@ package com.puzzle.auth.graph.verification.contract
 
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.designsystem.R
+import com.puzzle.domain.model.auth.Timer
 import java.util.Locale
 
 data class VerificationState(
     val isValidPhoneNumber: Boolean = true,
     val isAuthCodeRequested: Boolean = false,
     val authCodeStatus: AuthCodeStatus = AuthCodeStatus.INIT,
-    val isVerified: Boolean = false,
-    private val _remainingTimeInSec: Int = 0,
+    val remainingTimeInSec: Int = Timer.DEFAULT_DURATION_IN_SEC,
 ) : MavericksState {
 
-    val remainingTimeInSec: String = formatTime(_remainingTimeInSec)
+    val formattedRemainingTimeInSec: String = formatTime(remainingTimeInSec)
 
     private fun formatTime(seconds: Int): String {
         val minutes = seconds / 60
