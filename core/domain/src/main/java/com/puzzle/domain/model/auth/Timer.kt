@@ -11,16 +11,16 @@ class Timer @Inject constructor() {
 
         while (remainingTime > 0) {
             emit(remainingTime)
-            delay(TIMER_TICK)
+            delay(TICK_INTERVAL)
             remainingTime--
         }
 
-        emit(END_TIMER_FLAG) // 타이머 만료를 나타내는 플래그를 방출
+        emit(TIMEOUT_FLAG) // 타이머 만료를 나타내는 플래그를 방출
     }
 
     companion object {
         const val DEFAULT_DURATION_IN_SEC = 300
-        const val END_TIMER_FLAG = -1
-        private const val TIMER_TICK = 1000L
+        const val TIMEOUT_FLAG = -1
+        private const val TICK_INTERVAL = 1000L
     }
 }
