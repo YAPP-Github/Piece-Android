@@ -98,9 +98,7 @@ private fun VerificationScreen(
                 .padding(vertical = 14.dp),
         )
 
-        VerificationHeader(
-            modifier = Modifier.padding(top = 20.dp)
-        )
+        VerificationHeader(modifier = Modifier.padding(top = 20.dp))
 
         PhoneNumberBody(
             isValidPhoneNumber = state.isValidPhoneNumber,
@@ -175,7 +173,7 @@ private fun AuthCodeBody(
 ) {
     var authCode by rememberSaveable { mutableStateOf("") }
 
-    val authgCodeStatusColor = when (authCodeStatus) {
+    val authCodeStatusColor = when (authCodeStatus) {
         AuthCodeStatus.INIT -> PieceTheme.colors.dark3
         AuthCodeStatus.VERIFIED -> PieceTheme.colors.primaryDefault
         AuthCodeStatus.INVALID -> PieceTheme.colors.subDefault
@@ -238,7 +236,7 @@ private fun AuthCodeBody(
         Text(
             text = stringResource(authCodeStatus.displayResId),
             style = PieceTheme.typography.bodySM,
-            color = authgCodeStatusColor,
+            color = authCodeStatusColor,
         )
     }
 }

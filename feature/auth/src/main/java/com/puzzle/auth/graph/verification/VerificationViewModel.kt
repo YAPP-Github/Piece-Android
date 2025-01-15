@@ -87,10 +87,9 @@ class VerificationViewModel @AssistedInject constructor(
     }
 
     internal fun verifyAuthCode(code: String) {
-        pauseTimer()
-
         viewModelScope.launch {
             authRepository.verifyAuthCode(code).onSuccess {
+                // 인증에 성공했을 경우,
                 timerJob?.cancel()
 
                 setState {
@@ -100,7 +99,6 @@ class VerificationViewModel @AssistedInject constructor(
                     )
                 }
 
-                // 인증에 성공했을 경우,
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
                         route = AuthGraphDest.SignUpRoute,
@@ -109,9 +107,7 @@ class VerificationViewModel @AssistedInject constructor(
                 )
 
                 // 인증에 실패했을 경우,
-//                startTimer()
-//
-//                setState { copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID) }
+                //setState { copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID) }
             }.onFailure { errorHelper.sendError(it) }
         }
     }
