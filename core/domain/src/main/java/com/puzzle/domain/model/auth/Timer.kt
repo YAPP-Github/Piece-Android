@@ -3,8 +3,9 @@ package com.puzzle.domain.model.auth
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class Timer(
+class Timer @Inject constructor(
     private val durationInSec: Int = DEFAULT_DURATION_IN_SEC,
 ) {
     fun startTimer(): Flow<Int> = flow {

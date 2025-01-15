@@ -36,6 +36,8 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.navigation.AuthGraph
+import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
@@ -50,7 +52,6 @@ internal fun VerificationRoute(
             viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
         },
         onVerifyClick = { code -> viewModel.onIntent(VerificationIntent.OnVerifyClick(code)) },
-        onNextClick = { viewModel.onIntent(VerificationIntent.OnNextClick) },
         navigate = { viewModel.onSideEffect(VerificationSideEffect.Navigate(it)) },
     )
 }
@@ -60,7 +61,6 @@ private fun VerificationScreen(
     state: VerificationState,
     onRequestAuthCodeClick: (String) -> Unit,
     onVerifyClick: (String) -> Unit,
-    onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -103,7 +103,12 @@ private fun VerificationScreen(
         PieceSolidButton(
             label = stringResource(R.string.verification_submit),
             onClick = {
-                onNextClick()
+                navigate(
+                    NavigationEvent.NavigateTo(
+                        route = AuthGraphDest.SignUpRoute,
+                        popUpTo = AuthGraph,
+                    )
+                )
             },
             enabled = state.isVerified,
             modifier = Modifier
@@ -297,7 +302,6 @@ fun PreviewVerificationScreen() {
             navigate = {},
             onRequestAuthCodeClick = {},
             onVerifyClick = {},
-            onNextClick = {},
         )
     }
 }

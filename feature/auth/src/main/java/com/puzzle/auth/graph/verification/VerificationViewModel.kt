@@ -28,6 +28,7 @@ class VerificationViewModel @AssistedInject constructor(
     @Assisted initialState: VerificationState,
     private val navigationHelper: NavigationHelper,
     private val authRepository: AuthRepository,
+    private val timer: Timer,
 ) : MavericksViewModel<VerificationState>(initialState) {
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<VerificationViewModel, VerificationState> {
@@ -37,7 +38,6 @@ class VerificationViewModel @AssistedInject constructor(
     private val intents = Channel<VerificationIntent>(BUFFERED)
     private val sideEffects = Channel<VerificationSideEffect>(BUFFERED)
     private var timerJob: Job? = null
-    private var timer = Timer()
 
     init {
         intents.receiveAsFlow()
@@ -61,7 +61,6 @@ class VerificationViewModel @AssistedInject constructor(
         when (intent) {
             is VerificationIntent.OnRequestAuthCodeClick -> requestAuthCode(intent.phoneNumber)
             is VerificationIntent.OnVerifyClick -> verifyAuthCode(intent.code)
-            VerificationIntent.OnNextClick -> moveToNextPage()
         }
     }
 
@@ -69,15 +68,6 @@ class VerificationViewModel @AssistedInject constructor(
         when (sideEffect) {
             is VerificationSideEffect.Navigate -> navigationHelper.navigate(sideEffect.navigationEvent)
         }
-    }
-
-    private fun moveToNextPage() {
-        navigationHelper.navigate(
-            NavigationEvent.NavigateTo(
-                route = AuthGraphDest.SignUpRoute,
-                popUpTo = AuthGraph,
-            )
-        )
     }
 
     private fun requestAuthCode(phoneNumber: String) {
