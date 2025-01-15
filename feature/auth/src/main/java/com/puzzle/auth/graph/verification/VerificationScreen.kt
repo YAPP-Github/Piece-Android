@@ -43,6 +43,7 @@ import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
+import com.puzzle.designsystem.component.PieceTextInputFields
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
@@ -285,20 +286,15 @@ private fun PhoneNumberBody(
                 .fillMaxWidth()
                 .padding(top = 8.dp),
         ) {
-            BasicTextField(
+            PieceTextInputFields(
                 value = phoneNumber,
-                onValueChange = { phoneNumber = it },
-                textStyle = PieceTheme.typography.bodyMM,
+                onValueChange = { phoneNumber = it},
+                placeholder = "",
+                imageId = R.drawable.ic_delete,
+                onImageClick = { phoneNumber = "" },
                 modifier = Modifier
                     .focusRequester(focusRequester)
-                    .height(52.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(PieceTheme.colors.light3)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 14.dp,
-                    )
-                    .weight(1f),
+                    .weight(1f)
             )
 
             PieceSolidButton(
