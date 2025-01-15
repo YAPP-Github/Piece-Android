@@ -37,4 +37,12 @@ class AuthRepositoryImpl @Inject constructor(
             userRoleJob.join()
         }
     }
+
+    override suspend fun requestAuthCode(phoneNumber: String): Result<Boolean> {
+        return Result.success(true)
+    }
+
+    override suspend fun verifyAuthCode(code: String): Result<Boolean> {
+        return Result.success(true)
+    }
 }
