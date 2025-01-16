@@ -56,7 +56,10 @@ class VerificationViewModel @AssistedInject constructor(
             )
 
             is VerificationIntent.OnVerifyClick -> _sideEffects.send(
-                VerificationSideEffect.VerifyAuthCode(intent.code)
+                VerificationSideEffect.VerifyAuthCode(
+                    phoneNumber = intent.phoneNumber,
+                    code = intent.code,
+                )
             )
 
             is VerificationIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
@@ -86,17 +89,17 @@ class VerificationViewModel @AssistedInject constructor(
         }
     }
 
-    internal fun verifyAuthCode(code: String) {
+    internal fun verifyAuthCode(phoneNumber: String, code: String) {
         viewModelScope.launch {
-            authRepository.verifyAuthCode(code).onSuccess {
+            authRepository.verifyAuthCode(
+                phoneNumber = phoneNumber,
+                code = code,
+            ).onSuccess {
                 // 인증에 성공했을 경우,
                 timerJob?.cancel()
 
                 setState {
-                    copy(
-                        remainingTimeInSec = 0,
-                        authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED,
-                    )
+                    copy(authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED)
                 }
 
                 navigationHelper.navigate(
@@ -128,19 +131,6 @@ class VerificationViewModel @AssistedInject constructor(
                         timerJob?.cancel()
                     }
                 }
-        }
-    }
-
-    private fun pauseTimer() = timerJob?.cancel()
-
-    private fun stopTimer() {
-        timerJob?.cancel()
-
-        setState {
-            copy(
-                remainingTimeInSec = 0,
-                authCodeStatus = VerificationState.AuthCodeStatus.INIT,
-            )
         }
     }
 
