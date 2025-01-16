@@ -4,6 +4,7 @@ import com.puzzle.datastore.datasource.LocalTokenDataSource
 import com.puzzle.datastore.datasource.LocalUserDataSource
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.network.model.auth.LoginOauthResponse
+import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.source.AuthDataSource
 import io.mockk.Runs
 import io.mockk.coEvery
@@ -50,9 +51,29 @@ class AuthRepositoryImplTest {
 
         // then
         assertTrue(result.isSuccess)
-        coVerify { tokenDataSource.setAccessToken("accessToken") }
-        coVerify { tokenDataSource.setRefreshToken("refreshToken") }
+        coVerify { tokenDataSource.setAccessToken(any()) }
+        coVerify { tokenDataSource.setRefreshToken(any()) }
         coVerify { userInfoDataSource.setUserRole("NONE") }
     }
 
+    @Test
+    fun `유저가 휴대폰 인증에 성공했을 경우 토큰과 유저 상태를 저장한다`() = runTest {
+        // given
+        val tokenResponse = VerifyAuthCodeResponse("REGISTER", "accessToken", "refreshToken")
+        coEvery {
+            authDataSource.verifyAuthCode(
+                any(),
+                any()
+            )
+        } returns Result.success(tokenResponse)
+
+        // when
+        val result = authRepository.verifyAuthCode("01012341234", "authCode")
+
+        // then
+        assertTrue(result.isSuccess)
+        coVerify { tokenDataSource.setAccessToken(any()) }
+        coVerify { tokenDataSource.setRefreshToken(any()) }
+        coVerify { userInfoDataSource.setUserRole("REGISTER") }
+    }
 }
