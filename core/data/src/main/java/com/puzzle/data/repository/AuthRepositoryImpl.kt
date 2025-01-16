@@ -38,11 +38,30 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun requestAuthCode(phoneNumber: String): Result<Boolean> {
-        return Result.success(true)
-    }
+    override suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
+        authDataSource.requestAuthCode(phoneNumber)
 
-    override suspend fun verifyAuthCode(code: String): Result<Boolean> {
-        return Result.success(true)
-    }
+    override suspend fun verifyAuthCode(phoneNumber: String, code: String): Result<Unit> =
+        suspendRunCatching {
+            val response = authDataSource.verifyAuthCode(
+                phoneNumber = phoneNumber,
+                code = code,
+            ).getOrThrow()
+
+            coroutineScope {
+                val accessTokenJob = launch {
+                    response.accessToken?.let { localTokenDataSource.setAccessToken(it) }
+                }
+                val refreshTokenJob = launch {
+                    response.refreshToken?.let { localTokenDataSource.setRefreshToken(it) }
+                }
+                val userRoleJob = launch {
+                    response.role?.let { localUserDataSource.setUserRole(it) }
+                }
+
+                accessTokenJob.join()
+                refreshTokenJob.join()
+                userRoleJob.join()
+            }
+        }
 }

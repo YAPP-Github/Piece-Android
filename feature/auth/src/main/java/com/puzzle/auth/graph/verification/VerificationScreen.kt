@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,11 @@ internal fun VerificationRoute(
                         sideEffect.phoneNumber
                     )
 
-                    is VerificationSideEffect.VerifyAuthCode -> viewModel.verifyAuthCode(sideEffect.code)
+                    is VerificationSideEffect.VerifyAuthCode -> viewModel.verifyAuthCode(
+                        phoneNumber = sideEffect.phoneNumber,
+                        code = sideEffect.code,
+                    )
+
                     is VerificationSideEffect.Navigate -> viewModel.navigationHelper
                         .navigate(sideEffect.navigationEvent)
                 }
@@ -77,7 +82,14 @@ internal fun VerificationRoute(
         onRequestAuthCodeClick = { phoneNumber ->
             viewModel.onIntent(VerificationIntent.OnRequestAuthCodeClick(phoneNumber))
         },
-        onVerifyClick = { code -> viewModel.onIntent(VerificationIntent.OnVerifyClick(code)) },
+        onVerifyClick = { phoneNumber, code ->
+            viewModel.onIntent(
+                VerificationIntent.OnVerifyClick(
+                    phoneNumber = phoneNumber,
+                    code = code,
+                )
+            )
+        },
         navigate = { viewModel.onIntent(VerificationIntent.Navigate(it)) },
     )
 }
@@ -86,7 +98,7 @@ internal fun VerificationRoute(
 private fun VerificationScreen(
     state: VerificationState,
     onRequestAuthCodeClick: (String) -> Unit,
-    onVerifyClick: (String) -> Unit,
+    onVerifyClick: (String, String) -> Unit,
     navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -97,6 +109,9 @@ private fun VerificationScreen(
             focusManager.moveFocus(FocusDirection.Down)
         }
     }
+
+    var phoneNumber by rememberSaveable { mutableStateOf("") }
+    var authCode by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = modifier
@@ -115,17 +130,22 @@ private fun VerificationScreen(
         VerificationHeader(modifier = Modifier.padding(top = 20.dp))
 
         PhoneNumberBody(
+            phoneNumber = phoneNumber,
             isValidPhoneNumber = state.isValidPhoneNumber,
             isAuthCodeRequested = state.isAuthCodeRequested,
+            onPhoneNumberChanged = { phoneNumber = it },
             onRequestAuthCodeClick = onRequestAuthCodeClick,
+            onClearClick = { phoneNumber = "" },
             modifier = Modifier.padding(top = 68.dp)
         )
 
         if (state.isAuthCodeRequested) {
             AuthCodeBody(
+                authCode = authCode,
                 remainingTimeInSec = state.formattedRemainingTimeInSec,
                 authCodeStatus = state.authCodeStatus,
-                onVerifyClick = onVerifyClick,
+                onAuthCodeChanged = { authCode = it },
+                onVerifyClick = { onVerifyClick(phoneNumber, authCode) },
                 modifier = Modifier.padding(top = 32.dp)
             )
         }
@@ -180,13 +200,13 @@ private fun VerificationHeader(
 
 @Composable
 private fun AuthCodeBody(
+    authCode: String,
     remainingTimeInSec: String,
     authCodeStatus: AuthCodeStatus,
-    onVerifyClick: (String) -> Unit,
+    onAuthCodeChanged: (String) -> Unit,
+    onVerifyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var authCode by rememberSaveable { mutableStateOf("") }
-
     val authCodeStatusColor = when (authCodeStatus) {
         AuthCodeStatus.INIT -> PieceTheme.colors.dark3
         AuthCodeStatus.VERIFIED -> PieceTheme.colors.primaryDefault
@@ -212,7 +232,7 @@ private fun AuthCodeBody(
         ) {
             BasicTextField(
                 value = authCode,
-                onValueChange = { authCode = it },
+                onValueChange = onAuthCodeChanged,
                 textStyle = PieceTheme.typography.bodyMM,
                 decorationBox = { innerTextField ->
                     Box {
@@ -230,18 +250,13 @@ private fun AuthCodeBody(
                     .height(52.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(PieceTheme.colors.light3)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 14.dp,
-                    )
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
                     .weight(1f),
             )
 
             PieceSolidButton(
                 label = stringResource(R.string.verification_submit),
-                onClick = {
-                    onVerifyClick(authCode)
-                },
+                onClick = onVerifyClick,
                 enabled = isVerifyButtonEnabled,
                 modifier = Modifier.padding(start = 8.dp)
             )
@@ -257,9 +272,12 @@ private fun AuthCodeBody(
 
 @Composable
 private fun PhoneNumberBody(
+    phoneNumber: String,
     isAuthCodeRequested: Boolean,
     isValidPhoneNumber: Boolean,
+    onPhoneNumberChanged: (String) -> Unit,
     onRequestAuthCodeClick: (String) -> Unit,
+    onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -267,8 +285,6 @@ private fun PhoneNumberBody(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-
-    var phoneNumber by rememberSaveable { mutableStateOf("") }
 
     val requestButtonLabel =
         if (isAuthCodeRequested) stringResource(R.string.verification_resend) else stringResource(R.string.verification_request)
@@ -288,10 +304,15 @@ private fun PhoneNumberBody(
         ) {
             PieceTextInputFields(
                 value = phoneNumber,
-                onValueChange = { phoneNumber = it},
-                placeholder = "",
                 imageId = R.drawable.ic_delete,
-                onImageClick = { phoneNumber = "" },
+                keyboardType = KeyboardType.Phone,
+                onDone = {
+                    if (phoneNumber.isNotEmpty()) {
+                        onRequestAuthCodeClick(phoneNumber)
+                    }
+                },
+                onValueChange = onPhoneNumberChanged,
+                onImageClick = onClearClick,
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .weight(1f)
@@ -334,7 +355,7 @@ fun PreviewVerificationScreen() {
             ),
             navigate = {},
             onRequestAuthCodeClick = {},
-            onVerifyClick = {},
+            onVerifyClick = { _, _ -> },
         )
     }
 }

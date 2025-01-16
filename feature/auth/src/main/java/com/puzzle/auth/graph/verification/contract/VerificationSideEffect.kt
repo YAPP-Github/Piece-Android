@@ -4,6 +4,6 @@ import com.puzzle.navigation.NavigationEvent
 
 sealed class VerificationSideEffect {
     data class RequestAuthCode(val phoneNumber: String) : VerificationSideEffect()
-    data class VerifyAuthCode(val code: String) : VerificationSideEffect()
+    data class VerifyAuthCode(val phoneNumber: String, val code: String) : VerificationSideEffect()
     data class Navigate(val navigationEvent: NavigationEvent) : VerificationSideEffect()
 }
