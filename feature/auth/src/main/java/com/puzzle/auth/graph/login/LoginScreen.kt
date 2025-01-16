@@ -5,7 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +33,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent
-import com.puzzle.auth.graph.login.contract.LoginIntent.Navigate
 import com.puzzle.auth.graph.login.contract.LoginSideEffect
 import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.common.ui.repeatOnStarted
@@ -43,9 +41,6 @@ import com.puzzle.designsystem.component.PieceLoginButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
-import com.puzzle.navigation.AuthGraph
-import com.puzzle.navigation.AuthGraphDest
-import com.puzzle.navigation.NavigationEvent
 
 @Composable
 internal fun LoginRoute(
@@ -89,7 +84,6 @@ internal fun LoginRoute(
         state = state,
         loginKakao = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.KAKAO)) },
         loginGoogle = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.GOOGLE)) },
-        navigate = { viewModel.onIntent(Navigate(it)) },
     )
 }
 
@@ -98,29 +92,14 @@ private fun LoginScreen(
     state: LoginState,
     loginKakao: () -> Unit,
     loginGoogle: () -> Unit,
-    navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(PieceTheme.colors.white)
-            .padding(horizontal = 20.dp)
-            .clickable {
-                navigate(
-                    NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.VerificationRoute,
-                        popUpTo = AuthGraph,
-                    )
-                )
-            },
+            .padding(horizontal = 20.dp),
     ) {
-        PieceSubCloseTopBar(
-            title = "",
-            onCloseClick = { },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
@@ -133,7 +112,7 @@ private fun LoginScreen(
             color = PieceTheme.colors.black,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 20.dp, bottom = 12.dp),
+                .padding(top = 80.dp, bottom = 12.dp),
         )
 
         Text(
@@ -207,7 +186,7 @@ private fun loginKakao(
     }
 }
 
-fun handleGoogleSignIn(
+private fun handleGoogleSignIn(
     task: Task<GoogleSignInAccount>?,
     onSuccess: (String) -> Unit,
     onFailure: (Throwable) -> Unit,
@@ -242,7 +221,6 @@ private fun PreviewAuthScreen() {
             state = LoginState(),
             loginKakao = {},
             loginGoogle = {},
-            navigate = {},
         )
     }
 }
