@@ -8,6 +8,8 @@ import com.puzzle.auth.graph.signup.SignUpViewModel
 import com.puzzle.auth.graph.verification.VerificationViewModel
 import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
+import com.puzzle.setting.graph.main.SettingViewModel
+import com.puzzle.setting.graph.withdraw.WithdrawViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,14 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(VerificationViewModel::class)
     fun authVerificationViewModelFactory(factory: VerificationViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettingViewModel::class)
+    fun settingViewModelFactory(factory: SettingViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(WithdrawViewModel::class)
+    fun settingWithdrawViewModelFactory(factory: WithdrawViewModel.Factory): AssistedViewModelFactory<*, *>
 }
