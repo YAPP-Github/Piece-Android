@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -230,18 +231,13 @@ private fun AuthCodeBody(
                     .height(52.dp)
                     .clip(RoundedCornerShape(8.dp))
                     .background(PieceTheme.colors.light3)
-                    .padding(
-                        horizontal = 16.dp,
-                        vertical = 14.dp,
-                    )
+                    .padding(horizontal = 16.dp, vertical = 14.dp)
                     .weight(1f),
             )
 
             PieceSolidButton(
                 label = stringResource(R.string.verification_submit),
-                onClick = {
-                    onVerifyClick(authCode)
-                },
+                onClick = { onVerifyClick(authCode) },
                 enabled = isVerifyButtonEnabled,
                 modifier = Modifier.padding(start = 8.dp)
             )
@@ -288,9 +284,14 @@ private fun PhoneNumberBody(
         ) {
             PieceTextInputFields(
                 value = phoneNumber,
-                onValueChange = { phoneNumber = it},
-                placeholder = "",
                 imageId = R.drawable.ic_delete,
+                keyboardType = KeyboardType.Phone,
+                onDone = {
+                    if (phoneNumber.isNotEmpty()) {
+                        onRequestAuthCodeClick(phoneNumber)
+                    }
+                },
+                onValueChange = { phoneNumber = it },
                 onImageClick = { phoneNumber = "" },
                 modifier = Modifier
                     .focusRequester(focusRequester)
