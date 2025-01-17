@@ -4,9 +4,13 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,32 +21,39 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-fun PieceTextInputFields(
+fun PieceTextInputDefault(
     value: String,
     onValueChange: (String) -> Unit,
     @DrawableRes imageId: Int,
     onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
-    placeholder: String = "",
-    onDone: () -> Unit = {},
+    hint: String = "",
+    readOnly: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     throttleTime: Long = 2000L,
+    onDone: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastDoneTime by remember { mutableLongStateOf(0L) }
@@ -51,6 +62,7 @@ fun PieceTextInputFields(
         value = value,
         onValueChange = onValueChange,
         singleLine = true,
+        readOnly = readOnly,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
             imeAction = ImeAction.Done
@@ -71,7 +83,7 @@ fun PieceTextInputFields(
             Box {
                 if (value.isEmpty()) {
                     Text(
-                        text = placeholder,
+                        text = hint,
                         style = PieceTheme.typography.bodyMM,
                         color = PieceTheme.colors.dark3,
                         modifier = Modifier.align(Alignment.CenterStart)
@@ -95,24 +107,263 @@ fun PieceTextInputFields(
         modifier = modifier
             .height(52.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(PieceTheme.colors.light3)
+            .background(
+                if (readOnly) PieceTheme.colors.light2
+                else PieceTheme.colors.light3
+            )
             .padding(horizontal = 16.dp, vertical = 14.dp),
     )
 }
 
+@Composable
+fun PieceTextInputLong(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    hint: String = "",
+    limit: Int? = null,
+    readOnly: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    throttleTime: Long = 2000L,
+    onDone: () -> Unit = {},
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var lastDoneTime by remember { mutableLongStateOf(0L) }
+    var isFocused by remember { mutableStateOf(false) }
+
+    BasicTextField(
+        value = value,
+        onValueChange = { input ->
+            limit?.let { if (input.length <= limit) onValueChange(input) } ?: onValueChange(input)
+        },
+        singleLine = true,
+        readOnly = readOnly,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = ImeAction.Done
+        ),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - lastDoneTime >= throttleTime) {
+                    keyboardController?.hide()
+                    onDone()
+                    lastDoneTime = currentTime
+                }
+            }
+        ),
+        textStyle = PieceTheme.typography.bodyMM,
+        cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+        decorationBox = { innerTextField ->
+            Box {
+                if (value.isEmpty()) {
+                    Text(
+                        text = hint,
+                        style = PieceTheme.typography.bodyMM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    )
+                }
+
+                innerTextField()
+
+                if (limit != null && isFocused && value.isNotEmpty()) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                append(value.length.toString())
+                            }
+                            append("/${limit}")
+                        },
+                        style = PieceTheme.typography.bodySM,
+                        modifier = Modifier.align(Alignment.BottomEnd),
+                    )
+                }
+            }
+        },
+        modifier = modifier
+            .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+            .heightIn(min = 160.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(
+                if (readOnly) PieceTheme.colors.light2
+                else PieceTheme.colors.light3
+            )
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+    )
+}
+
+@Composable
+fun PieceTextInputAI(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    throttleTime: Long = 2000L,
+    onDone: () -> Unit = {},
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    var lastDoneTime by remember { mutableLongStateOf(0L) }
+    var isFocused by remember { mutableStateOf(false) }
+
+    BasicTextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                val currentTime = System.currentTimeMillis()
+                if (currentTime - lastDoneTime >= throttleTime) {
+                    keyboardController?.hide()
+                    onDone()
+                    lastDoneTime = currentTime
+                }
+            }
+        ),
+        textStyle = PieceTheme.typography.bodyMM,
+        cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+        decorationBox = { innerTextField ->
+            Box {
+                if (value.isEmpty()) {
+                    Text(
+                        text = "작성해주신 내용을 AI가 요약하고 있어요",
+                        style = PieceTheme.typography.bodyMM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    )
+                }
+
+                innerTextField()
+
+                val imageRes = if (value.isEmpty()) R.drawable.ic_textinput_3dots
+                else if (isFocused) R.drawable.ic_textinput_check
+                else R.drawable.ic_textinput_pencil
+
+                Image(
+                    painter = painterResource(imageRes),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterEnd),
+                )
+            }
+        },
+        modifier = modifier
+            .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+            .height(52.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(PieceTheme.colors.primaryLight)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+    )
+}
+
+@Composable
+fun PieceTextInputDropDown(
+    value: String,
+    modifier: Modifier = Modifier,
+    hint: String = "",
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .height(52.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(PieceTheme.colors.light3)
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+    ) {
+        Text(
+            text = value.ifEmpty { hint },
+            style = PieceTheme.typography.bodyMM,
+            color = if (value.isNotEmpty()) PieceTheme.colors.black
+            else PieceTheme.colors.dark2,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+        )
+
+        Image(
+            painter = painterResource(R.drawable.ic_textinput_dropdown),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+    }
+}
+
 @Preview
 @Composable
-fun PreviewPieceTextInputFields() {
+private fun PreviewPieceTextInputDefault() {
     PieceTheme {
-        PieceTextInputFields(
+        PieceTextInputDefault(
             value = "Label",
             onValueChange = {},
-            placeholder = "hint",
+            hint = "hint",
             imageId = R.drawable.ic_alarm,
             onImageClick = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
         )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPieceTextInputLong() {
+    PieceTheme {
+        PieceTextInputLong(
+            value = "Label",
+            onValueChange = {},
+            limit = 6,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPieceTextInputAI() {
+    PieceTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            PieceTextInputAI(
+                value = "",
+                onValueChange = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputAI(
+                value = "Label",
+                onValueChange = { },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPieceTextInputDropDown() {
+    PieceTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            PieceTextInputDropDown(
+                value = "",
+                hint = "안내 문구",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputDropDown(
+                value = "Label",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+        }
     }
 }

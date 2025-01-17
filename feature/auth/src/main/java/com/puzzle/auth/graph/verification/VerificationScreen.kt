@@ -45,7 +45,7 @@ import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
-import com.puzzle.designsystem.component.PieceTextInputFields
+import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
@@ -307,7 +307,7 @@ private fun PhoneNumberBody(
                 .fillMaxWidth()
                 .padding(top = 8.dp),
         ) {
-            PieceTextInputFields(
+            PieceTextInputDefault(
                 value = phoneNumber,
                 imageId = R.drawable.ic_delete,
                 keyboardType = KeyboardType.Phone,
