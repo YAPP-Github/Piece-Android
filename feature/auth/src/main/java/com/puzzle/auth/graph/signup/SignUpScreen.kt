@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.signup.contract.SignUpIntent
@@ -19,7 +21,7 @@ import com.puzzle.auth.graph.signup.page.AvoidAcquaintancesPage
 import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
 import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.auth.graph.signup.page.TermPage
-import com.puzzle.domain.model.terms.Term
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.navigation.NavigationEvent
 
 @Composable
@@ -27,6 +29,18 @@ internal fun SignUpRoute(
     viewModel: SignUpViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel) {
+        lifecycleOwner.repeatOnStarted {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is SignUpSideEffect.Navigate -> viewModel.navigationHelper
+                        .navigate(sideEffect.navigationEvent)
+                }
+            }
+        }
+    }
 
     SignUpScreen(
         state = state,
@@ -36,7 +50,7 @@ internal fun SignUpRoute(
         onTermDetailClick = { viewModel.onIntent(SignUpIntent.OnTermDetailClick) },
         onBackClick = { viewModel.onIntent(SignUpIntent.OnBackClick) },
         onNextClick = { viewModel.onIntent(SignUpIntent.OnNextClick) },
-        navigate = { event -> viewModel.onSideEffect(SignUpSideEffect.Navigate(event)) }
+        navigate = { event -> viewModel.onIntent(SignUpIntent.Navigate(event)) }
     )
 }
 
