@@ -36,7 +36,7 @@ include(":core:datastore")
 include(":core:common")
 
 include(":feature:auth")
-include(":feature:mypage")
+include(":feature:profile")
 include(":feature:matching")
 include(":feature:setting")
 include(":presentation")

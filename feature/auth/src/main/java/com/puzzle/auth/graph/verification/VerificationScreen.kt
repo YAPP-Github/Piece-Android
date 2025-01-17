@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -44,7 +45,7 @@ import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
-import com.puzzle.designsystem.component.PieceTextInputFields
+import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
@@ -102,6 +103,7 @@ private fun VerificationScreen(
     navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(state.isAuthCodeRequested) {
@@ -145,7 +147,10 @@ private fun VerificationScreen(
                 remainingTimeInSec = state.formattedRemainingTimeInSec,
                 authCodeStatus = state.authCodeStatus,
                 onAuthCodeChanged = { authCode = it },
-                onVerifyClick = { onVerifyClick(phoneNumber, authCode) },
+                onVerifyClick = {
+                    keyboardController?.hide()
+                    onVerifyClick(phoneNumber, authCode)
+                },
                 modifier = Modifier.padding(top = 32.dp)
             )
         }
@@ -302,7 +307,7 @@ private fun PhoneNumberBody(
                 .fillMaxWidth()
                 .padding(top = 8.dp),
         ) {
-            PieceTextInputFields(
+            PieceTextInputDefault(
                 value = phoneNumber,
                 imageId = R.drawable.ic_delete,
                 keyboardType = KeyboardType.Phone,

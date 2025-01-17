@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.signup.contract.SignUpIntent
@@ -19,14 +21,29 @@ import com.puzzle.auth.graph.signup.page.AvoidAcquaintancesPage
 import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
 import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.auth.graph.signup.page.TermPage
-import com.puzzle.domain.model.terms.Term
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.NavigateTo
+import com.puzzle.navigation.NavigationEvent.NavigateUp
+import com.puzzle.navigation.ProfileGraphDest.RegisterProfileRoute
 
 @Composable
 internal fun SignUpRoute(
     viewModel: SignUpViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel) {
+        lifecycleOwner.repeatOnStarted {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is SignUpSideEffect.Navigate -> viewModel.navigationHelper
+                        .navigate(sideEffect.navigationEvent)
+                }
+            }
+        }
+    }
 
     SignUpScreen(
         state = state,
@@ -36,7 +53,7 @@ internal fun SignUpRoute(
         onTermDetailClick = { viewModel.onIntent(SignUpIntent.OnTermDetailClick) },
         onBackClick = { viewModel.onIntent(SignUpIntent.OnBackClick) },
         onNextClick = { viewModel.onIntent(SignUpIntent.OnNextClick) },
-        navigate = { event -> viewModel.onSideEffect(SignUpSideEffect.Navigate(event)) }
+        navigate = { event -> viewModel.onIntent(SignUpIntent.Navigate(event)) }
     )
 }
 
@@ -51,7 +68,7 @@ private fun SignUpScreen(
     onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
-    val (selectedTerm, setSelectedTerm) = rememberSaveable { mutableStateOf<Term?>(null) }
+    val (selectedTermIdx, setSelectedTermIdx) = rememberSaveable { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = Modifier
@@ -66,15 +83,15 @@ private fun SignUpScreen(
                 checkAllTerms = checkAllTerms,
                 checkTerm = checkTerm,
                 showTermDetail = {
-                    setSelectedTerm(it)
+                    setSelectedTermIdx(it)
                     onTermDetailClick()
                 },
-                onBackClick = { navigate(NavigationEvent.NavigateUp) },
+                onBackClick = { navigate(NavigateUp) },
                 onNextClick = onNextClick,
             )
 
             SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
-                term = selectedTerm!!,
+                term = state.terms[selectedTermIdx!!],
                 onBackClick = onBackClick,
                 onAgreeClick = agreeTerm,
             )
@@ -91,7 +108,7 @@ private fun SignUpScreen(
             )
 
             SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
-                onGenerateProfileClick = {},
+                onGenerateProfileClick = { navigate(NavigateTo(RegisterProfileRoute)) },
             )
         }
     }
