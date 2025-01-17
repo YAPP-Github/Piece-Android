@@ -3,7 +3,7 @@ package com.puzzle.presentation.navigation
 import androidx.annotation.DrawableRes
 import com.puzzle.designsystem.R
 import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.ProfileRoute
+import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.navigation.SettingRoute
 import kotlin.reflect.KClass
 
@@ -17,7 +17,7 @@ enum class TopLevelDestination(
         iconDrawableId = R.drawable.ic_profile,
         contentDescription = "프로필",
         title = "프로필",
-        route = ProfileRoute::class,
+        route = ProfileGraphDest.ProfileRoute::class,
     ),
     MATCHING(
         iconDrawableId = R.drawable.ic_profile,

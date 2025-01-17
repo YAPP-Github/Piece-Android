@@ -39,7 +39,8 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
-import com.puzzle.navigation.ProfileRoute
+import com.puzzle.navigation.ProfileGraphDest
+import com.puzzle.navigation.ProfileGraphDest.ProfileRoute
 import com.puzzle.navigation.Route
 import com.puzzle.navigation.SettingRoute
 import com.puzzle.presentation.navigation.AppNavHost
@@ -138,14 +139,9 @@ private fun AppBottomBar(
                 interactionSource = remember { NoRippleInteractionSource() },
                 onClick = {
                     when (topLevelRoute) {
-                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(
-                            MatchingGraph
-                        )
-
+                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
                         TopLevelDestination.PROFILE -> navigateToTopLevelDestination(ProfileRoute)
-                        TopLevelDestination.SETTING -> navigateToTopLevelDestination(
-                            SettingRoute
-                        )
+                        TopLevelDestination.SETTING -> navigateToTopLevelDestination(SettingRoute)
                     }
                 },
             )
@@ -156,6 +152,7 @@ private fun AppBottomBar(
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     AuthGraph::class.qualifiedName,
     MatchingDetailRoute::class.qualifiedName,
+    ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
 )
 
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =

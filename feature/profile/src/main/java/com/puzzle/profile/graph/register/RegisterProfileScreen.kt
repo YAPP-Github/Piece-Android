@@ -20,6 +20,6 @@ private fun RegisterProfileScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text = "MyPageRoute", fontSize = 30.sp)
+        Text(text = "RegisterRoute", fontSize = 30.sp)
     }
 }

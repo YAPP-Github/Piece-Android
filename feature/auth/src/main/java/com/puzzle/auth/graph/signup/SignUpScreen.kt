@@ -23,6 +23,9 @@ import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.auth.graph.signup.page.TermPage
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.NavigateTo
+import com.puzzle.navigation.NavigationEvent.NavigateUp
+import com.puzzle.navigation.ProfileGraphDest.RegisterProfileRoute
 
 @Composable
 internal fun SignUpRoute(
@@ -83,7 +86,7 @@ private fun SignUpScreen(
                     setSelectedTermIdx(it)
                     onTermDetailClick()
                 },
-                onBackClick = { navigate(NavigationEvent.NavigateUp) },
+                onBackClick = { navigate(NavigateUp) },
                 onNextClick = onNextClick,
             )
 
@@ -105,7 +108,7 @@ private fun SignUpScreen(
             )
 
             SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
-                onGenerateProfileClick = {},
+                onGenerateProfileClick = { navigate(NavigateTo(RegisterProfileRoute)) },
             )
         }
     }
