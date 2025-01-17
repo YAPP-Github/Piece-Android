@@ -32,5 +32,8 @@ sealed class MatchingGraphDest : Route {
     data object MatchingDetailRoute : MatchingGraphDest()
 }
 
-@Serializable
-data object MyPageRoute : Route
+sealed class ProfileGraphDest : Route {
+    @Serializable
+    data object ProfileRoute : Route
+}
+

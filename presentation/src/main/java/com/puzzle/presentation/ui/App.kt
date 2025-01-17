@@ -39,7 +39,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
-import com.puzzle.navigation.MyPageRoute
+import com.puzzle.navigation.ProfileRoute
 import com.puzzle.navigation.Route
 import com.puzzle.navigation.SettingRoute
 import com.puzzle.presentation.navigation.AppNavHost
@@ -142,7 +142,7 @@ private fun AppBottomBar(
                             MatchingGraph
                         )
 
-                        TopLevelDestination.MY_PAGE -> navigateToTopLevelDestination(MyPageRoute)
+                        TopLevelDestination.PROFILE -> navigateToTopLevelDestination(ProfileRoute)
                         TopLevelDestination.SETTING -> navigateToTopLevelDestination(
                             SettingRoute
                         )
