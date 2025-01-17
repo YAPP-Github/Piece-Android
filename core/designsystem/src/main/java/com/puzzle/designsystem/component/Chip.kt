@@ -2,6 +2,7 @@ package com.puzzle.designsystem.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,6 +11,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults.filterChipColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,12 +29,19 @@ fun PieceChip(
 ) {
     FilterChip(
         label = {
-            Text(
-                text = label,
-                style = PieceTheme.typography.bodyMSB,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 12.dp, horizontal = 20.dp),
+            ) {
+                Text(
+                    text = label,
+                    style = if (selected) PieceTheme.typography.bodyMSB
+                    else PieceTheme.typography.bodyMM,
+                    textAlign = TextAlign.Center,
+                )
+            }
         },
         enabled = enabled,
         selected = selected,
