@@ -51,7 +51,7 @@ private fun SignUpScreen(
     onNextClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
-    val (selectedTerm, setSelectedTerm) = rememberSaveable { mutableStateOf<Term?>(null) }
+    val (selectedTermIdx, setSelectedTermIdx) = rememberSaveable { mutableStateOf<Int?>(null) }
 
     Column(
         modifier = Modifier
@@ -66,7 +66,7 @@ private fun SignUpScreen(
                 checkAllTerms = checkAllTerms,
                 checkTerm = checkTerm,
                 showTermDetail = {
-                    setSelectedTerm(it)
+                    setSelectedTermIdx(it)
                     onTermDetailClick()
                 },
                 onBackClick = { navigate(NavigationEvent.NavigateUp) },
@@ -74,7 +74,7 @@ private fun SignUpScreen(
             )
 
             SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
-                term = selectedTerm!!,
+                term = state.terms[selectedTermIdx!!],
                 onBackClick = onBackClick,
                 onAgreeClick = agreeTerm,
             )
