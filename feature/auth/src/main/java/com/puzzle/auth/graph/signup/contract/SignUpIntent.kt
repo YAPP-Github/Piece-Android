@@ -1,5 +1,8 @@
 package com.puzzle.auth.graph.signup.contract
 
+import com.puzzle.auth.graph.verification.contract.VerificationIntent
+import com.puzzle.navigation.NavigationEvent
+
 sealed class SignUpIntent {
     data object CheckAllTerms : SignUpIntent()
     data class CheckTerm(val termId: Int) : SignUpIntent()
@@ -7,4 +10,5 @@ sealed class SignUpIntent {
     data object OnTermDetailClick : SignUpIntent()
     data object OnBackClick : SignUpIntent()
     data object OnNextClick : SignUpIntent()
+    data class Navigate(val navigationEvent: NavigationEvent) : SignUpIntent()
 }

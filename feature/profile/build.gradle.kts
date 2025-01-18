@@ -3,5 +3,5 @@ plugins {
 }
 
 android {
-    namespace = "com.puzzle.mypage"
+    namespace = "com.puzzle.profile"
 }

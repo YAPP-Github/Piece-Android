@@ -14,5 +14,5 @@ dependencies {
     implementation(projects.feature.auth)
     implementation(projects.feature.setting)
     implementation(projects.feature.matching)
-    implementation(projects.feature.mypage)
+    implementation(projects.feature.profile)
 }

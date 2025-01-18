@@ -24,34 +24,27 @@ import kotlinx.coroutines.launch
 class SignUpViewModel @AssistedInject constructor(
     @Assisted initialState: SignUpState,
     private val termsRepository: TermsRepository,
-    private val navigationHelper: NavigationHelper,
+    internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SignUpState>(initialState) {
+    private val _intents = Channel<SignUpIntent>(BUFFERED)
 
-    private val intents = Channel<SignUpIntent>(BUFFERED)
-    private val sideEffects = Channel<SignUpSideEffect>(BUFFERED)
+    private val _sideEffects = Channel<SignUpSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         fetchTerms()
 
-        intents.receiveAsFlow()
+        _intents.receiveAsFlow()
             .onEach(::processIntent)
-            .launchIn(viewModelScope)
-
-        sideEffects.receiveAsFlow()
-            .onEach(::handleSideEffect)
             .launchIn(viewModelScope)
     }
 
     internal fun onIntent(intent: SignUpIntent) = viewModelScope.launch {
-        intents.send(intent)
+        _intents.send(intent)
     }
 
-    internal fun onSideEffect(sideEffect: SignUpSideEffect) = viewModelScope.launch {
-        sideEffects.send(sideEffect)
-    }
-
-    private fun processIntent(intent: SignUpIntent) {
+    private suspend fun processIntent(intent: SignUpIntent) {
         when (intent) {
             is SignUpIntent.CheckAllTerms -> checkAllTerms()
             is SignUpIntent.CheckTerm -> checkTerm(intent.termId)
@@ -59,12 +52,7 @@ class SignUpViewModel @AssistedInject constructor(
             is SignUpIntent.OnTermDetailClick -> onTermDetailClick()
             is SignUpIntent.OnBackClick -> onBackClick()
             is SignUpIntent.OnNextClick -> onNextClick()
-        }
-    }
-
-    private fun handleSideEffect(sideEffect: SignUpSideEffect) {
-        when (sideEffect) {
-            is Navigate -> navigationHelper.navigate(sideEffect.navigationEvent)
+            is SignUpIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
         }
     }
 

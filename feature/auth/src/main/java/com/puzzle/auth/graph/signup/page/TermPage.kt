@@ -30,7 +30,7 @@ internal fun ColumnScope.TermPage(
     allTermsAgreed: Boolean,
     checkAllTerms: () -> Unit,
     checkTerm: (Int) -> Unit,
-    showTermDetail: (Term) -> Unit,
+    showTermDetail: (Int) -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
 ) {
@@ -70,13 +70,13 @@ internal fun ColumnScope.TermPage(
             .padding(bottom = 12.dp),
     )
 
-    terms.forEach { term ->
+    terms.forEachIndexed { idx, term ->
         PieceCheckRow(
             checked = termsCheckedInfo.getOrDefault(term.id, false),
             arrowEnabled = true,
             label = term.title,
             onCheckedChange = { checkTerm(term.id) },
-            onArrowClick = { showTermDetail(term) },
+            onArrowClick = { showTermDetail(idx) },
             modifier = Modifier.fillMaxWidth(),
         )
     }
