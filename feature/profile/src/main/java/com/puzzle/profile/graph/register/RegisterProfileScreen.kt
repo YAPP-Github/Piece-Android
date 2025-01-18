@@ -1,7 +1,8 @@
 package com.puzzle.profile.graph.register
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,23 +16,37 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
+import com.puzzle.designsystem.component.PieceTextInputDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.navigation.MatchingGraphDest.MatchingRoute
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.TopLevelNavigateTo
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
@@ -64,9 +79,21 @@ private fun RegisterProfileScreen(
     state: RegisterProfileState,
     navigate: (NavigationEvent) -> Unit,
 ) {
+    val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
+    var isNicknameFocus by remember { mutableStateOf(false) }
+    var isOneLinerFocus by remember { mutableStateOf(false) }
+    var isBirthdayFocus by remember { mutableStateOf(false) }
+    var isRegionFocus by remember { mutableStateOf(false) }
+    var isHeightFocus by remember { mutableStateOf(false) }
+    var isJobFocus by remember { mutableStateOf(false) }
+    var isContactFocus by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .addFocusCleaner(focusManager),
+    ) {
         PieceSubBackTopBar(
             title = "",
             onBackClick = { navigate(NavigationEvent.NavigateUp) },
@@ -128,7 +155,9 @@ private fun RegisterProfileScreen(
                     keyboardType = KeyboardType.Text,
                     onValueChange = {},
                     onImageClick = {},
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .weight(1f)
+                        .onFocusChanged { isNicknameFocus = it.isFocused },
                 )
 
                 PieceSolidButton(
@@ -137,6 +166,35 @@ private fun RegisterProfileScreen(
                     enabled = false,
                     modifier = Modifier.padding(start = 8.dp)
                 )
+            }
+            AnimatedVisibility(visible = isNicknameFocus) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "닉네임 중복 검사를 진행해주세요.",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                append("2")
+                            }
+                            append("/6")
+                        },
+                        maxLines = 1,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.padding(start = 5.dp),
+                    )
+                }
             }
 
             SectionTitle(title = "나를 표현하는 한 마디")
@@ -149,21 +207,22 @@ private fun RegisterProfileScreen(
                 onImageClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isOneLinerFocus = it.isFocused },
             )
 
             SectionTitle(title = "생년월일")
             PieceTextInputDefault(
                 value = "",
                 hint = "2000.00.00.",
-                readOnly = true,
                 imageId = R.drawable.ic_delete,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
                 onImageClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isBirthdayFocus = it.isFocused },
             )
 
             SectionTitle(title = "활동 지역")
@@ -175,7 +234,8 @@ private fun RegisterProfileScreen(
                 onImageClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isRegionFocus = it.isFocused },
             )
 
             SectionTitle(title = "키")
@@ -187,56 +247,70 @@ private fun RegisterProfileScreen(
                 onImageClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isHeightFocus = it.isFocused },
             )
 
             SectionTitle(title = "직업")
-            PieceTextInputDefault(
+            PieceTextInputDropDown(
                 value = "",
-                imageId = R.drawable.ic_delete,
-                onImageClick = {},
-                keyboardType = KeyboardType.Number,
-                onValueChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isJobFocus = it.isFocused },
             )
 
             SectionTitle(title = "흡연")
-            PieceTextInputDefault(
-                value = "",
-                keyboardType = KeyboardType.Text,
-                imageId = R.drawable.ic_delete,
-                onImageClick = {},
-                onValueChange = {},
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-            )
+            ) {
+                PieceChip(
+                    label = "흡연",
+                    selected = false,
+                    onChipClicked = {},
+                    modifier = Modifier.weight(1f),
+                )
+
+                PieceChip(
+                    label = "비흡연",
+                    selected = false,
+                    onChipClicked = {},
+                    modifier = Modifier.weight(1f),
+                )
+            }
 
             SectionTitle(title = "종교")
-            PieceTextInputDefault(
+            PieceTextInputDropDown(
                 value = "",
-                keyboardType = KeyboardType.Text,
-                imageId = R.drawable.ic_delete,
-                onImageClick = {},
-                onValueChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
             )
 
             SectionTitle(title = "SNS 활동")
-            PieceTextInputDefault(
-                value = "",
-                keyboardType = KeyboardType.Text,
-                imageId = R.drawable.ic_delete,
-                onImageClick = {},
-                onValueChange = {},
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp),
-            )
+            ) {
+                PieceChip(
+                    label = "활동",
+                    selected = false,
+                    onChipClicked = {},
+                    modifier = Modifier.weight(1f),
+                )
+
+                PieceChip(
+                    label = "은둔",
+                    selected = false,
+                    onChipClicked = {},
+                    modifier = Modifier.weight(1f),
+                )
+            }
 
             SectionTitle(title = "연락처")
             PieceTextInputDefault(
@@ -247,26 +321,23 @@ private fun RegisterProfileScreen(
                 onValueChange = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isContactFocus = it.isFocused },
             )
 
-            Row(
+            Text(
+                text = "연락처 추가하기 +",
+                style = PieceTheme.typography.bodyMSB,
+                color = PieceTheme.colors.primaryDefault,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .clickable { }
-                    .padding(top = 16.dp, bottom = 60.dp),
-            ) {
-                Text(
-                    text = "연락처 추가하기",
-                    style = PieceTheme.typography.bodyMM,
-                    color = PieceTheme.colors.primaryDefault,
-                )
-            }
+                    .padding(top = 16.dp, bottom = 68.dp)
+            )
         }
 
         PieceSolidButton(
             label = stringResource(R.string.next),
-            onClick = {},
+            onClick = { navigate(TopLevelNavigateTo(MatchingRoute)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
@@ -276,12 +347,14 @@ private fun RegisterProfileScreen(
 }
 
 @Composable
-private fun SectionTitle(title: String) {
+private fun SectionTitle(
+    title: String,
+) {
     Text(
         text = title,
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark3,
-        modifier = Modifier.padding(top = 40.dp),
+        modifier = Modifier.padding(top = 32.dp),
     )
 }
 

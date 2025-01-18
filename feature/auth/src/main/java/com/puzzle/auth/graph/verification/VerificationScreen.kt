@@ -41,6 +41,8 @@ import com.puzzle.auth.graph.verification.contract.VerificationIntent
 import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus
+import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus.VERIFIED
+import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
@@ -118,6 +120,7 @@ private fun VerificationScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .addFocusCleaner(focusManager)
             .background(PieceTheme.colors.white)
             .padding(horizontal = 20.dp),
     ) {
@@ -135,6 +138,7 @@ private fun VerificationScreen(
             phoneNumber = phoneNumber,
             isValidPhoneNumber = state.isValidPhoneNumber,
             isAuthCodeRequested = state.isAuthCodeRequested,
+            isAuthCodeVerified = state.authCodeStatus == VERIFIED,
             onPhoneNumberChanged = { phoneNumber = it },
             onRequestAuthCodeClick = onRequestAuthCodeClick,
             onClearClick = { phoneNumber = "" },
@@ -167,7 +171,7 @@ private fun VerificationScreen(
                     )
                 )
             },
-            enabled = state.authCodeStatus == AuthCodeStatus.VERIFIED,
+            enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
@@ -214,7 +218,7 @@ private fun AuthCodeBody(
 ) {
     val authCodeStatusColor = when (authCodeStatus) {
         AuthCodeStatus.INIT -> PieceTheme.colors.dark3
-        AuthCodeStatus.VERIFIED -> PieceTheme.colors.primaryDefault
+        VERIFIED -> PieceTheme.colors.primaryDefault
         AuthCodeStatus.INVALID -> PieceTheme.colors.subDefault
         AuthCodeStatus.TIME_EXPIRED -> PieceTheme.colors.subDefault
     }
@@ -280,6 +284,7 @@ private fun PhoneNumberBody(
     phoneNumber: String,
     isAuthCodeRequested: Boolean,
     isValidPhoneNumber: Boolean,
+    isAuthCodeVerified: Boolean,
     onPhoneNumberChanged: (String) -> Unit,
     onRequestAuthCodeClick: (String) -> Unit,
     onClearClick: () -> Unit,
@@ -326,7 +331,7 @@ private fun PhoneNumberBody(
             PieceSolidButton(
                 label = requestButtonLabel,
                 onClick = { onRequestAuthCodeClick(phoneNumber) },
-                enabled = phoneNumber.isNotEmpty(),
+                enabled = phoneNumber.isNotEmpty() && !isAuthCodeVerified,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }

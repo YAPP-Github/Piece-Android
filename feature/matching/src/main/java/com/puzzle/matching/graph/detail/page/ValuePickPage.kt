@@ -1,5 +1,10 @@
 package com.puzzle.matching.graph.detail.page
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -132,24 +137,29 @@ private fun ValuePickTabContent(
     pickCards: List<ValuePick>,
     onDeclineClick: () -> Unit,
 ) {
-    when (tabIndex) {
-        0 ->
-            ValuePickCards(
+    AnimatedContent(
+        targetState = tabIndex,
+        transitionSpec = {
+            fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+        },
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        when (it) {
+            0 -> ValuePickCards(
                 pickCards = pickCards,
                 onDeclineClick = onDeclineClick,
             )
 
-        1 ->
-            ValuePickCards(
+            1 -> ValuePickCards(
                 pickCards = pickCards.filter { it.isSimilarToMe },
                 onDeclineClick = onDeclineClick,
             )
 
-        2 ->
-            ValuePickCards(
+            2 -> ValuePickCards(
                 pickCards = pickCards.filterNot { it.isSimilarToMe },
                 onDeclineClick = onDeclineClick,
             )
+        }
     }
 }
 
