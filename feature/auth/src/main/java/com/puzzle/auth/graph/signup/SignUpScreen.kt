@@ -1,10 +1,9 @@
 package com.puzzle.auth.graph.signup
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -79,13 +78,7 @@ private fun SignUpScreen(
     AnimatedContent(
         targetState = state.signUpPage,
         transitionSpec = {
-            if (targetState.ordinal > initialState.ordinal) {
-                slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
-                        slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
-            } else {
-                slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
-                        slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
-            }
+            fadeIn(tween(700)) togetherWith fadeOut(tween(700))
         },
         modifier = Modifier
             .fillMaxSize()

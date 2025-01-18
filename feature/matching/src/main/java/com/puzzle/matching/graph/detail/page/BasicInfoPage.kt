@@ -71,6 +71,7 @@ private fun BasicInfoName(
             text = stringResource(R.string.basicinfo_main_label),
             style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -102,7 +103,7 @@ private fun BasicInfoCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 12.dp),
+            .padding(horizontal = 20.dp, vertical = 12.dp),
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -140,10 +141,7 @@ private fun BasicInfoCard(
                         )
                     }
                 },
-                modifier = modifier.size(
-                    width = 144.dp,
-                    height = 80.dp,
-                ),
+                modifier = modifier.width(width = 144.dp),
             )
             InfoItem(
                 title = stringResource(R.string.basicinfocard_height),
@@ -196,6 +194,7 @@ private fun InfoItem(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
+            .height(80.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(PieceTheme.colors.white)
             .padding(vertical = 16.dp, horizontal = 12.dp),

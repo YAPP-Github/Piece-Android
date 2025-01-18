@@ -1,5 +1,10 @@
 package com.puzzle.matching.graph.detail
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -134,7 +139,7 @@ private fun MatchingDetailScreen(
 
             DialogType.PROFILE_IMAGE_DETAIL -> {
                 PieceImageDialog(
-                    imageUri = "https://s3-alpha-sig.figma.com/img/8760/4901/8bde4e95875afc55effc572d30f262c9?Expires=1736726400&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=CbG2KhUw8J1G6SUW1xKNVuEz-G9VA-vgxaP9GI2mQQ-m3ibGqEzheg3L0mOGbqvK9nv7DK0Op0YrVSGYS1OV3Rf-L2Q7V9esCG3veKkGEnJXWNnQRoIE~3QG6CUhpakzfqG5uUWm7JAodUXZ0LCfnDuavFB6uk1NDsPl0XrQtlUUTHTqD31JDJiUN4eMVQip99dGOHjJ7f9oxWVxjsEh8pZOX0Y4bWx16Dv3vIGxEb2ht3ibDsvf913ie7BlX1eqqxWihMjfFZ2TvjBbwRZUrH5h3eP7g0t4Ds65qbFacFdFmMHCxHsugmhoUe1juFosguFkPEeEUFw4p-BveERWvA__",
+                    imageUri = "https://data.onnada.com/character/202301/2042390482_867dcf19_939696.jpg",
                     buttonLabel = "매칭 수락하기",
                     onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },
@@ -242,37 +247,44 @@ private fun MatchingDetailContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        when (state.currentPage) {
-            MatchingDetailState.MatchingDetailPage.BasicInfoPage ->
-                BasicInfoPage(
-                    nickName = state.nickName,
-                    selfDescription = state.selfDescription,
-                    birthYear = state.birthYear,
-                    age = state.age,
-                    height = state.height,
-                    religion = state.religion,
-                    activityRegion = state.activityRegion,
-                    occupation = state.occupation,
-                    smokeStatue = state.smokeStatue,
-                    onMoreClick = onMoreClick,
-                    modifier = Modifier.padding(horizontal = 20.dp),
-                )
+        AnimatedContent(
+            targetState = state.currentPage,
+            transitionSpec = {
+                fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+            },
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            when (it) {
+                MatchingDetailState.MatchingDetailPage.BasicInfoPage ->
+                    BasicInfoPage(
+                        nickName = state.nickName,
+                        selfDescription = state.selfDescription,
+                        birthYear = state.birthYear,
+                        age = state.age,
+                        height = state.height,
+                        religion = state.religion,
+                        activityRegion = state.activityRegion,
+                        occupation = state.occupation,
+                        smokeStatue = state.smokeStatue,
+                        onMoreClick = onMoreClick,
+                    )
 
-            MatchingDetailState.MatchingDetailPage.ValueTalkPage ->
-                ValueTalkPage(
-                    nickName = state.nickName,
-                    selfDescription = state.selfDescription,
-                    talkCards = state.talkCards,
-                    onMoreClick = onMoreClick,
-                )
+                MatchingDetailState.MatchingDetailPage.ValueTalkPage ->
+                    ValueTalkPage(
+                        nickName = state.nickName,
+                        selfDescription = state.selfDescription,
+                        talkCards = state.talkCards,
+                        onMoreClick = onMoreClick,
+                    )
 
-            MatchingDetailState.MatchingDetailPage.ValuePickPage ->
-                ValuePickPage(
-                    nickName = state.nickName,
-                    selfDescription = state.selfDescription,
-                    pickCards = state.pickCards,
-                    onDeclineClick = onDeclineClick,
-                )
+                MatchingDetailState.MatchingDetailPage.ValuePickPage ->
+                    ValuePickPage(
+                        nickName = state.nickName,
+                        selfDescription = state.selfDescription,
+                        pickCards = state.pickCards,
+                        onDeclineClick = onDeclineClick,
+                    )
+            }
         }
     }
 }
@@ -327,7 +339,7 @@ private fun MatchingDetailBottomBar(
 
         if (currentPage == MatchingDetailPage.ValuePickPage) {
             PieceRoundingButton(
-                label = stringResource(R.string.valuepick_bottom_bar_label),
+                label = stringResource(R.string.accept_matching),
                 onClick = onAcceptClick,
             )
         } else {
