@@ -2,6 +2,7 @@
 
 package com.puzzle.presentation.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -62,7 +63,7 @@ fun App(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = PieceTheme.colors.white,
         bottomBar = {
-            if (currentDestination?.shouldHideBottomNavigation() == false) {
+            AnimatedVisibility(currentDestination?.shouldHideBottomNavigation() == false) {
                 AppBottomBar(
                     currentDestination = currentDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination,

@@ -1,5 +1,11 @@
 package com.puzzle.auth.graph.signup
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -70,46 +76,58 @@ private fun SignUpScreen(
 ) {
     val (selectedTermIdx, setSelectedTermIdx) = rememberSaveable { mutableStateOf<Int?>(null) }
 
-    Column(
+    AnimatedContent(
+        targetState = state.signUpPage,
+        transitionSpec = {
+            if (targetState.ordinal > initialState.ordinal) {
+                slideInHorizontally(initialOffsetX = { it }) + fadeIn() togetherWith
+                        slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+            } else {
+                slideInHorizontally(initialOffsetX = { -it }) + fadeIn() togetherWith
+                        slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+            }
+        },
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 20.dp),
     ) {
-        when (state.signUpPage) {
-            SignUpState.SignUpPage.TermPage -> TermPage(
-                terms = state.terms,
-                termsCheckedInfo = state.termsCheckedInfo,
-                allTermsAgreed = state.areAllTermsAgreed,
-                checkAllTerms = checkAllTerms,
-                checkTerm = checkTerm,
-                showTermDetail = {
-                    setSelectedTermIdx(it)
-                    onTermDetailClick()
-                },
-                onBackClick = { navigate(NavigateUp) },
-                onNextClick = onNextClick,
-            )
+        Column(modifier = Modifier.fillMaxSize()) {
+            when (it) {
+                SignUpState.SignUpPage.TermPage -> TermPage(
+                    terms = state.terms,
+                    termsCheckedInfo = state.termsCheckedInfo,
+                    allTermsAgreed = state.areAllTermsAgreed,
+                    checkAllTerms = checkAllTerms,
+                    checkTerm = checkTerm,
+                    showTermDetail = {
+                        setSelectedTermIdx(it)
+                        onTermDetailClick()
+                    },
+                    onBackClick = { navigate(NavigateUp) },
+                    onNextClick = onNextClick,
+                )
 
-            SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
-                term = state.terms[selectedTermIdx!!],
-                onBackClick = onBackClick,
-                onAgreeClick = agreeTerm,
-            )
+                SignUpState.SignUpPage.TermDetailPage -> TermDetailPage(
+                    term = state.terms[selectedTermIdx!!],
+                    onBackClick = onBackClick,
+                    onAgreeClick = agreeTerm,
+                )
 
-            SignUpState.SignUpPage.AccessRightsPage -> AccessRightsPage(
-                onBackClick = onBackClick,
-                onNextClick = onNextClick,
-            )
+                SignUpState.SignUpPage.AccessRightsPage -> AccessRightsPage(
+                    onBackClick = onBackClick,
+                    onNextClick = onNextClick,
+                )
 
-            SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesPage(
-                onBackClick = onBackClick,
-                onTryNextClick = onNextClick,
-                onAvoidAcquaintancesClick = onNextClick,
-            )
+                SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesPage(
+                    onBackClick = onBackClick,
+                    onTryNextClick = onNextClick,
+                    onAvoidAcquaintancesClick = onNextClick,
+                )
 
-            SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
-                onGenerateProfileClick = { navigate(NavigateTo(RegisterProfileRoute)) },
-            )
+                SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
+                    onGenerateProfileClick = { navigate(NavigateTo(RegisterProfileRoute)) },
+                )
+            }
         }
     }
 }
