@@ -3,6 +3,7 @@ package com.puzzle.matching.graph.detail.page
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -111,7 +112,7 @@ private fun BasicInfoCard(
             InfoItem(
                 title = stringResource(R.string.basicinfocard_age),
                 text = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(verticalAlignment = Alignment.Bottom) {
                         Text(
                             text = stringResource(R.string.basicinfocard_age_particle),
                             style = PieceTheme.typography.bodySM,
@@ -138,6 +139,7 @@ private fun BasicInfoCard(
                             text = birthYear + stringResource(R.string.basicinfocard_age_suffix),
                             style = PieceTheme.typography.bodySM,
                             color = PieceTheme.colors.dark2,
+                            modifier = Modifier.padding(top = 1.dp),
                         )
                     }
                 },
@@ -146,12 +148,41 @@ private fun BasicInfoCard(
 
             InfoItem(
                 title = stringResource(R.string.basicinfocard_height),
-                content = height,
+                text = {
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(
+                            text = height,
+                            style = PieceTheme.typography.headingSSB,
+                            color = PieceTheme.colors.black,
+                        )
+
+                        Text(
+                            text = "cm",
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.black,
+                        )
+                    }
+                },
                 modifier = modifier.weight(1f),
             )
+
             InfoItem(
-                title = stringResource(R.string.basicinfocard_religion),
-                content = religion,
+                title = "몸무게",
+                text = {
+                    Row(verticalAlignment = Alignment.Bottom) {
+                        Text(
+                            text = "72",
+                            style = PieceTheme.typography.headingSSB,
+                            color = PieceTheme.colors.black,
+                        )
+
+                        Text(
+                            text = "kg",
+                            style = PieceTheme.typography.bodySM,
+                            color = PieceTheme.colors.black,
+                        )
+                    }
+                },
                 modifier = modifier.weight(1f),
             )
         }
@@ -190,7 +221,7 @@ private fun InfoItem(
     title: String,
     modifier: Modifier = Modifier,
     content: String? = null,
-    text: @Composable () -> Unit? = {},
+    text: @Composable ColumnScope.() -> Unit? = {},
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

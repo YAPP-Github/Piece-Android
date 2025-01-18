@@ -11,11 +11,11 @@ data class MatchingDetailState(
     val selfDescription: String = "음악과 요리를 좋아하는",
     val nickName: String = "수줍은 수달",
     val age: String = "25",
-    val birthYear: String = "00년생",
+    val birthYear: String = "00",
     val height: String = "254",
-    val religion: String = "도쿄",
-    val occupation: String = "서울특별시",
-    val activityRegion: String = "개발자",
+    val religion: String = "무교",
+    val occupation: String = "개발자",
+    val activityRegion: String = "서울특별시",
     val smokeStatue: String = "비흡연",
     val talkCards: List<ValueTalk> = listOf(
         ValueTalk(
