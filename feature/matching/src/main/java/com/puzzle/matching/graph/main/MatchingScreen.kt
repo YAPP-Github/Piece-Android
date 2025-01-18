@@ -251,7 +251,7 @@ internal fun MatchingScreen(
                 }
 
                 PieceSolidButton(
-                    label = stringResource(R.string.accept_matching),
+                    label = stringResource(R.string.check_matching_pieces),
                     onClick = { navigateToMatchingDetail() },
                     modifier = Modifier
                         .padding(top = 16.dp)

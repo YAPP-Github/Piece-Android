@@ -92,10 +92,7 @@ internal fun ValueTalkPage(
                 .offset { IntOffset(0, connection.headerOffset) }
                 .background(PieceTheme.colors.white)
                 .height(valueTalkHeaderHeight)
-                .padding(
-                    vertical = 20.dp,
-                    horizontal = 20.dp
-                ),
+                .padding(vertical = 20.dp, horizontal = 20.dp),
         )
 
         Spacer(
