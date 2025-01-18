@@ -143,6 +143,7 @@ private fun BasicInfoCard(
                 },
                 modifier = modifier.width(width = 144.dp),
             )
+
             InfoItem(
                 title = stringResource(R.string.basicinfocard_height),
                 content = height,
@@ -209,7 +210,7 @@ private fun InfoItem(
 
         if (content != null) {
             Text(
-                text = title,
+                text = content,
                 style = PieceTheme.typography.headingSSB,
                 color = PieceTheme.colors.black,
             )

@@ -1,6 +1,5 @@
 package com.puzzle.data.repository
 
-import android.util.Log
 import com.puzzle.common.suspendRunCatching
 import com.puzzle.database.model.terms.TermEntity
 import com.puzzle.database.source.term.LocalTermDataSource
@@ -29,8 +28,6 @@ class TermsRepositoryImpl @Inject constructor(
                 startDate = it.startDate,
             )
         }
-
-        Log.d("test", termsEntity.toString())
 
         localTermDataSource.replaceTerms(termsEntity)
     }
