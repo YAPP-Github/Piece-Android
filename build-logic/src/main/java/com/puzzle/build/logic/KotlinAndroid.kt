@@ -32,12 +32,6 @@ internal fun Project.configureKotlinAndroid() {
             targetCompatibility = JavaVersion.VERSION_17
         }
 
-        packaging {
-            resources {
-                pickFirsts.add("META-INF/LICENSE.md")
-            }
-        }
-
 //        val libs = extensions.libs
 //        dependencies {
 //            val bom = libs.findLibrary("firebase-bom").get()

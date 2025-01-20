@@ -54,10 +54,7 @@ private fun SettingScreen(
             .background(PieceTheme.colors.white)
             .padding(horizontal = 20.dp)
     ) {
-        PieceMainTopBar(
-            title = "Setting",
-            modifier = Modifier.padding(vertical = 19.dp)
-        )
+        PieceMainTopBar(title = "Setting")
 
         Column(
             modifier = Modifier

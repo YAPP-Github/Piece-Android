@@ -47,6 +47,27 @@ class WithdrawViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: WithdrawIntent) {
         when (intent) {
+            WithdrawIntent.OnSameWithdrawReasonClick -> processNullReason()
+            is WithdrawIntent.OnWithdrawReasonsClick -> selectReason(intent.withdrawReason)
+        }
+    }
+
+    private fun selectReason(reason: WithdrawState.WithdrawReason) {
+        setState {
+            val selectedReason =
+                if (this.selectedReason == reason) {
+                    null
+                } else {
+                    reason
+                }
+
+            copy(selectedReason = selectedReason)
+        }
+    }
+
+    private fun processNullReason() {
+        setState {
+            copy(selectedReason = null)
         }
     }
 
