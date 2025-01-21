@@ -52,12 +52,13 @@ class WithdrawViewModel @AssistedInject constructor(
             is WithdrawIntent.OnReasonsClick -> selectReason(intent.withdrawReason)
             WithdrawIntent.OnWithdrawClick -> withdraw()
             WithdrawIntent.OnNextClick -> moveToWithdrawPage()
-            is WithdrawIntent.Navigate -> moveToPreviousScreen(intent.navigationEvent)
+            is WithdrawIntent.onBackClick -> moveToPreviousScreen()
         }
     }
 
-    private fun moveToPreviousScreen(navigationEvent: NavigationEvent) {
-        navigationHelper.navigate(navigationEvent)
+    // TODO side effect 처리
+    private fun moveToPreviousScreen() {
+        navigationHelper.navigate(NavigationEvent.NavigateUp)
     }
 
     private fun moveToWithdrawPage() {

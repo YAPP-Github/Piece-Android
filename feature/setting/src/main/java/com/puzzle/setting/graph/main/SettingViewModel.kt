@@ -5,8 +5,9 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
-import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.NavigateTo
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingSideEffect
 import com.puzzle.setting.graph.main.contract.SettingState
@@ -48,12 +49,13 @@ class SettingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: SettingIntent) {
         when (intent) {
-            is SettingIntent.Navigate -> moveToWithdrawScreen(intent.navigationEvent)
+            is SettingIntent.OnWithdrawClick -> moveToWithdrawScreen()
         }
     }
 
-    private fun moveToWithdrawScreen(navigationEvent: NavigationEvent) {
-        navigationHelper.navigate(navigationEvent)
+    // TODO side effect 처리
+    private fun moveToWithdrawScreen() {
+        navigationHelper.navigate(NavigateTo(SettingGraphDest.WithdrawRoute))
     }
 
     private fun handleSideEffect(sideEffect: SettingSideEffect) {

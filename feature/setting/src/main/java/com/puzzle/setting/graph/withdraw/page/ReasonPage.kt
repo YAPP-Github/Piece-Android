@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.puzzle.designsystem.component.PieceRadioList
+import com.puzzle.designsystem.component.PieceRadio
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -47,7 +47,7 @@ internal fun ColumnScope.ReasonPage(
     val isKeyboardOpen = WindowInsets.isImeVisible
 
     if (isKeyboardOpen) {
-        PieceRadioList(
+        PieceRadio(
             selected = true,
             label = WithdrawState.WithdrawReason.Other.label,
             onSelectedChange = {
@@ -74,7 +74,7 @@ internal fun ColumnScope.ReasonPage(
         )
 
         WithdrawState.WithdrawReason.entries.forEach { reason ->
-            PieceRadioList(
+            PieceRadio(
                 selected = (reason == selectedReason),
                 label = reason.label,
                 onSelectedChange = {

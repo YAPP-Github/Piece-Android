@@ -20,8 +20,6 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.navigation.NavigationEvent
-import com.puzzle.navigation.NavigationEvent.NavigateUp
 import com.puzzle.setting.graph.withdraw.contract.WithdrawIntent
 import com.puzzle.setting.graph.withdraw.contract.WithdrawState
 import com.puzzle.setting.graph.withdraw.page.ConfirmPage
@@ -47,7 +45,9 @@ internal fun WithdrawRoute(
         onNextClick = {
             viewModel.onIntent(WithdrawIntent.OnNextClick)
         },
-        navigate = { event -> viewModel.onIntent(WithdrawIntent.Navigate(event)) },
+        onBackClick = {
+            viewModel.onIntent(WithdrawIntent.onBackClick)
+        },
     )
 }
 
@@ -58,7 +58,7 @@ private fun WithdrawScreen(
     onReasonsClick: (WithdrawState.WithdrawReason) -> Unit,
     onWithdrawClick: () -> Unit,
     onNextClick: () -> Unit,
-    navigate: (NavigationEvent) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -77,7 +77,7 @@ private fun WithdrawScreen(
     ) {
         PieceSubBackTopBar(
             title = "탈퇴하기",
-            onBackClick = { navigate(NavigateUp) },
+            onBackClick = onBackClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp)
@@ -122,7 +122,7 @@ private fun PreviewSettingScreen() {
             onReasonsClick = {},
             onWithdrawClick = {},
             onNextClick = {},
-            navigate = {},
+            onBackClick = {},
         )
     }
 }

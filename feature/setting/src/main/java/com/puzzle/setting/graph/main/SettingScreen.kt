@@ -30,9 +30,6 @@ import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
-import com.puzzle.navigation.NavigationEvent
-import com.puzzle.navigation.NavigationEvent.NavigateTo
-import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingState
 
@@ -44,14 +41,14 @@ internal fun SettingRoute(
 
     SettingScreen(
         state = state,
-        navigate = { event -> viewModel.onIntent(SettingIntent.Navigate(event)) },
+        onWithdrawClick = { viewModel.onIntent(SettingIntent.OnWithdrawClick) },
     )
 }
 
 @Composable
 private fun SettingScreen(
     state: SettingState,
-    navigate: (NavigationEvent) -> Unit,
+    onWithdrawClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -117,7 +114,7 @@ private fun SettingScreen(
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
                     .clickable {
-                        navigate(NavigateTo(SettingGraphDest.WithdrawRoute))
+                        onWithdrawClick()
                     },
             )
         }

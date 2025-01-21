@@ -25,13 +25,19 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-fun PieceRadioList(
+fun PieceRadio(
     selected: Boolean,
     label: String,
     onSelectedChange: () -> Unit,
     modifier: Modifier = Modifier,
     containerColor: Color = PieceTheme.colors.white,
 ) {
+    val radioIcon = if (selected) {
+        R.drawable.ic_radio_selected
+    } else {
+        R.drawable.ic_radio_empty
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
@@ -39,10 +45,13 @@ fun PieceRadioList(
             .background(containerColor)
             .clickable { onSelectedChange() },
     ) {
-        PieceRadio(
-            selected = selected,
-            onSelectedChange = onSelectedChange,
-            modifier = Modifier.padding(end = 12.dp),
+        Image(
+            painter = painterResource(radioIcon),
+            contentDescription = null,
+            modifier = Modifier
+                .padding(end = 12.dp)
+                .size(20.dp)
+                .clickable { onSelectedChange() },
         )
 
         Text(
@@ -56,27 +65,6 @@ fun PieceRadioList(
     }
 }
 
-@Composable
-private fun PieceRadio(
-    selected: Boolean,
-    onSelectedChange: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val radioIcon = if (selected) {
-        R.drawable.ic_radio_selected
-    } else {
-        R.drawable.ic_radio_empty
-    }
-
-    Image(
-        painter = painterResource(radioIcon),
-        contentDescription = null,
-        modifier = modifier
-            .size(20.dp)
-            .clickable { onSelectedChange() },
-    )
-}
-
 @Preview
 @Composable
 fun PieceRadioPreview() {
@@ -86,7 +74,7 @@ fun PieceRadioPreview() {
 
             // 여러 개의 RadioRow
             listOf("Option A", "Option B", "Option C").forEachIndexed { index, label ->
-                PieceRadioList(
+                PieceRadio(
                     selected = (index == selectedIndex),
                     label = label,
                     onSelectedChange = {
