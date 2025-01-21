@@ -500,7 +500,7 @@ private fun PreviewSettingScreen() {
                 lastRefreshTime = "MM월 DD일 오전 00:00",
                 version = "v1.0",
             ),
-            navigate = {},
+            onWithdrawClick = {},
         )
     }
 }
