@@ -42,7 +42,7 @@ fun PieceRadioList(
         PieceRadio(
             selected = selected,
             onSelectedChange = onSelectedChange,
-            modifier = Modifier.padding(start = 14.dp, end = 12.dp),
+            modifier = Modifier.padding(end = 12.dp),
         )
 
         Text(

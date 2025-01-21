@@ -30,6 +30,10 @@ import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
+import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.NavigateTo
+import com.puzzle.navigation.SettingGraphDest
+import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingState
 
 @Composable
@@ -39,27 +43,37 @@ internal fun SettingRoute(
     val state by viewModel.collectAsState()
 
     SettingScreen(
-        state = state
+        state = state,
+        navigate = { event -> viewModel.onIntent(SettingIntent.Navigate(event)) },
     )
 }
 
 @Composable
 private fun SettingScreen(
     state: SettingState,
+    navigate: (NavigationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(PieceTheme.colors.white)
-            .padding(horizontal = 20.dp)
     ) {
-        PieceMainTopBar(title = "Setting")
+        PieceMainTopBar(
+            title = "Setting",
+            modifier = Modifier.padding(horizontal = 20.dp),
+        )
+
+        HorizontalDivider(
+            color = PieceTheme.colors.light2,
+            thickness = 1.dp,
+        )
 
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp),
         ) {
             LoginAccountBody(
                 oAuthProvider = state.oAuthProvider,
@@ -102,7 +116,9 @@ private fun SettingScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable { },
+                    .clickable {
+                        navigate(NavigateTo(SettingGraphDest.WithdrawRoute))
+                    },
             )
         }
     }
@@ -208,25 +224,14 @@ private fun AnnouncementBody(
         )
     }
 
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
+    Text(
+        text = "버전 정보 $version",
+        style = PieceTheme.typography.headingSSB,
+        color = PieceTheme.colors.dark3,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 17.dp),
-    ) {
-        Image(
-            painter = painterResource(R.drawable.ic_kakao_login),
-            contentDescription = "상세 내용",
-            modifier = Modifier.padding(start = 4.dp),
-        )
-
-        Text(
-            text = "버전 정보 $version",
-            style = PieceTheme.typography.headingSSB,
-            color = PieceTheme.colors.dark3,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-    }
+    )
 
     HorizontalDivider(
         color = PieceTheme.colors.light2,
@@ -497,7 +502,8 @@ private fun PreviewSettingScreen() {
                 isContactBlocked = true,
                 lastRefreshTime = "MM월 DD일 오전 00:00",
                 version = "v1.0",
-            )
+            ),
+            navigate = {},
         )
     }
 }

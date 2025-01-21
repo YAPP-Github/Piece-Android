@@ -1,4 +1,7 @@
 package com.puzzle.setting.graph.main.contract
 
-class SettingIntent {
+import com.puzzle.navigation.NavigationEvent
+
+sealed class SettingIntent {
+    data class Navigate(val navigationEvent: NavigationEvent) : SettingIntent()
 }

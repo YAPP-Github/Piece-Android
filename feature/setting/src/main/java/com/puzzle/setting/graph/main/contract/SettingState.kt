@@ -5,11 +5,11 @@ import com.puzzle.domain.model.auth.OAuthProvider
 
 data class SettingState(
     val isLoading: Boolean = false,
-    val oAuthProvider: OAuthProvider ?= null,
-    val email: String = "",
+    val oAuthProvider: OAuthProvider? = OAuthProvider.KAKAO,
+    val email: String = "example@kakao.com",
     val isMatchingNotificationEnabled: Boolean = false,
     val isPushNotificationEnabled: Boolean = false,
     val isContactBlocked: Boolean = false,
-    val lastRefreshTime: String = "",
-    val version: String = "",
+    val lastRefreshTime: String = "MM월 DD일 오전 00:00",
+    val version: String = "v1.0",
 ) : MavericksState

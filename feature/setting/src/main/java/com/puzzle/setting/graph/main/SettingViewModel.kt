@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingSideEffect
@@ -47,7 +48,12 @@ class SettingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: SettingIntent) {
         when (intent) {
+            is SettingIntent.Navigate -> moveToWithdrawScreen(intent.navigationEvent)
         }
+    }
+
+    private fun moveToWithdrawScreen(navigationEvent: NavigationEvent) {
+        navigationHelper.navigate(navigationEvent)
     }
 
     private fun handleSideEffect(sideEffect: SettingSideEffect) {
