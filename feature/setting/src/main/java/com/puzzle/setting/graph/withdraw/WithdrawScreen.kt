@@ -89,8 +89,7 @@ private fun WithdrawScreen(
         transitionSpec = {
             fadeIn(tween(700)) togetherWith fadeOut(tween(700))
         },
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
         Column(
             modifier = Modifier
@@ -109,7 +108,7 @@ private fun WithdrawScreen(
                 onBackClick = onBackClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
+                    .padding(horizontal = 20.dp),
             )
 
             HorizontalDivider(
@@ -125,14 +124,14 @@ private fun WithdrawScreen(
                     onNextClick = onNextClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 20.dp),
                 )
 
                 WithdrawState.WithdrawPage.CONFIRM -> ConfirmPage(
                     onWithdrawClick = onWithdrawClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+                        .padding(horizontal = 20.dp),
                 )
             }
         }

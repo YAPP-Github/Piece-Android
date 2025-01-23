@@ -23,6 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.component.PieceRadio
@@ -30,6 +31,7 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.setting.graph.withdraw.contract.WithdrawState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
@@ -45,6 +47,7 @@ internal fun ColumnScope.ReasonPage(
     var textInput by remember { mutableStateOf("") }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val isKeyboardOpen = WindowInsets.isImeVisible
+    val keyboardController = LocalSoftwareKeyboardController.current
     val isNextButtonEnabled = selectedReason != null &&
             (selectedReason != WithdrawState.WithdrawReason.Other || textInput.isNotEmpty())
 
@@ -114,7 +117,13 @@ internal fun ColumnScope.ReasonPage(
 
     PieceSolidButton(
         label = "다음",
-        onClick = onNextClick,
+        onClick = {
+            coroutineScope.launch {
+                keyboardController?.hide()
+                delay(300L)
+                onNextClick()
+            }
+        },
         enabled = isNextButtonEnabled,
         modifier = modifier
             .fillMaxWidth()
