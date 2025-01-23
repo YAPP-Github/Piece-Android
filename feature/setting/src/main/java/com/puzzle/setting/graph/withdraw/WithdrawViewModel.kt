@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.setting.graph.withdraw.contract.WithdrawIntent
@@ -22,43 +23,36 @@ import kotlinx.coroutines.launch
 
 class WithdrawViewModel @AssistedInject constructor(
     @Assisted initialState: WithdrawState,
-    private val navigationHelper: NavigationHelper,
+    internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<WithdrawState>(initialState) {
-    private val intents = Channel<WithdrawIntent>(BUFFERED)
-    private val sideEffects = Channel<WithdrawSideEffect>(BUFFERED)
+    private val _intents = Channel<WithdrawIntent>(BUFFERED)
+
+    private val _sideEffects = Channel<WithdrawSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-        intents.receiveAsFlow()
+        _intents.receiveAsFlow()
             .onEach(::processIntent)
-            .launchIn(viewModelScope)
-
-        sideEffects.receiveAsFlow()
-            .onEach(::handleSideEffect)
             .launchIn(viewModelScope)
     }
 
     internal fun onIntent(intent: WithdrawIntent) = viewModelScope.launch {
-        intents.send(intent)
+        _intents.send(intent)
     }
 
-    internal fun onSideEffect(sideEffect: WithdrawSideEffect) = viewModelScope.launch {
-        sideEffects.send(sideEffect)
-    }
-
-    private fun processIntent(intent: WithdrawIntent) {
+    private suspend fun processIntent(intent: WithdrawIntent) {
         when (intent) {
             WithdrawIntent.OnSameReasonClick -> selectNothing()
             is WithdrawIntent.OnReasonsClick -> selectReason(intent.withdrawReason)
-            WithdrawIntent.OnWithdrawClick -> withdraw()
             WithdrawIntent.OnNextClick -> moveToWithdrawPage()
-            is WithdrawIntent.onBackClick -> moveToPreviousScreen()
+            WithdrawIntent.OnWithdrawClick -> withdraw()
+            WithdrawIntent.onBackClick -> moveToPreviousScreen()
         }
     }
 
-    // TODO side effect 처리
-    private fun moveToPreviousScreen() {
-        navigationHelper.navigate(NavigationEvent.NavigateUp)
+    private suspend fun moveToPreviousScreen() {
+        _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.NavigateUp))
     }
 
     private fun moveToWithdrawPage() {
@@ -67,7 +61,9 @@ class WithdrawViewModel @AssistedInject constructor(
         }
     }
 
-    private fun withdraw() {}
+    private suspend fun withdraw() {
+        _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)))
+    }
 
     private fun selectReason(reason: WithdrawState.WithdrawReason) {
         setState {
@@ -85,11 +81,6 @@ class WithdrawViewModel @AssistedInject constructor(
     private fun selectNothing() {
         setState {
             copy(selectedReason = null)
-        }
-    }
-
-    private fun handleSideEffect(sideEffect: WithdrawSideEffect) {
-        when (sideEffect) {
         }
     }
 

@@ -1,4 +1,7 @@
 package com.puzzle.setting.graph.withdraw.contract
 
-class WithdrawSideEffect {
+import com.puzzle.navigation.NavigationEvent
+
+sealed class WithdrawSideEffect {
+    data class Navigate(val navigationEvent: NavigationEvent) : WithdrawSideEffect()
 }
