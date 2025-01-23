@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -73,7 +74,7 @@ private fun SettingScreen(
             .background(PieceTheme.colors.white)
     ) {
         PieceMainTopBar(
-            title = "Setting",
+            title = stringResource(R.string.setting_screen),
             modifier = Modifier.padding(horizontal = 20.dp),
         )
 
@@ -121,7 +122,7 @@ private fun SettingScreen(
             OthersBody(onLogoutClick = {})
 
             Text(
-                text = "탈퇴하기",
+                text = stringResource(R.string.withdraw_page),
                 style = PieceTheme.typography.bodyMM.copy(
                     textDecoration = TextDecoration.Underline
                 ),
@@ -140,14 +141,14 @@ private fun SettingScreen(
 @Composable
 private fun OthersBody(onLogoutClick: () -> Unit) {
     Text(
-        text = "기타",
+        text = stringResource(R.string.setting_other),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
     )
 
     Text(
-        text = "로그아웃",
+        text = stringResource(R.string.setting_logout),
         style = PieceTheme.typography.headingSSB,
         color = PieceTheme.colors.dark1,
         modifier = Modifier
@@ -165,7 +166,7 @@ private fun AnnouncementBody(
     onTermsClick: () -> Unit,
 ) {
     Text(
-        text = "안내",
+        text = stringResource(R.string.setting_guidance),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
@@ -178,7 +179,7 @@ private fun AnnouncementBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "공지사항",
+            text = stringResource(R.string.setting_announcement),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -200,7 +201,7 @@ private fun AnnouncementBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "개인정보처리방침",
+            text = stringResource(R.string.setting_privacy_policy),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -222,7 +223,7 @@ private fun AnnouncementBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "이용약관",
+            text = stringResource(R.string.setting_term),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -238,7 +239,7 @@ private fun AnnouncementBody(
     }
 
     Text(
-        text = "버전 정보 $version",
+        text = stringResource(R.string.setting_version, version),
         style = PieceTheme.typography.headingSSB,
         color = PieceTheme.colors.dark3,
         modifier = Modifier
@@ -256,7 +257,7 @@ private fun AnnouncementBody(
 @Composable
 private fun InquirBody(onContactUsClick: () -> Unit) {
     Text(
-        text = "문의",
+        text = stringResource(R.string.setting_inquiry),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
@@ -269,7 +270,7 @@ private fun InquirBody(onContactUsClick: () -> Unit) {
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "문의하기",
+            text = stringResource(R.string.setting_contact_us),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -299,7 +300,7 @@ private fun SystemSettingBody(
     onRefreshClick: () -> Unit,
 ) {
     Text(
-        text = "시스템 설정",
+        text = stringResource(R.string.setting_system),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
@@ -312,7 +313,7 @@ private fun SystemSettingBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "지인 차단",
+            text = stringResource(R.string.setting_block_contacts),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -335,20 +336,20 @@ private fun SystemSettingBody(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "연락처 동기화",
+                    text = stringResource(R.string.setting_sync_contacts),
                     style = PieceTheme.typography.headingSSB,
                     color = PieceTheme.colors.dark1,
                     modifier = Modifier.padding(bottom = 8.dp),
                 )
 
                 Text(
-                    text = "내 연락처 목록을 즉시 업데이트합니다.",
+                    text = stringResource(R.string.setting_update_contacts),
                     style = PieceTheme.typography.captionM,
                     color = PieceTheme.colors.dark3,
                 )
 
                 Text(
-                    text = "연락처에 새로 추가된 지인을 차단할 수 있어요.",
+                    text = stringResource(R.string.setting_block_new_contacts),
                     style = PieceTheme.typography.captionM,
                     color = PieceTheme.colors.dark3,
                     modifier = Modifier.padding(bottom = 4.dp),
@@ -365,7 +366,7 @@ private fun SystemSettingBody(
                     )
 
                     Text(
-                        text = "마지막 새로고침",
+                        text = stringResource(R.string.setting_last_refresh),
                         style = PieceTheme.typography.captionM,
                         color = PieceTheme.colors.dark3,
                     )
@@ -403,7 +404,7 @@ private fun NotificationBody(
     onPushNotificationCheckedChagne: () -> Unit,
 ) {
     Text(
-        text = "알림",
+        text = stringResource(R.string.setting_notification),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
@@ -416,7 +417,7 @@ private fun NotificationBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "매칭 알림",
+            text = stringResource(R.string.setting_match_notification),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -435,7 +436,7 @@ private fun NotificationBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = "푸쉬 알림",
+            text = stringResource(R.string.setting_push_notification),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
@@ -460,7 +461,7 @@ private fun LoginAccountBody(
     email: String,
 ) {
     Text(
-        text = "로그인 계정",
+        text = stringResource(R.string.setting_logged_in_account),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
@@ -497,7 +498,7 @@ private fun LoginAccountBody(
     HorizontalDivider(
         color = PieceTheme.colors.light2,
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp),
     )
 }
 

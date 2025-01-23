@@ -24,8 +24,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceRadio
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceTextInputLong
@@ -64,15 +66,14 @@ internal fun ColumnScope.ReasonPage(
         )
     } else {
         Text(
-            text = "지금 탈퇴화면\n새로운 인연을 만날 수 없어요",
+            text = stringResource(R.string.reason_page_header),
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
             modifier = modifier.padding(top = 20.dp),
         )
 
         Text(
-            text = "탈퇴하는 이유를 알려주세요.\n" +
-                    "반영하여 더 나은 사용자 경험을 제공하겠습니다.",
+            text = stringResource(R.string.reason_page_second_header),
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark3,
             modifier = modifier.padding(top = 12.dp, bottom = 40.dp),
@@ -97,7 +98,7 @@ internal fun ColumnScope.ReasonPage(
         PieceTextInputLong(
             value = textInput,
             onValueChange = { input -> textInput = input },
-            hint = "자유롭게 작성해 주세요",
+            hint = stringResource(R.string.withdraw_other_reaseon_textfield_hint),
             limit = 100,
             modifier = modifier
                 .fillMaxWidth()

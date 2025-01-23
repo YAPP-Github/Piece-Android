@@ -20,12 +20,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.setting.graph.withdraw.contract.WithdrawIntent
@@ -104,7 +106,7 @@ private fun WithdrawScreen(
                 .imePadding(),
         ) {
             PieceSubBackTopBar(
-                title = "탈퇴하기",
+                title = stringResource(R.string.withdraw_page),
                 onBackClick = onBackClick,
                 modifier = Modifier
                     .fillMaxWidth()

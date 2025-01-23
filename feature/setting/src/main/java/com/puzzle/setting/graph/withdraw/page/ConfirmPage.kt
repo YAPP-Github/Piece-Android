@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
@@ -25,15 +26,14 @@ internal fun ColumnScope.ConfirmPage(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "정말 탈퇴하시겠어요?",
+        text = stringResource(R.string.confirm_page_header),
         style = PieceTheme.typography.headingLSB,
         color = PieceTheme.colors.black,
         modifier = modifier.padding(top = 20.dp),
     )
 
     Text(
-        text = "탈퇴하면 계정과 관련된 모든 정보가 삭제되며\n" +
-                "복구할 수 없습니다. 탈퇴하시겠습니까?",
+        text = stringResource(R.string.confirm_page_second_header),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark3,
         modifier = modifier.padding(top = 12.dp, bottom = 60.dp),
@@ -49,7 +49,7 @@ internal fun ColumnScope.ConfirmPage(
     Spacer(modifier = modifier.weight(1f))
 
     PieceSolidButton(
-        label = "탈퇴할래요",
+        label = stringResource(R.string.withdraw),
         onClick = onWithdrawClick,
         enabled = true,
         modifier = modifier
