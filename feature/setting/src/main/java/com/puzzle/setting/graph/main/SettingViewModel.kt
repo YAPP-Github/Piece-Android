@@ -23,43 +23,28 @@ import kotlinx.coroutines.launch
 
 class SettingViewModel @AssistedInject constructor(
     @Assisted initialState: SettingState,
-    private val navigationHelper: NavigationHelper,
+    internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
-    private val intents = Channel<SettingIntent>(BUFFERED)
-    private val sideEffects = Channel<SettingSideEffect>(BUFFERED)
+    private val _intents = Channel<SettingIntent>(BUFFERED)
+
+    private val _sideEffects = Channel<SettingSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-        intents.receiveAsFlow()
+        _intents.receiveAsFlow()
             .onEach(::processIntent)
-            .launchIn(viewModelScope)
-
-        sideEffects.receiveAsFlow()
-            .onEach(::handleSideEffect)
             .launchIn(viewModelScope)
     }
 
     internal fun onIntent(intent: SettingIntent) = viewModelScope.launch {
-        intents.send(intent)
+        _intents.send(intent)
     }
 
-    internal fun onSideEffect(sideEffect: SettingSideEffect) = viewModelScope.launch {
-        sideEffects.send(sideEffect)
-    }
-
-    private fun processIntent(intent: SettingIntent) {
+    private suspend fun processIntent(intent: SettingIntent) {
         when (intent) {
-            is SettingIntent.OnWithdrawClick -> moveToWithdrawScreen()
-        }
-    }
-
-    // TODO side effect 처리
-    private fun moveToWithdrawScreen() {
-        navigationHelper.navigate(NavigateTo(SettingGraphDest.WithdrawRoute))
-    }
-
-    private fun handleSideEffect(sideEffect: SettingSideEffect) {
-        when (sideEffect) {
+            is SettingIntent.OnWithdrawClick ->
+                _sideEffects.send(SettingSideEffect.Navigate(NavigateTo(SettingGraphDest.WithdrawRoute)))
         }
     }
 

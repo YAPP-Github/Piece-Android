@@ -1,4 +1,7 @@
 package com.puzzle.setting.graph.main.contract
 
-class SettingSideEffect {
+import com.puzzle.navigation.NavigationEvent
+
+sealed class SettingSideEffect {
+    data class Navigate(val navigationEvent: NavigationEvent) : SettingSideEffect()
 }
