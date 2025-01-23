@@ -1,5 +1,10 @@
 package com.puzzle.setting.graph.withdraw
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -79,48 +84,57 @@ private fun WithdrawScreen(
 ) {
     val focusManager = LocalFocusManager.current
 
-    Column(
+    AnimatedContent(
+        targetState = state.currentPage,
+        transitionSpec = {
+            fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+        },
         modifier = modifier
             .fillMaxSize()
-            .background(PieceTheme.colors.white)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null
-            ) {
-                focusManager.clearFocus()
-            }
-            .imePadding(),
     ) {
-        PieceSubBackTopBar(
-            title = "탈퇴하기",
-            onBackClick = onBackClick,
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 20.dp)
-        )
-
-        HorizontalDivider(
-            color = PieceTheme.colors.light2,
-            thickness = 1.dp,
-        )
-
-        when (state.currentPage) {
-            WithdrawState.WithdrawPage.REASON -> ReasonPage(
-                selectedReason = state.selectedReason,
-                onSameReasonClick = onSameReasonClick,
-                onReasonsClick = onReasonsClick,
-                onNextClick = onNextClick,
+                .fillMaxSize()
+                .background(PieceTheme.colors.white)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null
+                ) {
+                    focusManager.clearFocus()
+                }
+                .imePadding(),
+        ) {
+            PieceSubBackTopBar(
+                title = "탈퇴하기",
+                onBackClick = onBackClick,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp)
             )
 
-            WithdrawState.WithdrawPage.CONFIRM -> ConfirmPage(
-                onWithdrawClick = onWithdrawClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
+            HorizontalDivider(
+                color = PieceTheme.colors.light2,
+                thickness = 1.dp,
             )
+
+            when (it) {
+                WithdrawState.WithdrawPage.REASON -> ReasonPage(
+                    selectedReason = state.selectedReason,
+                    onSameReasonClick = onSameReasonClick,
+                    onReasonsClick = onReasonsClick,
+                    onNextClick = onNextClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                )
+
+                WithdrawState.WithdrawPage.CONFIRM -> ConfirmPage(
+                    onWithdrawClick = onWithdrawClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                )
+            }
         }
     }
 }

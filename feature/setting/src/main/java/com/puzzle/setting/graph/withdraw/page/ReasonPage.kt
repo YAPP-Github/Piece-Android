@@ -45,6 +45,8 @@ internal fun ColumnScope.ReasonPage(
     var textInput by remember { mutableStateOf("") }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val isKeyboardOpen = WindowInsets.isImeVisible
+    val isNextButtonEnabled = selectedReason != null &&
+            (selectedReason != WithdrawState.WithdrawReason.Other || textInput.isNotEmpty())
 
     if (isKeyboardOpen) {
         PieceRadio(
@@ -113,7 +115,7 @@ internal fun ColumnScope.ReasonPage(
     PieceSolidButton(
         label = "다음",
         onClick = onNextClick,
-        enabled = selectedReason != null && textInput.isNotEmpty(),
+        enabled = isNextButtonEnabled,
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 10.dp),
