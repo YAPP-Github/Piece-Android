@@ -43,9 +43,12 @@ class SettingViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: SettingIntent) {
         when (intent) {
-            is SettingIntent.OnWithdrawClick ->
-                _sideEffects.send(SettingSideEffect.Navigate(NavigateTo(SettingGraphDest.WithdrawRoute)))
+            is SettingIntent.OnWithdrawClick -> moveToWithdrawScreen()
         }
+    }
+
+    private suspend fun moveToWithdrawScreen() {
+        _sideEffects.send(SettingSideEffect.Navigate(NavigateTo(SettingGraphDest.WithdrawRoute)))
     }
 
     @AssistedFactory
