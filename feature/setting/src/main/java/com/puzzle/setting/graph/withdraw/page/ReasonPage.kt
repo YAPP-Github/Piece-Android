@@ -113,7 +113,7 @@ internal fun ColumnScope.ReasonPage(
     PieceSolidButton(
         label = "다음",
         onClick = onNextClick,
-        enabled = selectedReason != null,
+        enabled = selectedReason != null && textInput.isNotEmpty(),
         modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 10.dp),
