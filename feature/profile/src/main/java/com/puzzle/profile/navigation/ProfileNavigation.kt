@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.puzzle.navigation.ProfileGraph
 import com.puzzle.navigation.ProfileGraphDest
-import com.puzzle.profile.graph.home.ProfileRoute
+import com.puzzle.profile.graph.main.ProfileRoute
 import com.puzzle.profile.graph.register.RegisterProfileRoute
 
 fun NavGraphBuilder.profileNavGraph() {
