@@ -1,6 +1,7 @@
 package com.puzzle.designsystem.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -134,7 +135,8 @@ fun PieceSubCloseTopBar(
                 modifier = Modifier
                     .size(32.dp)
                     .clickable { onCloseClick() }
-                    .align(Alignment.CenterEnd),
+                    .align(Alignment.CenterEnd)
+                    .background(PieceTheme.colors.white),
             )
         }
     }
@@ -149,7 +151,8 @@ fun PreviewPieceMainTopBar() {
             rightComponent = { },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp),
+                .padding(vertical = 20.dp)
+                .background(PieceTheme.colors.white),
         )
     }
 }
@@ -170,7 +173,8 @@ fun PreviewPieceMainTopBarWithRightComponent() {
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp),
+                .padding(vertical = 20.dp)
+                .background(PieceTheme.colors.white),
         )
     }
 }
@@ -189,7 +193,9 @@ fun PreviewPieceSubTopBar() {
                     modifier = Modifier.size(32.dp),
                 )
             },
-            modifier = Modifier.padding(vertical = 20.dp),
+            modifier = Modifier
+                .padding(vertical = 20.dp)
+                .background(PieceTheme.colors.white),
         )
     }
 }
@@ -203,7 +209,8 @@ fun PreviewPieceSubBackTopBar() {
             onBackClick = { },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp),
+                .padding(vertical = 20.dp)
+                .background(PieceTheme.colors.white),
         )
     }
 }
@@ -217,7 +224,8 @@ fun PreviewPieceSubCloseTopBar() {
             onCloseClick = { },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 20.dp),
+                .padding(vertical = 20.dp)
+                .background(PieceTheme.colors.white),
         )
     }
 }

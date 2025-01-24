@@ -19,7 +19,15 @@ sealed class AuthGraphDest : Route {
 }
 
 @Serializable
-data object SettingRoute : Route
+data object SettingGraph : Route
+
+sealed class SettingGraphDest : Route {
+    @Serializable
+    data object SettingRoute : SettingGraphDest()
+
+    @Serializable
+    data object WithdrawRoute : SettingGraphDest()
+}
 
 @Serializable
 data object MatchingGraph : Route
@@ -42,4 +50,3 @@ sealed class ProfileGraphDest : Route {
     @Serializable
     data object ProfileRoute : Route
 }
-
