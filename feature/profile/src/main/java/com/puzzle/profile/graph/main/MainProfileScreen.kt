@@ -1,24 +1,46 @@
 package com.puzzle.profile.graph.main
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.profile.graph.main.contract.MainProfileSideEffect
+import com.puzzle.profile.graph.main.contract.MainProfileState
 
 @Composable
-internal fun ProfileRoute(
+internal fun MainProfileRoute(
     viewModel: MainProfileViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -35,17 +57,384 @@ internal fun ProfileRoute(
         }
     }
 
-    ProfileScreen()
+    MainProfileScreen(
+        state = state,
+        onMyProfileClick = {},
+        onValueTalkClick = {},
+        onValuePickClick = {},
+    )
 }
 
 @Composable
-private fun ProfileScreen(
+private fun MainProfileScreen(
+    state: MainProfileState,
+    onMyProfileClick: () -> Unit,
+    onValueTalkClick: () -> Unit,
+    onValuePickClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(PieceTheme.colors.white),
     ) {
-        Text(text = "MyPageRoute", fontSize = 30.sp)
+        PieceMainTopBar(
+            title = "Profile",
+            rightComponent = {
+                Image(
+                    painter = painterResource(R.drawable.ic_alarm_black),
+                    contentDescription = "알람",
+                )
+            },
+            modifier = Modifier.padding(vertical = 14.dp, horizontal = 20.dp),
+        )
+
+        MyProfile(
+            nickName = state.nickName,
+            selfDescription = state.selfDescription,
+            age = state.age,
+            birthYear = state.birthYear,
+            height = state.height,
+            activityRegion = state.activityRegion,
+            occupation = state.occupation,
+            smokeStatue = state.smokeStatue,
+            onMyProfileClick = onMyProfileClick,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+
+        HorizontalDivider(
+            thickness = 12.dp,
+            color = PieceTheme.colors.light3,
+        )
+
+        MyMatchingPiece(
+            onValueTalkClick = onValueTalkClick,
+            onValuePickClick = onValuePickClick,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        )
+    }
+}
+
+@Composable
+private fun ColumnScope.MyProfile(
+    nickName: String,
+    selfDescription: String,
+    age: String,
+    birthYear: String,
+    height: String,
+    activityRegion: String,
+    occupation: String,
+    smokeStatue: String,
+    onMyProfileClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(modifier = modifier
+        .padding(top = 20.dp)
+        .clickable { onMyProfileClick() }
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_profile_default),
+            contentDescription = null,
+            modifier = Modifier.size(80.dp),
+        )
+
+        Column(
+            modifier = Modifier
+                .padding(vertical = 9.dp)
+                .padding(start = 20.dp)
+                .align(Alignment.CenterVertically),
+        ) {
+            Text(
+                text = selfDescription,
+                style = PieceTheme.typography.bodyMR,
+                modifier = Modifier.padding(bottom = 6.dp),
+            )
+
+            Text(
+                text = nickName,
+                color = PieceTheme.colors.primaryDefault,
+                style = PieceTheme.typography.headingLSB,
+            )
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right_black),
+            contentDescription = null,
+            modifier = Modifier
+                .size(30.dp)
+                .align(Alignment.CenterVertically),
+        )
+    }
+
+    BasicInfoCard(
+        age = age,
+        birthYear = birthYear,
+        height = height,
+        activityRegion = activityRegion,
+        occupation = occupation,
+        smokeStatue = smokeStatue,
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun ColumnScope.MyMatchingPiece(
+    onValueTalkClick: () -> Unit,
+    onValuePickClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = "나의 매칭 조각",
+        style = PieceTheme.typography.bodyMM,
+        color = PieceTheme.colors.dark2,
+        modifier = modifier.padding(top = 24.dp, bottom = 12.dp),
+    )
+
+    MyMatchingPieceDetail(
+        imageId = R.drawable.ic_talk,
+        title = "가치관 Talk",
+        content = "꿈과 목표, 관심사와 취향, 연애에 관련된\n" +
+                "내 생각을 확인하고 수정할 수 있습니다.",
+        onMyMatchingPieceDetailClick = onValueTalkClick,
+        modifier = modifier.padding(vertical = 16.dp),
+    )
+
+    HorizontalDivider(
+        thickness = 1.dp,
+        color = PieceTheme.colors.light2,
+        modifier = modifier.fillMaxWidth(),
+    )
+
+    MyMatchingPieceDetail(
+        imageId = R.drawable.ic_question,
+        title = "가치관 Pick",
+        content = "퀴즈를 통해 나의 연애 스타일을 파악해보고\n" +
+                "선택한 답변을 수정할 수 있습니다.",
+        onMyMatchingPieceDetailClick = onValuePickClick,
+        modifier = modifier.padding(vertical = 16.dp),
+    )
+}
+
+@Composable
+private fun MyMatchingPieceDetail(
+    imageId: Int,
+    title: String,
+    content: String,
+    onMyMatchingPieceDetailClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.clickable {
+            onMyMatchingPieceDetailClick()
+        },
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.weight(1f),
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Image(
+                    painter = painterResource(imageId),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(PieceTheme.colors.dark1),
+                    modifier = Modifier.size(20.dp),
+                )
+
+                Text(
+                    text = title,
+                    style = PieceTheme.typography.headingSSB,
+                    color = PieceTheme.colors.dark1,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+
+            Text(
+                text = content,
+                style = PieceTheme.typography.captionM,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.padding(start = 28.dp),
+            )
+        }
+
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right_black),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+        )
+    }
+}
+
+@Composable
+private fun ColumnScope.BasicInfoCard(
+    age: String,
+    birthYear: String,
+    height: String,
+    activityRegion: String,
+    occupation: String,
+    smokeStatue: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 24.dp, bottom = 4.dp),
+    ) {
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_age),
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(R.string.basicinfocard_age_particle),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = age,
+                        style = PieceTheme.typography.headingSSB,
+                        color = PieceTheme.colors.black,
+                    )
+
+                    Text(
+                        text = stringResource(R.string.basicinfocard_age_classifier),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Text(
+                        text = birthYear + stringResource(R.string.basicinfocard_age_suffix),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark2,
+                        modifier = Modifier.padding(top = 1.dp),
+                    )
+                }
+            },
+            backgroundColor = PieceTheme.colors.light3,
+            modifier = Modifier.size(
+                width = 144.dp,
+                height = 80.dp,
+            ),
+        )
+
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_height),
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = height,
+                        style = PieceTheme.typography.headingSSB,
+                        color = PieceTheme.colors.black,
+                    )
+
+                    Text(
+                        text = "cm",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
+                }
+            },
+            backgroundColor = PieceTheme.colors.light3,
+            modifier = Modifier.weight(1f),
+        )
+
+        InfoItem(
+            title = "몸무게",
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "72",
+                        style = PieceTheme.typography.headingSSB,
+                        color = PieceTheme.colors.black,
+                    )
+
+                    Text(
+                        text = "kg",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
+                }
+            },
+            backgroundColor = PieceTheme.colors.light3,
+            modifier = Modifier.weight(1f),
+        )
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 32.dp),
+    ) {
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_activityRegion),
+            content = activityRegion,
+            backgroundColor = PieceTheme.colors.light3,
+            modifier = Modifier.size(
+                width = 144.dp,
+                height = 80.dp,
+            ),
+        )
+
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_occupation),
+            content = occupation,
+            backgroundColor = PieceTheme.colors.light3,
+            modifier = Modifier.weight(1f),
+        )
+
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_smokeStatue),
+            content = smokeStatue,
+            backgroundColor = PieceTheme.colors.light3,
+            modifier = Modifier.weight(1f),
+        )
+    }
+}
+
+@Composable
+private fun InfoItem(
+    title: String,
+    modifier: Modifier = Modifier,
+    content: String? = null,
+    backgroundColor: Color = PieceTheme.colors.white,
+    text: @Composable ColumnScope.() -> Unit? = {},
+) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(
+            space = 8.dp,
+            alignment = Alignment.CenterVertically,
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .height(80.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundColor)
+            .padding(horizontal = 12.dp),
+    ) {
+        Text(
+            text = title,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark2,
+        )
+
+        if (content != null) {
+            Text(
+                text = content,
+                style = PieceTheme.typography.headingSSB,
+                color = PieceTheme.colors.black,
+            )
+        } else {
+            text()
+        }
     }
 }
 
@@ -53,6 +442,20 @@ private fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreview() {
     PieceTheme {
-        ProfileScreen()
+        MainProfileScreen(
+            state = MainProfileState(
+                nickName = "수줍은 수달",
+                selfDescription = "음악과 요리를 좋아하는",
+                age = "14",
+                birthYear = "00",
+                height = "100",
+                activityRegion = "서울 특별시",
+                occupation = "개발자",
+                smokeStatue = "흡연",
+            ),
+            onMyProfileClick = {},
+            onValueTalkClick = {},
+            onValuePickClick = {},
+        )
     }
 }

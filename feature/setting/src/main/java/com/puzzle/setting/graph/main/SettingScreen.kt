@@ -75,7 +75,7 @@ private fun SettingScreen(
     ) {
         PieceMainTopBar(
             title = stringResource(R.string.setting_screen),
-            modifier = Modifier.padding(horizontal = 20.dp),
+            modifier = Modifier.padding(horizontal = 20.dp, vertical = 19.dp),
         )
 
         HorizontalDivider(

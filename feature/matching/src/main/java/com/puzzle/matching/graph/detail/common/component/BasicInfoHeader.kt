@@ -2,13 +2,10 @@ package com.puzzle.matching.graph.detail.common.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,14 +22,12 @@ internal fun BasicInfoHeader(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier) {
         Text(
             text = selfDescription,
             style = PieceTheme.typography.bodyMR,
             color = PieceTheme.colors.black,
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
@@ -41,8 +36,6 @@ internal fun BasicInfoHeader(
                 color = PieceTheme.colors.primaryDefault,
                 modifier = Modifier.weight(1f)
             )
-
-            Spacer(modifier = Modifier.width(28.dp))
 
             Image(
                 painter = painterResource(id = R.drawable.ic_more),
