@@ -11,7 +11,7 @@ import com.puzzle.auth.navigation.authNavGraph
 import com.puzzle.matching.navigation.matchingNavGraph
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.profile.navigation.profileNavGraph
-import com.puzzle.setting.navigation.settingScreen
+import com.puzzle.setting.navigation.settingNavGraph
 
 @Composable
 fun AppNavHost(
@@ -28,6 +28,6 @@ fun AppNavHost(
         authNavGraph()
         matchingNavGraph()
         profileNavGraph()
-        settingScreen()
+        settingNavGraph()
     }
 }

@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import com.puzzle.designsystem.R
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.ProfileGraphDest
-import com.puzzle.navigation.SettingRoute
+import com.puzzle.navigation.SettingGraph
 import kotlin.reflect.KClass
 
 enum class TopLevelDestination(
@@ -29,7 +29,7 @@ enum class TopLevelDestination(
         iconDrawableId = R.drawable.ic_setting,
         contentDescription = "설정",
         title = "설정",
-        route = SettingRoute::class,
+        route = SettingGraph::class,
     );
 
     companion object {

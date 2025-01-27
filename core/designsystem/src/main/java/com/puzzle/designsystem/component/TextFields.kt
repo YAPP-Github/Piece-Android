@@ -154,7 +154,7 @@ fun PieceTextInputLong(
                         text = hint,
                         style = PieceTheme.typography.bodyMM,
                         color = PieceTheme.colors.dark3,
-                        modifier = Modifier.align(Alignment.CenterStart)
+                        modifier = Modifier.align(Alignment.TopStart)
                     )
                 }
 

@@ -43,7 +43,8 @@ import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.navigation.ProfileGraphDest.ProfileRoute
 import com.puzzle.navigation.Route
-import com.puzzle.navigation.SettingRoute
+import com.puzzle.navigation.SettingGraph
+import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
 import kotlin.reflect.KClass
@@ -142,7 +143,7 @@ private fun AppBottomBar(
                     when (topLevelRoute) {
                         TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
                         TopLevelDestination.PROFILE -> navigateToTopLevelDestination(ProfileRoute)
-                        TopLevelDestination.SETTING -> navigateToTopLevelDestination(SettingRoute)
+                        TopLevelDestination.SETTING -> navigateToTopLevelDestination(SettingGraph)
                     }
                 },
             )
@@ -154,6 +155,7 @@ private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     AuthGraph::class.qualifiedName,
     MatchingDetailRoute::class.qualifiedName,
     ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
+    SettingGraphDest.WithdrawRoute::class.qualifiedName,
 )
 
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
