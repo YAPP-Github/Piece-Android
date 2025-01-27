@@ -151,7 +151,7 @@ private fun RegisterProfileScreen(
                 PieceTextInputDefault(
                     value = "",
                     hint = "6자 이하로 작성해주세요",
-                    imageId = R.drawable.ic_delete,
+                    imageId = R.drawable.ic_delete_circle,
                     keyboardType = KeyboardType.Text,
                     onValueChange = {},
                     onImageClick = {},
@@ -201,7 +201,7 @@ private fun RegisterProfileScreen(
             PieceTextInputDefault(
                 value = "",
                 hint = "수식어 형태로 작성해 주세요",
-                imageId = R.drawable.ic_delete,
+                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Text,
                 onValueChange = {},
                 onImageClick = {},
@@ -215,7 +215,7 @@ private fun RegisterProfileScreen(
             PieceTextInputDefault(
                 value = "",
                 hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
-                imageId = R.drawable.ic_delete,
+                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
                 onImageClick = {},
@@ -228,7 +228,7 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "활동 지역")
             PieceTextInputDefault(
                 value = "",
-                imageId = R.drawable.ic_delete,
+                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
                 onImageClick = {},
@@ -241,7 +241,7 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "키")
             PieceTextInputDefault(
                 value = "",
-                imageId = R.drawable.ic_delete,
+                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
                 onImageClick = {},
@@ -316,7 +316,7 @@ private fun RegisterProfileScreen(
             PieceTextInputDefault(
                 value = "",
                 keyboardType = KeyboardType.Text,
-                imageId = R.drawable.ic_delete,
+                imageId = R.drawable.ic_delete_circle,
                 onImageClick = {},
                 onValueChange = {},
                 modifier = Modifier

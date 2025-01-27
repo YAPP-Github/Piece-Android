@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -289,6 +290,73 @@ fun PieceTextInputDropDown(
     }
 }
 
+@Composable
+fun PieceTextInputSnsDropDown(
+    value: String,
+    @DrawableRes image: Int,
+    onValueChange: (String) -> Unit,
+    onDropDownClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isMandatory: Boolean = false,
+    onDeleteClick: () -> Unit = {},
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .height(52.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.light3)
+                .padding(horizontal = 16.dp, vertical = 14.dp)
+                .weight(1f),
+        ) {
+            Image(
+                painter = painterResource(image),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(20.dp)
+                    .padding(end = 4.dp),
+            )
+
+            Image(
+                painter = painterResource(R.drawable.ic_textinput_dropdown),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .size(24.dp)
+                    .clickable { onDropDownClick() },
+            )
+
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+                textStyle = PieceTheme.typography.bodyMM,
+                cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+                decorationBox = { innerTextField -> innerTextField() },
+            )
+        }
+
+        if (!isMandatory) {
+            Image(
+                painter = painterResource(R.drawable.ic_delete_circle),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .clickable { onDeleteClick() },
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewPieceTextInputDefault() {
@@ -360,6 +428,36 @@ private fun PreviewPieceTextInputDropDown() {
 
             PieceTextInputDropDown(
                 value = "Label",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPieceSnsDropDown() {
+    PieceTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            PieceTextInputSnsDropDown(
+                value = "가나",
+                image = R.drawable.ic_sns_kakao,
+                isMandatory = true,
+                onValueChange = {},
+                onDropDownClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputSnsDropDown(
+                value = "가나다라마바사",
+                image = R.drawable.ic_sns_openchatting,
+                isMandatory = false,
+                onValueChange = {},
+                onDropDownClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),

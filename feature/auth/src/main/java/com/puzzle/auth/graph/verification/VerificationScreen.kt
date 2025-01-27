@@ -314,7 +314,7 @@ private fun PhoneNumberBody(
         ) {
             PieceTextInputDefault(
                 value = phoneNumber,
-                imageId = R.drawable.ic_delete,
+                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Phone,
                 onDone = {
                     if (phoneNumber.isNotEmpty()) {
