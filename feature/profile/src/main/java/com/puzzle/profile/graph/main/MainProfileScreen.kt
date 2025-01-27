@@ -51,7 +51,7 @@ internal fun MainProfileRoute(
             viewModel.sideEffects.collect { sideEffect ->
                 when (sideEffect) {
                     is MainProfileSideEffect.Navigate ->
-                        viewModel.navigationHelper..navigate(sideEffect.navigationEvent)
+                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
                 }
             }
         }
