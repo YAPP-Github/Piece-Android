@@ -47,14 +47,13 @@ import com.puzzle.designsystem.foundation.PieceTheme
 fun PieceTextInputDefault(
     value: String,
     onValueChange: (String) -> Unit,
-    @DrawableRes imageId: Int,
-    onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "",
     readOnly: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     throttleTime: Long = 2000L,
     onDone: () -> Unit = {},
+    rightComponent: @Composable () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastDoneTime by remember { mutableLongStateOf(0L) }
@@ -81,28 +80,21 @@ fun PieceTextInputDefault(
         textStyle = PieceTheme.typography.bodyMM,
         cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
         decorationBox = { innerTextField ->
-            Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = hint,
-                        style = PieceTheme.typography.bodyMM,
-                        color = PieceTheme.colors.dark3,
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    )
+            Row {
+                Box(modifier = Modifier.weight(1f)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = hint,
+                            style = PieceTheme.typography.bodyMM,
+                            color = PieceTheme.colors.dark3,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                    }
+
+                    innerTextField()
                 }
 
-                innerTextField()
-
-                if (value.isNotEmpty()) {
-                    Image(
-                        painter = painterResource(imageId),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .align(Alignment.CenterEnd)
-                            .clickable { onImageClick() },
-                    )
-                }
+                rightComponent()
             }
         },
         modifier = modifier
@@ -361,16 +353,33 @@ fun PieceTextInputSnsDropDown(
 @Composable
 private fun PreviewPieceTextInputDefault() {
     PieceTheme {
-        PieceTextInputDefault(
-            value = "Label",
-            onValueChange = {},
-            hint = "hint",
-            imageId = R.drawable.ic_alarm,
-            onImageClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            PieceTextInputDefault(
+                value = "Label",
+                onValueChange = {},
+                hint = "hint",
+                rightComponent = {
+                    Image(
+                        painter = painterResource(R.drawable.ic_delete_circle),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputDefault(
+                value = "",
+                onValueChange = {},
+                hint = "hint",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+        }
     }
 }
 

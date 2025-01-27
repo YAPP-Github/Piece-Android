@@ -2,6 +2,7 @@ package com.puzzle.profile.graph.register
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -84,7 +85,7 @@ private fun RegisterProfileScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     var isNicknameFocus by remember { mutableStateOf(false) }
-    var isOneLinerFocus by remember { mutableStateOf(false) }
+    var isDescribeMySelfFocus by remember { mutableStateOf(false) }
     var isBirthdayFocus by remember { mutableStateOf(false) }
     var isRegionFocus by remember { mutableStateOf(false) }
     var isHeightFocus by remember { mutableStateOf(false) }
@@ -100,7 +101,7 @@ private fun RegisterProfileScreen(
             title = "",
             onBackClick = { navigate(NavigationEvent.NavigateUp) },
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp, vertical = 14.dp)
                 .align(Alignment.TopCenter),
         )
 
@@ -137,7 +138,7 @@ private fun RegisterProfileScreen(
                 )
 
                 Image(
-                    painter = painterResource(R.drawable.ic_plus),
+                    painter = painterResource(R.drawable.ic_plus_circle),
                     contentDescription = null,
                     modifier = Modifier.align(Alignment.BottomEnd)
                 )
@@ -151,12 +152,21 @@ private fun RegisterProfileScreen(
                     .padding(top = 8.dp),
             ) {
                 PieceTextInputDefault(
-                    value = "",
+                    value = state.nickName,
                     hint = "6자 이하로 작성해주세요",
-                    imageId = R.drawable.ic_delete_circle,
                     keyboardType = KeyboardType.Text,
                     onValueChange = {},
-                    onImageClick = {},
+                    rightComponent = {
+                        if (isNicknameFocus && state.nickName.isNotEmpty()) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_delete_circle),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(20.dp)
+                            )
+                        }
+                    },
+
                     modifier = Modifier
                         .weight(1f)
                         .onFocusChanged { isNicknameFocus = it.isFocused },
@@ -201,26 +211,42 @@ private fun RegisterProfileScreen(
 
             SectionTitle(title = "나를 표현하는 한 마디")
             PieceTextInputDefault(
-                value = "",
+                value = state.describeMySelf,
                 hint = "수식어 형태로 작성해 주세요",
-                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Text,
                 onValueChange = {},
-                onImageClick = {},
+                rightComponent = {
+                    if (isDescribeMySelfFocus && state.describeMySelf.isNotEmpty()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(20.dp)
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .onFocusChanged { isOneLinerFocus = it.isFocused },
+                    .onFocusChanged { isDescribeMySelfFocus = it.isFocused },
             )
 
             SectionTitle(title = "생년월일")
             PieceTextInputDefault(
-                value = "",
+                value = state.birthday,
                 hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
-                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
-                onImageClick = {},
+                rightComponent = {
+                    if (isBirthdayFocus && state.birthday.isNotEmpty()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(20.dp)
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -228,25 +254,43 @@ private fun RegisterProfileScreen(
             )
 
             SectionTitle(title = "활동 지역")
-            PieceTextInputDefault(
-                value = "",
-                imageId = R.drawable.ic_delete_circle,
-                keyboardType = KeyboardType.Number,
-                onValueChange = {},
-                onImageClick = {},
+            PieceTextInputDropDown(
+                value = state.region,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .onFocusChanged { isRegionFocus = it.isFocused },
+                    .padding(top = 8.dp),
             )
 
             SectionTitle(title = "키")
             PieceTextInputDefault(
-                value = "",
-                imageId = R.drawable.ic_delete_circle,
+                value = state.height,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
-                onImageClick = {},
+                rightComponent = {
+                    Text(
+                        text = "cm",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isHeightFocus = it.isFocused },
+            )
+
+            SectionTitle(title = "몸무게")
+            PieceTextInputDefault(
+                value = state.weight,
+                keyboardType = KeyboardType.Number,
+                onValueChange = {},
+                rightComponent = {
+                    Text(
+                        text = "kg",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -255,7 +299,7 @@ private fun RegisterProfileScreen(
 
             SectionTitle(title = "직업")
             PieceTextInputDropDown(
-                value = "",
+                value = state.job,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -271,26 +315,18 @@ private fun RegisterProfileScreen(
             ) {
                 PieceChip(
                     label = "흡연",
-                    selected = false,
+                    selected = state.isSmoke == true,
                     onChipClicked = {},
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "비흡연",
-                    selected = false,
+                    selected = state.isSmoke == false,
                     onChipClicked = {},
                     modifier = Modifier.weight(1f),
                 )
             }
-
-            SectionTitle(title = "종교")
-            PieceTextInputDropDown(
-                value = "",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            )
 
             SectionTitle(title = "SNS 활동")
             Row(
@@ -301,14 +337,14 @@ private fun RegisterProfileScreen(
             ) {
                 PieceChip(
                     label = "활동",
-                    selected = false,
+                    selected = state.isSnsActivity == true,
                     onChipClicked = {},
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "은둔",
-                    selected = false,
+                    selected = state.isSnsActivity == false,
                     onChipClicked = {},
                     modifier = Modifier.weight(1f),
                 )
@@ -336,14 +372,24 @@ private fun RegisterProfileScreen(
                 )
             }
 
-            Text(
-                text = "연락처 추가하기 +",
-                style = PieceTheme.typography.bodyMSB,
-                color = PieceTheme.colors.primaryDefault,
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp, bottom = 68.dp)
-            )
+                    .padding(top = 16.dp, bottom = 60.dp)
+                    .clickable { }
+            ) {
+                Text(
+                    text = "연락처 추가하기",
+                    style = PieceTheme.typography.bodyMSB,
+                    color = PieceTheme.colors.primaryDefault,
+                )
+
+                Image(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                )
+            }
         }
 
         PieceSolidButton(
@@ -352,7 +398,7 @@ private fun RegisterProfileScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(start = 20.dp, end = 20.dp, bottom = 10.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
         )
     }
 }

@@ -1,6 +1,8 @@
 package com.puzzle.auth.graph.verification
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -30,6 +33,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -336,7 +340,6 @@ private fun PhoneNumberBody(
         ) {
             PieceTextInputDefault(
                 value = phoneNumber,
-                imageId = R.drawable.ic_delete_circle,
                 keyboardType = KeyboardType.Phone,
                 onDone = {
                     if (phoneNumber.isNotEmpty()) {
@@ -344,7 +347,17 @@ private fun PhoneNumberBody(
                     }
                 },
                 onValueChange = onPhoneNumberChanged,
-                onImageClick = onClearClick,
+                rightComponent = {
+                    if (phoneNumber.isNotEmpty()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .clickable { onClearClick() },
+                        )
+                    }
+                },
                 modifier = Modifier
                     .focusRequester(focusRequester)
                     .weight(1f)
