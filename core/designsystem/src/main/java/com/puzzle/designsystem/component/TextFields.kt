@@ -314,8 +314,8 @@ fun PieceTextInputSnsDropDown(
                 painter = painterResource(image),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(20.dp)
-                    .padding(end = 4.dp),
+                    .padding(end = 4.dp)
+                    .size(20.dp),
             )
 
             Image(
