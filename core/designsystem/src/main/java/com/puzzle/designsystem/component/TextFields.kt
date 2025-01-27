@@ -263,7 +263,8 @@ fun PieceTextInputDropDown(
             .height(52.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(PieceTheme.colors.light3)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+            .clickable { onDropDownClick() },
     ) {
         Text(
             text = value.ifEmpty { hint },
@@ -278,9 +279,7 @@ fun PieceTextInputDropDown(
         Image(
             painter = painterResource(R.drawable.ic_textinput_dropdown),
             contentDescription = null,
-            modifier = Modifier
-                .size(24.dp)
-                .clickable { onDropDownClick() },
+            modifier = Modifier.size(24.dp),
         )
     }
 }

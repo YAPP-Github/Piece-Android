@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
@@ -80,11 +81,12 @@ internal fun RegisterProfileRoute(
         onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateHeight(it)) },
         onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateWeight(it)) },
         onJobChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateJob(it)) },
-        onJobDropDownClicked = {},
+        onJobDropDownClicked = { viewModel.onIntent(RegisterProfileIntent.OnJobDropDownClicked) },
         onRegionChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateRegion(it)) },
-        onRegionDropDownClicked = {},
+        onRegionDropDownClicked = { viewModel.onIntent(RegisterProfileIntent.OnRegionDropDownClicked) },
         onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSmokeStatus(it)) },
         onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
+        onAddContactsClicked = { viewModel.onIntent(RegisterProfileIntent.OnAddContactsClicked) },
     )
 }
 
@@ -103,6 +105,7 @@ private fun RegisterProfileScreen(
     onRegionDropDownClicked: () -> Unit,
     onSmokeStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
+    onAddContactsClicked: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
@@ -183,7 +186,10 @@ private fun RegisterProfileScreen(
                             Image(
                                 painter = painterResource(R.drawable.ic_delete_circle),
                                 contentDescription = null,
-                                modifier = Modifier.size(20.dp)
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .size(20.dp)
+                                    .clickable { onNickNameChanged("") }
                             )
                         }
                     },
@@ -240,7 +246,10 @@ private fun RegisterProfileScreen(
                         Image(
                             painter = painterResource(R.drawable.ic_delete_circle),
                             contentDescription = null,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(20.dp)
+                                .clickable { onDescribeMySelfChanged("") },
                         )
                     }
                 },
@@ -313,7 +322,11 @@ private fun RegisterProfileScreen(
             PieceTextInputDefault(
                 value = state.height,
                 keyboardType = KeyboardType.Number,
-                onValueChange = onHeightChanged,
+                onValueChange = { height ->
+                    if(height.isDigitsOnly()) {
+                        onHeightChanged(height)
+                    }
+                },
                 rightComponent = {
                     Text(
                         text = "cm",
@@ -343,7 +356,11 @@ private fun RegisterProfileScreen(
             PieceTextInputDefault(
                 value = state.weight,
                 keyboardType = KeyboardType.Number,
-                onValueChange = onWeightChanged,
+                onValueChange = { weight ->
+                    if (weight.isDigitsOnly()) {
+                        onWeightChanged(weight)
+                    }
+                },
                 rightComponent = {
                     Text(
                         text = "kg",
@@ -450,7 +467,7 @@ private fun RegisterProfileScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable { }
+                    .clickable { onAddContactsClicked() },
             ) {
                 Text(
                     text = "연락처 추가하기",
@@ -492,18 +509,19 @@ private fun PreviewRegisterProfileScreen() {
     PieceTheme {
         RegisterProfileScreen(
             state = RegisterProfileState(),
-            navigate = { },
-            onNickNameChanged = { },
-            onDescribeMySelfChanged = { },
-            onBirthdayChanged = { },
-            onHeightChanged = { },
-            onWeightChanged = { },
-            onJobChanged = { },
+            navigate = {},
+            onNickNameChanged = {},
+            onDescribeMySelfChanged = {},
+            onBirthdayChanged = {},
+            onHeightChanged = {},
+            onWeightChanged = {},
+            onJobChanged = {},
             onJobDropDownClicked = {},
-            onRegionChanged = { },
+            onRegionChanged = {},
             onRegionDropDownClicked = {},
-            onSmokeStatusChanged = { },
-            onSnsActivityChanged = { },
+            onSmokeStatusChanged = {},
+            onSnsActivityChanged = {},
+            onAddContactsClicked = {},
         )
     }
 }

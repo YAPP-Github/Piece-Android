@@ -41,17 +41,72 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
-            is RegisterProfileIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
-            is RegisterProfileIntent.UpdateNickName -> setState { copy(nickName = intent.nickName) }
-            is RegisterProfileIntent.UpdateDescribeMySelf -> setState { copy(describeMySelf = intent.description) }
-            is RegisterProfileIntent.UpdateBirthday -> setState { copy(birthday = intent.birthday) }
-            is RegisterProfileIntent.UpdateHeight -> setState { copy(height = intent.height) }
-            is RegisterProfileIntent.UpdateWeight -> setState { copy(weight = intent.weight) }
-            is RegisterProfileIntent.UpdateJob -> setState { copy(job = intent.job) }
-            is RegisterProfileIntent.UpdateRegion -> setState { copy(region = intent.region) }
-            is RegisterProfileIntent.UpdateSmokeStatus -> setState { copy(isSmoke = intent.isSmoke) }
-            is RegisterProfileIntent.UpdateSnsActivity -> setState { copy(isSnsActivity = intent.isSnsActivity) }
+            is RegisterProfileIntent.Navigate -> handleNavigation(intent)
+            is RegisterProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
+            is RegisterProfileIntent.UpdateDescribeMySelf -> updateDescribeMySelf(intent.description)
+            is RegisterProfileIntent.UpdateBirthday -> updateBirthday(intent.birthday)
+            is RegisterProfileIntent.UpdateHeight -> updateHeight(intent.height)
+            is RegisterProfileIntent.UpdateWeight -> updateWeight(intent.weight)
+            is RegisterProfileIntent.UpdateJob -> updateJob(intent.job)
+            is RegisterProfileIntent.UpdateRegion -> updateRegion(intent.region)
+            is RegisterProfileIntent.UpdateSmokeStatus -> updateSmokeStatus(intent.isSmoke)
+            is RegisterProfileIntent.UpdateSnsActivity -> updateSnsActivity(intent.isSnsActivity)
+            RegisterProfileIntent.OnAddContactsClicked -> handleAddContactsClicked()
+            RegisterProfileIntent.OnJobDropDownClicked -> handleJobDropDownClicked()
+            RegisterProfileIntent.OnRegionDropDownClicked -> handleRegionDropDownClicked()
         }
+    }
+
+    private suspend fun handleNavigation(intent: RegisterProfileIntent.Navigate) {
+        _sideEffects.send(Navigate(intent.navigationEvent))
+    }
+
+    private fun updateNickName(nickName: String) {
+        setState { copy(nickName = nickName) }
+    }
+
+    private fun updateDescribeMySelf(description: String) {
+        setState { copy(describeMySelf = description) }
+    }
+
+    private fun updateBirthday(birthday: String) {
+        setState { copy(birthday = birthday) }
+    }
+
+    private fun updateHeight(height: String) {
+        setState { copy(height = height) }
+    }
+
+    private fun updateWeight(weight: String) {
+        setState { copy(weight = weight) }
+    }
+
+    private fun updateJob(job: String) {
+        setState { copy(job = job) }
+    }
+
+    private fun updateRegion(region: String) {
+        setState { copy(region = region) }
+    }
+
+    private fun updateSmokeStatus(isSmoke: Boolean?) {
+        setState { copy(isSmoke = isSmoke) }
+    }
+
+    private fun updateSnsActivity(isSnsActivity: Boolean?) {
+        setState { copy(isSnsActivity = isSnsActivity) }
+    }
+
+    private fun handleAddContactsClicked() {
+        // TODO: Implement add contacts logic
+    }
+
+    private fun handleJobDropDownClicked() {
+        // TODO: Implement job dropdown logic
+    }
+
+    private fun handleRegionDropDownClicked() {
+        // TODO: Implement region dropdown logic
     }
 
     @AssistedFactory
@@ -61,5 +116,4 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     companion object :
         MavericksViewModelFactory<RegisterProfileViewModel, RegisterProfileState> by hiltMavericksViewModelFactory()
-
 }
