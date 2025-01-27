@@ -74,6 +74,17 @@ internal fun RegisterProfileRoute(
     RegisterProfileScreen(
         state = state,
         navigate = { viewModel.onIntent(RegisterProfileIntent.Navigate(it)) },
+        onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateNickName(it)) },
+        onDescribeMySelfChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateDescribeMySelf(it)) },
+        onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateBirthday(it)) },
+        onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateHeight(it)) },
+        onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateWeight(it)) },
+        onJobChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateJob(it)) },
+        onJobDropDownClicked = {},
+        onRegionChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateRegion(it)) },
+        onRegionDropDownClicked = {},
+        onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSmokeStatus(it)) },
+        onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
     )
 }
 
@@ -81,6 +92,17 @@ internal fun RegisterProfileRoute(
 private fun RegisterProfileScreen(
     state: RegisterProfileState,
     navigate: (NavigationEvent) -> Unit,
+    onNickNameChanged: (String) -> Unit,
+    onDescribeMySelfChanged: (String) -> Unit,
+    onBirthdayChanged: (String) -> Unit,
+    onHeightChanged: (String) -> Unit,
+    onWeightChanged: (String) -> Unit,
+    onJobChanged: (String) -> Unit,
+    onJobDropDownClicked: () -> Unit,
+    onRegionChanged: (String) -> Unit,
+    onRegionDropDownClicked: () -> Unit,
+    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSnsActivityChanged: (Boolean) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
@@ -155,18 +177,16 @@ private fun RegisterProfileScreen(
                     value = state.nickName,
                     hint = "6자 이하로 작성해주세요",
                     keyboardType = KeyboardType.Text,
-                    onValueChange = {},
+                    onValueChange = onNickNameChanged,
                     rightComponent = {
                         if (isNicknameFocus && state.nickName.isNotEmpty()) {
                             Image(
                                 painter = painterResource(R.drawable.ic_delete_circle),
                                 contentDescription = null,
-                                modifier = Modifier
-                                    .size(20.dp)
+                                modifier = Modifier.size(20.dp)
                             )
                         }
                     },
-
                     modifier = Modifier
                         .weight(1f)
                         .onFocusChanged { isNicknameFocus = it.isFocused },
@@ -175,7 +195,7 @@ private fun RegisterProfileScreen(
                 PieceSolidButton(
                     label = "중복검사",
                     onClick = { },
-                    enabled = false,
+                    enabled = state.nickName.isNotEmpty(),
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -214,14 +234,13 @@ private fun RegisterProfileScreen(
                 value = state.describeMySelf,
                 hint = "수식어 형태로 작성해 주세요",
                 keyboardType = KeyboardType.Text,
-                onValueChange = {},
+                onValueChange = onDescribeMySelfChanged,
                 rightComponent = {
                     if (isDescribeMySelfFocus && state.describeMySelf.isNotEmpty()) {
                         Image(
                             painter = painterResource(R.drawable.ic_delete_circle),
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(20.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 },
@@ -265,14 +284,13 @@ private fun RegisterProfileScreen(
                 value = state.birthday,
                 hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
                 keyboardType = KeyboardType.Number,
-                onValueChange = {},
+                onValueChange = onBirthdayChanged,
                 rightComponent = {
                     if (isBirthdayFocus && state.birthday.isNotEmpty()) {
                         Image(
                             painter = painterResource(R.drawable.ic_delete_circle),
                             contentDescription = null,
-                            modifier = Modifier
-                                .size(20.dp)
+                            modifier = Modifier.size(20.dp)
                         )
                     }
                 },
@@ -285,16 +303,17 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "활동 지역")
             PieceTextInputDropDown(
                 value = state.region,
+                onDropDownClick = onRegionDropDownClicked,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
+                    .padding(top = 8.dp)
             )
 
             SectionTitle(title = "키")
             PieceTextInputDefault(
                 value = state.height,
                 keyboardType = KeyboardType.Number,
-                onValueChange = {},
+                onValueChange = onHeightChanged,
                 rightComponent = {
                     Text(
                         text = "cm",
@@ -308,25 +327,23 @@ private fun RegisterProfileScreen(
                     .onFocusChanged { isHeightFocus = it.isFocused },
             )
             AnimatedVisibility(visible = isHeightFocus) {
-                if (state.height.isNotEmpty()) {
-                    Text(
-                        text = "숫자가 정확한지 확인해 주세요",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = PieceTheme.typography.bodySM,
-                        color = PieceTheme.colors.error,
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .fillMaxWidth(),
-                    )
-                }
+                Text(
+                    text = if (state.height.isNotEmpty()) "숫자가 정확한지 확인해 주세요" else "",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.error,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                )
             }
 
             SectionTitle(title = "몸무게")
             PieceTextInputDefault(
                 value = state.weight,
                 keyboardType = KeyboardType.Number,
-                onValueChange = {},
+                onValueChange = onWeightChanged,
                 rightComponent = {
                     Text(
                         text = "kg",
@@ -340,23 +357,22 @@ private fun RegisterProfileScreen(
                     .onFocusChanged { isWeightFocus = it.isFocused },
             )
             AnimatedVisibility(visible = isWeightFocus) {
-                if (state.weight.isNotEmpty()) {
-                    Text(
-                        text = "숫자가 정확한지 확인해 주세요",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = PieceTheme.typography.bodySM,
-                        color = PieceTheme.colors.error,
-                        modifier = Modifier
-                            .padding(top = 8.dp)
-                            .fillMaxWidth(),
-                    )
-                }
+                Text(
+                    text = if (state.weight.isNotEmpty()) "숫자가 정확한지 확인해 주세요" else "",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.error,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                )
             }
 
             SectionTitle(title = "직업")
             PieceTextInputDropDown(
                 value = state.job,
+                onDropDownClick = onJobDropDownClicked,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -373,14 +389,14 @@ private fun RegisterProfileScreen(
                 PieceChip(
                     label = "흡연",
                     selected = state.isSmoke == true,
-                    onChipClicked = {},
+                    onChipClicked = { onSmokeStatusChanged(true) },
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "비흡연",
                     selected = state.isSmoke == false,
-                    onChipClicked = {},
+                    onChipClicked = { onSmokeStatusChanged(false) },
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -395,14 +411,14 @@ private fun RegisterProfileScreen(
                 PieceChip(
                     label = "활동",
                     selected = state.isSnsActivity == true,
-                    onChipClicked = {},
+                    onChipClicked = { onSnsActivityChanged(true) },
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "은둔",
                     selected = state.isSnsActivity == false,
-                    onChipClicked = {},
+                    onChipClicked = { onSnsActivityChanged(false) },
                     modifier = Modifier.weight(1f),
                 )
             }
@@ -477,6 +493,17 @@ private fun PreviewRegisterProfileScreen() {
         RegisterProfileScreen(
             state = RegisterProfileState(),
             navigate = { },
+            onNickNameChanged = { },
+            onDescribeMySelfChanged = { },
+            onBirthdayChanged = { },
+            onHeightChanged = { },
+            onWeightChanged = { },
+            onJobChanged = { },
+            onJobDropDownClicked = {},
+            onRegionChanged = { },
+            onRegionDropDownClicked = {},
+            onSmokeStatusChanged = { },
+            onSnsActivityChanged = { },
         )
     }
 }

@@ -253,6 +253,7 @@ fun PieceTextInputAI(
 @Composable
 fun PieceTextInputDropDown(
     value: String,
+    onDropDownClick: () -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "",
 ) {
@@ -277,7 +278,9 @@ fun PieceTextInputDropDown(
         Image(
             painter = painterResource(R.drawable.ic_textinput_dropdown),
             contentDescription = null,
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier
+                .size(24.dp)
+                .clickable { onDropDownClick() },
         )
     }
 }
@@ -430,6 +433,7 @@ private fun PreviewPieceTextInputDropDown() {
             PieceTextInputDropDown(
                 value = "",
                 hint = "안내 문구",
+                onDropDownClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -437,6 +441,7 @@ private fun PreviewPieceTextInputDropDown() {
 
             PieceTextInputDropDown(
                 value = "Label",
+                onDropDownClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),

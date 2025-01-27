@@ -42,6 +42,15 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
             is RegisterProfileIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
+            is RegisterProfileIntent.UpdateNickName -> setState { copy(nickName = intent.nickName) }
+            is RegisterProfileIntent.UpdateDescribeMySelf -> setState { copy(describeMySelf = intent.description) }
+            is RegisterProfileIntent.UpdateBirthday -> setState { copy(birthday = intent.birthday) }
+            is RegisterProfileIntent.UpdateHeight -> setState { copy(height = intent.height) }
+            is RegisterProfileIntent.UpdateWeight -> setState { copy(weight = intent.weight) }
+            is RegisterProfileIntent.UpdateJob -> setState { copy(job = intent.job) }
+            is RegisterProfileIntent.UpdateRegion -> setState { copy(region = intent.region) }
+            is RegisterProfileIntent.UpdateSmokeStatus -> setState { copy(isSmoke = intent.isSmoke) }
+            is RegisterProfileIntent.UpdateSnsActivity -> setState { copy(isSnsActivity = intent.isSnsActivity) }
         }
     }
 
