@@ -11,4 +11,5 @@ data class MainProfileState(
     val activityRegion: String = "",
     val occupation: String = "",
     val smokeStatue: String = "",
+    val weight: String = "",
 ) : MavericksState

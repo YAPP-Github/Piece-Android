@@ -50,8 +50,8 @@ internal fun MainProfileRoute(
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
                 when (sideEffect) {
-                    is MainProfileSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
+                    is MainProfileSideEffect.Navigate ->
+                        viewModel.navigationHelper..navigate(sideEffect.navigationEvent)
                 }
             }
         }
@@ -79,7 +79,7 @@ private fun MainProfileScreen(
             .background(PieceTheme.colors.white),
     ) {
         PieceMainTopBar(
-            title = "Profile",
+            title = stringResource(R.string.main_profile_topbar_title),
             rightComponent = {
                 Image(
                     painter = painterResource(R.drawable.ic_alarm_black),
@@ -98,6 +98,7 @@ private fun MainProfileScreen(
             activityRegion = state.activityRegion,
             occupation = state.occupation,
             smokeStatue = state.smokeStatue,
+            weight = state.weight,
             onMyProfileClick = onMyProfileClick,
             modifier = Modifier.padding(horizontal = 20.dp)
         )
@@ -116,7 +117,7 @@ private fun MainProfileScreen(
 }
 
 @Composable
-private fun ColumnScope.MyProfile(
+private fun MyProfile(
     nickName: String,
     selfDescription: String,
     age: String,
@@ -125,12 +126,14 @@ private fun ColumnScope.MyProfile(
     activityRegion: String,
     occupation: String,
     smokeStatue: String,
+    weight: String,
     onMyProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(modifier = modifier
-        .padding(top = 20.dp)
-        .clickable { onMyProfileClick() }
+    Row(
+        modifier = modifier
+            .padding(top = 20.dp)
+            .clickable { onMyProfileClick() }
     ) {
         Image(
             painter = painterResource(R.drawable.ic_profile_default),
@@ -175,18 +178,19 @@ private fun ColumnScope.MyProfile(
         activityRegion = activityRegion,
         occupation = occupation,
         smokeStatue = smokeStatue,
+        weight = weight,
         modifier = modifier,
     )
 }
 
 @Composable
-private fun ColumnScope.MyMatchingPiece(
+private fun MyMatchingPiece(
     onValueTalkClick: () -> Unit,
     onValuePickClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = "나의 매칭 조각",
+        text = stringResource(R.string.main_profile_my_matching_piece_title),
         style = PieceTheme.typography.bodyMM,
         color = PieceTheme.colors.dark2,
         modifier = modifier.padding(top = 24.dp, bottom = 12.dp),
@@ -194,9 +198,8 @@ private fun ColumnScope.MyMatchingPiece(
 
     MyMatchingPieceDetail(
         imageId = R.drawable.ic_talk,
-        title = "가치관 Talk",
-        content = "꿈과 목표, 관심사와 취향, 연애에 관련된\n" +
-                "내 생각을 확인하고 수정할 수 있습니다.",
+        title = stringResource(R.string.main_profile_value_talk_title),
+        content = stringResource(R.string.main_profile_value_talk_content),
         onMyMatchingPieceDetailClick = onValueTalkClick,
         modifier = modifier.padding(vertical = 16.dp),
     )
@@ -209,9 +212,8 @@ private fun ColumnScope.MyMatchingPiece(
 
     MyMatchingPieceDetail(
         imageId = R.drawable.ic_question,
-        title = "가치관 Pick",
-        content = "퀴즈를 통해 나의 연애 스타일을 파악해보고\n" +
-                "선택한 답변을 수정할 수 있습니다.",
+        title = stringResource(R.string.main_profile_value_pick_title),
+        content = stringResource(R.string.main_profile_value_pick_content),
         onMyMatchingPieceDetailClick = onValuePickClick,
         modifier = modifier.padding(vertical = 16.dp),
     )
@@ -269,10 +271,11 @@ private fun MyMatchingPieceDetail(
 }
 
 @Composable
-private fun ColumnScope.BasicInfoCard(
+private fun BasicInfoCard(
     age: String,
     birthYear: String,
     height: String,
+    weight: String,
     activityRegion: String,
     occupation: String,
     smokeStatue: String,
@@ -336,7 +339,7 @@ private fun ColumnScope.BasicInfoCard(
                     )
 
                     Text(
-                        text = "cm",
+                        text = stringResource(R.string.basicinfocard_height_unit),
                         style = PieceTheme.typography.bodySM,
                         color = PieceTheme.colors.black,
                     )
@@ -347,17 +350,17 @@ private fun ColumnScope.BasicInfoCard(
         )
 
         InfoItem(
-            title = "몸무게",
+            title = stringResource(R.string.basicinfocard_weight),
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "72",
+                        text = weight,
                         style = PieceTheme.typography.headingSSB,
                         color = PieceTheme.colors.black,
                     )
 
                     Text(
-                        text = "kg",
+                        text = stringResource(R.string.basicinfocard_weight_unit),
                         style = PieceTheme.typography.bodySM,
                         color = PieceTheme.colors.black,
                     )
