@@ -87,7 +87,7 @@ private fun RegisterProfileScreen(
     var isNicknameFocus by remember { mutableStateOf(false) }
     var isDescribeMySelfFocus by remember { mutableStateOf(false) }
     var isBirthdayFocus by remember { mutableStateOf(false) }
-    var isRegionFocus by remember { mutableStateOf(false) }
+    var isWeightFocus by remember { mutableStateOf(false) }
     var isHeightFocus by remember { mutableStateOf(false) }
     var isJobFocus by remember { mutableStateOf(false) }
     var isContactFocus by remember { mutableStateOf(false) }
@@ -197,7 +197,7 @@ private fun RegisterProfileScreen(
                     Text(
                         text = buildAnnotatedString {
                             withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                                append("2")
+                                append(state.nickName.length.toString())
                             }
                             append("/6")
                         },
@@ -230,6 +230,35 @@ private fun RegisterProfileScreen(
                     .padding(top = 8.dp)
                     .onFocusChanged { isDescribeMySelfFocus = it.isFocused },
             )
+            AnimatedVisibility(visible = isDescribeMySelfFocus) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                append(state.describeMySelf.length.toString())
+                            }
+                            append("/20")
+                        },
+                        maxLines = 1,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.padding(start = 5.dp),
+                    )
+                }
+            }
 
             SectionTitle(title = "생년월일")
             PieceTextInputDefault(
@@ -278,6 +307,20 @@ private fun RegisterProfileScreen(
                     .padding(top = 8.dp)
                     .onFocusChanged { isHeightFocus = it.isFocused },
             )
+            AnimatedVisibility(visible = isHeightFocus) {
+                if (state.height.isNotEmpty()) {
+                    Text(
+                        text = "숫자가 정확한지 확인해 주세요",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.error,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .fillMaxWidth(),
+                    )
+                }
+            }
 
             SectionTitle(title = "몸무게")
             PieceTextInputDefault(
@@ -294,8 +337,22 @@ private fun RegisterProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .onFocusChanged { isHeightFocus = it.isFocused },
+                    .onFocusChanged { isWeightFocus = it.isFocused },
             )
+            AnimatedVisibility(visible = isWeightFocus) {
+                if (state.weight.isNotEmpty()) {
+                    Text(
+                        text = "숫자가 정확한지 확인해 주세요",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.error,
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .fillMaxWidth(),
+                    )
+                }
+            }
 
             SectionTitle(title = "직업")
             PieceTextInputDropDown(
@@ -404,9 +461,7 @@ private fun RegisterProfileScreen(
 }
 
 @Composable
-private fun SectionTitle(
-    title: String,
-) {
+private fun SectionTitle(title: String) {
     Text(
         text = title,
         style = PieceTheme.typography.bodySM,
@@ -415,7 +470,7 @@ private fun SectionTitle(
     )
 }
 
-@Preview(heightDp = 1700)
+@Preview(heightDp = 1600)
 @Composable
 private fun PreviewRegisterProfileScreen() {
     PieceTheme {
