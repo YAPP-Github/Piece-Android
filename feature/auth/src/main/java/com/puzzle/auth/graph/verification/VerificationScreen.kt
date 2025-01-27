@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -30,6 +33,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -216,6 +220,9 @@ private fun AuthCodeBody(
     onVerifyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var lastDoneTime by remember { mutableLongStateOf(0L) }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val authCodeStatusColor = when (authCodeStatus) {
         AuthCodeStatus.INIT -> PieceTheme.colors.dark3
         VERIFIED -> PieceTheme.colors.primaryDefault
@@ -242,6 +249,21 @@ private fun AuthCodeBody(
             BasicTextField(
                 value = authCode,
                 onValueChange = onAuthCodeChanged,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastDoneTime >= 1000L) {
+                            keyboardController?.hide()
+                            onVerifyClick()
+                            lastDoneTime = currentTime
+                        }
+                    }
+                ),
                 textStyle = PieceTheme.typography.bodyMM,
                 decorationBox = { innerTextField ->
                     Box {

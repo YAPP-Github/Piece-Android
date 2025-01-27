@@ -43,7 +43,9 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.component.PieceTextInputDropDown
+import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.navigation.MatchingGraphDest.MatchingRoute
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.TopLevelNavigateTo
@@ -313,17 +315,26 @@ private fun RegisterProfileScreen(
             }
 
             SectionTitle(title = "연락처")
-            PieceTextInputDefault(
-                value = "",
-                keyboardType = KeyboardType.Text,
-                imageId = R.drawable.ic_delete_circle,
-                onImageClick = {},
-                onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .onFocusChanged { isContactFocus = it.isFocused },
-            )
+            state.contacts.forEachIndexed { index, contact ->
+                val image = when (contact.snsPlatForm) {
+                    SnsPlatform.KAKAO_TALK -> R.drawable.ic_sns_kakao
+                    SnsPlatform.KAKAO_OPENCCHATTING -> R.drawable.ic_sns_openchatting
+                    SnsPlatform.INSTAGRAM -> R.drawable.ic_sns_instagram
+                    SnsPlatform.PHONENUMBER -> R.drawable.ic_sns_call
+                }
+
+                PieceTextInputSnsDropDown(
+                    value = contact.content,
+                    image = image,
+                    onValueChange = {},
+                    onDropDownClick = {},
+                    isMandatory = (index == 0),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .onFocusChanged { isContactFocus = it.isFocused },
+                )
+            }
 
             Text(
                 text = "연락처 추가하기 +",
