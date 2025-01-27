@@ -200,7 +200,7 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "나를 표현하는 한 마디")
             PieceTextInputDefault(
                 value = "",
-                hint = "수식어 형태로 작성해주세요",
+                hint = "수식어 형태로 작성해 주세요",
                 imageId = R.drawable.ic_delete,
                 keyboardType = KeyboardType.Text,
                 onValueChange = {},
@@ -214,7 +214,7 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "생년월일")
             PieceTextInputDefault(
                 value = "",
-                hint = "2000.00.00.",
+                hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
                 imageId = R.drawable.ic_delete,
                 keyboardType = KeyboardType.Number,
                 onValueChange = {},
