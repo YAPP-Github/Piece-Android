@@ -2,6 +2,7 @@ package com.puzzle.profile.graph.register
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
@@ -43,7 +45,9 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.component.PieceTextInputDropDown
+import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.navigation.MatchingGraphDest.MatchingRoute
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.TopLevelNavigateTo
@@ -71,6 +75,18 @@ internal fun RegisterProfileRoute(
     RegisterProfileScreen(
         state = state,
         navigate = { viewModel.onIntent(RegisterProfileIntent.Navigate(it)) },
+        onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateNickName(it)) },
+        onDescribeMySelfChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateDescribeMySelf(it)) },
+        onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateBirthday(it)) },
+        onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateHeight(it)) },
+        onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateWeight(it)) },
+        onJobChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateJob(it)) },
+        onJobDropDownClicked = { viewModel.onIntent(RegisterProfileIntent.OnJobDropDownClicked) },
+        onRegionChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateRegion(it)) },
+        onRegionDropDownClicked = { viewModel.onIntent(RegisterProfileIntent.OnRegionDropDownClicked) },
+        onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSmokeStatus(it)) },
+        onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
+        onAddContactsClicked = { viewModel.onIntent(RegisterProfileIntent.OnAddContactsClicked) },
     )
 }
 
@@ -78,13 +94,25 @@ internal fun RegisterProfileRoute(
 private fun RegisterProfileScreen(
     state: RegisterProfileState,
     navigate: (NavigationEvent) -> Unit,
+    onNickNameChanged: (String) -> Unit,
+    onDescribeMySelfChanged: (String) -> Unit,
+    onBirthdayChanged: (String) -> Unit,
+    onHeightChanged: (String) -> Unit,
+    onWeightChanged: (String) -> Unit,
+    onJobChanged: (String) -> Unit,
+    onJobDropDownClicked: () -> Unit,
+    onRegionChanged: (String) -> Unit,
+    onRegionDropDownClicked: () -> Unit,
+    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSnsActivityChanged: (Boolean) -> Unit,
+    onAddContactsClicked: () -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     var isNicknameFocus by remember { mutableStateOf(false) }
-    var isOneLinerFocus by remember { mutableStateOf(false) }
+    var isDescribeMySelfFocus by remember { mutableStateOf(false) }
     var isBirthdayFocus by remember { mutableStateOf(false) }
-    var isRegionFocus by remember { mutableStateOf(false) }
+    var isWeightFocus by remember { mutableStateOf(false) }
     var isHeightFocus by remember { mutableStateOf(false) }
     var isJobFocus by remember { mutableStateOf(false) }
     var isContactFocus by remember { mutableStateOf(false) }
@@ -98,7 +126,7 @@ private fun RegisterProfileScreen(
             title = "",
             onBackClick = { navigate(NavigationEvent.NavigateUp) },
             modifier = Modifier
-                .padding(horizontal = 20.dp)
+                .padding(horizontal = 20.dp, vertical = 14.dp)
                 .align(Alignment.TopCenter),
         )
 
@@ -135,7 +163,7 @@ private fun RegisterProfileScreen(
                 )
 
                 Image(
-                    painter = painterResource(R.drawable.ic_plus),
+                    painter = painterResource(R.drawable.ic_plus_circle),
                     contentDescription = null,
                     modifier = Modifier.align(Alignment.BottomEnd)
                 )
@@ -149,12 +177,22 @@ private fun RegisterProfileScreen(
                     .padding(top = 8.dp),
             ) {
                 PieceTextInputDefault(
-                    value = "",
+                    value = state.nickName,
                     hint = "6자 이하로 작성해주세요",
-                    imageId = R.drawable.ic_delete,
                     keyboardType = KeyboardType.Text,
-                    onValueChange = {},
-                    onImageClick = {},
+                    onValueChange = onNickNameChanged,
+                    rightComponent = {
+                        if (isNicknameFocus && state.nickName.isNotEmpty()) {
+                            Image(
+                                painter = painterResource(R.drawable.ic_delete_circle),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .padding(start = 8.dp)
+                                    .size(20.dp)
+                                    .clickable { onNickNameChanged("") }
+                            )
+                        }
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .onFocusChanged { isNicknameFocus = it.isFocused },
@@ -163,7 +201,7 @@ private fun RegisterProfileScreen(
                 PieceSolidButton(
                     label = "중복검사",
                     onClick = { },
-                    enabled = false,
+                    enabled = state.nickName.isNotEmpty(),
                     modifier = Modifier.padding(start = 8.dp)
                 )
             }
@@ -185,7 +223,7 @@ private fun RegisterProfileScreen(
                     Text(
                         text = buildAnnotatedString {
                             withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                                append("2")
+                                append(state.nickName.length.toString())
                             }
                             append("/6")
                         },
@@ -199,26 +237,72 @@ private fun RegisterProfileScreen(
 
             SectionTitle(title = "나를 표현하는 한 마디")
             PieceTextInputDefault(
-                value = "",
-                hint = "수식어 형태로 작성해주세요",
-                imageId = R.drawable.ic_delete,
+                value = state.describeMySelf,
+                hint = "수식어 형태로 작성해 주세요",
                 keyboardType = KeyboardType.Text,
-                onValueChange = {},
-                onImageClick = {},
+                onValueChange = onDescribeMySelfChanged,
+                rightComponent = {
+                    if (isDescribeMySelfFocus && state.describeMySelf.isNotEmpty()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(20.dp)
+                                .clickable { onDescribeMySelfChanged("") },
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .onFocusChanged { isOneLinerFocus = it.isFocused },
+                    .onFocusChanged { isDescribeMySelfFocus = it.isFocused },
             )
+            AnimatedVisibility(visible = isDescribeMySelfFocus) {
+                Row(
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.weight(1f),
+                    )
+
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                append(state.describeMySelf.length.toString())
+                            }
+                            append("/20")
+                        },
+                        maxLines = 1,
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                        modifier = Modifier.padding(start = 5.dp),
+                    )
+                }
+            }
 
             SectionTitle(title = "생년월일")
             PieceTextInputDefault(
-                value = "",
-                hint = "2000.00.00.",
-                imageId = R.drawable.ic_delete,
+                value = state.birthday,
+                hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
                 keyboardType = KeyboardType.Number,
-                onValueChange = {},
-                onImageClick = {},
+                onValueChange = onBirthdayChanged,
+                rightComponent = {
+                    if (isBirthdayFocus && state.birthday.isNotEmpty()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -226,34 +310,86 @@ private fun RegisterProfileScreen(
             )
 
             SectionTitle(title = "활동 지역")
-            PieceTextInputDefault(
-                value = "",
-                imageId = R.drawable.ic_delete,
-                keyboardType = KeyboardType.Number,
-                onValueChange = {},
-                onImageClick = {},
+            PieceTextInputDropDown(
+                value = state.region,
+                onDropDownClick = onRegionDropDownClicked,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .onFocusChanged { isRegionFocus = it.isFocused },
             )
 
             SectionTitle(title = "키")
             PieceTextInputDefault(
-                value = "",
-                imageId = R.drawable.ic_delete,
+                value = state.height,
                 keyboardType = KeyboardType.Number,
-                onValueChange = {},
-                onImageClick = {},
+                onValueChange = { height ->
+                    if(height.isDigitsOnly()) {
+                        onHeightChanged(height)
+                    }
+                },
+                rightComponent = {
+                    Text(
+                        text = "cm",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                    )
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
                     .onFocusChanged { isHeightFocus = it.isFocused },
             )
+            AnimatedVisibility(visible = isHeightFocus) {
+                Text(
+                    text = if (state.height.isNotEmpty()) "숫자가 정확한지 확인해 주세요" else "",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.error,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                )
+            }
+
+            SectionTitle(title = "몸무게")
+            PieceTextInputDefault(
+                value = state.weight,
+                keyboardType = KeyboardType.Number,
+                onValueChange = { weight ->
+                    if (weight.isDigitsOnly()) {
+                        onWeightChanged(weight)
+                    }
+                },
+                rightComponent = {
+                    Text(
+                        text = "kg",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark3,
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+                    .onFocusChanged { isWeightFocus = it.isFocused },
+            )
+            AnimatedVisibility(visible = isWeightFocus) {
+                Text(
+                    text = if (state.weight.isNotEmpty()) "숫자가 정확한지 확인해 주세요" else "",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.error,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .fillMaxWidth(),
+                )
+            }
 
             SectionTitle(title = "직업")
             PieceTextInputDropDown(
-                value = "",
+                value = state.job,
+                onDropDownClick = onJobDropDownClicked,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -269,26 +405,18 @@ private fun RegisterProfileScreen(
             ) {
                 PieceChip(
                     label = "흡연",
-                    selected = false,
-                    onChipClicked = {},
+                    selected = state.isSmoke == true,
+                    onChipClicked = { onSmokeStatusChanged(true) },
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "비흡연",
-                    selected = false,
-                    onChipClicked = {},
+                    selected = state.isSmoke == false,
+                    onChipClicked = { onSmokeStatusChanged(false) },
                     modifier = Modifier.weight(1f),
                 )
             }
-
-            SectionTitle(title = "종교")
-            PieceTextInputDropDown(
-                value = "",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp),
-            )
 
             SectionTitle(title = "SNS 활동")
             Row(
@@ -299,40 +427,59 @@ private fun RegisterProfileScreen(
             ) {
                 PieceChip(
                     label = "활동",
-                    selected = false,
-                    onChipClicked = {},
+                    selected = state.isSnsActivity == true,
+                    onChipClicked = { onSnsActivityChanged(true) },
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "은둔",
-                    selected = false,
-                    onChipClicked = {},
+                    selected = state.isSnsActivity == false,
+                    onChipClicked = { onSnsActivityChanged(false) },
                     modifier = Modifier.weight(1f),
                 )
             }
 
             SectionTitle(title = "연락처")
-            PieceTextInputDefault(
-                value = "",
-                keyboardType = KeyboardType.Text,
-                imageId = R.drawable.ic_delete,
-                onImageClick = {},
-                onValueChange = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 8.dp)
-                    .onFocusChanged { isContactFocus = it.isFocused },
-            )
+            state.contacts.forEachIndexed { index, contact ->
+                val image = when (contact.snsPlatForm) {
+                    SnsPlatform.KAKAO_TALK -> R.drawable.ic_sns_kakao
+                    SnsPlatform.KAKAO_OPENCCHATTING -> R.drawable.ic_sns_openchatting
+                    SnsPlatform.INSTAGRAM -> R.drawable.ic_sns_instagram
+                    SnsPlatform.PHONENUMBER -> R.drawable.ic_sns_call
+                }
 
-            Text(
-                text = "연락처 추가하기 +",
-                style = PieceTheme.typography.bodyMSB,
-                color = PieceTheme.colors.primaryDefault,
+                PieceTextInputSnsDropDown(
+                    value = contact.content,
+                    image = image,
+                    onValueChange = {},
+                    onDropDownClick = {},
+                    isMandatory = (index == 0),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                        .onFocusChanged { isContactFocus = it.isFocused },
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp, bottom = 68.dp)
-            )
+                    .padding(top = 16.dp, bottom = 60.dp)
+                    .clickable { onAddContactsClicked() },
+            ) {
+                Text(
+                    text = "연락처 추가하기",
+                    style = PieceTheme.typography.bodyMSB,
+                    color = PieceTheme.colors.primaryDefault,
+                )
+
+                Image(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                )
+            }
         }
 
         PieceSolidButton(
@@ -341,15 +488,13 @@ private fun RegisterProfileScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .padding(start = 20.dp, end = 20.dp, bottom = 10.dp),
+                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
         )
     }
 }
 
 @Composable
-private fun SectionTitle(
-    title: String,
-) {
+private fun SectionTitle(title: String) {
     Text(
         text = title,
         style = PieceTheme.typography.bodySM,
@@ -358,13 +503,25 @@ private fun SectionTitle(
     )
 }
 
-@Preview(heightDp = 1700)
+@Preview(heightDp = 1600)
 @Composable
 private fun PreviewRegisterProfileScreen() {
     PieceTheme {
         RegisterProfileScreen(
             state = RegisterProfileState(),
-            navigate = { },
+            navigate = {},
+            onNickNameChanged = {},
+            onDescribeMySelfChanged = {},
+            onBirthdayChanged = {},
+            onHeightChanged = {},
+            onWeightChanged = {},
+            onJobChanged = {},
+            onJobDropDownClicked = {},
+            onRegionChanged = {},
+            onRegionDropDownClicked = {},
+            onSmokeStatusChanged = {},
+            onSnsActivityChanged = {},
+            onAddContactsClicked = {},
         )
     }
 }

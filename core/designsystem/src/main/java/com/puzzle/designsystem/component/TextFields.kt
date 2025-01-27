@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -46,14 +47,13 @@ import com.puzzle.designsystem.foundation.PieceTheme
 fun PieceTextInputDefault(
     value: String,
     onValueChange: (String) -> Unit,
-    @DrawableRes imageId: Int,
-    onImageClick: () -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "",
     readOnly: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     throttleTime: Long = 2000L,
     onDone: () -> Unit = {},
+    rightComponent: @Composable () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastDoneTime by remember { mutableLongStateOf(0L) }
@@ -80,28 +80,21 @@ fun PieceTextInputDefault(
         textStyle = PieceTheme.typography.bodyMM,
         cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
         decorationBox = { innerTextField ->
-            Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = hint,
-                        style = PieceTheme.typography.bodyMM,
-                        color = PieceTheme.colors.dark3,
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    )
+            Row {
+                Box(modifier = Modifier.weight(1f)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = hint,
+                            style = PieceTheme.typography.bodyMM,
+                            color = PieceTheme.colors.dark3,
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        )
+                    }
+
+                    innerTextField()
                 }
 
-                innerTextField()
-
-                if (value.isNotEmpty()) {
-                    Image(
-                        painter = painterResource(imageId),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .align(Alignment.CenterEnd)
-                            .clickable { onImageClick() },
-                    )
-                }
+                rightComponent()
             }
         },
         modifier = modifier
@@ -260,6 +253,7 @@ fun PieceTextInputAI(
 @Composable
 fun PieceTextInputDropDown(
     value: String,
+    onDropDownClick: () -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "",
 ) {
@@ -269,7 +263,8 @@ fun PieceTextInputDropDown(
             .height(52.dp)
             .clip(RoundedCornerShape(8.dp))
             .background(PieceTheme.colors.light3)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+            .clickable { onDropDownClick() },
     ) {
         Text(
             text = value.ifEmpty { hint },
@@ -289,20 +284,104 @@ fun PieceTextInputDropDown(
     }
 }
 
+@Composable
+fun PieceTextInputSnsDropDown(
+    value: String,
+    @DrawableRes image: Int,
+    onValueChange: (String) -> Unit,
+    onDropDownClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isMandatory: Boolean = false,
+    onDeleteClick: () -> Unit = {},
+) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier
+            .height(52.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.light3)
+                .padding(horizontal = 16.dp, vertical = 14.dp)
+                .weight(1f),
+        ) {
+            Image(
+                painter = painterResource(image),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 4.dp)
+                    .size(20.dp),
+            )
+
+            Image(
+                painter = painterResource(R.drawable.ic_textinput_dropdown),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(end = 12.dp)
+                    .size(24.dp)
+                    .clickable { onDropDownClick() },
+            )
+
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+                textStyle = PieceTheme.typography.bodyMM,
+                cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+                decorationBox = { innerTextField -> innerTextField() },
+            )
+        }
+
+        if (!isMandatory) {
+            Image(
+                painter = painterResource(R.drawable.ic_delete_circle),
+                contentDescription = null,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .clickable { onDeleteClick() },
+            )
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun PreviewPieceTextInputDefault() {
     PieceTheme {
-        PieceTextInputDefault(
-            value = "Label",
-            onValueChange = {},
-            hint = "hint",
-            imageId = R.drawable.ic_alarm,
-            onImageClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            PieceTextInputDefault(
+                value = "Label",
+                onValueChange = {},
+                hint = "hint",
+                rightComponent = {
+                    Image(
+                        painter = painterResource(R.drawable.ic_delete_circle),
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp),
+                    )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputDefault(
+                value = "",
+                onValueChange = {},
+                hint = "hint",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+        }
     }
 }
 
@@ -353,6 +432,7 @@ private fun PreviewPieceTextInputDropDown() {
             PieceTextInputDropDown(
                 value = "",
                 hint = "안내 문구",
+                onDropDownClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -360,6 +440,37 @@ private fun PreviewPieceTextInputDropDown() {
 
             PieceTextInputDropDown(
                 value = "Label",
+                onDropDownClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewPieceSnsDropDown() {
+    PieceTheme {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            PieceTextInputSnsDropDown(
+                value = "가나",
+                image = R.drawable.ic_sns_kakao,
+                isMandatory = true,
+                onValueChange = {},
+                onDropDownClick = {},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputSnsDropDown(
+                value = "가나다라마바사",
+                image = R.drawable.ic_sns_openchatting,
+                isMandatory = false,
+                onValueChange = {},
+                onDropDownClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
