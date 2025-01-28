@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -52,10 +53,10 @@ internal fun BasicInfoPage(
             age = age,
             birthYear = birthYear,
             height = height,
-            religion = religion,
             activityRegion = activityRegion,
             occupation = occupation,
             smokeStatue = smokeStatue,
+            modifier = Modifier.padding(horizontal = 20.dp)
         )
     }
 }
@@ -67,12 +68,11 @@ private fun BasicInfoName(
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(horizontal = 20.dp)) {
         Text(
             text = stringResource(R.string.basicinfo_main_label),
             style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
-            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         Spacer(modifier = Modifier.weight(1f))
@@ -81,138 +81,133 @@ private fun BasicInfoName(
             nickName = nickName,
             selfDescription = selfDescription,
             onMoreClick = onMoreClick,
-            modifier = Modifier
-                .padding(
-                    vertical = 20.dp,
-                    horizontal = 20.dp
-                ),
         )
     }
 }
 
 @Composable
-private fun BasicInfoCard(
+private fun ColumnScope.BasicInfoCard(
     age: String,
     birthYear: String,
     height: String,
-    religion: String,
     activityRegion: String,
     occupation: String,
     smokeStatue: String,
     modifier: Modifier = Modifier,
 ) {
-    Column(
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(top = 12.dp, bottom = 4.dp)
     ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            InfoItem(
-                title = stringResource(R.string.basicinfocard_age),
-                text = {
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = stringResource(R.string.basicinfocard_age_particle),
-                            style = PieceTheme.typography.bodySM,
-                            color = PieceTheme.colors.black,
-                        )
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_age),
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = stringResource(R.string.basicinfocard_age_particle),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
 
-                        Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                        Text(
-                            text = age,
-                            style = PieceTheme.typography.headingSSB,
-                            color = PieceTheme.colors.black,
-                        )
+                    Text(
+                        text = age,
+                        style = PieceTheme.typography.headingSSB,
+                        color = PieceTheme.colors.black,
+                    )
 
-                        Text(
-                            text = stringResource(R.string.basicinfocard_age_classifier),
-                            style = PieceTheme.typography.bodySM,
-                            color = PieceTheme.colors.black,
-                        )
+                    Text(
+                        text = stringResource(R.string.basicinfocard_age_classifier),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
 
-                        Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(4.dp))
 
-                        Text(
-                            text = birthYear + stringResource(R.string.basicinfocard_age_suffix),
-                            style = PieceTheme.typography.bodySM,
-                            color = PieceTheme.colors.dark2,
-                            modifier = Modifier.padding(top = 1.dp),
-                        )
-                    }
-                },
-                modifier = modifier.width(width = 144.dp),
-            )
+                    Text(
+                        text = birthYear + stringResource(R.string.basicinfocard_age_suffix),
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.dark2,
+                        modifier = Modifier.padding(top = 1.dp),
+                    )
+                }
+            },
+            modifier = Modifier.size(
+                width = 144.dp,
+                height = 80.dp,
+            ),
+        )
 
-            InfoItem(
-                title = stringResource(R.string.basicinfocard_height),
-                text = {
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = height,
-                            style = PieceTheme.typography.headingSSB,
-                            color = PieceTheme.colors.black,
-                        )
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_height),
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = height,
+                        style = PieceTheme.typography.headingSSB,
+                        color = PieceTheme.colors.black,
+                    )
 
-                        Text(
-                            text = "cm",
-                            style = PieceTheme.typography.bodySM,
-                            color = PieceTheme.colors.black,
-                        )
-                    }
-                },
-                modifier = modifier.weight(1f),
-            )
+                    Text(
+                        text = "cm",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
+                }
+            },
+            modifier = Modifier.weight(1f),
+        )
 
-            InfoItem(
-                title = "몸무게",
-                text = {
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        Text(
-                            text = "72",
-                            style = PieceTheme.typography.headingSSB,
-                            color = PieceTheme.colors.black,
-                        )
+        InfoItem(
+            title = "몸무게",
+            text = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "72",
+                        style = PieceTheme.typography.headingSSB,
+                        color = PieceTheme.colors.black,
+                    )
 
-                        Text(
-                            text = "kg",
-                            style = PieceTheme.typography.bodySM,
-                            color = PieceTheme.colors.black,
-                        )
-                    }
-                },
-                modifier = modifier.weight(1f),
-            )
-        }
+                    Text(
+                        text = "kg",
+                        style = PieceTheme.typography.bodySM,
+                        color = PieceTheme.colors.black,
+                    )
+                }
+            },
+            modifier = Modifier.weight(1f),
+        )
+    }
 
-        Spacer(modifier = Modifier.height(4.dp))
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = 12.dp)
+    ) {
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_activityRegion),
+            content = activityRegion,
+            modifier = Modifier.size(
+                width = 144.dp,
+                height = 80.dp,
+            ),
+        )
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.5.dp),
-        ) {
-            InfoItem(
-                title = stringResource(R.string.basicinfocard_activityRegion),
-                content = activityRegion,
-                modifier = modifier.size(
-                    width = 144.dp,
-                    height = 80.dp,
-                ),
-            )
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_occupation),
+            content = occupation,
+            modifier = Modifier.weight(1f),
+        )
 
-            InfoItem(
-                title = stringResource(R.string.basicinfocard_occupation),
-                content = occupation,
-                modifier = modifier.weight(1f),
-            )
-
-            InfoItem(
-                title = stringResource(R.string.basicinfocard_smokeStatue),
-                content = smokeStatue,
-                modifier = modifier.weight(1f),
-            )
-        }
+        InfoItem(
+            title = stringResource(R.string.basicinfocard_smokeStatue),
+            content = smokeStatue,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 
@@ -221,23 +216,26 @@ private fun InfoItem(
     title: String,
     modifier: Modifier = Modifier,
     content: String? = null,
+    backgroundColor: Color = PieceTheme.colors.white,
     text: @Composable ColumnScope.() -> Unit? = {},
 ) {
     Column(
+        verticalArrangement = Arrangement.spacedBy(
+            space = 8.dp,
+            alignment = Alignment.CenterVertically
+        ),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
             .height(80.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(PieceTheme.colors.white)
-            .padding(vertical = 16.dp, horizontal = 12.dp),
+            .background(backgroundColor)
+            .padding(horizontal = 12.dp),
     ) {
         Text(
             text = title,
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark2,
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         if (content != null) {
             Text(

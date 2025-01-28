@@ -53,10 +53,13 @@
     <string name="basicinfocard_age_classifier">세</string>
     <string name="basicinfocard_age_suffix">년생</string>
     <string name="basicinfocard_height">키</string>
+    <string name="basicinfocard_height_unit">cm</string>
     <string name="basicinfocard_religion">종교</string>
     <string name="basicinfocard_activityRegion">활동 지역</string>
     <string name="basicinfocard_occupation">직업</string>
     <string name="basicinfocard_smokeStatue">흡연</string>
+    <string name="basicinfocard_weight">몸무게</string>
+    <string name="basicinfocard_weight_unit">kg</string>
     <string name="valuepick_all">전체</string>
     <string name="valuepick_same">나와 같은</string>
     <string name="valuepick_different">나와 다른</string>
@@ -91,4 +94,12 @@
     <string name="setting_match_notification">매칭 알림</string>
     <string name="setting_push_notification">푸쉬 알림</string>
     <string name="setting_logged_in_account">로그인 계정</string>
+
+    <!--Main Profile-->
+    <string name="main_profile_topbar_title">Profile</string>
+    <string name="main_profile_my_matching_piece_title">나의 매칭 조각</string>
+    <string name="main_profile_value_talk_title">가치관 Talk</string>
+    <string name="main_profile_value_talk_content">꿈과 목표, 관심사와 취향, 연애에 관련된\n내 생각을 확인하고 수정할 수 있습니다.</string>
+    <string name="main_profile_value_pick_title">가치관 Pick</string>
+    <string name="main_profile_value_pick_content">퀴즈를 통해 나의 연애 스타일을 파악해보고\n선택한 답변을 수정할 수 있습니다.</string>
 </resources>
