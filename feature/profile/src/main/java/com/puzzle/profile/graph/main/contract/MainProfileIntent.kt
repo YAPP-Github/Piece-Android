@@ -4,4 +4,5 @@ import com.puzzle.navigation.NavigationEvent
 
 sealed class MainProfileIntent {
     data class Navigate(val navigationEvent: NavigationEvent) : MainProfileIntent()
+    data object OnValueTalkClick : MainProfileIntent()
 }

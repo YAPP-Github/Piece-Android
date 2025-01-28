@@ -5,7 +5,9 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.profile.graph.main.contract.MainProfileIntent
 import com.puzzle.profile.graph.main.contract.MainProfileSideEffect
 import com.puzzle.profile.graph.main.contract.MainProfileState
@@ -42,7 +44,14 @@ class MainProfileViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: MainProfileIntent) {
         when (intent) {
             is MainProfileIntent.Navigate -> _sideEffects.send(MainProfileSideEffect.Navigate(intent.navigationEvent))
+            MainProfileIntent.OnValueTalkClick -> moveToValueTalkScreen()
         }
+    }
+
+    private suspend fun moveToValueTalkScreen() {
+        _sideEffects.send(
+            MainProfileSideEffect.Navigate(NavigationEvent.NavigateTo(ProfileGraphDest.ValueTalkProfileRoute))
+        )
     }
 
     @AssistedFactory

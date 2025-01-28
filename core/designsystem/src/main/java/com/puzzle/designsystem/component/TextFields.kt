@@ -136,7 +136,7 @@ fun PieceTextInputLong(
         onValueChange = { input ->
             limit?.let { if (input.length <= limit) onValueChange(input) } ?: onValueChange(input)
         },
-        singleLine = true,
+        singleLine = false,
         readOnly = readOnly,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
@@ -155,19 +155,22 @@ fun PieceTextInputLong(
         textStyle = PieceTheme.typography.bodyMM,
         cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
         decorationBox = { innerTextField ->
+            val isTextCountVisible: Boolean = limit != null && (isFocused || value.isNotEmpty())
             Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = hint,
-                        style = PieceTheme.typography.bodyMM,
-                        color = PieceTheme.colors.dark3,
-                        modifier = Modifier.align(Alignment.TopStart)
-                    )
+                Box(modifier = Modifier.padding(bottom = if (isTextCountVisible) 36.dp else 0.dp)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = hint,
+                            style = PieceTheme.typography.bodyMM,
+                            color = PieceTheme.colors.dark3,
+                            modifier = Modifier.align(Alignment.TopStart)
+                        )
+                    }
+
+                    innerTextField()
                 }
 
-                innerTextField()
-
-                if (limit != null && isFocused && value.isNotEmpty()) {
+                if (isTextCountVisible) {
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
@@ -176,7 +179,9 @@ fun PieceTextInputLong(
                             append("/${limit}")
                         },
                         style = PieceTheme.typography.bodySM,
-                        modifier = Modifier.align(Alignment.BottomEnd),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .height(20.dp),
                     )
                 }
             }
@@ -197,13 +202,17 @@ fun PieceTextInputLong(
 fun PieceTextInputAI(
     value: String,
     onValueChange: (String) -> Unit,
+    onSaveClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     throttleTime: Long = 2000L,
+    readOnly: Boolean = true,
     onDone: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastDoneTime by remember { mutableLongStateOf(0L) }
     var isFocused by remember { mutableStateOf(false) }
+    var isReadOnly: Boolean by remember { mutableStateOf(readOnly) }
+    var isLoading: Boolean by remember { mutableStateOf(value.isBlank()) }
 
     BasicTextField(
         value = value,
@@ -222,9 +231,10 @@ fun PieceTextInputAI(
         ),
         textStyle = PieceTheme.typography.bodyMM,
         cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+        readOnly = isReadOnly,
         decorationBox = { innerTextField ->
             Box {
-                if (value.isEmpty()) {
+                if (isLoading) {
                     Text(
                         text = "작성해주신 내용을 AI가 요약하고 있어요",
                         style = PieceTheme.typography.bodyMM,
@@ -235,16 +245,31 @@ fun PieceTextInputAI(
 
                 innerTextField()
 
-                val imageRes = if (value.isEmpty()) R.drawable.ic_textinput_3dots
-                else if (isFocused) R.drawable.ic_textinput_check
-                else R.drawable.ic_textinput_pencil
+                val imageRes = if (isLoading) {
+                    R.drawable.ic_textinput_3dots
+                } else {
+                    if (isReadOnly) {
+                        R.drawable.ic_textinput_pencil
+                    } else {
+                        R.drawable.ic_textinput_check
+                    }
+                }
 
                 Image(
                     painter = painterResource(imageRes),
                     contentDescription = null,
                     modifier = Modifier
                         .size(24.dp)
-                        .align(Alignment.CenterEnd),
+                        .align(Alignment.CenterEnd)
+                        .clickable {
+                            if (isReadOnly) {
+                                isReadOnly = false
+                            } else {
+                                isLoading = true
+                                isReadOnly = true
+                                onSaveClick(value)
+                            }
+                        },
                 )
             }
         },
@@ -329,6 +354,8 @@ private fun PreviewPieceTextInputAI() {
             PieceTextInputAI(
                 value = "",
                 onValueChange = {},
+                onSaveClick = {},
+                readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -337,6 +364,18 @@ private fun PreviewPieceTextInputAI() {
             PieceTextInputAI(
                 value = "Label",
                 onValueChange = { },
+                onSaveClick = { },
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputAI(
+                value = "Label",
+                onValueChange = { },
+                onSaveClick = { },
+                readOnly = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),

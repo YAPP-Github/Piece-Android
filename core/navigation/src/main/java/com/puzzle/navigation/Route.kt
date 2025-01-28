@@ -48,5 +48,8 @@ sealed class ProfileGraphDest : Route {
     data object RegisterProfileRoute : Route
 
     @Serializable
-    data object ProfileRoute : Route
+    data object MainProfileRoute : Route
+
+    @Serializable
+    data object ValueTalkProfileRoute : Route
 }

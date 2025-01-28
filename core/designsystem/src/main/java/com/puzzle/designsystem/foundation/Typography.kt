@@ -88,6 +88,11 @@ data class PieceTypography(
         fontSize = 14.sp,
         lineHeight = 20.sp,
     ),
+    val bodySR: TextStyle = TextStyle(
+        fontFamily = PretendardRegular,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+    ),
     val captionM: TextStyle = TextStyle(
         fontFamily = PretendardMedium,
         fontSize = 12.sp,
