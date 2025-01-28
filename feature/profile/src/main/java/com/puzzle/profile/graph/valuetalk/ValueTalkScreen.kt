@@ -192,8 +192,6 @@ private fun ValueTalkCard(
     onAiSummarySaveClick: (ValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var editableContent: String by remember { mutableStateOf(item.content) }
-
     Column(modifier = modifier) {
         Text(
             text = item.label,
@@ -210,9 +208,8 @@ private fun ValueTalkCard(
         )
 
         PieceTextInputLong(
-            value = editableContent,
+            value = item.content,
             onValueChange = {
-                editableContent = it
                 onContentChange(item.copy(content = it))
             },
             limit = 300,
