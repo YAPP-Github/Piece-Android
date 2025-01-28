@@ -3,6 +3,7 @@
 package com.puzzle.designsystem.component
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,8 +39,9 @@ fun PieceModalBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
+        containerColor = PieceTheme.colors.white,
         sheetState = sheetState,
-        modifier = modifier,
+        modifier = modifier.pointerInput(Unit) {},
     ) {
         sheetContent()
     }
@@ -77,7 +80,6 @@ fun PieceBottomSheetListItemDefault(
         modifier = modifier
             .fillMaxWidth()
             .height(62.dp)
-            .padding(horizontal = 20.dp)
             .clickable { onChecked() },
     ) {
         if (icon != null) {
@@ -117,6 +119,7 @@ fun PieceBottomSheetListItemExpandable(
     checked: Boolean,
     onChecked: () -> Unit,
     modifier: Modifier = Modifier,
+    expandableContent: @Composable () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -146,6 +149,15 @@ fun PieceBottomSheetListItemExpandable(
                 )
             }
         }
+
+        AnimatedVisibility(
+            visible = checked,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+        ) {
+            expandableContent()
+        }
     }
 }
 
@@ -161,10 +173,17 @@ private fun PreviewModalBottomSheet() {
 
     PieceTheme {
         PieceModalBottomSheet(
-            sheetState = rememberModalBottomSheetState(),
+            sheetState = rememberModalBottomSheetState(
+                skipPartiallyExpanded = true,
+            ),
             onDismissRequest = {},
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pointerInput(Unit) {}
+                    .padding(horizontal = 20.dp),
+            ) {
                 PieceBottomSheetHeader(
                     title = "활동 지역",
                     subTitle = "주로 활동하는 지역을 선택해주세요."
@@ -190,7 +209,7 @@ private fun PreviewModalBottomSheet() {
                     onClick = {},
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
+                        .padding(top = 12.dp, bottom = 10.dp),
                 )
             }
         }
