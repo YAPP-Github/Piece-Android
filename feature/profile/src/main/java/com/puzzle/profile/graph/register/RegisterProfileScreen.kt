@@ -185,10 +185,11 @@ private fun RegisterProfileScreen(
     var previousContactSize by remember { mutableStateOf(1) }
 
     LaunchedEffect(state.contacts) {
-        if (previousContactSize != state.contacts.size) {
+        if (previousContactSize < state.contacts.size) {
             scrollState.animateScrollTo(scrollState.maxValue)
-            previousContactSize = state.contacts.size
         }
+        previousContactSize = state.contacts.size
+
     }
 
     Box(
