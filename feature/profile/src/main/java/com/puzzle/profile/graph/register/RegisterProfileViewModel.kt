@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.domain.model.profile.Contact
+import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
@@ -53,9 +55,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.UpdateRegion -> updateLocation(intent.region)
             is RegisterProfileIntent.UpdateSmokeStatus -> updateIsSmoke(intent.isSmoke)
             is RegisterProfileIntent.UpdateSnsActivity -> updateIsSnsActive(intent.isSnsActivity)
-            is RegisterProfileIntent.OnJobDropDownClicked -> showBottomSheet(intent.content)
-            is RegisterProfileIntent.OnLocationDropDownClicked -> showBottomSheet(intent.content)
-            RegisterProfileIntent.OnAddContactsClicked -> onAddContactsClicked()
+            is RegisterProfileIntent.AddContact -> addContact(intent.snsPlatform)
+            is RegisterProfileIntent.DeleteContact -> deleteContact(intent.idx)
+            is RegisterProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
+            is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
         }
     }
 
@@ -101,8 +104,29 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState { copy(isSnsActive = isSnsActivity) }
     }
 
-    private fun onAddContactsClicked() {
-        // TODO: Implement add contacts logic
+    private fun addContact(snsPlatform: SnsPlatform) {
+        setState {
+            val newContacts = contacts.toMutableList()
+            newContacts.add(Contact(snsPlatform = snsPlatform, content = ""))
+            copy(contacts = newContacts)
+        }
+        eventHelper.sendEvent(PieceEvent.HideBottomSheet)
+    }
+
+    private fun deleteContact(idx: Int) {
+        setState {
+            val newContacts = contacts.toMutableList()
+            newContacts.removeAt(idx)
+            copy(contacts = newContacts)
+        }
+    }
+
+    private fun updateContact(idx: Int, contact: Contact) {
+        setState {
+            val newContacts = contacts.toMutableList()
+            newContacts[idx] = contact
+            copy(contacts = newContacts)
+        }
     }
 
     private fun showBottomSheet(content: @Composable () -> Unit) {

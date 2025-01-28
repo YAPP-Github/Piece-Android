@@ -47,10 +47,12 @@ import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.component.PieceTextInputDropDown
 import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.navigation.MatchingGraphDest.MatchingRoute
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.TopLevelNavigateTo
+import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
@@ -84,10 +86,39 @@ internal fun RegisterProfileRoute(
         onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateWeight(it)) },
         onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSmokeStatus(it)) },
         onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
-        onAddContactsClicked = { viewModel.onIntent(RegisterProfileIntent.OnAddContactsClicked) },
+        onAddContactsClicked = {
+            viewModel.onIntent(
+                RegisterProfileIntent.ShowBottomSheet(
+                    {
+                        ContactBottomSheet(
+                            onButtonClicked = {
+                                viewModel.onIntent(RegisterProfileIntent.AddContact(it))
+                            },
+                        )
+                    }
+                )
+            )
+        },
+        onUpdateSnsPlatformClicked = { idx ->
+            viewModel.onIntent(
+                RegisterProfileIntent.ShowBottomSheet(
+                    {
+                        ContactBottomSheet(
+                            onButtonClicked = {
+                                viewModel.onIntent(
+                                    RegisterProfileIntent.UpdateContact(
+                                        idx, state.contacts[idx].copy(snsPlatform = it)
+                                    )
+                                )
+                            },
+                        )
+                    }
+                )
+            )
+        },
         onJobDropDownClicked = {
             viewModel.onIntent(
-                RegisterProfileIntent.OnJobDropDownClicked(
+                RegisterProfileIntent.ShowBottomSheet(
                     {
                         JobBottomSheet(
                             selectedJob = state.job,
@@ -103,7 +134,7 @@ internal fun RegisterProfileRoute(
         },
         onLocationDropDownClicked = {
             viewModel.onIntent(
-                RegisterProfileIntent.OnLocationDropDownClicked(
+                RegisterProfileIntent.ShowBottomSheet(
                     {
                         LocationBottomSheet(
                             selectedLocation = state.location,
@@ -114,6 +145,10 @@ internal fun RegisterProfileRoute(
                     }
                 )
             )
+        },
+        onDeleteContact = { viewModel.onIntent(RegisterProfileIntent.DeleteContact(it)) },
+        onUpdateContact = { idx, contact ->
+            viewModel.onIntent(RegisterProfileIntent.UpdateContact(idx, contact))
         },
     )
 }
@@ -132,6 +167,9 @@ private fun RegisterProfileScreen(
     onSmokeStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
     onAddContactsClicked: () -> Unit,
+    onUpdateSnsPlatformClicked: (Int) -> Unit,
+    onDeleteContact: (Int) -> Unit,
+    onUpdateContact: (Int, Contact) -> Unit,
 ) {
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
@@ -467,8 +505,8 @@ private fun RegisterProfileScreen(
             }
 
             SectionTitle(title = "연락처")
-            state.contacts.forEachIndexed { index, contact ->
-                val image = when (contact.snsPlatForm) {
+            state.contacts.forEachIndexed { idx, contact ->
+                val image = when (contact.snsPlatform) {
                     SnsPlatform.KAKAO -> R.drawable.ic_sns_kakao
                     SnsPlatform.OPENKAKAO -> R.drawable.ic_sns_openchatting
                     SnsPlatform.INSTA -> R.drawable.ic_sns_instagram
@@ -479,9 +517,10 @@ private fun RegisterProfileScreen(
                 PieceTextInputSnsDropDown(
                     value = contact.content,
                     image = image,
-                    onValueChange = {},
-                    onDropDownClick = {},
-                    isMandatory = (index == 0),
+                    onValueChange = { onUpdateContact(idx, contact.copy(content = it)) },
+                    onDropDownClick = { onUpdateSnsPlatformClicked(idx) },
+                    onDeleteClick = { onDeleteContact(idx) },
+                    isMandatory = (idx == 0),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 8.dp)
@@ -547,6 +586,9 @@ private fun PreviewRegisterProfileScreen() {
             onSmokeStatusChanged = {},
             onSnsActivityChanged = {},
             onAddContactsClicked = {},
+            onDeleteContact = {},
+            onUpdateContact = { _, _ -> },
+            onUpdateSnsPlatformClicked = {},
         )
     }
 }

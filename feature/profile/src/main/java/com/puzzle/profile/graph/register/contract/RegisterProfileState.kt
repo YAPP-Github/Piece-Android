@@ -16,7 +16,7 @@ data class RegisterProfileState(
     val isSnsActive: Boolean? = null,
     val contacts: List<Contact> = listOf(
         Contact(
-            snsPlatForm = SnsPlatform.KAKAO,
+            snsPlatform = SnsPlatform.KAKAO,
             content = "",
         ),
     ),

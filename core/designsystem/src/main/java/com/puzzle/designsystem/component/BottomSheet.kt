@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -93,7 +94,7 @@ fun PieceBottomSheetListItemDefault(
     checked: Boolean,
     onChecked: () -> Unit,
     modifier: Modifier = Modifier,
-    @DrawableRes icon: Int? = null,
+    @DrawableRes image: Int? = null,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -102,10 +103,14 @@ fun PieceBottomSheetListItemDefault(
             .height(62.dp)
             .clickable { onChecked() },
     ) {
-        if (icon != null) {
+        if (image != null) {
             Image(
-                painter = painterResource(icon),
+                painter = painterResource(image),
                 contentDescription = null,
+                colorFilter = ColorFilter.tint(
+                    color = if (checked) PieceTheme.colors.primaryDefault
+                    else PieceTheme.colors.dark1,
+                ),
                 modifier = Modifier
                     .padding(end = 10.dp)
                     .size(32.dp),
