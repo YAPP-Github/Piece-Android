@@ -20,4 +20,5 @@ sealed class RegisterProfileIntent {
     data class DeleteContact(val idx: Int) : RegisterProfileIntent()
     data class AddContact(val snsPlatform: SnsPlatform) : RegisterProfileIntent()
     data class ShowBottomSheet(val content: @Composable () -> Unit) : RegisterProfileIntent()
+    data object HideBottomSheet : RegisterProfileIntent()
 }

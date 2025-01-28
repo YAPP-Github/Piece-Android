@@ -59,6 +59,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.DeleteContact -> deleteContact(intent.idx)
             is RegisterProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
             is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
+            RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
         }
     }
 
@@ -131,6 +132,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private fun showBottomSheet(content: @Composable () -> Unit) {
         eventHelper.sendEvent(PieceEvent.ShowBottomSheet(content))
+    }
+
+    private fun hideBottomSheet() {
+        eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     @AssistedFactory

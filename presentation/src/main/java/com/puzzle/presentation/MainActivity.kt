@@ -1,7 +1,6 @@
 package com.puzzle.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -50,11 +49,7 @@ class MainActivity : ComponentActivity() {
                     skipHalfExpanded = true,
                 )
                 var bottomSheetContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
-                val coroutineScope = rememberCoroutineScope()
-
-                LaunchedEffect(sheetState.currentValue) {
-                    Log.d("test", sheetState.currentValue.toString())
-                }
+                val scope = rememberCoroutineScope()
 
                 LaunchedEffect(Unit) {
                     repeatOnStarted {
@@ -74,14 +69,14 @@ class MainActivity : ComponentActivity() {
                                         snackBarHostState.showSnackbar(event.msg)
 
                                     is PieceEvent.ShowBottomSheet -> {
-                                        coroutineScope.launch {
+                                        scope.launch {
                                             bottomSheetContent = event.content
                                             sheetState.show()
                                         }
                                     }
 
                                     PieceEvent.HideBottomSheet -> {
-                                        coroutineScope.launch {
+                                        scope.launch {
                                             sheetState.hide()
                                         }
                                     }

@@ -110,6 +110,8 @@ internal fun RegisterProfileRoute(
                                         idx, state.contacts[idx].copy(snsPlatform = it)
                                     )
                                 )
+
+                                viewModel.onIntent(RegisterProfileIntent.HideBottomSheet)
                             },
                         )
                     }
@@ -180,6 +182,14 @@ private fun RegisterProfileScreen(
     var isHeightFocus by remember { mutableStateOf(false) }
     var isJobFocus by remember { mutableStateOf(false) }
     var isContactFocus by remember { mutableStateOf(false) }
+    var previousContactSize by remember { mutableStateOf(1) }
+
+    LaunchedEffect(state.contacts) {
+        if (previousContactSize != state.contacts.size) {
+            scrollState.animateScrollTo(scrollState.maxValue)
+            previousContactSize = state.contacts.size
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -528,23 +538,31 @@ private fun RegisterProfileScreen(
                 )
             }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+            AnimatedVisibility(
+                visible = state.contacts.size < 4,
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable { onAddContactsClicked() },
+                    .fillMaxWidth()
+                    .padding(bottom = 60.dp),
             ) {
-                Text(
-                    text = "연락처 추가하기",
-                    style = PieceTheme.typography.bodyMSB,
-                    color = PieceTheme.colors.primaryDefault,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 16.dp)
+                        .clickable { onAddContactsClicked() },
+                ) {
+                    Text(
+                        text = "연락처 추가하기",
+                        style = PieceTheme.typography.bodyMSB,
+                        color = PieceTheme.colors.primaryDefault,
+                    )
 
-                Image(
-                    painter = painterResource(R.drawable.ic_plus),
-                    contentDescription = null,
-                )
+                    Image(
+                        painter = painterResource(R.drawable.ic_plus),
+                        contentDescription = null,
+                    )
+                }
             }
         }
 

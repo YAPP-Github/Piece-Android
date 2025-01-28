@@ -33,7 +33,7 @@ internal fun ContactBottomSheet(
             .pointerInput(Unit) {}
             .padding(horizontal = 20.dp),
     ) {
-        PieceBottomSheetHeader(title = "직업")
+        PieceBottomSheetHeader(title = "연락처")
 
         Column(
             modifier = Modifier

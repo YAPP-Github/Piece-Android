@@ -2,6 +2,7 @@
 
 package com.puzzle.designsystem.component
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -23,6 +24,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun PieceModalBottomSheet(
@@ -42,6 +45,9 @@ fun PieceModalBottomSheet(
     sheetContent: @Composable (() -> Unit)?,
     content: @Composable () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    BackHandler { scope.launch { sheetState.hide() } }
+
     ModalBottomSheetLayout(
         sheetGesturesEnabled = false,
         sheetContentColor = PieceTheme.colors.white,
@@ -83,7 +89,7 @@ fun PieceBottomSheetHeader(
             text = subTitle,
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark2,
-            modifier = Modifier.padding(bottom = 8.dp),
+            modifier = Modifier.padding(vertical = 8.dp),
         )
     }
 }
