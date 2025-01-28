@@ -1,10 +1,12 @@
 package com.puzzle.profile.graph.register
 
+import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
-import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.common.event.EventHelper
+import com.puzzle.common.event.PieceEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
@@ -23,7 +25,7 @@ import kotlinx.coroutines.launch
 class RegisterProfileViewModel @AssistedInject constructor(
     @Assisted initialState: RegisterProfileState,
     internal val navigationHelper: NavigationHelper,
-    private val errorHelper: ErrorHelper,
+    private val eventHelper: EventHelper,
 ) : MavericksViewModel<RegisterProfileState>(initialState) {
     private val intents = Channel<RegisterProfileIntent>(BUFFERED)
     private val _sideEffects = Channel<RegisterProfileSideEffect>(BUFFERED)
@@ -43,17 +45,17 @@ class RegisterProfileViewModel @AssistedInject constructor(
         when (intent) {
             is RegisterProfileIntent.Navigate -> handleNavigation(intent)
             is RegisterProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
-            is RegisterProfileIntent.UpdateDescribeMySelf -> updateDescribeMySelf(intent.description)
-            is RegisterProfileIntent.UpdateBirthday -> updateBirthday(intent.birthday)
+            is RegisterProfileIntent.UpdateDescribeMySelf -> updateDescription(intent.description)
+            is RegisterProfileIntent.UpdateBirthday -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.UpdateHeight -> updateHeight(intent.height)
             is RegisterProfileIntent.UpdateWeight -> updateWeight(intent.weight)
             is RegisterProfileIntent.UpdateJob -> updateJob(intent.job)
-            is RegisterProfileIntent.UpdateRegion -> updateRegion(intent.region)
-            is RegisterProfileIntent.UpdateSmokeStatus -> updateSmokeStatus(intent.isSmoke)
-            is RegisterProfileIntent.UpdateSnsActivity -> updateSnsActivity(intent.isSnsActivity)
-            RegisterProfileIntent.OnAddContactsClicked -> handleAddContactsClicked()
-            RegisterProfileIntent.OnJobDropDownClicked -> handleJobDropDownClicked()
-            RegisterProfileIntent.OnRegionDropDownClicked -> handleRegionDropDownClicked()
+            is RegisterProfileIntent.UpdateRegion -> updateLocation(intent.region)
+            is RegisterProfileIntent.UpdateSmokeStatus -> updateIsSmoke(intent.isSmoke)
+            is RegisterProfileIntent.UpdateSnsActivity -> updateIsSnsActive(intent.isSnsActivity)
+            is RegisterProfileIntent.OnJobDropDownClicked -> showBottomSheet(intent.content)
+            is RegisterProfileIntent.OnLocationDropDownClicked -> showBottomSheet(intent.content)
+            RegisterProfileIntent.OnAddContactsClicked -> onAddContactsClicked()
         }
     }
 
@@ -65,12 +67,12 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState { copy(nickName = nickName) }
     }
 
-    private fun updateDescribeMySelf(description: String) {
-        setState { copy(describeMySelf = description) }
+    private fun updateDescription(description: String) {
+        setState { copy(description = description) }
     }
 
-    private fun updateBirthday(birthday: String) {
-        setState { copy(birthday = birthday) }
+    private fun updateBirthdate(birthday: String) {
+        setState { copy(birthdate = birthday) }
     }
 
     private fun updateHeight(height: String) {
@@ -83,30 +85,28 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private fun updateJob(job: String) {
         setState { copy(job = job) }
+        eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
-    private fun updateRegion(region: String) {
-        setState { copy(region = region) }
+    private fun updateLocation(region: String) {
+        setState { copy(location = region) }
+        eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
-    private fun updateSmokeStatus(isSmoke: Boolean?) {
+    private fun updateIsSmoke(isSmoke: Boolean?) {
         setState { copy(isSmoke = isSmoke) }
     }
 
-    private fun updateSnsActivity(isSnsActivity: Boolean?) {
-        setState { copy(isSnsActivity = isSnsActivity) }
+    private fun updateIsSnsActive(isSnsActivity: Boolean?) {
+        setState { copy(isSnsActive = isSnsActivity) }
     }
 
-    private fun handleAddContactsClicked() {
+    private fun onAddContactsClicked() {
         // TODO: Implement add contacts logic
     }
 
-    private fun handleJobDropDownClicked() {
-        // TODO: Implement job dropdown logic
-    }
-
-    private fun handleRegionDropDownClicked() {
-        // TODO: Implement region dropdown logic
+    private fun showBottomSheet(content: @Composable () -> Unit) {
+        eventHelper.sendEvent(PieceEvent.ShowBottomSheet(content))
     }
 
     @AssistedFactory

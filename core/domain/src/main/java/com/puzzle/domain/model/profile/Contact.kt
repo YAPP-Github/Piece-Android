@@ -6,8 +6,15 @@ data class Contact(
 )
 
 enum class SnsPlatform {
-    KAKAO_TALK,
-    KAKAO_OPENCCHATTING,
-    INSTAGRAM,
-    PHONENUMBER,
+    KAKAO,
+    OPENKAKAO,
+    INSTA,
+    PHONE,
+    UNKNOWN;
+
+    companion object {
+        fun create(value: String): SnsPlatform {
+            return SnsPlatform.entries.firstOrNull { it.name == value } ?: UNKNOWN
+        }
+    }
 }

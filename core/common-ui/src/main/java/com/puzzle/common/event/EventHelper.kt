@@ -20,4 +20,5 @@ class EventHelper @Inject constructor() {
 sealed class PieceEvent {
     data class ShowSnackBar(val msg: String) : PieceEvent()
     data class ShowBottomSheet(val content: @Composable () -> Unit) : PieceEvent()
+    data object HideBottomSheet : PieceEvent()
 }

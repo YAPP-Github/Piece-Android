@@ -51,6 +51,8 @@ import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.navigation.MatchingGraphDest.MatchingRoute
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.TopLevelNavigateTo
+import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
+import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
@@ -80,13 +82,39 @@ internal fun RegisterProfileRoute(
         onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateBirthday(it)) },
         onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateHeight(it)) },
         onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateWeight(it)) },
-        onJobChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateJob(it)) },
-        onJobDropDownClicked = { viewModel.onIntent(RegisterProfileIntent.OnJobDropDownClicked) },
-        onRegionChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateRegion(it)) },
-        onRegionDropDownClicked = { viewModel.onIntent(RegisterProfileIntent.OnRegionDropDownClicked) },
         onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSmokeStatus(it)) },
         onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
         onAddContactsClicked = { viewModel.onIntent(RegisterProfileIntent.OnAddContactsClicked) },
+        onJobDropDownClicked = {
+            viewModel.onIntent(
+                RegisterProfileIntent.OnJobDropDownClicked(
+                    {
+                        JobBottomSheet(
+                            selectedJob = state.job,
+                            updateSelectJob = {
+                                viewModel.onIntent(
+                                    RegisterProfileIntent.UpdateJob(it)
+                                )
+                            },
+                        )
+                    }
+                )
+            )
+        },
+        onLocationDropDownClicked = {
+            viewModel.onIntent(
+                RegisterProfileIntent.OnLocationDropDownClicked(
+                    {
+                        LocationBottomSheet(
+                            selectedLocation = state.location,
+                            updateSelectLocation = {
+                                viewModel.onIntent(RegisterProfileIntent.UpdateRegion(it))
+                            },
+                        )
+                    }
+                )
+            )
+        },
     )
 }
 
@@ -99,10 +127,8 @@ private fun RegisterProfileScreen(
     onBirthdayChanged: (String) -> Unit,
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
-    onJobChanged: (String) -> Unit,
     onJobDropDownClicked: () -> Unit,
-    onRegionChanged: (String) -> Unit,
-    onRegionDropDownClicked: () -> Unit,
+    onLocationDropDownClicked: () -> Unit,
     onSmokeStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
     onAddContactsClicked: () -> Unit,
@@ -110,8 +136,8 @@ private fun RegisterProfileScreen(
     val focusManager = LocalFocusManager.current
     val scrollState = rememberScrollState()
     var isNicknameFocus by remember { mutableStateOf(false) }
-    var isDescribeMySelfFocus by remember { mutableStateOf(false) }
-    var isBirthdayFocus by remember { mutableStateOf(false) }
+    var isDescriptionFocus by remember { mutableStateOf(false) }
+    var isBirthdateFocus by remember { mutableStateOf(false) }
     var isWeightFocus by remember { mutableStateOf(false) }
     var isHeightFocus by remember { mutableStateOf(false) }
     var isJobFocus by remember { mutableStateOf(false) }
@@ -237,12 +263,12 @@ private fun RegisterProfileScreen(
 
             SectionTitle(title = "나를 표현하는 한 마디")
             PieceTextInputDefault(
-                value = state.describeMySelf,
+                value = state.description,
                 hint = "수식어 형태로 작성해 주세요",
                 keyboardType = KeyboardType.Text,
                 onValueChange = onDescribeMySelfChanged,
                 rightComponent = {
-                    if (isDescribeMySelfFocus && state.describeMySelf.isNotEmpty()) {
+                    if (isDescriptionFocus && state.description.isNotEmpty()) {
                         Image(
                             painter = painterResource(R.drawable.ic_delete_circle),
                             contentDescription = null,
@@ -256,9 +282,9 @@ private fun RegisterProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .onFocusChanged { isDescribeMySelfFocus = it.isFocused },
+                    .onFocusChanged { isDescriptionFocus = it.isFocused },
             )
-            AnimatedVisibility(visible = isDescribeMySelfFocus) {
+            AnimatedVisibility(visible = isDescriptionFocus) {
                 Row(
                     modifier = Modifier
                         .padding(top = 8.dp)
@@ -276,7 +302,7 @@ private fun RegisterProfileScreen(
                     Text(
                         text = buildAnnotatedString {
                             withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                                append(state.describeMySelf.length.toString())
+                                append(state.description.length.toString())
                             }
                             append("/20")
                         },
@@ -290,12 +316,12 @@ private fun RegisterProfileScreen(
 
             SectionTitle(title = "생년월일")
             PieceTextInputDefault(
-                value = state.birthday,
+                value = state.birthdate,
                 hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
                 keyboardType = KeyboardType.Number,
                 onValueChange = onBirthdayChanged,
                 rightComponent = {
-                    if (isBirthdayFocus && state.birthday.isNotEmpty()) {
+                    if (isBirthdateFocus && state.birthdate.isNotEmpty()) {
                         Image(
                             painter = painterResource(R.drawable.ic_delete_circle),
                             contentDescription = null,
@@ -306,13 +332,13 @@ private fun RegisterProfileScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
-                    .onFocusChanged { isBirthdayFocus = it.isFocused },
+                    .onFocusChanged { isBirthdateFocus = it.isFocused },
             )
 
             SectionTitle(title = "활동 지역")
             PieceTextInputDropDown(
-                value = state.region,
-                onDropDownClick = onRegionDropDownClicked,
+                value = state.location,
+                onDropDownClick = onLocationDropDownClicked,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp)
@@ -323,7 +349,7 @@ private fun RegisterProfileScreen(
                 value = state.height,
                 keyboardType = KeyboardType.Number,
                 onValueChange = { height ->
-                    if(height.isDigitsOnly()) {
+                    if (height.isDigitsOnly()) {
                         onHeightChanged(height)
                     }
                 },
@@ -341,7 +367,7 @@ private fun RegisterProfileScreen(
             )
             AnimatedVisibility(visible = isHeightFocus) {
                 Text(
-                    text = if (state.height.isNotEmpty()) "숫자가 정확한지 확인해 주세요" else "",
+                    text = if (state.height.isNotEmpty()) "숫자가 정확한 지 확인해 주세요" else "",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = PieceTheme.typography.bodySM,
@@ -375,7 +401,7 @@ private fun RegisterProfileScreen(
             )
             AnimatedVisibility(visible = isWeightFocus) {
                 Text(
-                    text = if (state.weight.isNotEmpty()) "숫자가 정확한지 확인해 주세요" else "",
+                    text = if (state.weight.isNotEmpty()) "숫자가 정확한 지 확인해 주세요" else "",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = PieceTheme.typography.bodySM,
@@ -427,14 +453,14 @@ private fun RegisterProfileScreen(
             ) {
                 PieceChip(
                     label = "활동",
-                    selected = state.isSnsActivity == true,
+                    selected = state.isSnsActive == true,
                     onChipClicked = { onSnsActivityChanged(true) },
                     modifier = Modifier.weight(1f),
                 )
 
                 PieceChip(
                     label = "은둔",
-                    selected = state.isSnsActivity == false,
+                    selected = state.isSnsActive == false,
                     onChipClicked = { onSnsActivityChanged(false) },
                     modifier = Modifier.weight(1f),
                 )
@@ -443,10 +469,11 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "연락처")
             state.contacts.forEachIndexed { index, contact ->
                 val image = when (contact.snsPlatForm) {
-                    SnsPlatform.KAKAO_TALK -> R.drawable.ic_sns_kakao
-                    SnsPlatform.KAKAO_OPENCCHATTING -> R.drawable.ic_sns_openchatting
-                    SnsPlatform.INSTAGRAM -> R.drawable.ic_sns_instagram
-                    SnsPlatform.PHONENUMBER -> R.drawable.ic_sns_call
+                    SnsPlatform.KAKAO -> R.drawable.ic_sns_kakao
+                    SnsPlatform.OPENKAKAO -> R.drawable.ic_sns_openchatting
+                    SnsPlatform.INSTA -> R.drawable.ic_sns_instagram
+                    SnsPlatform.PHONE -> R.drawable.ic_sns_call
+                    else -> R.drawable.ic_delete_circle // 임시
                 }
 
                 PieceTextInputSnsDropDown(
@@ -515,10 +542,8 @@ private fun PreviewRegisterProfileScreen() {
             onBirthdayChanged = {},
             onHeightChanged = {},
             onWeightChanged = {},
-            onJobChanged = {},
             onJobDropDownClicked = {},
-            onRegionChanged = {},
-            onRegionDropDownClicked = {},
+            onLocationDropDownClicked = {},
             onSmokeStatusChanged = {},
             onSnsActivityChanged = {},
             onAddContactsClicked = {},

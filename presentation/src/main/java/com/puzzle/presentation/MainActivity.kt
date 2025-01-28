@@ -1,19 +1,28 @@
 package com.puzzle.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.designsystem.component.PieceModalBottomSheet
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
@@ -24,7 +33,6 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
-    private lateinit var snackBarHostState: SnackbarHostState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +44,17 @@ class MainActivity : ComponentActivity() {
         setContent {
             viewModel.apply {
                 val navController = rememberNavController()
-                snackBarHostState = remember { SnackbarHostState() }
+                val snackBarHostState = remember { SnackbarHostState() }
+                val sheetState = rememberModalBottomSheetState(
+                    initialValue = ModalBottomSheetValue.Hidden,
+                    skipHalfExpanded = true,
+                )
+                var bottomSheetContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
+                val coroutineScope = rememberCoroutineScope()
+
+                LaunchedEffect(sheetState.currentValue) {
+                    Log.d("test", sheetState.currentValue.toString())
+                }
 
                 LaunchedEffect(Unit) {
                     repeatOnStarted {
@@ -51,22 +69,43 @@ class MainActivity : ComponentActivity() {
 
                         launch {
                             eventHelper.eventFlow.collect { event ->
-                                handlePieceEvent(event)
+                                when (event) {
+                                    is PieceEvent.ShowSnackBar ->
+                                        snackBarHostState.showSnackbar(event.msg)
+
+                                    is PieceEvent.ShowBottomSheet -> {
+                                        coroutineScope.launch {
+                                            bottomSheetContent = event.content
+                                            sheetState.show()
+                                        }
+                                    }
+
+                                    PieceEvent.HideBottomSheet -> {
+                                        coroutineScope.launch {
+                                            sheetState.hide()
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
                 }
 
                 PieceTheme {
-                    App(
-                        snackBarHostState = snackBarHostState,
-                        navController = navController,
-                        navigateToTopLevelDestination = { topLevelDestination ->
-                            navigationHelper.navigate(
-                                NavigationEvent.TopLevelNavigateTo(topLevelDestination)
-                            )
-                        }
-                    )
+                    PieceModalBottomSheet(
+                        sheetState = sheetState,
+                        sheetContent = bottomSheetContent,
+                    ) {
+                        App(
+                            snackBarHostState = snackBarHostState,
+                            navController = navController,
+                            navigateToTopLevelDestination = { topLevelDestination ->
+                                navigationHelper.navigate(
+                                    NavigationEvent.TopLevelNavigateTo(topLevelDestination)
+                                )
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -116,9 +155,5 @@ class MainActivity : ComponentActivity() {
     }
 
     private suspend fun handlePieceEvent(event: PieceEvent) {
-        when (event) {
-            is PieceEvent.ShowSnackBar -> snackBarHostState.showSnackbar(event.msg)
-            is PieceEvent.ShowBottomSheet -> Unit
-        }
     }
 }

@@ -25,7 +25,6 @@ fun PieceChip(
     onChipClicked: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    borderStroke: BorderStroke? = null,
 ) {
     FilterChip(
         label = {
@@ -51,14 +50,14 @@ fun PieceChip(
             selectedLabelColor = PieceTheme.colors.primaryDefault,
             selectedContainerColor = PieceTheme.colors.primaryLight,
         ),
-        border = borderStroke,
+        border = if (selected) pieceChipSelectedBorder() else null,
         onClick = onChipClicked,
         modifier = modifier,
     )
 }
 
 @Composable
-fun pieceChipSelectedBorder(): BorderStroke = BorderStroke(
+private fun pieceChipSelectedBorder(): BorderStroke = BorderStroke(
     width = 1.dp,
     color = PieceTheme.colors.primaryDefault
 )
@@ -81,7 +80,6 @@ private fun PreviewPieceChip() {
                 label = "Select-Highlight",
                 selected = true,
                 onChipClicked = {},
-                borderStroke = pieceChipSelectedBorder(),
                 modifier = Modifier
                     .width(300.dp)
                     .padding(16.dp),

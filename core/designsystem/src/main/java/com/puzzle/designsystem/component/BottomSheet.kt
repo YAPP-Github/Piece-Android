@@ -14,11 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ModalBottomSheetLayout
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,25 +35,33 @@ import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
 fun PieceModalBottomSheet(
-    sheetState: SheetState,
-    onDismissRequest: () -> Unit,
+    sheetState: ModalBottomSheetState,
     modifier: Modifier = Modifier,
-    sheetContent: @Composable () -> Unit,
+    sheetContent: @Composable (() -> Unit)?,
+    content: @Composable () -> Unit,
 ) {
-    ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
-        containerColor = PieceTheme.colors.white,
+    ModalBottomSheetLayout(
+        sheetGesturesEnabled = false,
+        sheetContentColor = PieceTheme.colors.white,
+        sheetBackgroundColor = PieceTheme.colors.white,
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetState = sheetState,
-        modifier = modifier.pointerInput(Unit) {},
+        sheetContent = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                BottomSheetDefaults.DragHandle()
+                sheetContent?.invoke()
+            }
+        },
+        modifier = modifier.fillMaxWidth(),
     ) {
-        sheetContent()
+        content()
     }
 }
 
 @Composable
 fun PieceBottomSheetHeader(
     title: String,
-    subTitle: String,
+    subTitle: String? = null,
 ) {
     Text(
         text = title,
@@ -59,12 +70,14 @@ fun PieceBottomSheetHeader(
         modifier = Modifier.padding(top = 10.dp),
     )
 
-    Text(
-        text = subTitle,
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark2,
-        modifier = Modifier.padding(bottom = 8.dp),
-    )
+    subTitle?.let {
+        Text(
+            text = subTitle,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark2,
+            modifier = Modifier.padding(bottom = 8.dp),
+        )
+    }
 }
 
 @Composable
@@ -127,7 +140,6 @@ fun PieceBottomSheetListItemExpandable(
             modifier = modifier
                 .fillMaxWidth()
                 .height(62.dp)
-                .padding(horizontal = 20.dp)
                 .clickable { onChecked() },
         ) {
             Text(
@@ -164,7 +176,7 @@ fun PieceBottomSheetListItemExpandable(
 @Preview
 @Composable
 private fun PreviewModalBottomSheet() {
-    val mockRegionList = listOf(
+    val mocklocationList = listOf(
         "서울특별시", "경기도", "부산광역시", "대구광역시", "인천광역시",
         "광주광역시", "대전광역시", "울산광역시", "세종특별자치시", "강원도",
         "충청북도", "충청남도", "전라북도", "전라남도", "경상북도",
@@ -173,45 +185,44 @@ private fun PreviewModalBottomSheet() {
 
     PieceTheme {
         PieceModalBottomSheet(
-            sheetState = rememberModalBottomSheetState(
-                skipPartiallyExpanded = true,
-            ),
-            onDismissRequest = {},
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .pointerInput(Unit) {}
-                    .padding(horizontal = 20.dp),
-            ) {
-                PieceBottomSheetHeader(
-                    title = "활동 지역",
-                    subTitle = "주로 활동하는 지역을 선택해주세요."
-                )
-
-                LazyColumn(
+            sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Expanded),
+            sheetContent = {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(400.dp)
-                        .padding(top = 12.dp),
+                        .pointerInput(Unit) {}
+                        .padding(horizontal = 20.dp)
                 ) {
-                    items(mockRegionList) { region ->
-                        PieceBottomSheetListItemDefault(
-                            label = region,
-                            checked = region == "서울특별시",
-                            onChecked = {},
-                        )
-                    }
-                }
+                    PieceBottomSheetHeader(
+                        title = "활동 지역",
+                        subTitle = "주로 활동하는 지역을 선택해주세요."
+                    )
 
-                PieceSolidButton(
-                    label = "적용하기",
-                    onClick = {},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp, bottom = 10.dp),
-                )
-            }
-        }
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(400.dp)
+                            .padding(top = 12.dp),
+                    ) {
+                        items(mocklocationList) { location ->
+                            PieceBottomSheetListItemDefault(
+                                label = location,
+                                checked = location == "서울특별시",
+                                onChecked = {},
+                            )
+                        }
+                    }
+
+                    PieceSolidButton(
+                        label = "적용하기",
+                        onClick = {},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 12.dp, bottom = 10.dp),
+                    )
+                }
+            },
+            content = {}
+        )
     }
 }

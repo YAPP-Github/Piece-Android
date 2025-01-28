@@ -1,5 +1,6 @@
 package com.puzzle.profile.graph.register.contract
 
+import androidx.compose.runtime.Composable
 import com.puzzle.navigation.NavigationEvent
 
 sealed class RegisterProfileIntent {
@@ -10,9 +11,11 @@ sealed class RegisterProfileIntent {
     data class UpdateHeight(val height: String) : RegisterProfileIntent()
     data class UpdateWeight(val weight: String) : RegisterProfileIntent()
     data class UpdateJob(val job: String) : RegisterProfileIntent()
-    data object OnJobDropDownClicked : RegisterProfileIntent()
+    data class OnJobDropDownClicked(val content: @Composable () -> Unit) : RegisterProfileIntent()
     data class UpdateRegion(val region: String) : RegisterProfileIntent()
-    data object OnRegionDropDownClicked : RegisterProfileIntent()
+    data class OnLocationDropDownClicked(val content: @Composable () -> Unit) :
+        RegisterProfileIntent()
+
     data class UpdateSmokeStatus(val isSmoke: Boolean) : RegisterProfileIntent()
     data class UpdateSnsActivity(val isSnsActivity: Boolean) : RegisterProfileIntent()
     data object OnAddContactsClicked : RegisterProfileIntent()
