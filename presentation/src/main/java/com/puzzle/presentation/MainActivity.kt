@@ -18,7 +18,6 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.presentation.ui.App
-import com.puzzle.presentation.ui.rememberAppState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,7 +35,6 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             viewModel.apply {
-                val appState = rememberAppState()
                 val navController = rememberNavController()
                 snackBarHostState = remember { SnackbarHostState() }
 
@@ -61,7 +59,6 @@ class MainActivity : ComponentActivity() {
 
                 PieceTheme {
                     App(
-                        appState = appState,
                         snackBarHostState = snackBarHostState,
                         navController = navController,
                         navigateToTopLevelDestination = { topLevelDestination ->
