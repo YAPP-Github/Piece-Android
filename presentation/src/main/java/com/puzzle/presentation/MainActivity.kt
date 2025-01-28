@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
                 PieceTheme {
                     App(
                         appState = appState,
-                        snackbarHostState = snackBarHostState,
+                        snackBarHostState = snackBarHostState,
                         navController = navController,
                         navigateToTopLevelDestination = { topLevelDestination ->
                             navigationHelper.navigate(
@@ -120,7 +120,8 @@ class MainActivity : ComponentActivity() {
 
     private suspend fun handlePieceEvent(event: PieceEvent) {
         when (event) {
-            is PieceEvent.ShowSnackbar -> snackBarHostState.showSnackbar(event.msg)
+            is PieceEvent.ShowSnackBar -> snackBarHostState.showSnackbar(event.msg)
+            is PieceEvent.ShowBottomSheet -> Unit
         }
     }
 }

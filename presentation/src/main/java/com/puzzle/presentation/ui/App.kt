@@ -51,8 +51,7 @@ import kotlin.reflect.KClass
 
 @Composable
 fun App(
-    appState: AppState = rememberAppState(),
-    snackbarHostState: SnackbarHostState,
+    snackBarHostState: SnackbarHostState,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     navigateToTopLevelDestination: (Route) -> Unit,
@@ -61,7 +60,7 @@ fun App(
         .value?.destination
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
+        snackbarHost = { SnackbarHost(snackBarHostState) },
         containerColor = PieceTheme.colors.white,
         bottomBar = {
             AnimatedVisibility(currentDestination?.shouldHideBottomNavigation() == false) {

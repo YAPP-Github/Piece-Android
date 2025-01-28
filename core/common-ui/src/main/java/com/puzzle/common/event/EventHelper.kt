@@ -1,5 +1,6 @@
 package com.puzzle.common.event
 
+import androidx.compose.runtime.Composable
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -17,5 +18,6 @@ class EventHelper @Inject constructor() {
 }
 
 sealed class PieceEvent {
-    data class ShowSnackbar(val msg: String) : PieceEvent()
+    data class ShowSnackBar(val msg: String) : PieceEvent()
+    data class ShowBottomSheet(val content: @Composable () -> Unit) : PieceEvent()
 }
