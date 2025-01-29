@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,6 +40,7 @@ import com.puzzle.designsystem.component.PieceTextInputAI
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.matching.ValueTalk
+import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.ScreenState
@@ -63,7 +65,7 @@ internal fun ValueTalkRoute(
 
     ValueTalkScreen(
         state = state,
-        onBackClick = {},
+        onBackClick = { viewModel.onIntent(ValueTalkIntent.OnBackClick) },
         onSaveClick = {},
         onAiSummarySaveClick = {},
     )
@@ -179,6 +181,14 @@ private fun ValueTalkCards(
                     vertical = 24.dp,
                 )
             )
+
+            if (idx < valueTalks.size - 1) {
+                HorizontalDivider(
+                    thickness = 12.dp,
+                    color = PieceTheme.colors.light3,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }
@@ -267,10 +277,7 @@ private fun AiSummaryContent(
         },
         onSaveClick = {
             onAiSummarySaveClick(
-                item.copy(
-                    content = item.content,
-                    aiSummary = it,
-                )
+                item.copy(aiSummary = it)
             )
         },
         modifier = Modifier

@@ -258,7 +258,6 @@ fun PieceTextInputAI(
                             if (isReadOnly) {
                                 isReadOnly = false
                             } else {
-                                isLoading = true
                                 isReadOnly = true
                                 onSaveClick(value)
                             }

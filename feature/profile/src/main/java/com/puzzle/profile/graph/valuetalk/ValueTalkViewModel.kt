@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
@@ -41,7 +42,9 @@ class ValueTalkViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: ValueTalkIntent) {
         when (intent) {
-            is ValueTalkIntent.Navigate -> _sideEffects.send(ValueTalkSideEffect.Navigate(intent.navigationEvent))
+            ValueTalkIntent.OnBackClick -> _sideEffects.send(
+                ValueTalkSideEffect.Navigate(NavigationEvent.NavigateUp)
+            )
         }
     }
 
