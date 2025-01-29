@@ -102,4 +102,12 @@
     <string name="main_profile_value_talk_content">꿈과 목표, 관심사와 취향, 연애에 관련된\n내 생각을 확인하고 수정할 수 있습니다.</string>
     <string name="main_profile_value_pick_title">가치관 Pick</string>
     <string name="main_profile_value_pick_content">퀴즈를 통해 나의 연애 스타일을 파악해보고\n선택한 답변을 수정할 수 있습니다.</string>
+
+    <!--Value Talk-->
+    <string name="value_talk_profile_topbar_title">가치관 Talk</string>
+    <string name="value_talk_edit_profile_topbar_title">가치관 Talk 수정</string>
+    <string name="value_talk_profile_topbar_save">저장</string>
+    <string name="value_talk_profile_topbar_edit">수정</string>
+    <string name="value_talk_profile_aisummary_title">AI 요약</string>
+    <string name="value_talk_profile_helpmessage_title">도움말</string>
 </resources>

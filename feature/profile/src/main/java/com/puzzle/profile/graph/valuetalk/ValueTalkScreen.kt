@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -96,15 +97,25 @@ private fun ValueTalkScreen(
     ) {
         PieceSubTopBar(
             title = when (screenState) {
-                ScreenState.EDITING -> "가치관 Talk 수정"
-                ScreenState.SAVED -> "가치관 Talk"
+                ScreenState.SAVED -> stringResource(R.string.value_talk_profile_topbar_title)
+                ScreenState.EDITING -> stringResource(R.string.value_talk_edit_profile_topbar_title)
             },
             onNavigationClick = onBackClick,
             rightComponent = {
                 when (screenState) {
-                    ScreenState.EDITING -> {
+                    ScreenState.SAVED ->
                         Text(
-                            text = "저장",
+                            text = stringResource(R.string.value_talk_profile_topbar_edit),
+                            style = PieceTheme.typography.bodyMM,
+                            color = PieceTheme.colors.primaryDefault,
+                            modifier = Modifier.clickable {
+                                screenState = ScreenState.EDITING
+                            },
+                        )
+
+                    ScreenState.EDITING ->
+                        Text(
+                            text = stringResource(R.string.value_talk_profile_topbar_save),
                             style = PieceTheme.typography.bodyMM,
                             color = if (isContentEdited) {
                                 PieceTheme.colors.primaryDefault
@@ -120,18 +131,6 @@ private fun ValueTalkScreen(
                                 screenState = ScreenState.SAVED
                             },
                         )
-                    }
-
-                    ScreenState.SAVED -> {
-                        Text(
-                            text = "수정",
-                            style = PieceTheme.typography.bodyMM,
-                            color = PieceTheme.colors.primaryDefault,
-                            modifier = Modifier.clickable {
-                                screenState = ScreenState.EDITING
-                            },
-                        )
-                    }
                 }
             },
             modifier = Modifier
@@ -214,20 +213,20 @@ private fun ValueTalkCard(
             },
             limit = 300,
             readOnly = when (screenState) {
-                ScreenState.EDITING -> false
                 ScreenState.SAVED -> true
+                ScreenState.EDITING -> false
             },
         )
 
         when (screenState) {
-            ScreenState.EDITING ->
-                HelpMessageContent(helpMessage = item.helpMessage)
-
             ScreenState.SAVED ->
                 AiSummaryContent(
                     item = item,
                     onAiSummarySaveClick = onAiSummarySaveClick,
                 )
+
+            ScreenState.EDITING ->
+                HelpMessageContent(helpMessage = item.helpMessage)
         }
     }
 }
@@ -246,7 +245,7 @@ private fun AiSummaryContent(
             .padding(top = 20.dp),
     ) {
         Text(
-            text = "AI 요약",
+            text = stringResource(R.string.value_talk_profile_aisummary_title),
             style = PieceTheme.typography.bodySSB,
             color = PieceTheme.colors.primaryDefault,
         )
@@ -292,7 +291,7 @@ private fun HelpMessageContent(
             .height(26.dp),
     ) {
         Text(
-            text = "도움말",
+            text = stringResource(R.string.value_talk_profile_helpmessage_title),
             style = PieceTheme.typography.bodySR,
             color = PieceTheme.colors.subDefault,
             modifier = Modifier
