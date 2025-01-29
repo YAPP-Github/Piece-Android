@@ -42,8 +42,8 @@ fun Modifier.addFocusCleaner(
 @Composable
 fun Modifier.throttledClickable(
     throttleTime: Long,
-    onClick: () -> Unit,
     enabled: Boolean = true,
+    onClick: () -> Unit,
 ): Modifier = composed {
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
