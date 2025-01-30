@@ -95,12 +95,16 @@ class SignUpViewModel @AssistedInject constructor(
         copy(signUpPage = SignUpState.SignUpPage.TermDetailPage)
     }
 
-    private fun onBackClick() = setState {
-        copy(signUpPage = SignUpState.SignUpPage.getPreviousPage(signUpPage))
+    private fun onBackClick() = withState { state ->
+        SignUpState.SignUpPage.getPreviousPage(state.signUpPage)?.let {
+            setState { copy(signUpPage = it) }
+        }
     }
 
-    private fun onNextClick() = setState {
-        copy(signUpPage = SignUpState.SignUpPage.getNextPage(signUpPage))
+    private fun onNextClick() = withState { state ->
+        SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
+            setState { copy(signUpPage = it) }
+        }
     }
 
     @AssistedFactory

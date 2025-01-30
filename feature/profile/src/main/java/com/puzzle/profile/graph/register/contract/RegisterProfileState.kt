@@ -20,7 +20,10 @@ data class RegisterProfileState(
             content = "",
         ),
     ),
-) : MavericksState {}
+) : MavericksState {
+    val usingSnsPlatforms = contacts.map { it.snsPlatform }
+        .toSet()
+}
 
 enum class Location(val displayName: String) {
     SEOUL("서울특별시"),

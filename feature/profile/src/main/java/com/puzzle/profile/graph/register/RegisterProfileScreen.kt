@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -91,6 +93,7 @@ internal fun RegisterProfileRoute(
                 RegisterProfileIntent.ShowBottomSheet(
                     {
                         ContactBottomSheet(
+                            usingSnsPlatform = state.usingSnsPlatforms,
                             onButtonClicked = {
                                 viewModel.onIntent(RegisterProfileIntent.AddContact(it))
                             },
@@ -104,6 +107,7 @@ internal fun RegisterProfileRoute(
                 RegisterProfileIntent.ShowBottomSheet(
                     {
                         ContactBottomSheet(
+                            usingSnsPlatform = state.usingSnsPlatforms,
                             onButtonClicked = {
                                 viewModel.onIntent(
                                     RegisterProfileIntent.UpdateContact(
@@ -541,9 +545,7 @@ private fun RegisterProfileScreen(
 
             AnimatedVisibility(
                 visible = state.contacts.size < 4,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 60.dp),
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     horizontalArrangement = Arrangement.Center,
@@ -565,7 +567,14 @@ private fun RegisterProfileScreen(
                     )
                 }
             }
+
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(60.dp),
+            )
         }
+
 
         PieceSolidButton(
             label = stringResource(R.string.next),

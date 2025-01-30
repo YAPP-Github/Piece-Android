@@ -19,21 +19,21 @@ data class SignUpState(
         SignUpCompleted;
 
         companion object {
-            fun getPreviousPage(currentPage: SignUpPage): SignUpPage {
+            fun getPreviousPage(currentPage: SignUpPage): SignUpPage? {
                 return when (currentPage) {
                     TermDetailPage -> TermPage
                     AccessRightsPage -> TermPage
                     AvoidAcquaintancesPage -> AccessRightsPage
-                    else -> throw IllegalStateException("No previous page defined for $currentPage")
+                    else -> null
                 }
             }
 
-            fun getNextPage(currentPage: SignUpPage): SignUpPage {
+            fun getNextPage(currentPage: SignUpPage): SignUpPage? {
                 return when (currentPage) {
                     TermPage -> AccessRightsPage
                     AccessRightsPage -> AvoidAcquaintancesPage
                     AvoidAcquaintancesPage -> SignUpCompleted
-                    else -> throw IllegalStateException("No previous page defined for $currentPage")
+                    else -> null
                 }
             }
         }

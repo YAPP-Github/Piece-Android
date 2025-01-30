@@ -22,6 +22,7 @@ import com.puzzle.domain.model.profile.SnsPlatform
 
 @Composable
 internal fun ContactBottomSheet(
+    usingSnsPlatform: Set<SnsPlatform>,
     onButtonClicked: (SnsPlatform) -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -56,8 +57,8 @@ internal fun ContactBottomSheet(
                 PieceBottomSheetListItemDefault(
                     label = sns.displayName,
                     image = image,
-                    checked = tempSnsPlatform == sns,
-                    onChecked = { tempSnsPlatform = sns },
+                    checked = sns in usingSnsPlatform,
+                    onChecked = { if (sns !in usingSnsPlatform) tempSnsPlatform = sns },
                 )
             }
         }
