@@ -120,8 +120,8 @@ fun PieceBottomSheetListItemDefault(
                     else PieceTheme.colors.dark1,
                 ),
                 modifier = Modifier
-                    .padding(end = 10.dp)
-                    .size(32.dp),
+                    .size(32.dp)
+                    .padding(end = 10.dp),
             )
         }
 
@@ -145,8 +145,8 @@ fun PieceBottomSheetListItemDefault(
                     else PieceTheme.colors.primaryDefault,
                 ),
                 modifier = Modifier
-                    .padding(start = 36.dp)
-                    .size(32.dp),
+                    .size(32.dp)
+                    .padding(start = 36.dp),
             )
         }
     }
