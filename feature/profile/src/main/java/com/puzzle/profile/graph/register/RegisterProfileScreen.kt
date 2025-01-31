@@ -94,6 +94,7 @@ internal fun RegisterProfileRoute(
                     {
                         ContactBottomSheet(
                             usingSnsPlatform = state.usingSnsPlatforms,
+                            isEdit = false,
                             onButtonClicked = {
                                 viewModel.onIntent(RegisterProfileIntent.AddContact(it))
                             },
@@ -108,6 +109,8 @@ internal fun RegisterProfileRoute(
                     {
                         ContactBottomSheet(
                             usingSnsPlatform = state.usingSnsPlatforms,
+                            nowSnsPlatform = state.contacts[idx].snsPlatform,
+                            isEdit = true,
                             onButtonClicked = {
                                 viewModel.onIntent(
                                     RegisterProfileIntent.UpdateContact(

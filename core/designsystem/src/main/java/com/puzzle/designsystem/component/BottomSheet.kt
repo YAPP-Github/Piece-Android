@@ -100,6 +100,7 @@ fun PieceBottomSheetListItemDefault(
     checked: Boolean,
     onChecked: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     @DrawableRes image: Int? = null,
 ) {
     Row(
@@ -107,14 +108,15 @@ fun PieceBottomSheetListItemDefault(
         modifier = modifier
             .fillMaxWidth()
             .height(62.dp)
-            .clickable { onChecked() },
+            .clickable(enabled = enabled) { onChecked() },
     ) {
         if (image != null) {
             Image(
                 painter = painterResource(image),
                 contentDescription = null,
                 colorFilter = ColorFilter.tint(
-                    color = if (checked) PieceTheme.colors.primaryDefault
+                    color = if (!enabled) PieceTheme.colors.dark3
+                    else if (checked) PieceTheme.colors.primaryDefault
                     else PieceTheme.colors.dark1,
                 ),
                 modifier = Modifier
@@ -126,16 +128,22 @@ fun PieceBottomSheetListItemDefault(
         Text(
             text = label,
             style = if (checked) PieceTheme.typography.bodyMSB else PieceTheme.typography.bodyMM,
-            color = if (checked) PieceTheme.colors.primaryDefault else PieceTheme.colors.black,
+            color = if (!enabled) PieceTheme.colors.dark3
+            else if (checked) PieceTheme.colors.primaryDefault
+            else PieceTheme.colors.black,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f),
         )
 
-        if (checked) {
+        if (!enabled || checked) {
             Image(
                 painter = painterResource(R.drawable.ic_textinput_check),
                 contentDescription = null,
+                colorFilter = ColorFilter.tint(
+                    color = if (!enabled) PieceTheme.colors.dark3
+                    else PieceTheme.colors.primaryDefault,
+                ),
                 modifier = Modifier
                     .padding(start = 36.dp)
                     .size(32.dp),

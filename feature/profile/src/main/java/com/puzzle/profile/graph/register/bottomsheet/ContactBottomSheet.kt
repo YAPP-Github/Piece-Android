@@ -23,10 +23,12 @@ import com.puzzle.domain.model.profile.SnsPlatform
 @Composable
 internal fun ContactBottomSheet(
     usingSnsPlatform: Set<SnsPlatform>,
+    isEdit: Boolean,
     onButtonClicked: (SnsPlatform) -> Unit,
+    nowSnsPlatform: SnsPlatform? = null,
 ) {
     val scrollState = rememberScrollState()
-    var tempSnsPlatform by remember { mutableStateOf<SnsPlatform?>(null) }
+    var tempSnsPlatform by remember { mutableStateOf<SnsPlatform?>(nowSnsPlatform) }
 
     Column(
         modifier = Modifier
@@ -57,8 +59,10 @@ internal fun ContactBottomSheet(
                 PieceBottomSheetListItemDefault(
                     label = sns.displayName,
                     image = image,
-                    checked = sns in usingSnsPlatform,
-                    onChecked = { if (sns !in usingSnsPlatform) tempSnsPlatform = sns },
+                    checked = if (isEdit) sns == tempSnsPlatform
+                    else sns in usingSnsPlatform || sns == tempSnsPlatform,
+                    enabled = sns !in usingSnsPlatform,
+                    onChecked = { tempSnsPlatform = sns },
                 )
             }
         }
