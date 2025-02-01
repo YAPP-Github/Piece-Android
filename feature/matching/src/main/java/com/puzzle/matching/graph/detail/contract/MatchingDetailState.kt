@@ -1,13 +1,13 @@
 package com.puzzle.matching.graph.detail.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.domain.model.matching.Answer
 import com.puzzle.domain.model.matching.ValuePick
 import com.puzzle.domain.model.matching.ValueTalk
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
     val currentPage: MatchingDetailPage = MatchingDetailPage.BasicInfoPage,
-    // BasicInfoState
     val selfDescription: String = "음악과 요리를 좋아하는",
     val nickName: String = "수줍은 수달",
     val age: String = "25",
@@ -38,32 +38,40 @@ data class MatchingDetailState(
         ValuePick(
             category = "음주",
             question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
-            option1 = "함께 술을 즐기고 싶어요",
-            option2 = "같이 술을 즐길 수 없어도 괜찮아요",
+            answers = listOf(
+                Answer(1, "함께 술을 즐기고 싶어요"),
+                Answer(2, "같이 술을 즐길 수 없어도 괜찮아요")
+            ),
             isSimilarToMe = true,
         ),
         ValuePick(
             category = "만남 빈도",
             question = "주말에 얼마나 자주 데이트를 하고싶나요?",
-            option1 = "주말에는 최대한 같이 있고 싶어요",
-            option2 = "하루 정도는 각자 보내고 싶어요",
+            answers = listOf(
+                Answer(1, "주말에는 최대한 같이 있고 싶어요"),
+                Answer(2, "하루 정도는 각자 보내고 싶어요")
+            ),
             isSimilarToMe = false,
         ),
         ValuePick(
             category = "연락 빈도",
             question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
-            option1 = "바빠도 최대한 자주 연락하고 싶어요",
-            option2 = "연락은 생각날 때만 종종 해도 괜찮아요",
+            answers = listOf(
+                Answer(1, "바빠도 최대한 자주 연락하고 싶어요"),
+                Answer(2, "연락은 생각날 때만 종종 해도 괜찮아요")
+            ),
             isSimilarToMe = true,
         ),
         ValuePick(
             category = "연락 방식",
             question = "연락할 때 어떤 방법을 더 좋아하나요?",
-            option1 = "전화보다는 문자나 카톡이 좋아요",
-            option2 = "문자나 카톡보다는 전화가 좋아요",
+            answers = listOf(
+                Answer(1, "전화보다는 문자나 카톡이 좋아요"),
+                Answer(2, "문자나 카톡보다는 전화가 좋아요")
+            ),
             isSimilarToMe = false,
         )
-    ),
+    )
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {
