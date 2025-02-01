@@ -158,6 +158,7 @@ private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     MatchingDetailRoute::class.qualifiedName,
     ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
     ProfileGraphDest.ValueTalkProfileRoute::class.qualifiedName,
+    ProfileGraphDest.ValuePickProfileRoute::class.qualifiedName,
     SettingGraphDest.WithdrawRoute::class.qualifiedName,
 )
 
