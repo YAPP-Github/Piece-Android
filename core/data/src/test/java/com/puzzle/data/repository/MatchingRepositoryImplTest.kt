@@ -52,7 +52,7 @@ class MatchingRepositoryImplTest {
         coEvery { localMatchingDataSource.replaceValuePicks(any()) } returns Result.success(Unit)
 
         // when
-        val result = matchingRepository.loadValuePick()
+        val result = matchingRepository.loadValuePicks()
 
         // then
         assertTrue(result.isSuccess)
@@ -86,7 +86,7 @@ class MatchingRepositoryImplTest {
         coEvery { localMatchingDataSource.replaceValueTalks(any()) } returns Result.success(Unit)
 
         // when
-        val result = matchingRepository.loadValueTalk()
+        val result = matchingRepository.loadValueTalks()
 
         // then
         assertTrue(result.isSuccess)
@@ -129,7 +129,7 @@ class MatchingRepositoryImplTest {
         coEvery { localMatchingDataSource.replaceValuePicks(any()) } returns Result.success(Unit)
 
         // when
-        val result = matchingRepository.loadValuePick()
+        val result = matchingRepository.loadValuePicks()
 
         // then
         assertTrue(result.isSuccess)
@@ -171,7 +171,7 @@ class MatchingRepositoryImplTest {
         coEvery { localMatchingDataSource.replaceValueTalks(any()) } returns Result.success(Unit)
 
         // when
-        val result = matchingRepository.loadValueTalk()
+        val result = matchingRepository.loadValueTalks()
 
         // then
         assertTrue(result.isSuccess)

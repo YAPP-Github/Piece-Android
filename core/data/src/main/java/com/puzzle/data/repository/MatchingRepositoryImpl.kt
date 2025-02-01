@@ -17,7 +17,7 @@ class MatchingRepositoryImpl @Inject constructor(
     private val matchingDataSource: MatchingDataSource,
     private val localMatchingDataSource: LocalMatchingDataSource,
 ) : MatchingRepository {
-    override suspend fun loadValuePick(): Result<Unit> = suspendRunCatching {
+    override suspend fun loadValuePicks(): Result<Unit> = suspendRunCatching {
         val valuePicks = matchingDataSource.loadValuePicks()
             .getOrThrow()
             .toDomain()
@@ -43,7 +43,7 @@ class MatchingRepositoryImpl @Inject constructor(
         localMatchingDataSource.replaceValuePicks(valuePickEntities)
     }
 
-    override suspend fun loadValueTalk(): Result<Unit> = suspendRunCatching {
+    override suspend fun loadValueTalks(): Result<Unit> = suspendRunCatching {
         val valueTalks = matchingDataSource.loadValueTalks()
             .getOrThrow()
             .toDomain()

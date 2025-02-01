@@ -9,6 +9,7 @@ import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
 import com.puzzle.domain.model.user.UserRole.USER
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraphDest
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val termsRepository: TermsRepository,
     private val userRepository: UserRepository,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
@@ -36,7 +38,7 @@ class MainViewModel @Inject constructor(
 
     init {
         handleError()
-        loadTerms()
+        initConfigure()
         checkRedirection()
     }
 
@@ -55,18 +57,29 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun loadTerms() = viewModelScope.launch {
-        termsRepository.loadTerms().onFailure {
-            errorHelper.sendError(it)
-        }
+    private fun initConfigure() = viewModelScope.launch {
+        val loadTermsJob = launch { loadTerms() }
+        val loadValuePicksJob = launch { loadValuePicks() }
+        val loadValueTalksJob = launch { loadValueTalks() }
+
+        loadTermsJob.join()
+        loadValuePicksJob.join()
+        loadValueTalksJob.join()
     }
 
-    private fun loadValuePick() = viewModelScope.launch {
-
+    private suspend fun loadTerms() {
+        termsRepository.loadTerms()
+            .onFailure { errorHelper.sendError(it) }
     }
 
-    private fun loadValueTalk() = viewModelScope.launch {
+    private suspend fun loadValuePicks() {
+        matchingRepository.loadValuePicks()
+            .onFailure { errorHelper.sendError(it) }
+    }
 
+    private suspend fun loadValueTalks() {
+        matchingRepository.loadValueTalks()
+            .onFailure { errorHelper.sendError(it) }
     }
 
     private fun checkRedirection() = viewModelScope.launch {
