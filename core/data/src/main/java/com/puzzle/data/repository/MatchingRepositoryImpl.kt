@@ -4,6 +4,7 @@ import com.puzzle.common.suspendRunCatching
 import com.puzzle.database.model.matching.ValuePickAnswer
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValuePickQuestion
+import com.puzzle.database.model.matching.ValueTalkEntity
 import com.puzzle.database.source.LocalMatchingDataSource
 import com.puzzle.domain.model.matching.ValuePick
 import com.puzzle.domain.model.matching.ValueTalk
@@ -42,8 +43,22 @@ class MatchingRepositoryImpl @Inject constructor(
         localMatchingDataSource.replaceValuePicks(valuePickEntities)
     }
 
-    override suspend fun loadValueTalk(): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun loadValueTalk(): Result<Unit> = suspendRunCatching {
+        val valueTalks = matchingDataSource.loadValueTalks()
+            .getOrThrow()
+            .toDomain()
+            .filter { it.id != UNKNOWN_INT }
+
+        val valueTalkEntities = valueTalks.map {
+            ValueTalkEntity(
+                id = it.id,
+                title = it.title,
+                category = it.category,
+                helpMessages = it.helpMessages,
+            )
+        }
+
+        localMatchingDataSource.replaceValueTalks(valueTalkEntities)
     }
 
     override suspend fun retrieveValuePick(): Result<List<ValuePick>> = suspendRunCatching {
@@ -51,7 +66,8 @@ class MatchingRepositoryImpl @Inject constructor(
             .map(ValuePickEntity::toDomain)
     }
 
-    override suspend fun retrieveValueTalk(): Result<List<ValueTalk>> {
-        TODO("Not yet implemented")
+    override suspend fun retrieveValueTalk(): Result<List<ValueTalk>> = suspendRunCatching {
+        localMatchingDataSource.retrieveValueTalks()
+            .map(ValueTalkEntity::toDomain)
     }
 }
