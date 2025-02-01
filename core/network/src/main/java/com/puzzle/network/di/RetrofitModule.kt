@@ -3,6 +3,7 @@ package com.puzzle.network.di
 import com.puzzle.network.BuildConfig
 import com.puzzle.network.adapter.PieceCallAdapterFactory
 import com.puzzle.network.api.PieceApi
+import com.puzzle.network.authenticator.PieceAuthenticator
 import com.puzzle.network.interceptor.PieceInterceptor
 import dagger.Module
 import dagger.Provides
@@ -29,10 +30,12 @@ object RetrofitModule {
     @Singleton
     @Provides
     fun provideOkHttpClient(
-        pieceInterceptor: PieceInterceptor,
+        interceptor: PieceInterceptor,
+        authenticator: PieceAuthenticator,
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
-            .addInterceptor(pieceInterceptor)
+            .addInterceptor(interceptor)
+            .authenticator(authenticator)
 
         if (BuildConfig.DEBUG) {
             val loggingInterceptor = HttpLoggingInterceptor()
