@@ -7,6 +7,8 @@ import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.terms.LoadTermsResponse
+import com.puzzle.network.model.token.RefreshTokenRequest
+import com.puzzle.network.model.token.RefreshTokenResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -23,4 +25,7 @@ interface PieceApi {
 
     @GET("/api/terms")
     suspend fun loadTerms(): Result<ApiResponse<LoadTermsResponse>>
+
+    @POST("/api/auth/refresh")
+    suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Result<ApiResponse<RefreshTokenResponse>>
 }

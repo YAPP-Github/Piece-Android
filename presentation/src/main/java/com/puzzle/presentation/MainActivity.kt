@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -34,22 +35,25 @@ class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
 
-        // TODO(재확인 필요)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+//        // TODO(재확인 필요)
+//        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         setContent {
             viewModel.apply {
                 val navController = rememberNavController()
                 val snackBarHostState = remember { SnackbarHostState() }
+
+                var bottomSheetContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
+                val scope = rememberCoroutineScope()
                 val sheetState = rememberModalBottomSheetState(
                     initialValue = ModalBottomSheetValue.Hidden,
                     skipHalfExpanded = true,
                 )
-                var bottomSheetContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
-                val scope = rememberCoroutineScope()
 
                 LaunchedEffect(Unit) {
                     repeatOnStarted {
