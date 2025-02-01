@@ -4,7 +4,6 @@ import com.puzzle.domain.model.auth.OAuthProvider
 
 interface AuthRepository {
     suspend fun requestAuthCode(phoneNumber: String): Result<Unit>
-
     suspend fun verifyAuthCode(
         phoneNumber: String,
         code: String
@@ -14,4 +13,6 @@ interface AuthRepository {
         oAuthProvider: OAuthProvider,
         token: String
     ): Result<Unit>
+
+    suspend fun logout(): Result<Unit>
 }

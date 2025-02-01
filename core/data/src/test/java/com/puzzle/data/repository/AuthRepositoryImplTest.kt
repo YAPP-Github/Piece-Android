@@ -37,6 +37,7 @@ class AuthRepositoryImplTest {
         coEvery { tokenDataSource.setAccessToken(any()) } just Runs
         coEvery { tokenDataSource.setRefreshToken(any()) } just Runs
         coEvery { userInfoDataSource.setUserRole(any()) } just Runs
+        coEvery { userInfoDataSource.clearUserRole() } just Runs
         coEvery { tokenDataSource.clearToken() } just Runs
     }
 
@@ -75,5 +76,16 @@ class AuthRepositoryImplTest {
         coVerify { tokenDataSource.setAccessToken(any()) }
         coVerify { tokenDataSource.setRefreshToken(any()) }
         coVerify { userInfoDataSource.setUserRole("REGISTER") }
+    }
+
+    @Test
+    fun `로그아웃을 할 경우 로컬에 저장된 유저 데이터를 모두 제거한다`() = runTest {
+        // when
+        val result = authRepository.logout()
+
+        // then
+        assertTrue(result.isSuccess)
+        coVerify { tokenDataSource.clearToken() }
+        coVerify { userInfoDataSource.clearUserRole() }
     }
 }
