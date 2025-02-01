@@ -15,6 +15,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val termsRepository: TermsRepository,
+
     internal val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
@@ -44,5 +45,9 @@ class MainViewModel @Inject constructor(
         termsRepository.loadTerms().onFailure {
             errorHelper.sendError(it)
         }
+    }
+
+    private fun loadToken() = viewModelScope.launch {
+
     }
 }
