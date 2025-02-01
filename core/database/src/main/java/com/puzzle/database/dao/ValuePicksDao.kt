@@ -5,13 +5,19 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.puzzle.database.model.matching.ValuePickAnswer
 import com.puzzle.database.model.matching.ValuePickEntity
+import com.puzzle.database.model.matching.ValuePickQuestion
 
 @Dao
 interface ValuePicksDao {
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertValuePicks(vararg valuePicks: ValuePickEntity)
+    suspend fun insertValuePickQuestion(question: ValuePickQuestion)
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertValuePickAnswers(answers: List<ValuePickAnswer>)
 
     @Transaction
     @Query("SELECT * FROM value_pick_question")
@@ -22,8 +28,9 @@ interface ValuePicksDao {
     suspend fun clearValuePicks()
 
     @Transaction
-    suspend fun replaceValuePicks(vararg valuePicks: ValuePickEntity) {
+    suspend fun replaceValuePicks(valuePick: ValuePickEntity) {
         clearValuePicks()
-        insertValuePicks(*valuePicks)
+        insertValuePickQuestion(valuePick.valuePickQuestion)
+        insertValuePickAnswers(valuePick.answers)
     }
 }

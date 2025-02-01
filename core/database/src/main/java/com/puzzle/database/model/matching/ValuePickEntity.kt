@@ -3,12 +3,12 @@ package com.puzzle.database.model.matching
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
 import com.puzzle.domain.model.matching.Answer
 import com.puzzle.domain.model.matching.ValuePick
 
-@Entity(tableName = "value_pick")
 data class ValuePickEntity(
     @Embedded val valuePickQuestion: ValuePickQuestion,
     @Relation(
@@ -48,7 +48,8 @@ data class ValuePickQuestion(
             childColumns = ["questionsId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("questionsId")]
 )
 data class ValuePickAnswer(
     @PrimaryKey(autoGenerate = true) val id: Int,
