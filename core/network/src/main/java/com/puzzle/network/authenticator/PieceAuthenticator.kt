@@ -25,6 +25,7 @@ class PieceAuthenticator @Inject constructor(
     override fun authenticate(route: Route?, response: Response): Request? {
         val originRequest = response.request
 
+        // 토큰이 헤더에 달리지 않은 API 호출은 그냥 반환
         if (originRequest.header("Authorization").isNullOrEmpty()) {
             return null
         }
@@ -37,15 +38,18 @@ class PieceAuthenticator @Inject constructor(
             return null
         }
 
+        // 3번 이상 재호출 했을 경우 에러 반환
         val retryCount = originRequest.header(RETRY_HEADER)?.toIntOrNull() ?: 0
         if (retryCount >= MAX_RETRY_COUNT) {
             return null
         }
 
+        // 401 에러가 아닐 경우 에러 반환
         if (response.code != HttpResponseStatus.Unauthorized.code) {
             return null
         }
 
+        // Refresh 토큰을 이용하여 발급
         val token = runBlocking {
             lock.withLock {
                 pieceApi.get()
