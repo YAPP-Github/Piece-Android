@@ -5,5 +5,5 @@ data class ValueTalk(
     val title: String = "",
     val content: String = "",
     val aiSummary: String = "",
-    val helpMessage: String = "",
+    val helpMessages: List<String> = emptyList(),
 )
