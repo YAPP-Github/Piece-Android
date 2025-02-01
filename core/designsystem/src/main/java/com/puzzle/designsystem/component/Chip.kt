@@ -47,10 +47,14 @@ fun PieceChip(
         colors = filterChipColors(
             containerColor = PieceTheme.colors.light3,
             labelColor = PieceTheme.colors.dark2,
-            selectedLabelColor = PieceTheme.colors.primaryDefault,
             selectedContainerColor = PieceTheme.colors.primaryLight,
+            selectedLabelColor = PieceTheme.colors.primaryDefault,
+            disabledSelectedContainerColor = PieceTheme.colors.primaryLight,
+            disabledContainerColor = PieceTheme.colors.light3,
+            disabledLabelColor = if (selected) PieceTheme.colors.primaryDefault
+            else PieceTheme.colors.dark2,
         ),
-        border = if (selected) pieceChipSelectedBorder() else null,
+        border = if (enabled && selected) pieceChipSelectedBorder() else null,
         onClick = onChipClicked,
         modifier = modifier,
     )
@@ -68,8 +72,8 @@ private fun PreviewPieceChip() {
     PieceTheme {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             PieceChip(
-                label = "Select",
-                selected = true,
+                label = "Non_Select",
+                selected = false,
                 onChipClicked = {},
                 modifier = Modifier
                     .width(300.dp)
@@ -86,9 +90,20 @@ private fun PreviewPieceChip() {
             )
 
             PieceChip(
-                label = "Non-Select",
+                label = "Non-Selected",
                 selected = false,
                 onChipClicked = {},
+                enabled = false,
+                modifier = Modifier
+                    .width(300.dp)
+                    .padding(16.dp),
+            )
+
+            PieceChip(
+                label = "Selected",
+                selected = true,
+                onChipClicked = {},
+                enabled = false,
                 modifier = Modifier
                     .width(300.dp)
                     .padding(16.dp),
