@@ -52,7 +52,7 @@ data class ValuePickQuestion(
     indices = [Index("questionsId")]
 )
 data class ValuePickAnswer(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val questionsId: Int,
     val number: Int,
     val content: String,

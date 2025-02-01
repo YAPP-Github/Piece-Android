@@ -1,6 +1,8 @@
 package com.puzzle.network.source
 
 import com.puzzle.network.api.PieceApi
+import com.puzzle.network.model.matching.LoadValuePicksResponse
+import com.puzzle.network.model.unwrapData
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -8,6 +10,8 @@ import javax.inject.Singleton
 class MatchingDataSource @Inject constructor(
     private val pieceApi: PieceApi,
 ) {
-    suspend fun loadValuePick(): Result<Unit> = Result.success(Unit)
-    suspend fun loadValueTalk(): Result<Unit> = Result.success(Unit)
+    suspend fun loadValuePicks(): Result<LoadValuePicksResponse> =
+        pieceApi.loadValuePicks().unwrapData()
+
+    suspend fun loadValueTalks(): Result<Unit> = Result.success(Unit)
 }

@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalValuePickDataSource @Inject constructor(
+class LocalMatchingDataSource @Inject constructor(
     private val valuePicksDao: ValuePicksDao,
 ) {
     suspend fun retrieveValuePicks() = valuePicksDao.getValuePicks()
