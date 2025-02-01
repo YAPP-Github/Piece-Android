@@ -7,6 +7,7 @@ import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
+import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
@@ -29,6 +30,9 @@ interface PieceApi {
 
     @GET("/api/valuePicks")
     suspend fun loadValuePicks(): Result<ApiResponse<LoadValuePicksResponse>>
+
+    @GET("/api/valueTalks")
+    suspend fun loadValueTalks(): Result<ApiResponse<LoadValueTalksResponse>>
 
     @POST("/api/auth/refresh")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Result<ApiResponse<RefreshTokenResponse>>
