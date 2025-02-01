@@ -184,10 +184,7 @@ fun PieceTextInputLong(
             .onFocusChanged { focusState -> isFocused = focusState.isFocused }
             .heightIn(min = 160.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(
-                if (readOnly) PieceTheme.colors.light2
-                else PieceTheme.colors.light3
-            )
+            .background(PieceTheme.colors.light3)
             .padding(horizontal = 16.dp, vertical = 14.dp),
     )
 }
