@@ -1,10 +1,14 @@
 package com.puzzle.setting.graph.main
 
+import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.navigation.AuthGraph
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.NavigateTo
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.SettingGraphDest
@@ -23,6 +27,7 @@ import kotlinx.coroutines.launch
 
 class SettingViewModel @AssistedInject constructor(
     @Assisted initialState: SettingState,
+    private val authRepository: AuthRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
@@ -44,11 +49,18 @@ class SettingViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: SettingIntent) {
         when (intent) {
             is SettingIntent.OnWithdrawClick -> moveToWithdrawScreen()
+            is SettingIntent.OnLogoutClick -> logout()
         }
     }
 
     private suspend fun moveToWithdrawScreen() {
         _sideEffects.send(SettingSideEffect.Navigate(NavigateTo(SettingGraphDest.WithdrawRoute)))
+    }
+
+    private suspend fun logout() {
+        authRepository.logout()
+            .onSuccess { navigationHelper.navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)) }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory

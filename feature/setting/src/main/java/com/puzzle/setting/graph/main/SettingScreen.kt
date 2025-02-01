@@ -65,6 +65,7 @@ internal fun SettingRoute(
     SettingScreen(
         state = state,
         onWithdrawClick = { viewModel.onIntent(SettingIntent.OnWithdrawClick) },
+        onLogoutClick = { viewModel.onIntent(SettingIntent.OnLogoutClick) },
     )
 }
 
@@ -72,6 +73,7 @@ internal fun SettingRoute(
 private fun SettingScreen(
     state: SettingState,
     onWithdrawClick: () -> Unit,
+    onLogoutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isLogoutDialogShow by remember { mutableStateOf(false) }
@@ -89,8 +91,8 @@ private fun SettingScreen(
                 PieceDialogBottom(
                     leftButtonText = "취소",
                     rightButtonText = "확인",
-                    onLeftButtonClick = {},
-                    onRightButtonClick = {},
+                    onLeftButtonClick = { isLogoutDialogShow = false },
+                    onRightButtonClick = { onLogoutClick() },
                 )
             },
         )
@@ -547,6 +549,31 @@ private fun PreviewSettingScreen() {
                 version = "v1.0",
             ),
             onWithdrawClick = {},
+            onLogoutClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewLogoutDialog() {
+    PieceTheme {
+        PieceDialog(
+            onDismissRequest = { },
+            dialogTop = {
+                PieceDialogDefaultTop(
+                    title = "로그아웃",
+                    subText = "로그아웃하시겠습니까?",
+                )
+            },
+            dialogBottom = {
+                PieceDialogBottom(
+                    leftButtonText = "취소",
+                    rightButtonText = "확인",
+                    onLeftButtonClick = {},
+                    onRightButtonClick = {},
+                )
+            },
         )
     }
 }

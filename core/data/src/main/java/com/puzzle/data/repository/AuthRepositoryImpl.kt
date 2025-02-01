@@ -38,6 +38,16 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun logout(): Result<Unit> = suspendRunCatching {
+        coroutineScope {
+            val clearUserRoleJob = launch { localUserDataSource.clearUserRole() }
+            val clearTokenJob = launch { localTokenDataSource.clearToken() }
+
+            clearTokenJob.join()
+            clearUserRoleJob.join()
+        }
+    }
+
     override suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
         authDataSource.requestAuthCode(phoneNumber)
 
