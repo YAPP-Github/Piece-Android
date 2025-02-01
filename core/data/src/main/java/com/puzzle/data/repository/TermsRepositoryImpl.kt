@@ -32,7 +32,7 @@ class TermsRepositoryImpl @Inject constructor(
         localTermDataSource.replaceTerms(termsEntity)
     }
 
-    override suspend fun getTerms(): Result<List<Term>> = runCatching {
+    override suspend fun retrieveTerms(): Result<List<Term>> = runCatching {
         localTermDataSource.retrieveTerms()
             .map(TermEntity::toDomain)
     }
