@@ -6,24 +6,38 @@ import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
+import com.puzzle.domain.model.user.UserRole.PENDING
+import com.puzzle.domain.model.user.UserRole.REGISTER
+import com.puzzle.domain.model.user.UserRole.USER
 import com.puzzle.domain.repository.TermsRepository
+import com.puzzle.domain.repository.UserRepository
+import com.puzzle.navigation.AuthGraphDest
+import com.puzzle.navigation.MatchingGraphDest
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val termsRepository: TermsRepository,
-
+    private val userRepository: UserRepository,
     internal val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : ViewModel() {
+    private val _isInitialized = MutableStateFlow(false)
+    val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
 
     init {
         handleError()
         loadTerms()
+        checkRedirection()
     }
 
     private fun handleError() = viewModelScope.launch {
@@ -47,7 +61,31 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun loadToken() = viewModelScope.launch {
+    private fun checkRedirection() = viewModelScope.launch {
+        val userRole = async { userRepository.getUserRole() }
+            .await()
+            .getOrElse { return@launch }
 
-    }
+        when (userRole) {
+            REGISTER -> {
+                navigationHelper.navigate(
+                    NavigationEvent.NavigateTo(
+                        route = AuthGraphDest.VerificationRoute,
+                        popUpTo = AuthGraphDest.LoginRoute,
+                    )
+                )
+            }
+
+            PENDING, USER -> {
+                navigationHelper.navigate(
+                    NavigationEvent.NavigateTo(
+                        route = MatchingGraphDest.MatchingRoute,
+                        popUpTo = AuthGraphDest.LoginRoute,
+                    )
+                )
+            }
+
+            else -> Unit
+        }
+    }.also { _isInitialized.value = true }
 }
