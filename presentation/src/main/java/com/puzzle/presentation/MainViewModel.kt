@@ -61,6 +61,14 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    private fun loadValuePick() = viewModelScope.launch {
+
+    }
+
+    private fun loadValueTalk() = viewModelScope.launch {
+
+    }
+
     private fun checkRedirection() = viewModelScope.launch {
         val userRole = async { userRepository.getUserRole() }
             .await()
