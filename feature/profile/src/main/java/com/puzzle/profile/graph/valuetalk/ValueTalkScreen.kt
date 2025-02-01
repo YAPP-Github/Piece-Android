@@ -51,6 +51,8 @@ import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState
+import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.Companion.PAGE_TRANSITION_DURATION
+import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.Companion.TEXT_DISPLAY_DURATION
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.ScreenState
 import kotlinx.coroutines.delay
 
@@ -311,9 +313,6 @@ private fun AiSummaryContent(
             .padding(top = 12.dp),
     )
 }
-
-const val TEXT_DISPLAY_DURATION = 3000L
-const val PAGE_TRANSITION_DURATION = 1000
 
 @Composable
 fun HelpMessageRow(

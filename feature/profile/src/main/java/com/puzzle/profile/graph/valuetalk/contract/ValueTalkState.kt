@@ -47,6 +47,11 @@ data class ValueTalkState(
     )
 ) : MavericksState {
 
+    companion object {
+        const val TEXT_DISPLAY_DURATION = 3000L
+        const val PAGE_TRANSITION_DURATION = 1000
+    }
+
     enum class ScreenState {
         EDITING,
         SAVED
