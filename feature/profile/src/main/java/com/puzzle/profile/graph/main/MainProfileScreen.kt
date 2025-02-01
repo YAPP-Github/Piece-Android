@@ -36,6 +36,7 @@ import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.profile.graph.main.contract.MainProfileIntent
 import com.puzzle.profile.graph.main.contract.MainProfileSideEffect
 import com.puzzle.profile.graph.main.contract.MainProfileState
 
@@ -60,7 +61,7 @@ internal fun MainProfileRoute(
     MainProfileScreen(
         state = state,
         onMyProfileClick = {},
-        onValueTalkClick = {},
+        onValueTalkClick = { viewModel.onIntent(MainProfileIntent.OnValueTalkClick) },
         onValuePickClick = {},
     )
 }

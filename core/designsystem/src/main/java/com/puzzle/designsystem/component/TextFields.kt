@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -129,7 +130,7 @@ fun PieceTextInputLong(
         onValueChange = { input ->
             limit?.let { if (input.length <= limit) onValueChange(input) } ?: onValueChange(input)
         },
-        singleLine = true,
+        singleLine = false,
         readOnly = readOnly,
         keyboardOptions = KeyboardOptions(
             keyboardType = keyboardType,
@@ -148,19 +149,22 @@ fun PieceTextInputLong(
         textStyle = PieceTheme.typography.bodyMM,
         cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
         decorationBox = { innerTextField ->
+            val isCharCountVisible: Boolean = limit != null && !readOnly
             Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = hint,
-                        style = PieceTheme.typography.bodyMM,
-                        color = PieceTheme.colors.dark3,
-                        modifier = Modifier.align(Alignment.TopStart)
-                    )
+                Box(modifier = Modifier.padding(bottom = if (isCharCountVisible) 36.dp else 0.dp)) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = hint,
+                            style = PieceTheme.typography.bodyMM,
+                            color = PieceTheme.colors.dark3,
+                            modifier = Modifier.align(Alignment.TopStart)
+                        )
+                    }
+
+                    innerTextField()
                 }
 
-                innerTextField()
-
-                if (limit != null && isFocused && value.isNotEmpty()) {
+                if (isCharCountVisible) {
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
@@ -169,7 +173,9 @@ fun PieceTextInputLong(
                             append("/${limit}")
                         },
                         style = PieceTheme.typography.bodySM,
-                        modifier = Modifier.align(Alignment.BottomEnd),
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .height(20.dp),
                     )
                 }
             }
@@ -178,10 +184,7 @@ fun PieceTextInputLong(
             .onFocusChanged { focusState -> isFocused = focusState.isFocused }
             .heightIn(min = 160.dp)
             .clip(RoundedCornerShape(8.dp))
-            .background(
-                if (readOnly) PieceTheme.colors.light2
-                else PieceTheme.colors.light3
-            )
+            .background(PieceTheme.colors.light3)
             .padding(horizontal = 16.dp, vertical = 14.dp),
     )
 }
@@ -190,64 +193,110 @@ fun PieceTextInputLong(
 fun PieceTextInputAI(
     value: String,
     onValueChange: (String) -> Unit,
+    onSaveClick: (String) -> Unit,
     modifier: Modifier = Modifier,
     throttleTime: Long = 2000L,
+    readOnly: Boolean = true,
     onDone: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastDoneTime by remember { mutableLongStateOf(0L) }
     var isFocused by remember { mutableStateOf(false) }
+    var isReadOnly: Boolean by remember { mutableStateOf(readOnly) }
+    var isLoading: Boolean by remember { mutableStateOf(value.isBlank()) }
 
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                val currentTime = System.currentTimeMillis()
-                if (currentTime - lastDoneTime >= throttleTime) {
-                    keyboardController?.hide()
-                    onDone()
-                    lastDoneTime = currentTime
+    Column(
+        modifier = modifier
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastDoneTime >= throttleTime) {
+                        keyboardController?.hide()
+                        onDone()
+                        lastDoneTime = currentTime
+                    }
                 }
-            }
-        ),
-        textStyle = PieceTheme.typography.bodyMM,
-        cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
-        decorationBox = { innerTextField ->
-            Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = "작성해주신 내용을 AI가 요약하고 있어요",
-                        style = PieceTheme.typography.bodyMM,
-                        color = PieceTheme.colors.dark3,
-                        modifier = Modifier.align(Alignment.CenterStart)
+            ),
+            textStyle = PieceTheme.typography.bodyMM,
+            cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+            readOnly = isReadOnly,
+            decorationBox = { innerTextField ->
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    if (isLoading) {
+                        Text(
+                            text = "작성해주신 내용을 AI가 요약하고 있어요",
+                            style = PieceTheme.typography.bodyMM,
+                            color = PieceTheme.colors.dark3,
+                        )
+                    } else {
+                        innerTextField()
+                    }
+
+                    val imageRes = if (isLoading) {
+                        R.drawable.ic_textinput_3dots
+                    } else {
+                        if (isReadOnly) {
+                            R.drawable.ic_textinput_pencil
+                        } else {
+                            R.drawable.ic_textinput_check
+                        }
+                    }
+
+                    Image(
+                        painter = painterResource(imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable {
+                                if (isLoading) return@clickable
+
+                                if (isReadOnly) {
+                                    isReadOnly = false
+                                } else {
+                                    isReadOnly = true
+                                    onSaveClick(value)
+                                }
+                            },
                     )
                 }
+            },
+            modifier = Modifier
+                .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+                .height(52.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.primaryLight)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        )
 
-                innerTextField()
+        if (!isReadOnly) {
+            Row {
+                Spacer(modifier = Modifier.weight(1f))
 
-                val imageRes = if (value.isEmpty()) R.drawable.ic_textinput_3dots
-                else if (isFocused) R.drawable.ic_textinput_check
-                else R.drawable.ic_textinput_pencil
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                            append(value.length.toString())
+                        }
 
-                Image(
-                    painter = painterResource(imageRes),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(24.dp)
-                        .align(Alignment.CenterEnd),
+                        append("/20")
+                    },
+                    style = PieceTheme.typography.bodySR,
+                    color = PieceTheme.colors.dark3,
+                    modifier = Modifier.padding(top = 4.dp)
                 )
             }
-        },
-        modifier = modifier
-            .onFocusChanged { focusState -> isFocused = focusState.isFocused }
-            .height(52.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(PieceTheme.colors.primaryLight)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-    )
+        }
+    }
 }
 
 @Composable
@@ -408,6 +457,8 @@ private fun PreviewPieceTextInputAI() {
             PieceTextInputAI(
                 value = "",
                 onValueChange = {},
+                onSaveClick = {},
+                readOnly = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -416,6 +467,18 @@ private fun PreviewPieceTextInputAI() {
             PieceTextInputAI(
                 value = "Label",
                 onValueChange = { },
+                onSaveClick = { },
+                readOnly = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+            )
+
+            PieceTextInputAI(
+                value = "Label",
+                onValueChange = { },
+                onSaveClick = { },
+                readOnly = false,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),

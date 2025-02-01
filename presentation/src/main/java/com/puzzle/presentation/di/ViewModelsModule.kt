@@ -10,6 +10,8 @@ import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
 import com.puzzle.profile.graph.main.MainProfileViewModel
 import com.puzzle.profile.graph.register.RegisterProfileViewModel
+import com.puzzle.profile.graph.valuepick.ValuePickViewModel
+import com.puzzle.profile.graph.valuetalk.ValueTalkViewModel
 import com.puzzle.setting.graph.main.SettingViewModel
 import com.puzzle.setting.graph.withdraw.WithdrawViewModel
 import dagger.Binds
@@ -65,4 +67,14 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(WithdrawViewModel::class)
     fun settingWithdrawViewModelFactory(factory: WithdrawViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ValueTalkViewModel::class)
+    fun valueTalkViewModelFactory(factory: ValueTalkViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ValuePickViewModel::class)
+    fun valuePickViewModelFactory(factory: ValuePickViewModel.Factory): AssistedViewModelFactory<*, *>
 }

@@ -41,7 +41,7 @@ import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.ProfileGraphDest
-import com.puzzle.navigation.ProfileGraphDest.ProfileRoute
+import com.puzzle.navigation.ProfileGraphDest.MainProfileRoute
 import com.puzzle.navigation.Route
 import com.puzzle.navigation.SettingGraph
 import com.puzzle.navigation.SettingGraphDest
@@ -141,7 +141,10 @@ private fun AppBottomBar(
                 onClick = {
                     when (topLevelRoute) {
                         TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
-                        TopLevelDestination.PROFILE -> navigateToTopLevelDestination(ProfileRoute)
+                        TopLevelDestination.PROFILE -> navigateToTopLevelDestination(
+                            MainProfileRoute
+                        )
+
                         TopLevelDestination.SETTING -> navigateToTopLevelDestination(SettingGraph)
                     }
                 },
@@ -154,6 +157,7 @@ private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     AuthGraph::class.qualifiedName,
     MatchingDetailRoute::class.qualifiedName,
     ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
+    ProfileGraphDest.ValueTalkProfileRoute::class.qualifiedName,
     SettingGraphDest.WithdrawRoute::class.qualifiedName,
 )
 

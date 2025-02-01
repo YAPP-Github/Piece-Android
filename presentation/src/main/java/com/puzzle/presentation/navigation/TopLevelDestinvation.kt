@@ -17,7 +17,7 @@ enum class TopLevelDestination(
         iconDrawableId = R.drawable.ic_profile,
         contentDescription = "프로필",
         title = "프로필",
-        route = ProfileGraphDest.ProfileRoute::class,
+        route = ProfileGraphDest.MainProfileRoute::class,
     ),
     MATCHING(
         iconDrawableId = R.drawable.ic_profile,
