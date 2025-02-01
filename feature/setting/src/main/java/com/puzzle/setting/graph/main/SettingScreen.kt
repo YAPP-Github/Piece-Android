@@ -18,6 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,6 +33,9 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceDialog
+import com.puzzle.designsystem.component.PieceDialogBottom
+import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -68,6 +74,28 @@ private fun SettingScreen(
     onWithdrawClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var isLogoutDialogShow by remember { mutableStateOf(false) }
+
+    if (isLogoutDialogShow) {
+        PieceDialog(
+            onDismissRequest = { isLogoutDialogShow = false },
+            dialogTop = {
+                PieceDialogDefaultTop(
+                    title = "로그아웃",
+                    subText = "로그아웃하시겠습니까?",
+                )
+            },
+            dialogBottom = {
+                PieceDialogBottom(
+                    leftButtonText = "취소",
+                    rightButtonText = "확인",
+                    onLeftButtonClick = {},
+                    onRightButtonClick = {},
+                )
+            },
+        )
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -108,7 +136,7 @@ private fun SettingScreen(
                 onRefreshClick = {},
             )
 
-            InquirBody(
+            InquiryBody(
                 onContactUsClick = {},
             )
 
@@ -119,7 +147,7 @@ private fun SettingScreen(
                 onTermsClick = {},
             )
 
-            OthersBody(onLogoutClick = {})
+            OthersBody(onLogoutClick = { isLogoutDialogShow = true })
 
             Text(
                 text = stringResource(R.string.withdraw_page),
@@ -139,125 +167,61 @@ private fun SettingScreen(
 }
 
 @Composable
-private fun OthersBody(onLogoutClick: () -> Unit) {
-    Text(
-        text = stringResource(R.string.setting_other),
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark2,
-        modifier = Modifier.padding(bottom = 8.dp),
-    )
-
-    Text(
-        text = stringResource(R.string.setting_logout),
-        style = PieceTheme.typography.headingSSB,
-        color = PieceTheme.colors.dark1,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 17.dp)
-            .clickable { onLogoutClick() },
-    )
-}
-
-@Composable
-private fun AnnouncementBody(
-    version: String,
-    onAnnouncementClick: () -> Unit,
-    onPrivacyPolicy: () -> Unit,
-    onTermsClick: () -> Unit,
+private fun LoginAccountBody(
+    oAuthProvider: OAuthProvider?,
+    email: String,
 ) {
     Text(
-        text = stringResource(R.string.setting_guidance),
+        text = stringResource(R.string.setting_logged_in_account),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
-        modifier = Modifier.padding(bottom = 8.dp),
+        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
     )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .height(56.dp)
+            .padding(top = 20.dp, bottom = 8.dp),
     ) {
-        Text(
-            text = stringResource(R.string.setting_announcement),
-            style = PieceTheme.typography.headingSSB,
-            color = PieceTheme.colors.dark1,
-            modifier = Modifier.weight(1f),
-        )
+        val oAuthProviderIconId = when (oAuthProvider) {
+            OAuthProvider.GOOGLE -> R.drawable.ic_google_login
+            OAuthProvider.KAKAO -> R.drawable.ic_kakao_login
+            null -> null
+        }
 
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onAnnouncementClick() },
+        oAuthProviderIconId?.let {
+            Image(
+                painter = painterResource(it),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(24.dp),
+            )
+        }
+
+        Text(
+            text = email,
+            modifier = Modifier.padding(start = 8.dp),
         )
     }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 17.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.setting_privacy_policy),
-            style = PieceTheme.typography.headingSSB,
-            color = PieceTheme.colors.dark1,
-            modifier = Modifier.weight(1f),
-        )
-
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onPrivacyPolicy() },
-        )
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 17.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.setting_term),
-            style = PieceTheme.typography.headingSSB,
-            color = PieceTheme.colors.dark1,
-            modifier = Modifier.weight(1f),
-        )
-
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onTermsClick() },
-        )
-    }
-
-    Text(
-        text = stringResource(R.string.setting_version, version),
-        style = PieceTheme.typography.headingSSB,
-        color = PieceTheme.colors.dark3,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 17.dp),
-    )
 
     HorizontalDivider(
         color = PieceTheme.colors.light2,
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp),
     )
 }
 
 @Composable
-private fun InquirBody(onContactUsClick: () -> Unit) {
+private fun NotificationBody(
+    isMatchingNotificationEnabled: Boolean,
+    isPushNotificationEnabled: Boolean,
+    onMatchingNotificationCheckedChange: () -> Unit,
+    onPushNotificationCheckedChagne: () -> Unit,
+) {
     Text(
-        text = stringResource(R.string.setting_inquiry),
+        text = stringResource(R.string.setting_notification),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
@@ -270,25 +234,41 @@ private fun InquirBody(onContactUsClick: () -> Unit) {
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = stringResource(R.string.setting_contact_us),
+            text = stringResource(R.string.setting_match_notification),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
         )
 
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_right),
-            contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onContactUsClick() },
+        PieceToggle(
+            checked = isMatchingNotificationEnabled,
+            onCheckedChange = onMatchingNotificationCheckedChange,
+        )
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 17.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.setting_push_notification),
+            style = PieceTheme.typography.headingSSB,
+            color = PieceTheme.colors.dark1,
+            modifier = Modifier.weight(1f),
+        )
+
+        PieceToggle(
+            checked = isPushNotificationEnabled,
+            onCheckedChange = onPushNotificationCheckedChagne,
         )
     }
 
     HorizontalDivider(
-        color = PieceTheme.colors.light2,
+        modifier = Modifier.padding(vertical = 16.dp),
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 16.dp)
+        color = PieceTheme.colors.light2
     )
 }
 
@@ -397,14 +377,9 @@ private fun SystemSettingBody(
 }
 
 @Composable
-private fun NotificationBody(
-    isMatchingNotificationEnabled: Boolean,
-    isPushNotificationEnabled: Boolean,
-    onMatchingNotificationCheckedChange: () -> Unit,
-    onPushNotificationCheckedChagne: () -> Unit,
-) {
+private fun InquiryBody(onContactUsClick: () -> Unit) {
     Text(
-        text = stringResource(R.string.setting_notification),
+        text = stringResource(R.string.setting_inquiry),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark2,
         modifier = Modifier.padding(bottom = 8.dp),
@@ -417,15 +392,62 @@ private fun NotificationBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = stringResource(R.string.setting_match_notification),
+            text = stringResource(R.string.setting_contact_us),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
         )
 
-        PieceToggle(
-            checked = isMatchingNotificationEnabled,
-            onCheckedChange = onMatchingNotificationCheckedChange,
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = "상세 내용",
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .clickable { onContactUsClick() },
+        )
+    }
+
+    HorizontalDivider(
+        color = PieceTheme.colors.light2,
+        thickness = 1.dp,
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
+}
+
+
+@Composable
+private fun AnnouncementBody(
+    version: String,
+    onAnnouncementClick: () -> Unit,
+    onPrivacyPolicy: () -> Unit,
+    onTermsClick: () -> Unit,
+) {
+    Text(
+        text = stringResource(R.string.setting_guidance),
+        style = PieceTheme.typography.bodySM,
+        color = PieceTheme.colors.dark2,
+        modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 17.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.setting_announcement),
+            style = PieceTheme.typography.headingSSB,
+            color = PieceTheme.colors.dark1,
+            modifier = Modifier.weight(1f),
+        )
+
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = "상세 내용",
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .clickable { onAnnouncementClick() },
         )
     }
 
@@ -436,69 +458,76 @@ private fun NotificationBody(
             .padding(vertical = 17.dp),
     ) {
         Text(
-            text = stringResource(R.string.setting_push_notification),
+            text = stringResource(R.string.setting_privacy_policy),
             style = PieceTheme.typography.headingSSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.weight(1f),
         )
 
-        PieceToggle(
-            checked = isPushNotificationEnabled,
-            onCheckedChange = onPushNotificationCheckedChagne,
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = "상세 내용",
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .clickable { onPrivacyPolicy() },
         )
     }
-
-    HorizontalDivider(
-        modifier = Modifier.padding(vertical = 16.dp),
-        thickness = 1.dp,
-        color = PieceTheme.colors.light2
-    )
-}
-
-@Composable
-private fun LoginAccountBody(
-    oAuthProvider: OAuthProvider?,
-    email: String,
-) {
-    Text(
-        text = stringResource(R.string.setting_logged_in_account),
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark2,
-        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
-    )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .padding(top = 20.dp, bottom = 8.dp),
+            .padding(vertical = 17.dp),
     ) {
-        val oAuthProviderIconId = when (oAuthProvider) {
-            OAuthProvider.GOOGLE -> R.drawable.ic_google_login
-            OAuthProvider.KAKAO -> R.drawable.ic_kakao_login
-            null -> null
-        }
-
-        oAuthProviderIconId?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(24.dp),
-            )
-        }
-
         Text(
-            text = email,
-            modifier = Modifier.padding(start = 8.dp),
+            text = stringResource(R.string.setting_term),
+            style = PieceTheme.typography.headingSSB,
+            color = PieceTheme.colors.dark1,
+            modifier = Modifier.weight(1f),
+        )
+
+        Image(
+            painter = painterResource(R.drawable.ic_arrow_right),
+            contentDescription = "상세 내용",
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .clickable { onTermsClick() },
         )
     }
+
+    Text(
+        text = stringResource(R.string.setting_version, version),
+        style = PieceTheme.typography.headingSSB,
+        color = PieceTheme.colors.dark3,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 17.dp),
+    )
 
     HorizontalDivider(
         color = PieceTheme.colors.light2,
         thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 16.dp),
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
+}
+
+@Composable
+private fun OthersBody(onLogoutClick: () -> Unit) {
+    Text(
+        text = stringResource(R.string.setting_other),
+        style = PieceTheme.typography.bodySM,
+        color = PieceTheme.colors.dark2,
+        modifier = Modifier.padding(bottom = 8.dp),
+    )
+
+    Text(
+        text = stringResource(R.string.setting_logout),
+        style = PieceTheme.typography.headingSSB,
+        color = PieceTheme.colors.dark1,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 17.dp)
+            .clickable { onLogoutClick() },
     )
 }
 
