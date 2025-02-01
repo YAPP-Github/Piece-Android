@@ -1,24 +1,29 @@
 package com.puzzle.database.dao
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import com.puzzle.database.model.terms.TermEntity
+import com.puzzle.database.model.matching.ValuePickEntity
 
+@Dao
 interface ValuePicksDao {
+    @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTerms(vararg terms: TermEntity)
-
-    @Query(value = "SELECT * FROM term")
-    suspend fun getTerms(): List<TermEntity>
-
-    @Query(value = "DELETE FROM term")
-    suspend fun clearTerms()
+    suspend fun insertValuePicks(vararg valuePicks: ValuePickEntity)
 
     @Transaction
-    suspend fun replaceTerms(vararg terms: TermEntity) {
-        clearTerms()
-        insertTerms(*terms)
+    @Query("SELECT * FROM value_pick_question")
+    suspend fun getValuePicks(): List<ValuePickEntity>
+
+    @Transaction
+    @Query("DELETE FROM value_pick_question")
+    suspend fun clearValuePicks()
+
+    @Transaction
+    suspend fun replaceValuePicks(vararg valuePicks: ValuePickEntity) {
+        clearValuePicks()
+        insertValuePicks(*valuePicks)
     }
 }
