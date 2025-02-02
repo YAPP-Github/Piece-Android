@@ -221,10 +221,10 @@ private fun ValuePickCard(
         item.answers.forEachIndexed { index, answer ->
             PieceChip(
                 label = answer.content,
-                selected = index == item.selectedAnswer,
+                selected = answer.number == item.selectedAnswer,
                 onChipClicked = {
                     onContentChange(
-                        item.copy(selectedAnswer = index)
+                        item.copy(selectedAnswer = answer.number)
                     )
                 },
                 enabled = screenState == ScreenState.EDITING,
