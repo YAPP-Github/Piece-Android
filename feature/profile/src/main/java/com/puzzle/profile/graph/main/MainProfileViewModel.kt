@@ -45,7 +45,7 @@ class MainProfileViewModel @AssistedInject constructor(
         when (intent) {
             is MainProfileIntent.Navigate -> _sideEffects.send(MainProfileSideEffect.Navigate(intent.navigationEvent))
             MainProfileIntent.OnValueTalkClick -> moveToValueTalkScreen()
-            MainProfileIntent.OnMyProfileClick -> moveToMyProfileScreen()
+            MainProfileIntent.OnBasicProfileClick -> moveToBasicProfileScreen()
             MainProfileIntent.OnValuePickClick -> moveToValuePickScreen()
         }
     }
@@ -56,7 +56,7 @@ class MainProfileViewModel @AssistedInject constructor(
         )
     }
 
-    private suspend fun moveToMyProfileScreen() {
+    private suspend fun moveToBasicProfileScreen() {
         _sideEffects.send(
             MainProfileSideEffect.Navigate(NavigationEvent.NavigateTo(ProfileGraphDest.BasicProfileRoute))
         )

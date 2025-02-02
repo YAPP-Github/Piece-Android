@@ -60,7 +60,7 @@ internal fun MainProfileRoute(
 
     MainProfileScreen(
         state = state,
-        onMyProfileClick = { viewModel.onIntent(MainProfileIntent.OnMyProfileClick) },
+        onBasicProfileClick = { viewModel.onIntent(MainProfileIntent.OnBasicProfileClick) },
         onValueTalkClick = { viewModel.onIntent(MainProfileIntent.OnValueTalkClick) },
         onValuePickClick = { viewModel.onIntent(MainProfileIntent.OnValuePickClick) },
     )
@@ -69,7 +69,7 @@ internal fun MainProfileRoute(
 @Composable
 private fun MainProfileScreen(
     state: MainProfileState,
-    onMyProfileClick: () -> Unit,
+    onBasicProfileClick: () -> Unit,
     onValueTalkClick: () -> Unit,
     onValuePickClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -90,7 +90,7 @@ private fun MainProfileScreen(
             modifier = Modifier.padding(vertical = 14.dp, horizontal = 20.dp),
         )
 
-        MyProfile(
+        BasicProfile(
             nickName = state.nickName,
             selfDescription = state.selfDescription,
             age = state.age,
@@ -100,7 +100,7 @@ private fun MainProfileScreen(
             occupation = state.occupation,
             smokeStatue = state.smokeStatue,
             weight = state.weight,
-            onMyProfileClick = onMyProfileClick,
+            onBasicProfileClick = onBasicProfileClick,
             modifier = Modifier.padding(horizontal = 20.dp)
         )
 
@@ -118,7 +118,7 @@ private fun MainProfileScreen(
 }
 
 @Composable
-private fun MyProfile(
+private fun BasicProfile(
     nickName: String,
     selfDescription: String,
     age: String,
@@ -128,13 +128,13 @@ private fun MyProfile(
     occupation: String,
     smokeStatue: String,
     weight: String,
-    onMyProfileClick: () -> Unit,
+    onBasicProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .padding(top = 20.dp)
-            .clickable { onMyProfileClick() }
+            .clickable { onBasicProfileClick() }
     ) {
         Image(
             painter = painterResource(R.drawable.ic_profile_default),
@@ -457,7 +457,7 @@ private fun ProfileScreenPreview() {
                 occupation = "개발자",
                 smokeStatue = "흡연",
             ),
-            onMyProfileClick = {},
+            onBasicProfileClick = {},
             onValueTalkClick = {},
             onValuePickClick = {},
         )
