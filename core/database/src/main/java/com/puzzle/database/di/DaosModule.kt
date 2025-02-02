@@ -2,6 +2,8 @@ package com.puzzle.database.di
 
 import com.puzzle.database.PieceDatabase
 import com.puzzle.database.dao.TermsDao
+import com.puzzle.database.dao.ValuePicksDao
+import com.puzzle.database.dao.ValueTalksDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,4 +16,14 @@ internal object DaosModule {
     fun providesTermsDao(
         database: PieceDatabase,
     ): TermsDao = database.termsDao()
+
+    @Provides
+    fun providesValuePicksDao(
+        database: PieceDatabase,
+    ): ValuePicksDao = database.valuePicksDao()
+
+    @Provides
+    fun providesValueTalksDao(
+        database: PieceDatabase,
+    ): ValueTalksDao = database.valueTalksDao()
 }

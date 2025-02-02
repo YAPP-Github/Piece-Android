@@ -49,6 +49,7 @@ import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubButton
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.matching.Answer
 import com.puzzle.domain.model.matching.ValuePick
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
@@ -175,16 +176,13 @@ private fun ValuePickCards(
             .padding(horizontal = 20.dp),
     ) {
         itemsIndexed(pickCards) { idx, item ->
-            Spacer(Modifier.height(20.dp))
-
             ValuePickCard(
                 valuePick = item,
+                modifier = Modifier.padding(top = 20.dp)
             )
         }
 
         item {
-            Spacer(Modifier.height(60.dp))
-
             Text(
                 text = stringResource(R.string.valuepick_refuse),
                 style = PieceTheme.typography.bodyMM.copy(
@@ -194,12 +192,11 @@ private fun ValuePickCards(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(vertical = 60.dp)
                     .clickable {
                         onDeclineClick()
                     },
             )
-
-            Spacer(Modifier.height(60.dp))
         }
     }
 }
@@ -294,31 +291,26 @@ private fun ValuePickCard(
             }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
         Text(
             text = valuePick.question,
             style = PieceTheme.typography.headingMSB,
             color = PieceTheme.colors.dark1,
+            modifier = Modifier.padding(top = 12.dp, bottom = 24.dp),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        PieceSubButton(
-            label = valuePick.option1,
-            onClick = {},
-            enabled = true,
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        PieceSubButton(
-            label = valuePick.option2,
-            onClick = {},
-            enabled = false,
-            modifier = Modifier.fillMaxWidth(),
-        )
+        valuePick.answers.forEachIndexed { idx, answer ->
+            PieceSubButton(
+                label = answer.content,
+                onClick = {},
+                enabled = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .then(
+                        if (idx != 0) Modifier.padding(top = 8.dp)
+                        else Modifier
+                    ),
+            )
+        }
     }
 }
 
@@ -333,31 +325,39 @@ private fun ProfileValuePickPagePreview() {
                 ValuePick(
                     category = "음주",
                     question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
-                    option1 = "함께 술을 즐기고 싶어요",
-                    option2 = "같이 술을 즐길 수 없어도 괜찮아요",
+                    answers = listOf(
+                        Answer(1, "함께 술을 즐기고 싶어요"),
+                        Answer(2, "같이 술을 즐길 수 없어도 괜찮아요")
+                    ),
                     isSimilarToMe = true,
                 ),
                 ValuePick(
                     category = "만남 빈도",
                     question = "주말에 얼마나 자주 데이트를 하고싶나요?",
-                    option1 = "주말에는 최대한 같이 있고 싶어요",
-                    option2 = "하루 정도는 각자 보내고 싶어요",
+                    answers = listOf(
+                        Answer(1, "주말에는 최대한 같이 있고 싶어요"),
+                        Answer(2, "하루 정도는 각자 보내고 싶어요")
+                    ),
                     isSimilarToMe = false,
                 ),
                 ValuePick(
                     category = "연락 빈도",
                     question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
-                    option1 = "바빠도 최대한 자주 연락하고 싶어요",
-                    option2 = "연락은 생각날 때만 종종 해도 괜찮아요",
+                    answers = listOf(
+                        Answer(1, "바빠도 최대한 자주 연락하고 싶어요"),
+                        Answer(2, "연락은 생각날 때만 종종 해도 괜찮아요")
+                    ),
                     isSimilarToMe = true,
                 ),
                 ValuePick(
                     category = "연락 방식",
                     question = "연락할 때 어떤 방법을 더 좋아하나요?",
-                    option1 = "전화보다는 문자나 카톡이 좋아요",
-                    option2 = "문자나 카톡보다는 전화가 좋아요",
+                    answers = listOf(
+                        Answer(1, "전화보다는 문자나 카톡이 좋아요"),
+                        Answer(2, "문자나 카톡보다는 전화가 좋아요")
+                    ),
                     isSimilarToMe = false,
-                )
+                ),
             ),
             onDeclineClick = {},
         )

@@ -1,4 +1,4 @@
-package com.puzzle.database.source.term
+package com.puzzle.database.source
 
 import com.puzzle.database.dao.TermsDao
 import com.puzzle.database.model.terms.TermEntity
