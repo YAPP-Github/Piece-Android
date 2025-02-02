@@ -8,8 +8,7 @@ import java.time.LocalDateTime
 
 @Entity(tableName = "term")
 data class TermEntity(
-    @PrimaryKey
-    @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey val id: Int,
     val title: String,
     val content: String,
     val required: Boolean,

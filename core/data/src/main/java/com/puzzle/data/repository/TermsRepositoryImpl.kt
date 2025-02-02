@@ -2,7 +2,7 @@ package com.puzzle.data.repository
 
 import com.puzzle.common.suspendRunCatching
 import com.puzzle.database.model.terms.TermEntity
-import com.puzzle.database.source.term.LocalTermDataSource
+import com.puzzle.database.source.LocalTermDataSource
 import com.puzzle.domain.model.terms.Term
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.network.model.UNKNOWN_INT
@@ -32,7 +32,7 @@ class TermsRepositoryImpl @Inject constructor(
         localTermDataSource.replaceTerms(termsEntity)
     }
 
-    override suspend fun getTerms(): Result<List<Term>> = runCatching {
+    override suspend fun retrieveTerms(): Result<List<Term>> = suspendRunCatching {
         localTermDataSource.retrieveTerms()
             .map(TermEntity::toDomain)
     }

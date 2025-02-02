@@ -57,7 +57,7 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun fetchTerms() = viewModelScope.launch {
-        termsRepository.getTerms().onSuccess {
+        termsRepository.retrieveTerms().onSuccess {
             setState { copy(terms = it) }
         }.onFailure { errorHelper.sendError(it) }
     }

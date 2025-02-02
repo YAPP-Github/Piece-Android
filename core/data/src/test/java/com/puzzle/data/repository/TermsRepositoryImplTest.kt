@@ -1,6 +1,6 @@
 package com.puzzle.data.repository
 
-import com.puzzle.database.source.term.LocalTermDataSource
+import com.puzzle.database.source.LocalTermDataSource
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.terms.TermResponse
