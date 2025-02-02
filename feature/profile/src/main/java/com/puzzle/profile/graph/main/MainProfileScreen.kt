@@ -60,9 +60,9 @@ internal fun MainProfileRoute(
 
     MainProfileScreen(
         state = state,
-        onMyProfileClick = {},
+        onMyProfileClick = { viewModel.onIntent(MainProfileIntent.OnMyProfileClick) },
         onValueTalkClick = { viewModel.onIntent(MainProfileIntent.OnValueTalkClick) },
-        onValuePickClick = {},
+        onValuePickClick = { viewModel.onIntent(MainProfileIntent.OnValuePickClick) },
     )
 }
 
