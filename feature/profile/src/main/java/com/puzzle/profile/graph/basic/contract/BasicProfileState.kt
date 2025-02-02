@@ -28,10 +28,10 @@ data class BasicProfileState(
             snsPlatform = SnsPlatform.PHONE,
             content = "010-0000-0000",
         ),
-//        Contact(
-//            snsPlatform = SnsPlatform.OPENKAKAO,
-//            content = "https://open.kakao.com/o/s5aqIX1g",
-//        ),
+        Contact(
+            snsPlatform = SnsPlatform.OPENKAKAO,
+            content = "https://open.kakao.com/o/s5aqIX1g",
+        ),
     ),
 ) : MavericksState {
     val usingSnsPlatforms = contacts.map { it.snsPlatform }

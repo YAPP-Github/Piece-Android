@@ -19,9 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -173,16 +170,6 @@ private fun BasicProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-
-    var previousContactSize by remember { mutableStateOf(1) }
-
-    LaunchedEffect(state.contacts) {
-        if (previousContactSize < state.contacts.size) {
-            scrollState.animateScrollTo(scrollState.maxValue)
-        }
-
-        previousContactSize = state.contacts.size
-    }
 
     Column(
         modifier = modifier

@@ -74,150 +74,110 @@ class BasicProfileViewModel @AssistedInject constructor(
     }
 
     private fun updateNickName(nickName: String) {
-        val isEdited = nickName != initialState.nickName
-
         setState {
-            copy(
-                nickName = nickName,
-                isEdited = isEdited,
-            )
+            val newState = copy(nickName = nickName, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun updateDescription(description: String) {
-        val isEdited = description != initialState.description
-
         setState {
-            copy(
-                description = description,
-                isEdited = isEdited,
-            )
+            val newState = copy(description = description, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun updateBirthdate(birthdate: String) {
-        val isEdited = birthdate != initialState.birthdate
-
         setState {
-            copy(
-                birthdate = birthdate,
-                isEdited = isEdited,
-            )
+            val newState = copy(birthdate = birthdate, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun updateHeight(height: String) {
-        val isEdited = height != initialState.height
-
         setState {
-            copy(
-                height = height,
-                isEdited = isEdited,
-            )
+            val newState = copy(height = height, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun updateWeight(weight: String) {
-        val isEdited = weight != initialState.weight
-
         setState {
-            copy(
-                weight = weight,
-                isEdited = isEdited,
-            )
+            val newState = copy(weight = weight, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun updateJob(job: String) {
-        val isEdited = job != initialState.job
-
         setState {
-            copy(
-                job = job,
-                isEdited = isEdited,
-            )
+            val newState = copy(job = job, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun updateLocation(location: String) {
-        val isEdited = location != initialState.location
-
         setState {
-            copy(
-                location = location,
-                isEdited = isEdited,
-            )
+            val newState = copy(location = location, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun updateIsSmoke(isSmoke: Boolean) {
-        val isEdited = isSmoke != initialState.isSmoke
-
         setState {
-            copy(
-                isSmoke = isSmoke,
-                isEdited = isEdited,
-            )
+            val newState = copy(isSmoke = isSmoke, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
-        setState { copy(isSmoke = isSmoke) }
     }
 
     private fun updateIsSnsActive(isSnsActive: Boolean) {
-        val isEdited = isSnsActive != initialState.isSnsActive
-
         setState {
-            copy(
-                isSnsActive = isSnsActive,
-                isEdited = isEdited,
-            )
+            val newState = copy(isSnsActive = isSnsActive, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun addContact(snsPlatform: SnsPlatform) {
-        val newContacts = initialState.contacts.toMutableList()
-
-        newContacts.add(Contact(snsPlatform = snsPlatform, content = ""))
-
-        val isEdited = newContacts != initialState.contacts
-
         setState {
-            copy(
-                contacts = newContacts,
-                isEdited = isEdited,
-            )
+            val newContacts = contacts.toMutableList().apply {
+                add(Contact(snsPlatform = snsPlatform, content = ""))
+            }
+            val newState = copy(contacts = newContacts, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun deleteContact(idx: Int) {
-        val newContacts = initialState.contacts.toMutableList()
-
-        newContacts.removeAt(idx)
-
-        val isEdited = newContacts != initialState.contacts
-
         setState {
-            copy(
-                contacts = newContacts,
-                isEdited = isEdited,
-            )
+            val newContacts = contacts.toMutableList().apply {
+                removeAt(idx)
+            }
+            val newState = copy(contacts = newContacts, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 
     private fun updateContact(idx: Int, contact: Contact) {
-        val newContacts = initialState.contacts.toMutableList()
-
-        newContacts[idx] = contact
-
-        val isEdited = newContacts != initialState.contacts
-
         setState {
-            copy(
-                contacts = newContacts,
-                isEdited = isEdited,
-            )
+            val newContacts = contacts.toMutableList().apply {
+                set(idx, contact)
+            }
+            val newState = copy(contacts = newContacts, isEdited = false)
+
+            newState.copy(isEdited = newState != initialState)
         }
     }
 

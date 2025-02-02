@@ -385,6 +385,7 @@ fun PieceTextInputSnsDropDown(
                 textStyle = PieceTheme.typography.bodyMM,
                 cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
                 decorationBox = { innerTextField -> innerTextField() },
+                modifier = Modifier.weight(1f)
             )
         }
 
