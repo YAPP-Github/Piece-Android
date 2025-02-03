@@ -5,12 +5,12 @@ import com.puzzle.database.model.matching.ValuePickAnswer
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValuePickQuestion
 import com.puzzle.database.model.matching.ValueTalkEntity
-import com.puzzle.database.source.LocalMatchingDataSource
+import com.puzzle.database.source.matching.LocalMatchingDataSource
 import com.puzzle.domain.model.matching.ValuePick
 import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.network.model.UNKNOWN_INT
-import com.puzzle.network.source.MatchingDataSource
+import com.puzzle.network.source.matching.MatchingDataSource
 import javax.inject.Inject
 
 class MatchingRepositoryImpl @Inject constructor(
