@@ -1,8 +1,8 @@
 package com.puzzle.data.repository
 
 import com.puzzle.common.suspendRunCatching
-import com.puzzle.datastore.datasource.LocalTokenDataSource
-import com.puzzle.datastore.datasource.LocalUserDataSource
+import com.puzzle.datastore.datasource.token.LocalTokenDataSource
+import com.puzzle.datastore.datasource.user.LocalUserDataSource
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.network.source.AuthDataSource
