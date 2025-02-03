@@ -1,5 +1,7 @@
 package com.puzzle.network.di
 
+import com.puzzle.network.source.auth.AuthDataSource
+import com.puzzle.network.source.auth.AuthDataSourceImpl
 import com.puzzle.network.source.matching.MatchingDataSource
 import com.puzzle.network.source.matching.MatchingDataSourceImpl
 import com.puzzle.network.source.term.TermDataSource
@@ -13,6 +15,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class NetworkModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindsAuthDataSource(
+        authDataSourceImpl: AuthDataSourceImpl,
+    ): AuthDataSource
 
     @Binds
     @Singleton

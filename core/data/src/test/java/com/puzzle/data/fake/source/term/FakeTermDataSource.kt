@@ -1,4 +1,4 @@
-package com.puzzle.data.datasource.term
+package com.puzzle.data.fake.source.term
 
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.terms.TermResponse

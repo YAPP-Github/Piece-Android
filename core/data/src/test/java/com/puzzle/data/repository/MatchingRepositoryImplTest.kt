@@ -1,7 +1,7 @@
 package com.puzzle.data.repository
 
-import com.puzzle.data.datasource.matching.FakeLocalMatchingDataSource
-import com.puzzle.data.datasource.matching.FakeMatchingDataSource
+import com.puzzle.data.fake.source.matching.FakeLocalMatchingDataSource
+import com.puzzle.data.fake.source.matching.FakeMatchingDataSource
 import com.puzzle.network.model.matching.ValueTalkResponse
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue

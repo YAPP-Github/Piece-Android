@@ -12,14 +12,14 @@ import javax.inject.Named
 
 class LocalUserDataSourceImpl @Inject constructor(
     @Named("user") private val dataStore: DataStore<Preferences>
-) {
-    val userRole: Flow<String> = dataStore.getValue(USER_ROLE, "")
+) : LocalUserDataSource {
+    override val userRole: Flow<String> = dataStore.getValue(USER_ROLE, "")
 
-    suspend fun setUserRole(userRole: String) {
+    override suspend fun setUserRole(userRole: String) {
         dataStore.setValue(USER_ROLE, userRole)
     }
 
-    suspend fun clearUserRole() {
+    override suspend fun clearUserRole() {
         dataStore.clear(USER_ROLE)
     }
 

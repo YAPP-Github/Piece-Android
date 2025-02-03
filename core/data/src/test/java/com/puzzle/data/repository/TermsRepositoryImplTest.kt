@@ -1,7 +1,7 @@
 package com.puzzle.data.repository
 
-import com.puzzle.data.datasource.term.FakeLocalTermDataSource
-import com.puzzle.data.datasource.term.FakeTermDataSource
+import com.puzzle.data.fake.source.term.FakeLocalTermDataSource
+import com.puzzle.data.fake.source.term.FakeTermDataSource
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.terms.TermResponse
 import kotlinx.coroutines.test.runTest
