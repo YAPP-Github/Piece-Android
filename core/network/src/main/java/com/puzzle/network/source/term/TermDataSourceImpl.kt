@@ -1,4 +1,4 @@
-package com.puzzle.network.source
+package com.puzzle.network.source.term
 
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.model.terms.LoadTermsResponse
@@ -7,8 +7,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class TermDataSource @Inject constructor(
+class TermDataSourceImpl @Inject constructor(
     private val pieceApi: PieceApi,
-) {
-    suspend fun loadTerms(): Result<LoadTermsResponse> = pieceApi.loadTerms().unwrapData()
+) : TermDataSource {
+    override suspend fun loadTerms(): Result<LoadTermsResponse> = pieceApi.loadTerms().unwrapData()
 }

@@ -6,7 +6,7 @@ import com.puzzle.database.source.term.LocalTermDataSource
 import com.puzzle.domain.model.terms.Term
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.network.model.UNKNOWN_INT
-import com.puzzle.network.source.TermDataSource
+import com.puzzle.network.source.term.TermDataSource
 import javax.inject.Inject
 
 class TermsRepositoryImpl @Inject constructor(

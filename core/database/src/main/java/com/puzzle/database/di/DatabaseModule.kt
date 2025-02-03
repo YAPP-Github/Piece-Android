@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.puzzle.database.PieceDatabase
 import com.puzzle.database.source.matching.LocalMatchingDataSource
 import com.puzzle.database.source.matching.LocalMatchingDataSourceImpl
+import com.puzzle.database.source.term.LocalTermDataSource
+import com.puzzle.database.source.term.LocalTermDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -36,4 +38,10 @@ abstract class DatabaseBindsModule {
     abstract fun bindsLocalMatchingDataSource(
         localMatchingDataSourceImpl: LocalMatchingDataSourceImpl
     ): LocalMatchingDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsLocalTermDataSource(
+        localTermDataSourceImpl: LocalTermDataSourceImpl
+    ): LocalTermDataSource
 }
