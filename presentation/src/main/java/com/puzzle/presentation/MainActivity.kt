@@ -70,8 +70,12 @@ class MainActivity : ComponentActivity() {
                         launch {
                             eventHelper.eventFlow.collect { event ->
                                 when (event) {
-                                    is PieceEvent.ShowSnackBar ->
-                                        snackBarHostState.showSnackbar(event.msg)
+                                    is PieceEvent.ShowSnackBar -> {
+                                        scope.launch {
+                                            snackBarHostState.currentSnackbarData?.dismiss()
+                                            snackBarHostState.showSnackbar("${event.msg}/${event.type}")
+                                        }
+                                    }
 
                                     PieceEvent.HideSnackBar -> snackBarHostState.currentSnackbarData?.dismiss()
 

@@ -13,18 +13,22 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -129,17 +133,28 @@ internal fun ColumnScope.AccessRightsPage(
     )
 
     val isButtonEnabled = cameraPermission?.status == PermissionStatus.Granted
-    PieceSolidButton(
-        label = stringResource(R.string.next),
-        enabled = isButtonEnabled,
-        onClick = onNextClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 10.dp)
-            .clickable(enabled = !isButtonEnabled) {
+    Box {
+        PieceSolidButton(
+            label = stringResource(R.string.next),
+            enabled = isButtonEnabled,
+            onClick = onNextClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp, bottom = 10.dp),
+        )
 
-            },
-    )
+        if (!isButtonEnabled) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { onDisEnabledButtonClick() }
+            )
+        }
+    }
 }
 
 @Composable
@@ -216,7 +231,8 @@ private fun AccessRightsPagePreview() {
         ) {
             AccessRightsPage(
                 onBackClick = {},
-                onNextClick = {}
+                onNextClick = {},
+                onDisEnabledButtonClick = {},
             )
         }
     }
@@ -228,7 +244,7 @@ private fun PiecePermissionRowPreview() {
     PieceTheme {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,
-            label = "사진,카메라 [필수]",
+            label = "사진 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
             checked = true,
             onCheckedChange = {},
