@@ -1,8 +1,9 @@
 package com.puzzle.auth.graph.signup.page
 
-import android.Manifest.permission.CAMERA
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -59,10 +60,17 @@ internal fun ColumnScope.AccessRightsPage(
 ) {
     val context = LocalContext.current
     val permissionList = rememberMultiplePermissionsState(
-        listOfNotNull(CAMERA, if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null, READ_CONTACTS)
+        listOfNotNull(
+            if (SDK_INT >= 33) READ_MEDIA_IMAGES else READ_EXTERNAL_STORAGE,
+            if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null,
+            READ_CONTACTS
+        )
     )
-    val cameraPermission = permissionList.permissions
-        .find { it.permission == CAMERA }
+    val galleryPermission = permissionList.permissions
+        .find {
+            if (SDK_INT >= 33) it.permission == READ_MEDIA_IMAGES
+            else it.permission == READ_EXTERNAL_STORAGE
+        }
     val notificationPermission = permissionList.permissions
         .find { if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true }
     val contactsPermission = permissionList.permissions
@@ -105,8 +113,8 @@ internal fun ColumnScope.AccessRightsPage(
             icon = R.drawable.ic_permission_camera,
             label = stringResource(R.string.permission_gallery),
             description = stringResource(R.string.permission_gallery_description),
-            checked = cameraPermission?.status == PermissionStatus.Granted,
-            onCheckedChange = { handlePermission(context, cameraPermission) },
+            checked = galleryPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = { handlePermission(context, galleryPermission) },
         )
 
         PiecePermissionRow(
@@ -132,7 +140,7 @@ internal fun ColumnScope.AccessRightsPage(
             .weight(1.8f),
     )
 
-    val isButtonEnabled = cameraPermission?.status == PermissionStatus.Granted
+    val isButtonEnabled = galleryPermission?.status == PermissionStatus.Granted
     Box {
         PieceSolidButton(
             label = stringResource(R.string.next),
