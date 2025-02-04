@@ -1,6 +1,8 @@
 package com.puzzle.profile.graph.register.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.matching.ValueTalk
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
 
@@ -20,7 +22,15 @@ data class RegisterProfileState(
             content = "",
         ),
     ),
+    val valuePicks: List<ValuePick> = emptyList(),
+    val valueTalks: List<ValueTalk> = emptyList(),
 ) : MavericksState {
+
+    companion object {
+        const val TEXT_DISPLAY_DURATION = 3000L
+        const val PAGE_TRANSITION_DURATION = 1000
+    }
+
     val usingSnsPlatforms = contacts.map { it.snsPlatform }
         .toSet()
 }
