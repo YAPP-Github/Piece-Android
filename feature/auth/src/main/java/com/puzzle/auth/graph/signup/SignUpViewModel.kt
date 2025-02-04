@@ -102,8 +102,25 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun onNextClick() = withState { state ->
-        SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
-            setState { copy(signUpPage = it) }
+        if (state.signUpPage == SignUpState.SignUpPage.TermPage) {
+            viewModelScope.launch {
+                val agreeTermsIds = state.termsCheckedInfo.filter { it.value }
+                    .map { it.key }
+                    .toList()
+
+                termsRepository.agreeTerms(agreeTermsIds)
+                    .onSuccess {
+                        SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
+                            setState { copy(signUpPage = it) }
+                        }
+                    }.onFailure {
+                        errorHelper.sendError(it)
+                    }
+            }
+        } else {
+            SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
+                setState { copy(signUpPage = it) }
+            }
         }
     }
 

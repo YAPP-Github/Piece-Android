@@ -7,6 +7,9 @@
         android:name="android.permission.POST_NOTIFICATIONS"
         tools:targetApi="33" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature android:name="android.hardware.camera" />
 
     <application
         android:name=".PieceApplication"
