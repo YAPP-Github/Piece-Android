@@ -26,6 +26,7 @@ import com.puzzle.auth.graph.signup.page.AvoidAcquaintancesPage
 import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
 import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.auth.graph.signup.page.TermPage
+import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.NavigateTo
@@ -45,6 +46,12 @@ internal fun SignUpRoute(
                 when (sideEffect) {
                     is SignUpSideEffect.Navigate -> viewModel.navigationHelper
                         .navigate(sideEffect.navigationEvent)
+
+                    is SignUpSideEffect.ShowSnackBar -> viewModel.eventHelper
+                        .sendEvent(PieceEvent.ShowSnackBar(sideEffect.msg))
+
+                    SignUpSideEffect.HideSnackBar -> viewModel.eventHelper
+                        .sendEvent(PieceEvent.HideSnackBar)
                 }
             }
         }
@@ -58,6 +65,7 @@ internal fun SignUpRoute(
         onTermDetailClick = { viewModel.onIntent(SignUpIntent.OnTermDetailClick) },
         onBackClick = { viewModel.onIntent(SignUpIntent.OnBackClick) },
         onNextClick = { viewModel.onIntent(SignUpIntent.OnNextClick) },
+        onDisEnabledButtonClick = { viewModel.onIntent(SignUpIntent.OnDisEnabledButtonClick) },
         navigate = { event -> viewModel.onIntent(SignUpIntent.Navigate(event)) }
     )
 }
@@ -71,6 +79,7 @@ private fun SignUpScreen(
     onTermDetailClick: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    onDisEnabledButtonClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
     val (selectedTermIdx, setSelectedTermIdx) = rememberSaveable { mutableStateOf<Int?>(null) }
@@ -89,7 +98,7 @@ private fun SignUpScreen(
                 SignUpState.SignUpPage.TermPage -> TermPage(
                     terms = state.terms,
                     termsCheckedInfo = state.termsCheckedInfo,
-                    allTermsAgreed = state.areAllTermsAgreed,
+                    allTermsAgreed = state.areAllRequiredTermsAgreed,
                     checkAllTerms = checkAllTerms,
                     checkTerm = checkTerm,
                     showTermDetail = {
@@ -109,6 +118,7 @@ private fun SignUpScreen(
                 SignUpState.SignUpPage.AccessRightsPage -> AccessRightsPage(
                     onBackClick = onBackClick,
                     onNextClick = onNextClick,
+                    onDisEnabledButtonClick = onDisEnabledButtonClick,
                 )
 
                 SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesPage(

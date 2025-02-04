@@ -51,6 +51,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 internal fun ColumnScope.AccessRightsPage(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    onDisEnabledButtonClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val permissionList = rememberMultiplePermissionsState(
@@ -98,8 +99,8 @@ internal fun ColumnScope.AccessRightsPage(
     Column(modifier = Modifier.fillMaxWidth()) {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,
-            label = stringResource(R.string.permission_camera),
-            description = stringResource(R.string.permission_camera_description),
+            label = stringResource(R.string.permission_gallery),
+            description = stringResource(R.string.permission_gallery_description),
             checked = cameraPermission?.status == PermissionStatus.Granted,
             onCheckedChange = { handlePermission(context, cameraPermission) },
         )
@@ -127,13 +128,17 @@ internal fun ColumnScope.AccessRightsPage(
             .weight(1.8f),
     )
 
+    val isButtonEnabled = cameraPermission?.status == PermissionStatus.Granted
     PieceSolidButton(
         label = stringResource(R.string.next),
-        enabled = cameraPermission?.status == PermissionStatus.Granted,
+        enabled = isButtonEnabled,
         onClick = onNextClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 10.dp),
+            .padding(top = 12.dp, bottom = 10.dp)
+            .clickable(enabled = !isButtonEnabled) {
+
+            },
     )
 }
 

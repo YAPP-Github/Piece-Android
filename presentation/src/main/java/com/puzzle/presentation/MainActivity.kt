@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -73,6 +72,8 @@ class MainActivity : ComponentActivity() {
                                 when (event) {
                                     is PieceEvent.ShowSnackBar ->
                                         snackBarHostState.showSnackbar(event.msg)
+
+                                    PieceEvent.HideSnackBar -> snackBarHostState.currentSnackbarData?.dismiss()
 
                                     is PieceEvent.ShowBottomSheet -> {
                                         scope.launch {
