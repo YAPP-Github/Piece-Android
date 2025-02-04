@@ -1,4 +1,4 @@
-package com.puzzle.datastore.datasource
+package com.puzzle.datastore.datasource.token
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -12,21 +12,21 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
 
-class LocalTokenDataSource @Inject constructor(
+class LocalTokenDataSourceImpl @Inject constructor(
     @Named("token") private val dataStore: DataStore<Preferences>
-) {
-    val accessToken: Flow<String> = dataStore.getValue(ACCESS_TOKEN, "")
-    val refreshToken: Flow<String> = dataStore.getValue(REFRESH_TOKEN, "")
+) : LocalTokenDataSource {
+    override val accessToken: Flow<String> = dataStore.getValue(ACCESS_TOKEN, "")
+    override val refreshToken: Flow<String> = dataStore.getValue(REFRESH_TOKEN, "")
 
-    suspend fun setAccessToken(accessToken: String) {
+    override suspend fun setAccessToken(accessToken: String) {
         dataStore.setValue(ACCESS_TOKEN, accessToken)
     }
 
-    suspend fun setRefreshToken(refreshToken: String) {
+    override suspend fun setRefreshToken(refreshToken: String) {
         dataStore.setValue(REFRESH_TOKEN, refreshToken)
     }
 
-    suspend fun clearToken() {
+    override suspend fun clearToken() {
         coroutineScope {
             launch { dataStore.clear(REFRESH_TOKEN) }
             dataStore.clear(ACCESS_TOKEN)

@@ -1,4 +1,4 @@
-package com.puzzle.network.source
+package com.puzzle.network.source.auth
 
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.network.api.PieceApi
@@ -12,10 +12,13 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AuthDataSource @Inject constructor(
+class AuthDataSourceImpl @Inject constructor(
     private val pieceApi: PieceApi,
-) {
-    suspend fun loginOauth(provider: OAuthProvider, token: String): Result<LoginOauthResponse> =
+) : AuthDataSource {
+    override suspend fun loginOauth(
+        provider: OAuthProvider,
+        token: String
+    ): Result<LoginOauthResponse> =
         pieceApi.loginOauth(
             LoginOauthRequest(
                 providerName = provider.apiValue,
@@ -23,11 +26,14 @@ class AuthDataSource @Inject constructor(
             )
         ).unwrapData()
 
-    suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
+    override suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
         pieceApi.requestAuthCode(RequestAuthCodeRequest(phoneNumber))
             .unwrapData()
 
-    suspend fun verifyAuthCode(phoneNumber: String, code: String): Result<VerifyAuthCodeResponse> =
+    override suspend fun verifyAuthCode(
+        phoneNumber: String,
+        code: String
+    ): Result<VerifyAuthCodeResponse> =
         pieceApi.verifyAuthCode(
             VerifyAuthCodeRequest(
                 phoneNumber = phoneNumber,

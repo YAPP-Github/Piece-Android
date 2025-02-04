@@ -1,4 +1,4 @@
-package com.puzzle.datastore.datasource
+package com.puzzle.datastore.datasource.user
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,16 +10,16 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Named
 
-class LocalUserDataSource @Inject constructor(
+class LocalUserDataSourceImpl @Inject constructor(
     @Named("user") private val dataStore: DataStore<Preferences>
-) {
-    val userRole: Flow<String> = dataStore.getValue(USER_ROLE, "")
+) : LocalUserDataSource {
+    override val userRole: Flow<String> = dataStore.getValue(USER_ROLE, "")
 
-    suspend fun setUserRole(userRole: String) {
+    override suspend fun setUserRole(userRole: String) {
         dataStore.setValue(USER_ROLE, userRole)
     }
 
-    suspend fun clearUserRole() {
+    override suspend fun clearUserRole() {
         dataStore.clear(USER_ROLE)
     }
 
