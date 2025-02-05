@@ -1,23 +1,23 @@
 package com.puzzle.data.repository
 
-import com.puzzle.data.fake.source.matching.FakeLocalMatchingDataSource
-import com.puzzle.data.fake.source.matching.FakeMatchingDataSource
+import com.puzzle.data.fake.source.matching.FakeLocalProfileDataSource
+import com.puzzle.data.fake.source.matching.FakeProfileDataSource
 import com.puzzle.network.model.matching.ValueTalkResponse
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class MatchingRepositoryImplTest {
-    private lateinit var matchingDataSource: FakeMatchingDataSource
-    private lateinit var localMatchingDataSource: FakeLocalMatchingDataSource
-    private lateinit var matchingRepository: MatchingRepositoryImpl
+class ProfileRepositoryImplTest {
+    private lateinit var matchingDataSource: FakeProfileDataSource
+    private lateinit var localMatchingDataSource: FakeLocalProfileDataSource
+    private lateinit var matchingRepository: ProfileRepositoryImpl
 
     @BeforeEach
     fun setUp() {
-        matchingDataSource = FakeMatchingDataSource()
-        localMatchingDataSource = FakeLocalMatchingDataSource()
-        matchingRepository = MatchingRepositoryImpl(matchingDataSource, localMatchingDataSource)
+        matchingDataSource = FakeProfileDataSource()
+        localMatchingDataSource = FakeLocalProfileDataSource()
+        matchingRepository = ProfileRepositoryImpl(matchingDataSource, localMatchingDataSource)
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.puzzle.domain.model.matching
+package com.puzzle.domain.model.profile
 
 data class ValuePick(
     val id: Int = 0,
@@ -11,4 +11,9 @@ data class ValuePick(
 data class Answer(
     val number: Int,
     val content: String,
+)
+
+data class ValuePickAnswer(
+    val valuePickId: Int,
+    val selectedAnswer: Int,
 )

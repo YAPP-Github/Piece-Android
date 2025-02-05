@@ -2,7 +2,7 @@ package com.puzzle.database.model.matching
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.puzzle.domain.model.matching.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalk
 
 @Entity(tableName = "value_talk")
 data class ValueTalkEntity(

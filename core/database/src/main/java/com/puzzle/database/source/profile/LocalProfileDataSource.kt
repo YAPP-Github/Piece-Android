@@ -1,9 +1,9 @@
-package com.puzzle.database.source.matching
+package com.puzzle.database.source.profile
 
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValueTalkEntity
 
-interface LocalMatchingDataSource {
+interface LocalProfileDataSource {
     suspend fun retrieveValuePicks(): List<ValuePickEntity>
     suspend fun replaceValuePicks(valuePicks: List<ValuePickEntity>): Result<Unit>
 

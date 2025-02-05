@@ -5,20 +5,20 @@ import com.puzzle.database.model.matching.ValuePickAnswer
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValuePickQuestion
 import com.puzzle.database.model.matching.ValueTalkEntity
-import com.puzzle.database.source.matching.LocalMatchingDataSource
-import com.puzzle.domain.model.matching.ValuePick
-import com.puzzle.domain.model.matching.ValueTalk
-import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.database.source.profile.LocalProfileDataSource
+import com.puzzle.domain.model.profile.ValuePick
+import com.puzzle.domain.model.profile.ValueTalk
+import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.network.model.UNKNOWN_INT
-import com.puzzle.network.source.matching.MatchingDataSource
+import com.puzzle.network.source.profile.ProfileDataSource
 import javax.inject.Inject
 
-class MatchingRepositoryImpl @Inject constructor(
-    private val matchingDataSource: MatchingDataSource,
-    private val localMatchingDataSource: LocalMatchingDataSource,
-) : MatchingRepository {
+class ProfileRepositoryImpl @Inject constructor(
+    private val profileDataSource: ProfileDataSource,
+    private val localProfileDataSource: LocalProfileDataSource,
+) : ProfileRepository {
     override suspend fun loadValuePicks(): Result<Unit> = suspendRunCatching {
-        val valuePicks = matchingDataSource.loadValuePicks()
+        val valuePicks = profileDataSource.loadValuePicks()
             .getOrThrow()
             .toDomain()
             .filter { it.id != UNKNOWN_INT }
@@ -40,11 +40,11 @@ class MatchingRepositoryImpl @Inject constructor(
             )
         }
 
-        localMatchingDataSource.replaceValuePicks(valuePickEntities)
+        localProfileDataSource.replaceValuePicks(valuePickEntities)
     }
 
     override suspend fun loadValueTalks(): Result<Unit> = suspendRunCatching {
-        val valueTalks = matchingDataSource.loadValueTalks()
+        val valueTalks = profileDataSource.loadValueTalks()
             .getOrThrow()
             .toDomain()
             .filter { it.id != UNKNOWN_INT }
@@ -58,16 +58,16 @@ class MatchingRepositoryImpl @Inject constructor(
             )
         }
 
-        localMatchingDataSource.replaceValueTalks(valueTalkEntities)
+        localProfileDataSource.replaceValueTalks(valueTalkEntities)
     }
 
     override suspend fun retrieveValuePick(): Result<List<ValuePick>> = suspendRunCatching {
-        localMatchingDataSource.retrieveValuePicks()
+        localProfileDataSource.retrieveValuePicks()
             .map(ValuePickEntity::toDomain)
     }
 
     override suspend fun retrieveValueTalk(): Result<List<ValueTalk>> = suspendRunCatching {
-        localMatchingDataSource.retrieveValueTalks()
+        localProfileDataSource.retrieveValueTalks()
             .map(ValueTalkEntity::toDomain)
     }
 }

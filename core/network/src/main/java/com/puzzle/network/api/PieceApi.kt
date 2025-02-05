@@ -8,12 +8,15 @@ import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
+import com.puzzle.network.model.profile.GenerateProfileRequest
+import com.puzzle.network.model.profile.GenerateProfileResponse
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface PieceApi {
     @POST("/api/login/oauth")
@@ -36,4 +39,10 @@ interface PieceApi {
 
     @POST("/api/auth/refresh")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Result<ApiResponse<RefreshTokenResponse>>
+
+    @POST("/api/profiles/check-nickname")
+    suspend fun checkNickname(@Query("nickname") nickname: String): Result<ApiResponse<Boolean>>
+
+    @POST("/api/profiles")
+    suspend fun generateProfile(@Body generateProfileRequest: GenerateProfileRequest): Result<ApiResponse<GenerateProfileResponse>>
 }

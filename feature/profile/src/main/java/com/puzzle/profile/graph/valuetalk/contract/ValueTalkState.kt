@@ -1,7 +1,7 @@
 package com.puzzle.profile.graph.valuetalk.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.matching.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalk
 
 data class ValueTalkState(
     val valueTalks: List<ValueTalk> = listOf(

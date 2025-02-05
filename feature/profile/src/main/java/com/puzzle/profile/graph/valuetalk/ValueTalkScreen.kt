@@ -47,7 +47,7 @@ import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.component.PieceTextInputAI
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.matching.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalk
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState
