@@ -74,7 +74,7 @@ internal fun ColumnScope.TermPage(
         PieceCheckRow(
             checked = termsCheckedInfo.getOrDefault(term.id, false),
             arrowEnabled = true,
-            label = term.title,
+            label = if (term.required) "[필수] ${term.title}" else term.title,
             onCheckedChange = { checkTerm(term.id) },
             onArrowClick = { showTermDetail(idx) },
             modifier = Modifier.fillMaxWidth(),
@@ -108,7 +108,7 @@ private fun TermPagePreview() {
         ) {
             TermPage(
                 terms = listOf(
-                    Term(1, "서비스 이용약관", "https://example.com/term1", false, LocalDateTime.now()),
+                    Term(1, "서비스 이용약관", "https://example.com/term1", true, LocalDateTime.now()),
                     Term(2, "위치정보 이용약관", "https://example.com/term2", false, LocalDateTime.now()),
                     Term(3, "개인정보 처리방침", "https://example.com/term2", false, LocalDateTime.now()),
                 ),

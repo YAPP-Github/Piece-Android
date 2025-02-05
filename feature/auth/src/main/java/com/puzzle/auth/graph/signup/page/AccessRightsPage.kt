@@ -1,8 +1,9 @@
 package com.puzzle.auth.graph.signup.page
 
-import android.Manifest.permission.CAMERA
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_CONTACTS
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -13,18 +14,22 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,13 +56,21 @@ import com.puzzle.designsystem.foundation.PieceTheme
 internal fun ColumnScope.AccessRightsPage(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    onDisEnabledButtonClick: () -> Unit,
 ) {
     val context = LocalContext.current
     val permissionList = rememberMultiplePermissionsState(
-        listOfNotNull(CAMERA, if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null, READ_CONTACTS)
+        listOfNotNull(
+            if (SDK_INT >= 33) READ_MEDIA_IMAGES else READ_EXTERNAL_STORAGE,
+            if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null,
+            READ_CONTACTS
+        )
     )
-    val cameraPermission = permissionList.permissions
-        .find { it.permission == CAMERA }
+    val galleryPermission = permissionList.permissions
+        .find {
+            if (SDK_INT >= 33) it.permission == READ_MEDIA_IMAGES
+            else it.permission == READ_EXTERNAL_STORAGE
+        }
     val notificationPermission = permissionList.permissions
         .find { if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true }
     val contactsPermission = permissionList.permissions
@@ -98,10 +111,10 @@ internal fun ColumnScope.AccessRightsPage(
     Column(modifier = Modifier.fillMaxWidth()) {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,
-            label = stringResource(R.string.permission_camera),
-            description = stringResource(R.string.permission_camera_description),
-            checked = cameraPermission?.status == PermissionStatus.Granted,
-            onCheckedChange = { handlePermission(context, cameraPermission) },
+            label = stringResource(R.string.permission_gallery),
+            description = stringResource(R.string.permission_gallery_description),
+            checked = galleryPermission?.status == PermissionStatus.Granted,
+            onCheckedChange = { handlePermission(context, galleryPermission) },
         )
 
         PiecePermissionRow(
@@ -127,14 +140,29 @@ internal fun ColumnScope.AccessRightsPage(
             .weight(1.8f),
     )
 
-    PieceSolidButton(
-        label = stringResource(R.string.next),
-        enabled = cameraPermission?.status == PermissionStatus.Granted,
-        onClick = onNextClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp, bottom = 10.dp),
-    )
+    val isButtonEnabled = galleryPermission?.status == PermissionStatus.Granted
+    Box {
+        PieceSolidButton(
+            label = stringResource(R.string.next),
+            enabled = isButtonEnabled,
+            onClick = onNextClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp, bottom = 10.dp),
+        )
+
+        if (!isButtonEnabled) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() }
+                    ) { onDisEnabledButtonClick() }
+            )
+        }
+    }
 }
 
 @Composable
@@ -189,9 +217,7 @@ private fun PiecePermissionRow(
 @OptIn(ExperimentalPermissionsApi::class)
 private fun handlePermission(context: Context, permission: PermissionState?) {
     permission?.let {
-        if (it.status == PermissionStatus.Granted) return@let
-
-        if (!it.status.shouldShowRationale) {
+        if (it.status == PermissionStatus.Granted || !it.status.shouldShowRationale) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
                 data = Uri.fromParts("package", context.packageName, null)
             }
@@ -213,7 +239,8 @@ private fun AccessRightsPagePreview() {
         ) {
             AccessRightsPage(
                 onBackClick = {},
-                onNextClick = {}
+                onNextClick = {},
+                onDisEnabledButtonClick = {},
             )
         }
     }
@@ -225,7 +252,7 @@ private fun PiecePermissionRowPreview() {
     PieceTheme {
         PiecePermissionRow(
             icon = R.drawable.ic_permission_camera,
-            label = "사진,카메라 [필수]",
+            label = "사진 [필수]",
             description = "프로필 생성 시 사진 첨부를 위해 필요해요.",
             checked = true,
             onCheckedChange = {},
