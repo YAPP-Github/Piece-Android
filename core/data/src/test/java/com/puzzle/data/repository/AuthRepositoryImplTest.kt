@@ -13,19 +13,19 @@ import org.junit.jupiter.api.Test
 
 class AuthRepositoryImplTest {
     private lateinit var authDataSource: FakeAuthDataSource
-    private lateinit var tokenDataSource: FakeLocalTokenDataSource
-    private lateinit var userInfoDataSource: FakeLocalUserDataSource
+    private lateinit var localTokenDataSource: FakeLocalTokenDataSource
+    private lateinit var localUserDataSource: FakeLocalUserDataSource
     private lateinit var authRepository: AuthRepositoryImpl
 
     @BeforeEach
     fun setUp() {
         authDataSource = FakeAuthDataSource()
-        tokenDataSource = FakeLocalTokenDataSource()
-        userInfoDataSource = FakeLocalUserDataSource()
+        localTokenDataSource = FakeLocalTokenDataSource()
+        localUserDataSource = FakeLocalUserDataSource()
         authRepository = AuthRepositoryImpl(
             authDataSource = authDataSource,
-            localTokenDataSource = tokenDataSource,
-            localUserDataSource = userInfoDataSource,
+            localTokenDataSource = localTokenDataSource,
+            localUserDataSource = localUserDataSource,
         )
     }
 
@@ -35,9 +35,9 @@ class AuthRepositoryImplTest {
         val result = authRepository.loginOauth(OAuthProvider.KAKAO, "OAuthClientToken")
 
         // then
-        assertTrue(tokenDataSource.accessToken.first().isNotEmpty())
-        assertTrue(tokenDataSource.refreshToken.first().isNotEmpty())
-        assertEquals("NONE", userInfoDataSource.userRole.first())
+        assertTrue(localTokenDataSource.accessToken.first().isNotEmpty())
+        assertTrue(localTokenDataSource.refreshToken.first().isNotEmpty())
+        assertEquals("NONE", localUserDataSource.userRole.first())
     }
 
     @Test
@@ -46,9 +46,9 @@ class AuthRepositoryImplTest {
         val result = authRepository.verifyAuthCode("01012341234", "authCode")
 
         // then
-        assertTrue(tokenDataSource.accessToken.first().isNotEmpty())
-        assertTrue(tokenDataSource.refreshToken.first().isNotEmpty())
-        assertEquals("REGISTER", userInfoDataSource.userRole.first())
+        assertTrue(localTokenDataSource.accessToken.first().isNotEmpty())
+        assertTrue(localTokenDataSource.refreshToken.first().isNotEmpty())
+        assertEquals("REGISTER", localUserDataSource.userRole.first())
     }
 
     @Test
@@ -60,8 +60,8 @@ class AuthRepositoryImplTest {
         val result = authRepository.logout()
 
         // then
-        assertTrue(tokenDataSource.accessToken.first().isEmpty())
-        assertTrue(tokenDataSource.refreshToken.first().isEmpty())
-        assertTrue(userInfoDataSource.userRole.first().isEmpty())
+        assertTrue(localTokenDataSource.accessToken.first().isEmpty())
+        assertTrue(localTokenDataSource.refreshToken.first().isEmpty())
+        assertTrue(localUserDataSource.userRole.first().isEmpty())
     }
 }

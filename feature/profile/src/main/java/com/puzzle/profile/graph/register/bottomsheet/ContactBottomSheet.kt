@@ -49,10 +49,10 @@ internal fun ContactBottomSheet(
                 if (sns == SnsPlatform.UNKNOWN) return@forEach
 
                 val image = when (sns) {
-                    SnsPlatform.KAKAO -> R.drawable.ic_sns_kakao
-                    SnsPlatform.OPENKAKAO -> R.drawable.ic_sns_openchatting
-                    SnsPlatform.INSTA -> R.drawable.ic_sns_instagram
-                    SnsPlatform.PHONE -> R.drawable.ic_sns_call
+                    SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+                    SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+                    SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+                    SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
                     else -> R.drawable.ic_delete_circle
                 }
 

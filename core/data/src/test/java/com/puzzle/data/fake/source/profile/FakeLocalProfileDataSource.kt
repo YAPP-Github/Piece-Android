@@ -1,10 +1,10 @@
-package com.puzzle.data.fake.source.matching
+package com.puzzle.data.fake.source.profile
 
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValueTalkEntity
-import com.puzzle.database.source.matching.LocalMatchingDataSource
+import com.puzzle.database.source.profile.LocalProfileDataSource
 
-class FakeLocalMatchingDataSource : LocalMatchingDataSource {
+class FakeLocalProfileDataSource : LocalProfileDataSource {
     private var valuePicks = listOf<ValuePickEntity>()
     private var valueTalks = listOf<ValueTalkEntity>()
 

@@ -1,4 +1,4 @@
-package com.puzzle.database.source.matching
+package com.puzzle.database.source.profile
 
 import com.puzzle.common.suspendRunCatching
 import com.puzzle.database.dao.ValuePicksDao
@@ -9,10 +9,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class LocalMatchingDataSourceImpl @Inject constructor(
+class LocalProfileDataSourceImpl @Inject constructor(
     private val valuePicksDao: ValuePicksDao,
     private val valueTalksDao: ValueTalksDao,
-) : LocalMatchingDataSource {
+) : LocalProfileDataSource {
     override suspend fun retrieveValuePicks() = valuePicksDao.getValuePicks()
     override suspend fun replaceValuePicks(valuePicks: List<ValuePickEntity>) = suspendRunCatching {
         valuePicks.forEach { valuePicksDao.replaceValuePicks(it) }
