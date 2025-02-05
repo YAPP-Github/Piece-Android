@@ -11,6 +11,7 @@ import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.profile.GenerateProfileRequest
 import com.puzzle.network.model.profile.GenerateProfileResponse
 import com.puzzle.network.model.profile.UploadProfileImageRequest
+import com.puzzle.network.model.terms.AgreeTermsRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
@@ -49,4 +50,7 @@ interface PieceApi {
 
     @POST("/api/profiles/images")
     suspend fun uploadProfileImage(@Body uploadProfileImageRequest: UploadProfileImageRequest): Result<ApiResponse<String>>
+
+    @POST("/api/terms/agree")
+    suspend fun agreeTerms(@Body agreeTermsRequest: AgreeTermsRequest): Result<ApiResponse<Unit>>
 }

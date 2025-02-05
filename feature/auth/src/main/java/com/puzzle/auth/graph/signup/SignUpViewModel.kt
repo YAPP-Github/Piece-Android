@@ -8,6 +8,7 @@ import com.puzzle.auth.graph.signup.contract.SignUpIntent
 import com.puzzle.auth.graph.signup.contract.SignUpSideEffect
 import com.puzzle.auth.graph.signup.contract.SignUpSideEffect.Navigate
 import com.puzzle.auth.graph.signup.contract.SignUpState
+import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.navigation.NavigationHelper
@@ -26,6 +27,7 @@ class SignUpViewModel @AssistedInject constructor(
     private val termsRepository: TermsRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
+    internal val eventHelper: EventHelper,
 ) : MavericksViewModel<SignUpState>(initialState) {
     private val _intents = Channel<SignUpIntent>(BUFFERED)
 
@@ -52,6 +54,10 @@ class SignUpViewModel @AssistedInject constructor(
             is SignUpIntent.OnTermDetailClick -> onTermDetailClick()
             is SignUpIntent.OnBackClick -> onBackClick()
             is SignUpIntent.OnNextClick -> onNextClick()
+            is SignUpIntent.OnDisEnabledButtonClick -> _sideEffects.send(
+                SignUpSideEffect.ShowSnackBar("필수 권한을 허용해주세요")
+            )
+
             is SignUpIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
         }
     }
@@ -82,7 +88,7 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun checkAllTerms() = setState {
-        val updatedTermsCheckedInfo = if (areAllTermsAgreed) {
+        val updatedTermsCheckedInfo = if (areAllRequiredTermsAgreed) {
             emptyMap()
         } else {
             terms.associate { termInfo -> termInfo.id to true }
@@ -102,8 +108,25 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun onNextClick() = withState { state ->
-        SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
-            setState { copy(signUpPage = it) }
+        if (state.signUpPage == SignUpState.SignUpPage.TermPage) {
+            viewModelScope.launch {
+                val agreeTermsIds = state.termsCheckedInfo.filter { it.value }
+                    .map { it.key }
+                    .toList()
+
+                termsRepository.agreeTerms(agreeTermsIds)
+                    .onSuccess {
+                        SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
+                            setState { copy(signUpPage = it) }
+                        }
+                    }.onFailure {
+                        errorHelper.sendError(it)
+                    }
+            }
+        } else {
+            SignUpState.SignUpPage.getNextPage(state.signUpPage)?.let {
+                setState { copy(signUpPage = it) }
+            }
         }
     }
 

@@ -11,6 +11,10 @@ class FakeTermDataSource : TermDataSource {
         return Result.success(LoadTermsResponse(responses = terms))
     }
 
+    override suspend fun agreeTerms(agreeTermsId: List<Int>): Result<Unit> {
+        return Result.success(Unit)
+    }
+
     fun setTerms(newTerms: List<TermResponse>) {
         terms = newTerms
     }

@@ -36,4 +36,6 @@ class TermsRepositoryImpl @Inject constructor(
         localTermDataSource.retrieveTerms()
             .map(TermEntity::toDomain)
     }
+
+    override suspend fun agreeTerms(ids: List<Int>): Result<Unit> = termDataSource.agreeTerms(ids)
 }
