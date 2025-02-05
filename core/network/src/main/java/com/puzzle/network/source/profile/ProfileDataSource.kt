@@ -11,6 +11,7 @@ interface ProfileDataSource {
     suspend fun loadValuePicks(): Result<LoadValuePicksResponse>
     suspend fun loadValueTalks(): Result<LoadValueTalksResponse>
     suspend fun checkNickname(nickname: String): Result<Boolean>
+    suspend fun uploadProfileImage(file: String): Result<String>
     suspend fun generateProfile(
         birthdate: String,
         description: String,

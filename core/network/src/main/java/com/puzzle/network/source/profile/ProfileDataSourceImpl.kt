@@ -6,9 +6,9 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
-import com.puzzle.network.model.profile.ContactsRequest
 import com.puzzle.network.model.profile.GenerateProfileRequest
 import com.puzzle.network.model.profile.GenerateProfileResponse
+import com.puzzle.network.model.profile.UploadProfileImageRequest
 import com.puzzle.network.model.profile.ValuePickAnswerRequest
 import com.puzzle.network.model.profile.ValueTalkAnswerRequest
 import com.puzzle.network.model.unwrapData
@@ -27,6 +27,9 @@ class ProfileDataSourceImpl @Inject constructor(
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         pieceApi.checkNickname(nickname).unwrapData()
+
+    override suspend fun uploadProfileImage(file: String): Result<String> =
+        pieceApi.uploadProfileImage(UploadProfileImageRequest(file)).unwrapData()
 
     override suspend fun generateProfile(
         birthdate: String,
@@ -68,11 +71,7 @@ class ProfileDataSourceImpl @Inject constructor(
                     answer = it.answer,
                 )
             },
-            contacts = ContactsRequest(
-                additionalProp1 = null,
-                additionalProp2 = null,
-                additionalProp3 = null,
-            )
+            contacts = contacts.associate { it.snsPlatform.name to it.content }
         )
     ).unwrapData()
 }

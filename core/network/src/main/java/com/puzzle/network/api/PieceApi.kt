@@ -10,6 +10,7 @@ import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.profile.GenerateProfileRequest
 import com.puzzle.network.model.profile.GenerateProfileResponse
+import com.puzzle.network.model.profile.UploadProfileImageRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
@@ -45,4 +46,7 @@ interface PieceApi {
 
     @POST("/api/profiles")
     suspend fun generateProfile(@Body generateProfileRequest: GenerateProfileRequest): Result<ApiResponse<GenerateProfileResponse>>
+
+    @POST("/api/profiles/images")
+    suspend fun uploadProfileImage(@Body uploadProfileImageRequest: UploadProfileImageRequest): Result<ApiResponse<String>>
 }

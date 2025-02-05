@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class GenerateProfileRequest(
     val birthdate: String,
-    val contacts: ContactsRequest,
+    val contacts: Map<String, String>,
     val description: String,
     val height: Int,
     val weight: Int,
@@ -19,13 +19,6 @@ data class GenerateProfileRequest(
     val snsActivityLevel: String,
     val valuePicks: List<ValuePickAnswerRequest?>,
     val valueTalks: List<ValueTalkAnswerRequest?>,
-)
-
-@Serializable
-data class ContactsRequest(
-    val additionalProp1: String?,
-    val additionalProp2: String?,
-    val additionalProp3: String?
 )
 
 @Serializable
