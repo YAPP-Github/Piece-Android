@@ -2,6 +2,8 @@ package com.puzzle.data.repository
 
 import com.puzzle.data.fake.source.matching.FakeLocalProfileDataSource
 import com.puzzle.data.fake.source.matching.FakeProfileDataSource
+import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
+import com.puzzle.data.fake.source.user.FakeLocalUserDataSource
 import com.puzzle.network.model.matching.ValueTalkResponse
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -9,21 +11,30 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class ProfileRepositoryImplTest {
-    private lateinit var matchingDataSource: FakeProfileDataSource
-    private lateinit var localMatchingDataSource: FakeLocalProfileDataSource
+    private lateinit var profileDataSource: FakeProfileDataSource
+    private lateinit var localProfileDataSource: FakeLocalProfileDataSource
+    private lateinit var localTokenDataSource: FakeLocalTokenDataSource
+    private lateinit var localUserDataSource: FakeLocalUserDataSource
     private lateinit var matchingRepository: ProfileRepositoryImpl
 
     @BeforeEach
     fun setUp() {
-        matchingDataSource = FakeProfileDataSource()
-        localMatchingDataSource = FakeLocalProfileDataSource()
-        matchingRepository = ProfileRepositoryImpl(matchingDataSource, localMatchingDataSource)
+        profileDataSource = FakeProfileDataSource()
+        localProfileDataSource = FakeLocalProfileDataSource()
+        localTokenDataSource = FakeLocalTokenDataSource()
+        localUserDataSource = FakeLocalUserDataSource()
+        matchingRepository = ProfileRepositoryImpl(
+            profileDataSource = profileDataSource,
+            localProfileDataSource = localProfileDataSource,
+            localUserDataSource = localUserDataSource,
+            localTokenDataSource = localTokenDataSource,
+        )
     }
 
     @Test
     fun `가치관Talk을 새로 갱신할 경우 id값이 올바르게 내려오지 않은 가치관Talk은 무시한다`() = runTest {
         // given
-        matchingDataSource.setValueTalks(
+        profileDataSource.setValueTalks(
             listOf(
                 ValueTalkResponse(
                     id = null,
@@ -44,7 +55,7 @@ class ProfileRepositoryImplTest {
         matchingRepository.loadValueTalks()
 
         // then
-        val storedTalks = localMatchingDataSource.retrieveValueTalks()
+        val storedTalks = localProfileDataSource.retrieveValueTalks()
         assertTrue(storedTalks.all { it.id != null })
         assertTrue(storedTalks.size == 1)
     }
@@ -66,13 +77,13 @@ class ProfileRepositoryImplTest {
                 guide = null
             )
         )
-        matchingDataSource.setValueTalks(validValueTalks)
+        profileDataSource.setValueTalks(validValueTalks)
 
         // when
         matchingRepository.loadValueTalks()
 
         // then
-        val storedTalks = localMatchingDataSource.retrieveValueTalks()
+        val storedTalks = localProfileDataSource.retrieveValueTalks()
         assertTrue(storedTalks.size == validValueTalks.size)
         assertTrue(
             storedTalks.all { entity ->
