@@ -1,4 +1,4 @@
-package com.puzzle.data.fake.source.matching
+package com.puzzle.data.fake.source.profile
 
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ValuePickAnswer
@@ -40,9 +40,9 @@ class FakeProfileDataSource : ProfileDataSource {
         valueTalks: List<ValueTalkAnswer>
     ): Result<GenerateProfileResponse> = Result.success(
         GenerateProfileResponse(
-            role = "",
-            accessToken = "",
-            refreshToken = "",
+            role = "PENDING",
+            accessToken = "accessToken",
+            refreshToken = "refreshToken",
         )
     )
 
