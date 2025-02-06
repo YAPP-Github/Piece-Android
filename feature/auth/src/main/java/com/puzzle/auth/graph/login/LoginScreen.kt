@@ -10,14 +10,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,7 +37,6 @@ import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceLoginButton
-import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
 
@@ -97,8 +95,7 @@ private fun LoginScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(PieceTheme.colors.white)
-            .padding(horizontal = 20.dp),
+            .background(PieceTheme.colors.white),
     ) {
         Text(
             text = buildAnnotatedString {
@@ -112,7 +109,7 @@ private fun LoginScreen(
             color = PieceTheme.colors.black,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 80.dp, bottom = 12.dp),
+                .padding(top = 80.dp, bottom = 12.dp, start = 20.dp, end = 20.dp),
         )
 
         Text(
@@ -121,25 +118,36 @@ private fun LoginScreen(
             color = PieceTheme.colors.dark3,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 70.dp),
+                .padding(horizontal = 20.dp),
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
         )
 
         Image(
-            painter = painterResource(R.drawable.ic_puzzle1),
+            painter = painterResource(R.drawable.ic_login_background),
             contentDescription = null,
-            modifier = Modifier
-                .size(240.dp)
-                .align(Alignment.CenterHorizontally),
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f),
+        )
 
         PieceLoginButton(
             label = stringResource(R.string.kakao_login),
             imageId = R.drawable.ic_kakao_login,
             containerColor = Color(0xFFFFE812),
             onClick = loginKakao,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
         )
 
         PieceLoginButton(
@@ -153,7 +161,7 @@ private fun LoginScreen(
             onClick = loginGoogle,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 10.dp),
+                .padding(vertical = 10.dp, horizontal = 20.dp),
         )
     }
 }

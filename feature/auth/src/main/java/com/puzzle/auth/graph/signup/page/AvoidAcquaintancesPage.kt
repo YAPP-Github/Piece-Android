@@ -1,7 +1,7 @@
 package com.puzzle.auth.graph.signup.page
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -65,11 +66,12 @@ internal fun ColumnScope.AvoidAcquaintancesPage(
             .weight(0.7f),
     )
 
-    Spacer(
+    Image(
+        painter = painterResource(R.drawable.ic_avoid_acquaintances),
+        contentDescription = null,
         modifier = Modifier
             .align(Alignment.CenterHorizontally)
-            .size(240.dp)
-            .background(PieceTheme.colors.black),
+            .size(300.dp),
     )
 
     Spacer(
