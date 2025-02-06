@@ -51,6 +51,8 @@ class BasicProfileViewModel @AssistedInject constructor(
         when (intent) {
             BasicProfileIntent.OnBackClick -> moveToBackScreen()
             is BasicProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
+            BasicProfileIntent.CheckNickNameDuplication -> checkNickNameDuplication()
+            BasicProfileIntent.SaveBasicProfile -> saveBasicProfile()
             is BasicProfileIntent.UpdateDescribeMySelf -> updateDescription(intent.description)
             is BasicProfileIntent.UpdateBirthday -> updateBirthdate(intent.birthday)
             is BasicProfileIntent.UpdateHeight -> updateHeight(intent.height)
@@ -73,11 +75,67 @@ class BasicProfileViewModel @AssistedInject constructor(
         )
     }
 
+    private fun saveBasicProfile() {
+        withState { state ->
+            if (state.nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE) {
+                // TODO: save API 호출, 뒤로 가기
+                return@withState
+            }
+
+            setState {
+                copy(
+                    nickNameInputState = if (state.nickName.isEmpty()) {
+                        BasicProfileState.NickNameInputState.EMPTY
+                    } else if (state.nickName.length <= 6) {
+                        BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK
+                    } else {
+                        this.nickNameInputState
+                    }
+                )
+            }
+        }
+    }
+
+    private fun checkNickNameDuplication() {
+        setState {
+            if (this.nickName.isEmpty()) {
+                copy(nickNameInputState = BasicProfileState.NickNameInputState.EMPTY)
+            } else {
+                // TODO: 실제 API 응답 처리
+                val isSuccess = true
+                copy(
+                    isCheckingButtonAvailable = !isSuccess,
+                    nickNameInputState = if (isSuccess) {
+                        BasicProfileState.NickNameInputState.AVAILABLE
+                    } else {
+                        BasicProfileState.NickNameInputState.ALREADY_IN_USE
+                    }
+                )
+            }
+        }
+    }
+
     private fun updateNickName(nickName: String) {
         setState {
-            val newState = copy(nickName = nickName, isEdited = false)
+            val newState = copy(
+                nickName = nickName,
+                nickNameInputState = if (nickName.length > 6) {
+                    BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH
+                } else {
+                    BasicProfileState.NickNameInputState.VALID_LENGTH
+                },
+                isEdited = false
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            val isCheckingButtonAvailable = isEdited &&
+                    newState.nickNameInputState == BasicProfileState.NickNameInputState.VALID_LENGTH &&
+                    nickName.isNotEmpty()
+
+            newState.copy(
+                isEdited = isEdited,
+                isCheckingButtonAvailable = isCheckingButtonAvailable
+            )
         }
     }
 

@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -72,10 +73,10 @@ internal fun BasicProfileRoute(
 
     BasicProfileScreen(
         state = state,
-        isEdited = state.isEdited,
-        onSaveClick = {},
+        onSaveClick = { viewModel.onIntent(BasicProfileIntent.SaveBasicProfile) },
         onBackClick = { viewModel.onIntent(BasicProfileIntent.OnBackClick) },
         onNickNameChanged = { viewModel.onIntent(BasicProfileIntent.UpdateNickName(it)) },
+        onDuplicationCheckClick = { viewModel.onIntent(BasicProfileIntent.CheckNickNameDuplication) },
         onDescribeMySelfChanged = { viewModel.onIntent(BasicProfileIntent.UpdateDescribeMySelf(it)) },
         onBirthdayChanged = { viewModel.onIntent(BasicProfileIntent.UpdateBirthday(it)) },
         onHeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateHeight(it)) },
@@ -151,10 +152,10 @@ internal fun BasicProfileRoute(
 @Composable
 private fun BasicProfileScreen(
     state: BasicProfileState,
-    isEdited: Boolean,
     onSaveClick: () -> Unit,
     onBackClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
+    onDuplicationCheckClick: () -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
     onBirthdayChanged: (String) -> Unit,
     onLocationDropDownClicked: () -> Unit,
@@ -170,6 +171,7 @@ private fun BasicProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
 
     Column(
         modifier = modifier
@@ -186,14 +188,15 @@ private fun BasicProfileScreen(
                 Text(
                     text = stringResource(R.string.value_pick_profile_topbar_save),
                     style = PieceTheme.typography.bodyMM,
-                    color = if (isEdited) {
+                    color = if (state.isEdited) {
                         PieceTheme.colors.primaryDefault
                     } else {
                         PieceTheme.colors.dark3
                     },
                     modifier = Modifier.clickable {
-                        if (isEdited) {
+                        if (state.isEdited) {
                             onSaveClick()
+                            focusManager.clearFocus()
                         }
                     },
                 )
@@ -210,7 +213,10 @@ private fun BasicProfileScreen(
 
         NickNameContent(
             nickName = state.nickName,
+            nickNameInputState = state.nickNameInputState,
+            isCheckingButtonAvailable = state.isCheckingButtonAvailable,
             onNickNameChanged = onNickNameChanged,
+            onDuplicationCheckClick = onDuplicationCheckClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -597,12 +603,26 @@ private fun SelfDescriptionContent(
 }
 
 @Composable
-private fun ColumnScope.NickNameContent(
+private fun NickNameContent(
     nickName: String,
+    nickNameInputState: BasicProfileState.NickNameInputState,
+    isCheckingButtonAvailable: Boolean,
+    onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SectionTitle(title = "닉네임")
+    val focusManager = LocalFocusManager.current
+//    var isDescriptionFocus by remember { mutableStateOf(false) }
+
+    val inputGuideMessage = when (nickNameInputState) {
+        BasicProfileState.NickNameInputState.VALID_LENGTH -> ""
+        BasicProfileState.NickNameInputState.EMPTY -> "필수 항목을 입력해 주세요."
+        BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH -> "6자 이하로 작성해 주세요."
+        BasicProfileState.NickNameInputState.ALREADY_IN_USE -> "이미 사용 중인 닉네임입니다."
+        BasicProfileState.NickNameInputState.AVAILABLE -> "사용할 수 있는 닉네임입니다."
+        BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK -> "닉네임 중복 검사를 진행해 주세요."
+    }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -625,28 +645,42 @@ private fun ColumnScope.NickNameContent(
                     )
                 }
             },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+//                .onFocusChanged { isDescriptionFocus = it.isFocused },
         )
 
         PieceSolidButton(
             label = "중복검사",
-            onClick = { },
-            enabled = nickName.isNotEmpty(),
+            onClick = {
+                onDuplicationCheckClick()
+                focusManager.clearFocus()
+            },
+            enabled = isCheckingButtonAvailable,
             modifier = Modifier.padding(start = 8.dp)
         )
     }
 
+//    AnimatedVisibility(
+//        visible = nickName.isEmpty() &&
+//                isDescriptionFocus ||
+//                nickName.isNotEmpty()
+//    ) {
     Row(
         modifier = Modifier
             .padding(top = 8.dp)
             .fillMaxWidth(),
     ) {
         Text(
-            text = "닉네임 중복 검사를 진행해주세요.",
+            text = inputGuideMessage,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
+            color = if (nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE) {
+                PieceTheme.colors.primaryDefault
+            } else {
+                PieceTheme.colors.error
+            },
             modifier = Modifier.weight(1f),
         )
 
@@ -663,16 +697,15 @@ private fun ColumnScope.NickNameContent(
             modifier = Modifier.padding(start = 5.dp),
         )
     }
+//    }
 }
 
 @Composable
-private fun ColumnScope.PhotoContent(
+private fun PhotoContent(
     onEditPhotoClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier,
-    ) {
+    Box(modifier = modifier) {
         Image(
             painter = painterResource(R.drawable.ic_profile_default),
             contentDescription = null,
@@ -706,7 +739,7 @@ private fun BasicProfilePreview() {
     PieceTheme {
         BasicProfileScreen(
             state = BasicProfileState(),
-            isEdited = false,
+            onDuplicationCheckClick = {},
             onSaveClick = {},
             onBackClick = {},
             onNickNameChanged = {},
