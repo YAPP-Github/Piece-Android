@@ -10,7 +10,7 @@ import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 
 fun NavGraphBuilder.authNavGraph() {
-    navigation<AuthGraph>(startDestination = AuthGraphDest.LoginRoute) {
+    navigation<AuthGraph>(startDestination = AuthGraphDest.SignUpRoute) {
         composable<AuthGraphDest.LoginRoute> {
             LoginRoute()
         }
