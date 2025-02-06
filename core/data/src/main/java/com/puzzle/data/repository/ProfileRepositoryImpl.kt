@@ -82,7 +82,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         profileDataSource.checkNickname(nickname)
 
-    override suspend fun generateProfile(
+    override suspend fun uploadProfile(
         birthdate: String,
         description: String,
         height: Int,
@@ -98,7 +98,7 @@ class ProfileRepositoryImpl @Inject constructor(
         valuePicks: List<com.puzzle.domain.model.profile.ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> = suspendRunCatching {
-        val response = profileDataSource.generateProfile(
+        val response = profileDataSource.uploadProfile(
             birthdate = birthdate,
             description = description,
             height = height,

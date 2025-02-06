@@ -6,8 +6,8 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
-import com.puzzle.network.model.profile.GenerateProfileRequest
-import com.puzzle.network.model.profile.GenerateProfileResponse
+import com.puzzle.network.model.profile.UploadProfileRequest
+import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.profile.UploadProfileImageRequest
 import com.puzzle.network.model.profile.ValuePickAnswerRequest
 import com.puzzle.network.model.profile.ValueTalkAnswerRequest
@@ -31,7 +31,7 @@ class ProfileDataSourceImpl @Inject constructor(
     override suspend fun uploadProfileImage(file: String): Result<String> =
         pieceApi.uploadProfileImage(UploadProfileImageRequest(file)).unwrapData()
 
-    override suspend fun generateProfile(
+    override suspend fun uploadProfile(
         birthdate: String,
         description: String,
         height: Int,
@@ -46,8 +46,8 @@ class ProfileDataSourceImpl @Inject constructor(
         contacts: List<Contact>,
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
-    ): Result<GenerateProfileResponse> = pieceApi.generateProfile(
-        GenerateProfileRequest(
+    ): Result<UploadProfileResponse> = pieceApi.uploadProfile(
+        UploadProfileRequest(
             birthdate = birthdate,
             description = description,
             height = height,
