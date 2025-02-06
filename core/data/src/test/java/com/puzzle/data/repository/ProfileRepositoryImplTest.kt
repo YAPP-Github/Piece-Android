@@ -1,20 +1,18 @@
 package com.puzzle.data.repository
 
+import com.puzzle.data.fake.source.image.FakeImageResizer
 import com.puzzle.data.fake.source.profile.FakeLocalProfileDataSource
 import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
 import com.puzzle.data.fake.source.user.FakeLocalUserDataSource
 import com.puzzle.data.image.ImageResizer
 import com.puzzle.network.model.matching.ValueTalkResponse
-import io.mockk.every
-import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.io.ByteArrayInputStream
 
 class ProfileRepositoryImplTest {
     private lateinit var profileDataSource: FakeProfileDataSource
@@ -30,7 +28,7 @@ class ProfileRepositoryImplTest {
         localProfileDataSource = FakeLocalProfileDataSource()
         localTokenDataSource = FakeLocalTokenDataSource()
         localUserDataSource = FakeLocalUserDataSource()
-        imageResizer = mockk<ImageResizer>()
+        imageResizer = FakeImageResizer()
         profileRepository = ProfileRepositoryImpl(
             profileDataSource = profileDataSource,
             localProfileDataSource = localProfileDataSource,
@@ -103,10 +101,6 @@ class ProfileRepositoryImplTest {
 
     @Test
     fun `유저가 프로필 생성에 성공했을 경우 토큰과 유저 상태를 저장한다`() = runTest {
-        // given
-        val fakeInputStream = ByteArrayInputStream(ByteArray(0))
-        every { imageResizer.resizeImage(any(), any(), any()) } returns fakeInputStream
-
         // when
         profileRepository.uploadProfile(
             birthdate = "2000-06-14",

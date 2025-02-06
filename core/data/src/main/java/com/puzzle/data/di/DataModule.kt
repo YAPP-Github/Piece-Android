@@ -1,6 +1,8 @@
 package com.puzzle.data.di
 
 import com.puzzle.data.TokenManagerImpl
+import com.puzzle.data.image.ImageResizer
+import com.puzzle.data.image.ImageResizerImpl
 import com.puzzle.data.repository.AuthRepositoryImpl
 import com.puzzle.data.repository.ProfileRepositoryImpl
 import com.puzzle.data.repository.TermsRepositoryImpl
@@ -49,4 +51,10 @@ abstract class DataModule {
     abstract fun bindsTokenManager(
         tokenManagerImpl: TokenManagerImpl,
     ): TokenManager
+
+    @Binds
+    @Singleton
+    abstract fun bindsImageResizer(
+        imageResizerImpl: ImageResizerImpl,
+    ): ImageResizer
 }
