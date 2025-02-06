@@ -9,6 +9,7 @@ import com.puzzle.network.model.matching.ValuePickResponse
 import com.puzzle.network.model.matching.ValueTalkResponse
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.source.profile.ProfileDataSource
+import java.io.InputStream
 
 class FakeProfileDataSource : ProfileDataSource {
     private var valuePicks = listOf<ValuePickResponse>()
@@ -23,7 +24,7 @@ class FakeProfileDataSource : ProfileDataSource {
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         Result.success(true)
 
-    override suspend fun uploadProfileImage(file: String): Result<String> = Result.success("")
+    override suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String> = Result.success("")
 
     override suspend fun uploadProfile(
         birthdate: String,

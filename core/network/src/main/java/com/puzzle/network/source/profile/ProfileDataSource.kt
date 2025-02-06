@@ -6,12 +6,13 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.profile.UploadProfileResponse
+import java.io.InputStream
 
 interface ProfileDataSource {
     suspend fun loadValuePicks(): Result<LoadValuePicksResponse>
     suspend fun loadValueTalks(): Result<LoadValueTalksResponse>
     suspend fun checkNickname(nickname: String): Result<Boolean>
-    suspend fun uploadProfileImage(file: String): Result<String>
+    suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String>
     suspend fun uploadProfile(
         birthdate: String,
         description: String,
