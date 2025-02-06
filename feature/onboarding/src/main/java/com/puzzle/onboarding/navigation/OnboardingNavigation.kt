@@ -5,7 +5,7 @@ import androidx.navigation.compose.composable
 import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.onboarding.OnboardingScreen
 
-fun NavGraphBuilder.onboardingNavGraph() {
+fun NavGraphBuilder.onboardingNavigation() {
     composable<OnboardingRoute> {
         OnboardingScreen()
     }

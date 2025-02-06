@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Onboarding -->
+    <string name="skip">건너뛰기</string>
+    <string name="start">시작하기</string>
+
     <!--SignUp-->
     <string name="all_term_agree">약관 전체 동의</string>
     <string name="next">다음</string>
