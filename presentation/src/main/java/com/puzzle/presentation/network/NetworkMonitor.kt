@@ -1,4 +1,4 @@
-package com.tgyuu.ui.network
+package com.puzzle.presentation.network
 
 import android.annotation.SuppressLint
 import android.content.Context
