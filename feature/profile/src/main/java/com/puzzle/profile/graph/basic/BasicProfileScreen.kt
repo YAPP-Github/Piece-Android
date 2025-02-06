@@ -790,46 +790,47 @@ private fun NickNameContent(
         )
     }
 
-    val errorColor = nickNameInputState == BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH ||
-        (nickNameInputState == BasicProfileState.NickNameInputState.EMPTY && screenState == BasicProfileState.ScreenState.SAVE_FAILED)||
-        nickNameInputState == BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK
+    val errorColor =
+        nickNameInputState == BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH ||
+                (nickNameInputState == BasicProfileState.NickNameInputState.EMPTY && screenState == BasicProfileState.ScreenState.SAVE_FAILED) ||
+                nickNameInputState == BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK
 
-        Row(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
-        ) {
-            Text(
-                text = inputGuideMessage,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = when {
-                    nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE ->
-                        PieceTheme.colors.primaryDefault
+    Row(
+        modifier = Modifier
+            .padding(top = 8.dp)
+            .fillMaxWidth(),
+    ) {
+        Text(
+            text = inputGuideMessage,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = when {
+                nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE ->
+                    PieceTheme.colors.primaryDefault
 
-                    errorColor ->
-                        PieceTheme.colors.error
+                errorColor ->
+                    PieceTheme.colors.error
 
-                    else ->
-                        PieceTheme.colors.dark3
-                },
-                modifier = Modifier.weight(1f),
-            )
+                else ->
+                    PieceTheme.colors.dark3
+            },
+            modifier = Modifier.weight(1f),
+        )
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                        append(nickName.length.toString())
-                    }
-                    append("/6")
-                },
-                maxLines = 1,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.dark3,
-                modifier = Modifier.padding(start = 5.dp),
-            )
-        }
+        Text(
+            text = buildAnnotatedString {
+                withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                    append(nickName.length.toString())
+                }
+                append("/6")
+            },
+            maxLines = 1,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark3,
+            modifier = Modifier.padding(start = 5.dp),
+        )
+    }
 }
 
 @Composable

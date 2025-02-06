@@ -97,12 +97,12 @@ class BasicProfileViewModel @AssistedInject constructor(
     private fun checkProfileState() {
         withState { state ->
             val isProfileIncomplete = state.contacts.isEmpty() ||
-                    state.description.isEmpty() ||
-                    state.birthdate.isEmpty() ||
-                    state.location.isEmpty() ||
-                    state.height.isEmpty() ||
-                    state.weight.isEmpty() ||
-                    state.job.isEmpty() ||
+                    state.description.isBlank() ||
+                    state.birthdate.isBlank() ||
+                    state.location.isBlank() ||
+                    state.height.isBlank() ||
+                    state.weight.isBlank() ||
+                    state.job.isBlank() ||
                     state.nickNameInputState != BasicProfileState.NickNameInputState.AVAILABLE
 
             // 프로필이 미완성일 때
@@ -145,7 +145,7 @@ class BasicProfileViewModel @AssistedInject constructor(
             val newState = copy(
                 nickName = nickName,
                 nickNameInputState = when {
-                    nickName.isEmpty() -> BasicProfileState.NickNameInputState.EMPTY
+                    nickName.isBlank() -> BasicProfileState.NickNameInputState.EMPTY
                     nickName.length > 6 -> BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH
                     else -> BasicProfileState.NickNameInputState.VALID_LENGTH
                 },
