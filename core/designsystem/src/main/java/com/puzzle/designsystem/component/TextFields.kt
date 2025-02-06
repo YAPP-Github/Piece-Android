@@ -54,10 +54,12 @@ fun PieceTextInputDefault(
     keyboardType: KeyboardType = KeyboardType.Text,
     throttleTime: Long = 2000L,
     onDone: () -> Unit = {},
+    onFocusChanged: (Boolean) -> Unit = {},
     rightComponent: @Composable () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var lastDoneTime by remember { mutableLongStateOf(0L) }
+    var isFocused by remember { mutableStateOf(false) }
 
     BasicTextField(
         value = value,
@@ -83,7 +85,7 @@ fun PieceTextInputDefault(
         decorationBox = { innerTextField ->
             Row {
                 Box(modifier = Modifier.weight(1f)) {
-                    if (value.isEmpty()) {
+                    if (value.isEmpty() && !isFocused) {
                         Text(
                             text = hint,
                             style = PieceTheme.typography.bodyMM,
@@ -105,7 +107,11 @@ fun PieceTextInputDefault(
                 if (readOnly) PieceTheme.colors.light2
                 else PieceTheme.colors.light3
             )
-            .padding(horizontal = 16.dp, vertical = 14.dp),
+            .padding(horizontal = 16.dp, vertical = 14.dp)
+            .onFocusChanged { focusState ->
+                isFocused = focusState.isFocused
+                onFocusChanged(focusState.isFocused)
+            },
     )
 }
 

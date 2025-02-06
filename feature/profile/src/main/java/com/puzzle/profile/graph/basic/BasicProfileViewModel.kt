@@ -76,42 +76,67 @@ class BasicProfileViewModel @AssistedInject constructor(
     }
 
     private fun saveBasicProfile() {
-        withState { state ->
-            if (state.nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE) {
-                // TODO: save API 호출, 뒤로 가기
-                return@withState
-            }
+        checkProfileState()
+        // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
+        // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
+        val isSuccess = true
+        val updatedScreenState = if (isSuccess) {
+            BasicProfileState.ScreenState.SAVED
+        } else {
+            BasicProfileState.ScreenState.SAVE_FAILED
+        }
 
-            setState {
-                copy(
-                    nickNameInputState = if (state.nickName.isEmpty()) {
-                        BasicProfileState.NickNameInputState.EMPTY
-                    } else if (state.nickName.length <= 6) {
+        setState {
+            copy(
+                screenState = updatedScreenState,
+                nickNameInputState = BasicProfileState.NickNameInputState.VALID_LENGTH,
+            )
+        }
+    }
+
+    private fun checkProfileState() {
+        withState { state ->
+            val isProfileIncomplete = state.contacts.isEmpty() ||
+                    state.description.isEmpty() ||
+                    state.birthdate.isEmpty() ||
+                    state.location.isEmpty() ||
+                    state.height.isEmpty() ||
+                    state.weight.isEmpty() ||
+                    state.job.isEmpty() ||
+                    state.nickNameInputState != BasicProfileState.NickNameInputState.AVAILABLE
+
+            // 프로필이 미완성일 때
+            if (isProfileIncomplete) {
+                val updatedNickNameState = when (state.nickNameInputState) {
+                    BasicProfileState.NickNameInputState.VALID_LENGTH ->
                         BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK
-                    } else {
-                        this.nickNameInputState
-                    }
-                )
+
+                    else -> state.nickNameInputState
+                }
+
+                setState {
+                    copy(
+                        screenState = BasicProfileState.ScreenState.SAVE_FAILED,
+                        nickNameInputState = updatedNickNameState
+                    )
+                }
+                return@withState
             }
         }
     }
 
     private fun checkNickNameDuplication() {
         setState {
-            if (this.nickName.isEmpty()) {
-                copy(nickNameInputState = BasicProfileState.NickNameInputState.EMPTY)
-            } else {
-                // TODO: 실제 API 응답 처리
-                val isSuccess = true
-                copy(
-                    isCheckingButtonAvailable = !isSuccess,
-                    nickNameInputState = if (isSuccess) {
-                        BasicProfileState.NickNameInputState.AVAILABLE
-                    } else {
-                        BasicProfileState.NickNameInputState.ALREADY_IN_USE
-                    }
-                )
-            }
+            // TODO: 실제 API 응답 처리
+            val isSuccess = true
+            copy(
+                isCheckingButtonAvailable = !isSuccess,
+                nickNameInputState = if (isSuccess) {
+                    BasicProfileState.NickNameInputState.AVAILABLE
+                } else {
+                    BasicProfileState.NickNameInputState.ALREADY_IN_USE
+                }
+            )
         }
     }
 
@@ -119,21 +144,24 @@ class BasicProfileViewModel @AssistedInject constructor(
         setState {
             val newState = copy(
                 nickName = nickName,
-                nickNameInputState = if (nickName.length > 6) {
-                    BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH
-                } else {
-                    BasicProfileState.NickNameInputState.VALID_LENGTH
+                nickNameInputState = when {
+                    nickName.isEmpty() -> BasicProfileState.NickNameInputState.EMPTY
+                    nickName.length > 6 -> BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH
+                    else -> BasicProfileState.NickNameInputState.VALID_LENGTH
                 },
-                isEdited = false
+                screenState = BasicProfileState.ScreenState.SAVED,
             )
 
             val isEdited = newState != initialState
             val isCheckingButtonAvailable = isEdited &&
-                    newState.nickNameInputState == BasicProfileState.NickNameInputState.VALID_LENGTH &&
-                    nickName.isNotEmpty()
+                    newState.nickNameInputState == BasicProfileState.NickNameInputState.VALID_LENGTH
 
             newState.copy(
-                isEdited = isEdited,
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
                 isCheckingButtonAvailable = isCheckingButtonAvailable
             )
         }
@@ -141,67 +169,147 @@ class BasicProfileViewModel @AssistedInject constructor(
 
     private fun updateDescription(description: String) {
         setState {
-            val newState = copy(description = description, isEdited = false)
+            val newState = copy(
+                description = description,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
     private fun updateBirthdate(birthdate: String) {
         setState {
-            val newState = copy(birthdate = birthdate, isEdited = false)
+            val newState = copy(
+                birthdate = birthdate,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
     private fun updateHeight(height: String) {
         setState {
-            val newState = copy(height = height, isEdited = false)
+            val newState = copy(
+                height = height,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
     private fun updateWeight(weight: String) {
         setState {
-            val newState = copy(weight = weight, isEdited = false)
+            val newState = copy(
+                weight = weight,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
     private fun updateJob(job: String) {
         setState {
-            val newState = copy(job = job, isEdited = false)
+            val newState = copy(
+                job = job,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun updateLocation(location: String) {
         setState {
-            val newState = copy(location = location, isEdited = false)
+            val newState = copy(
+                location = location,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun updateIsSmoke(isSmoke: Boolean) {
         setState {
-            val newState = copy(isSmoke = isSmoke, isEdited = false)
+            val newState = copy(
+                isSmoke = isSmoke,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
     private fun updateIsSnsActive(isSnsActive: Boolean) {
         setState {
-            val newState = copy(isSnsActive = isSnsActive, isEdited = false)
+            val newState = copy(
+                isSnsActive = isSnsActive,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
@@ -210,10 +318,22 @@ class BasicProfileViewModel @AssistedInject constructor(
             val newContacts = contacts.toMutableList().apply {
                 add(Contact(snsPlatform = snsPlatform, content = ""))
             }
-            val newState = copy(contacts = newContacts, isEdited = false)
+            val newState = copy(
+                contacts = newContacts,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
 
-            newState.copy(isEdited = newState != initialState)
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
+
+
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
@@ -222,9 +342,20 @@ class BasicProfileViewModel @AssistedInject constructor(
             val newContacts = contacts.toMutableList().apply {
                 removeAt(idx)
             }
-            val newState = copy(contacts = newContacts, isEdited = false)
 
-            newState.copy(isEdited = newState != initialState)
+            val newState = copy(
+                contacts = newContacts,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
+
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 
@@ -233,9 +364,20 @@ class BasicProfileViewModel @AssistedInject constructor(
             val newContacts = contacts.toMutableList().apply {
                 set(idx, contact)
             }
-            val newState = copy(contacts = newContacts, isEdited = false)
 
-            newState.copy(isEdited = newState != initialState)
+            val newState = copy(
+                contacts = newContacts,
+                screenState = BasicProfileState.ScreenState.SAVED,
+            )
+
+            val isEdited = newState != initialState
+            newState.copy(
+                screenState = when {
+                    !isEdited -> BasicProfileState.ScreenState.SAVED
+                    this.screenState == BasicProfileState.ScreenState.SAVE_FAILED -> BasicProfileState.ScreenState.SAVE_FAILED
+                    else -> BasicProfileState.ScreenState.EDITING
+                },
+            )
         }
     }
 

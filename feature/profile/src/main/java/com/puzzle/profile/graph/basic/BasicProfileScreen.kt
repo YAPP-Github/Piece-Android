@@ -172,6 +172,8 @@ private fun BasicProfileScreen(
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
+    val isSaveButtonEnabled = state.screenState == BasicProfileState.ScreenState.EDITING ||
+            state.screenState == BasicProfileState.ScreenState.SAVE_FAILED
 
     Column(
         modifier = modifier
@@ -188,13 +190,13 @@ private fun BasicProfileScreen(
                 Text(
                     text = stringResource(R.string.value_pick_profile_topbar_save),
                     style = PieceTheme.typography.bodyMM,
-                    color = if (state.isEdited) {
+                    color = if (isSaveButtonEnabled) {
                         PieceTheme.colors.primaryDefault
                     } else {
                         PieceTheme.colors.dark3
                     },
                     modifier = Modifier.clickable {
-                        if (state.isEdited) {
+                        if (isSaveButtonEnabled) {
                             onSaveClick()
                             focusManager.clearFocus()
                         }
@@ -205,6 +207,7 @@ private fun BasicProfileScreen(
 
         PhotoContent(
             onEditPhotoClick = {},
+            screenState = state.screenState,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 40.dp)
@@ -213,6 +216,7 @@ private fun BasicProfileScreen(
 
         NickNameContent(
             nickName = state.nickName,
+            screenState = state.screenState,
             nickNameInputState = state.nickNameInputState,
             isCheckingButtonAvailable = state.isCheckingButtonAvailable,
             onNickNameChanged = onNickNameChanged,
@@ -224,6 +228,7 @@ private fun BasicProfileScreen(
 
         SelfDescriptionContent(
             description = state.description,
+            screenState = state.screenState,
             onDescribeMySelfChanged = onDescribeMySelfChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -232,6 +237,7 @@ private fun BasicProfileScreen(
 
         BirthdateContent(
             birthdate = state.birthdate,
+            screenState = state.screenState,
             onBirthdayChanged = onBirthdayChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -240,6 +246,7 @@ private fun BasicProfileScreen(
 
         LocationContent(
             location = state.location,
+            screenState = state.screenState,
             onLocationDropDownClicked = onLocationDropDownClicked,
             modifier = Modifier
                 .fillMaxWidth()
@@ -248,6 +255,7 @@ private fun BasicProfileScreen(
 
         HeightContent(
             height = state.height,
+            screenState = state.screenState,
             onHeightChanged = onHeightChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -256,6 +264,7 @@ private fun BasicProfileScreen(
 
         WeightContent(
             weight = state.weight,
+            screenState = state.screenState,
             onWeightChanged = onWeightChanged,
             modifier = Modifier
                 .padding(top = 8.dp)
@@ -264,6 +273,7 @@ private fun BasicProfileScreen(
 
         JobContent(
             job = state.job,
+            screenState = state.screenState,
             onJobDropDownClicked = onJobDropDownClicked,
             modifier = Modifier
                 .fillMaxWidth()
@@ -288,6 +298,7 @@ private fun BasicProfileScreen(
 
         SnsPlatformContent(
             contacts = state.contacts,
+            screenState = state.screenState,
             onContactChange = onContactChange,
             onSnsPlatformChange = onSnsPlatformChange,
             onDeleteClick = onDeleteClick,
@@ -302,12 +313,16 @@ private fun BasicProfileScreen(
 @Composable
 private fun ColumnScope.SnsPlatformContent(
     contacts: List<Contact>,
+    screenState: BasicProfileState.ScreenState,
     onContactChange: (Int, Contact) -> Unit,
     onSnsPlatformChange: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     onAddContactClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && contacts.isEmpty()
+
     SectionTitle(title = "연락처")
 
     contacts.forEachIndexed { idx, contact ->
@@ -334,24 +349,35 @@ private fun ColumnScope.SnsPlatformContent(
         visible = contacts.size < 4,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 16.dp)
-                .clickable { onAddContactClick() },
-        ) {
+        if (isSaveFailed) {
             Text(
-                text = "연락처 추가하기",
-                style = PieceTheme.typography.bodyMSB,
-                color = PieceTheme.colors.primaryDefault,
+                text = "필수 항목을 입력해 주세요.",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = Modifier.padding(top = 8.dp),
             )
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.dp)
+                    .clickable { onAddContactClick() },
+            ) {
+                Text(
+                    text = "연락처 추가하기",
+                    style = PieceTheme.typography.bodyMSB,
+                    color = PieceTheme.colors.primaryDefault,
+                )
 
-            Image(
-                painter = painterResource(R.drawable.ic_plus),
-                contentDescription = null,
-            )
+                Image(
+                    painter = painterResource(R.drawable.ic_plus),
+                    contentDescription = null,
+                )
+            }
         }
     }
 }
@@ -417,9 +443,13 @@ private fun SmokeContent(
 @Composable
 private fun JobContent(
     job: String,
+    screenState: BasicProfileState.ScreenState,
     onJobDropDownClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && job.isEmpty()
+
     SectionTitle(title = "직업")
 
     PieceTextInputDropDown(
@@ -427,15 +457,35 @@ private fun JobContent(
         onDropDownClick = onJobDropDownClicked,
         modifier = modifier
     )
+
+    AnimatedVisibility(
+        visible = isSaveFailed
+    ) {
+        if (isSaveFailed) {
+            Text(
+                text = "필수 항목을 입력해 주세요.",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
+    }
 }
 
 @Composable
 private fun WeightContent(
     weight: String,
+    screenState: BasicProfileState.ScreenState,
     onWeightChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && weight.isEmpty()
+
     SectionTitle(title = "몸무게")
+
     PieceTextInputDefault(
         value = weight,
         keyboardType = KeyboardType.Number,
@@ -454,24 +504,38 @@ private fun WeightContent(
         modifier = modifier,
     )
 
-    if (weight.isEmpty()) {
-        Text(
-            text = "숫자가 정확한 지 확인해 주세요",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.error,
-            modifier = modifier,
-        )
+    val errorMessage = when {
+        isSaveFailed -> "필수 항목을 입력해 주세요."
+        weight.length > 3 -> "숫자가 정확한 지 확인해 주세요"
+        else -> null
+    }
+
+    AnimatedVisibility(
+        visible = !errorMessage.isNullOrBlank()
+    ) {
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = modifier,
+            )
+        }
     }
 }
 
 @Composable
 private fun HeightContent(
     height: String,
+    screenState: BasicProfileState.ScreenState,
     onHeightChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && height.isEmpty()
+
     SectionTitle(title = "키")
 
     PieceTextInputDefault(
@@ -492,24 +556,40 @@ private fun HeightContent(
         modifier = modifier,
     )
 
-    if (height.isEmpty()) {
-        Text(
-            text = "숫자가 정확한 지 확인해 주세요",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.error,
-            modifier = modifier,
-        )
+    val errorMessage = when {
+        isSaveFailed -> "필수 항목을 입력해 주세요."
+        // TODO : 소수점으로 입력하는 경우가 있을 것, 이 부분은 조금 더 고민 필요
+        height.length > 5 -> "숫자가 정확한 지 확인해 주세요"
+        else -> null
     }
+
+    AnimatedVisibility(
+        visible = !errorMessage.isNullOrBlank()
+    ) {
+        errorMessage?.let { message ->
+            Text(
+                text = message,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = modifier,
+            )
+        }
+    }
+
 }
 
 @Composable
 private fun LocationContent(
     location: String,
+    screenState: BasicProfileState.ScreenState,
     onLocationDropDownClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && location.isEmpty()
+
     SectionTitle(title = "활동 지역")
 
     PieceTextInputDropDown(
@@ -517,14 +597,31 @@ private fun LocationContent(
         onDropDownClick = onLocationDropDownClicked,
         modifier = modifier,
     )
+
+    AnimatedVisibility(
+        visible = isSaveFailed
+    ) {
+        Text(
+            text = "필수 항목을 입력해 주세요.",
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.error,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
 }
 
 @Composable
 private fun BirthdateContent(
     birthdate: String,
+    screenState: BasicProfileState.ScreenState,
     onBirthdayChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && birthdate.isEmpty()
+
     SectionTitle(title = "생년월일")
 
     PieceTextInputDefault(
@@ -537,20 +634,44 @@ private fun BirthdateContent(
                 Image(
                     painter = painterResource(R.drawable.ic_delete_circle),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier
+                        .padding(start = 8.dp)
+                        .size(20.dp)
+                        .clickable { onBirthdayChanged("") },
                 )
             }
         },
         modifier = modifier,
+    )
+
+    Text(
+        text = if (isSaveFailed) {
+            "필수 항목을 입력해 주세요."
+        } else {
+            "6자리(YYMMDD) 형식으로 입력해 주세요."
+        },
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = PieceTheme.typography.bodySM,
+        color = if (isSaveFailed) {
+            PieceTheme.colors.error
+        } else {
+            PieceTheme.colors.dark3
+        },
+        modifier = Modifier.padding(top = 8.dp),
     )
 }
 
 @Composable
 private fun SelfDescriptionContent(
     description: String,
+    screenState: BasicProfileState.ScreenState,
     onDescribeMySelfChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isSaveFailed: Boolean =
+        screenState == BasicProfileState.ScreenState.SAVE_FAILED && description.isEmpty()
+
     SectionTitle(title = "나를 표현하는 한 마디")
 
     PieceTextInputDefault(
@@ -579,11 +700,19 @@ private fun SelfDescriptionContent(
             .fillMaxWidth(),
     ) {
         Text(
-            text = "수식어 형태로 작성해주세요.",
+            text = if (isSaveFailed) {
+                "필수 항목을 입력해 주세요."
+            } else {
+                "수식어 형태로 작성해주세요."
+            },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
+            color = if (isSaveFailed) {
+                PieceTheme.colors.error
+            } else {
+                PieceTheme.colors.dark3
+            },
             modifier = Modifier.weight(1f),
         )
 
@@ -605,24 +734,26 @@ private fun SelfDescriptionContent(
 @Composable
 private fun NickNameContent(
     nickName: String,
+    screenState: BasicProfileState.ScreenState,
     nickNameInputState: BasicProfileState.NickNameInputState,
     isCheckingButtonAvailable: Boolean,
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SectionTitle(title = "닉네임")
     val focusManager = LocalFocusManager.current
-//    var isDescriptionFocus by remember { mutableStateOf(false) }
 
     val inputGuideMessage = when (nickNameInputState) {
-        BasicProfileState.NickNameInputState.VALID_LENGTH -> ""
-        BasicProfileState.NickNameInputState.EMPTY -> "필수 항목을 입력해 주세요."
+        BasicProfileState.NickNameInputState.VALID_LENGTH -> "6자 이하로 작성해 주세요."
         BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH -> "6자 이하로 작성해 주세요."
         BasicProfileState.NickNameInputState.ALREADY_IN_USE -> "이미 사용 중인 닉네임입니다."
         BasicProfileState.NickNameInputState.AVAILABLE -> "사용할 수 있는 닉네임입니다."
         BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK -> "닉네임 중복 검사를 진행해 주세요."
+        BasicProfileState.NickNameInputState.EMPTY ->
+            if (screenState == BasicProfileState.ScreenState.SAVE_FAILED) "필수 항목을 입력해 주세요." else "6자 이하로 작성해 주세요."
     }
+
+    SectionTitle(title = "닉네임")
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -645,9 +776,7 @@ private fun NickNameContent(
                     )
                 }
             },
-            modifier = Modifier
-                .weight(1f)
-//                .onFocusChanged { isDescriptionFocus = it.isFocused },
+            modifier = Modifier.weight(1f)
         )
 
         PieceSolidButton(
@@ -657,54 +786,61 @@ private fun NickNameContent(
                 focusManager.clearFocus()
             },
             enabled = isCheckingButtonAvailable,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp),
         )
     }
 
-//    AnimatedVisibility(
-//        visible = nickName.isEmpty() &&
-//                isDescriptionFocus ||
-//                nickName.isNotEmpty()
-//    ) {
-    Row(
-        modifier = Modifier
-            .padding(top = 8.dp)
-            .fillMaxWidth(),
-    ) {
-        Text(
-            text = inputGuideMessage,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = PieceTheme.typography.bodySM,
-            color = if (nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE) {
-                PieceTheme.colors.primaryDefault
-            } else {
-                PieceTheme.colors.error
-            },
-            modifier = Modifier.weight(1f),
-        )
+    val errorColor = nickNameInputState == BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH ||
+        (nickNameInputState == BasicProfileState.NickNameInputState.EMPTY && screenState == BasicProfileState.ScreenState.SAVE_FAILED)||
+        nickNameInputState == BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK
 
-        Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                    append(nickName.length.toString())
-                }
-                append("/6")
-            },
-            maxLines = 1,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
-            modifier = Modifier.padding(start = 5.dp),
-        )
-    }
-//    }
+        Row(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            Text(
+                text = inputGuideMessage,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = when {
+                    nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE ->
+                        PieceTheme.colors.primaryDefault
+
+                    errorColor ->
+                        PieceTheme.colors.error
+
+                    else ->
+                        PieceTheme.colors.dark3
+                },
+                modifier = Modifier.weight(1f),
+            )
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                        append(nickName.length.toString())
+                    }
+                    append("/6")
+                },
+                maxLines = 1,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.padding(start = 5.dp),
+            )
+        }
 }
 
 @Composable
 private fun PhotoContent(
     onEditPhotoClick: () -> Unit,
+    screenState: BasicProfileState.ScreenState,
     modifier: Modifier = Modifier,
 ) {
+    // TODO : 이미지 조건 추가, screenState == BasicProfileState.ScreenState.SAVE_FAILED && 이미지가 없을 경우
+    val isSaveFailed: Boolean = screenState == BasicProfileState.ScreenState.SAVE_FAILED
+
     Box(modifier = modifier) {
         Image(
             painter = painterResource(R.drawable.ic_profile_default),
@@ -712,7 +848,11 @@ private fun PhotoContent(
         )
 
         Image(
-            painter = painterResource(R.drawable.ic_edit),
+            painter = if (isSaveFailed) {
+                painterResource(R.drawable.ic_photo_error)
+            } else {
+                painterResource(R.drawable.ic_edit)
+            },
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
