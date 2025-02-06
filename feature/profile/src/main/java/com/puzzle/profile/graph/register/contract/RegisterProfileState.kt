@@ -6,6 +6,7 @@ import com.puzzle.domain.model.profile.SnsPlatform
 
 data class RegisterProfileState(
     val nickName: String = "",
+    val profileImageUri: String? = null,
     val description: String = "",
     val birthdate: String = "",
     val location: String = "",

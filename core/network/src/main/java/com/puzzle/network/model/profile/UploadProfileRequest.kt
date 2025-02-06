@@ -4,7 +4,7 @@ package com.puzzle.network.model.profile
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class GenerateProfileRequest(
+data class UploadProfileRequest(
     val birthdate: String,
     val contacts: Map<String, String>,
     val description: String,

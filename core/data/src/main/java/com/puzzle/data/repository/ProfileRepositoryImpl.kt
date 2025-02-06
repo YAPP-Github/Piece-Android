@@ -1,6 +1,8 @@
 package com.puzzle.data.repository
 
+import androidx.core.net.toUri
 import com.puzzle.common.suspendRunCatching
+import com.puzzle.data.image.ImageResizer
 import com.puzzle.database.model.matching.ValuePickAnswer
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValuePickQuestion
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
+    private val imageResizer: ImageResizer,
     private val profileDataSource: ProfileDataSource,
     private val localProfileDataSource: LocalProfileDataSource,
     private val localTokenDataSource: LocalTokenDataSource,
@@ -82,7 +85,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         profileDataSource.checkNickname(nickname)
 
-    override suspend fun generateProfile(
+    override suspend fun uploadProfile(
         birthdate: String,
         description: String,
         height: Int,
@@ -98,12 +101,18 @@ class ProfileRepositoryImpl @Inject constructor(
         valuePicks: List<com.puzzle.domain.model.profile.ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> = suspendRunCatching {
-        val response = profileDataSource.generateProfile(
+        val uploadedImageUrl =
+            imageResizer.resizeImage(imageUrl).use { imageInputStream ->
+                profileDataSource.uploadProfileImage(imageInputStream)
+                    .getOrThrow()
+            }
+
+        val response = profileDataSource.uploadProfile(
             birthdate = birthdate,
             description = description,
             height = height,
             weight = weight,
-            imageUrl = imageUrl,
+            imageUrl = uploadedImageUrl,
             job = job,
             location = location,
             nickname = nickname,

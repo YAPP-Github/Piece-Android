@@ -8,16 +8,17 @@ import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
-import com.puzzle.network.model.profile.GenerateProfileRequest
-import com.puzzle.network.model.profile.GenerateProfileResponse
-import com.puzzle.network.model.profile.UploadProfileImageRequest
+import com.puzzle.network.model.profile.UploadProfileRequest
+import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.terms.AgreeTermsRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
+import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Part
 import retrofit2.http.Query
 
 interface PieceApi {
@@ -46,10 +47,10 @@ interface PieceApi {
     suspend fun checkNickname(@Query("nickname") nickname: String): Result<ApiResponse<Boolean>>
 
     @POST("/api/profiles")
-    suspend fun generateProfile(@Body generateProfileRequest: GenerateProfileRequest): Result<ApiResponse<GenerateProfileResponse>>
+    suspend fun uploadProfile(@Body uploadProfileRequest: UploadProfileRequest): Result<ApiResponse<UploadProfileResponse>>
 
     @POST("/api/profiles/images")
-    suspend fun uploadProfileImage(@Body uploadProfileImageRequest: UploadProfileImageRequest): Result<ApiResponse<String>>
+    suspend fun uploadProfileImage(@Part file: MultipartBody.Part): Result<ApiResponse<String>>
 
     @POST("/api/terms/agree")
     suspend fun agreeTerms(@Body agreeTermsRequest: AgreeTermsRequest): Result<ApiResponse<Unit>>

@@ -7,8 +7,9 @@ import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.matching.ValuePickResponse
 import com.puzzle.network.model.matching.ValueTalkResponse
-import com.puzzle.network.model.profile.GenerateProfileResponse
+import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.source.profile.ProfileDataSource
+import java.io.InputStream
 
 class FakeProfileDataSource : ProfileDataSource {
     private var valuePicks = listOf<ValuePickResponse>()
@@ -23,9 +24,9 @@ class FakeProfileDataSource : ProfileDataSource {
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         Result.success(true)
 
-    override suspend fun uploadProfileImage(file: String): Result<String> = Result.success("")
+    override suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String> = Result.success("")
 
-    override suspend fun generateProfile(
+    override suspend fun uploadProfile(
         birthdate: String,
         description: String,
         height: Int,
@@ -40,8 +41,8 @@ class FakeProfileDataSource : ProfileDataSource {
         contacts: List<Contact>,
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
-    ): Result<GenerateProfileResponse> = Result.success(
-        GenerateProfileResponse(
+    ): Result<UploadProfileResponse> = Result.success(
+        UploadProfileResponse(
             role = "PENDING",
             accessToken = "accessToken",
             refreshToken = "refreshToken",

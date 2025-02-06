@@ -14,7 +14,7 @@ interface ProfileRepository {
     suspend fun retrieveValueTalk(): Result<List<ValueTalk>>
 
     suspend fun checkNickname(nickname: String): Result<Boolean>
-    suspend fun generateProfile(
+    suspend fun uploadProfile(
         birthdate: String,
         description: String,
         height: Int,
