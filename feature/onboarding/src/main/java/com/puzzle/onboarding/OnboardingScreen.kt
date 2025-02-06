@@ -5,6 +5,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,25 +20,60 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.navigation.AuthGraphDest
+import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.OnboardingRoute
+import com.puzzle.onboarding.contract.OnboardingIntent
+import com.puzzle.onboarding.contract.OnboardingSideEffect
+import kotlinx.coroutines.launch
 
 @Composable
-internal fun OnboardingRoute() {
-    OnboardingScreen()
+internal fun OnboardingRoute(viewModel: OnboardingViewModel = hiltViewModel()) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(viewModel) {
+        lifecycleOwner.repeatOnStarted {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is OnboardingSideEffect.Navigate ->
+                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
+                }
+            }
+        }
+    }
+
+    OnboardingScreen(
+        onStartButtonClick = {
+            viewModel.onIntent(
+                OnboardingIntent.Navigate(
+                    NavigationEvent.NavigateTo(
+                        route = AuthGraphDest.LoginRoute,
+                        popUpTo = OnboardingRoute,
+                    )
+                )
+            )
+        }
+    )
 }
 
 @Composable
-internal fun OnboardingScreen() {
+internal fun OnboardingScreen(onStartButtonClick: () -> Unit) {
+    val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState(
         initialPage = 0,
         pageCount = { 2 },
@@ -49,34 +85,10 @@ internal fun OnboardingScreen() {
             .fillMaxSize()
             .padding(horizontal = 20.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, bottom = 49.dp)
-                .height(64.dp)
-        ) {
-            Image(
-                painter = painterResource(R.drawable.ic_onboarding_logo),
-                contentDescription = null,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            AnimatedVisibility(
-                visible = pagerState.currentPage == 0,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Text(
-                    text = stringResource(R.string.skip),
-                    style = PieceTheme.typography.bodyMM.copy(
-                        textDecoration = TextDecoration.Underline
-                    ),
-                    color = PieceTheme.colors.dark3,
-                )
-            }
-        }
+        OnboardingTopBar(
+            currentPage = pagerState.currentPage,
+            onSkipButtonClick = onStartButtonClick,
+        )
 
         HorizontalPager(
             state = pagerState,
@@ -88,14 +100,14 @@ internal fun OnboardingScreen() {
                 when (page) {
                     0 -> OnboardingPageContent(
                         imageRes = R.drawable.ic_onboarding_camera,
-                        title = "하루 한 번,\n1:1로 만나는 특별한 인연",
-                        description = "매일 밤 10시, 새로운 매칭 조각이 도착해요.\n천천히 프로필을 살펴보고, 맞춰볼지 결정해보세요."
+                        title = stringResource(R.string.one_day_one_matching_title),
+                        description = stringResource(R.string.one_day_one_matching_description),
                     )
 
                     1 -> OnboardingPageContent(
                         imageRes = R.drawable.ic_onboarding_camera,
-                        title = "안심하고\n소중한 만남을 즐기세요",
-                        description = "스크린샷은 제한되어 있어요.\n오직 이 공간에서만, 편안하게 인연을 찾아보세요."
+                        title = stringResource(R.string.camera_block_title),
+                        description = stringResource(R.string.camera_block_description),
                     )
                 }
             }
@@ -114,11 +126,52 @@ internal fun OnboardingScreen() {
                 1 -> stringResource(R.string.start)
                 else -> stringResource(R.string.next)
             },
-            onClick = {},
+            onClick = {
+                when (pagerState.currentPage) {
+                    1 -> onStartButtonClick()
+                    else -> scope.launch { pagerState.animateScrollToPage(1) }
+                }
+            },
             modifier = Modifier
                 .padding(bottom = 10.dp, top = 12.dp)
                 .fillMaxWidth(),
         )
+    }
+}
+
+@Composable
+private fun OnboardingTopBar(
+    currentPage: Int,
+    onSkipButtonClick: () -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 20.dp, end = 20.dp, bottom = 49.dp)
+            .height(64.dp)
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_onboarding_logo),
+            contentDescription = null,
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        AnimatedVisibility(
+            visible = currentPage == 0,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Text(
+                text = stringResource(R.string.skip),
+                style = PieceTheme.typography.bodyMM.copy(
+                    textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
+                ),
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.clickable { onSkipButtonClick() }
+            )
+        }
     }
 }
 
