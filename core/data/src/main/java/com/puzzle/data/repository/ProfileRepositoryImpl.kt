@@ -1,12 +1,8 @@
 package com.puzzle.data.repository
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
-import android.os.Build
 import androidx.core.net.toUri
 import com.puzzle.common.suspendRunCatching
+import com.puzzle.data.image.ImageResizer
 import com.puzzle.database.model.matching.ValuePickAnswer
 import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValuePickQuestion
@@ -21,16 +17,12 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.source.profile.ProfileDataSource
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import java.io.ByteArrayInputStream
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
 import javax.inject.Inject
 
 class ProfileRepositoryImpl @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val imageResizer: ImageResizer,
     private val profileDataSource: ProfileDataSource,
     private val localProfileDataSource: LocalProfileDataSource,
     private val localTokenDataSource: LocalTokenDataSource,
@@ -110,7 +102,7 @@ class ProfileRepositoryImpl @Inject constructor(
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> = suspendRunCatching {
         val uploadedImageUrl =
-            resizeImage(context = context, uri = imageUrl.toUri()).use { imageInputStream ->
+            imageResizer.resizeImage(imageUrl).use { imageInputStream ->
                 profileDataSource.uploadProfileImage(imageInputStream)
                     .getOrThrow()
             }
@@ -147,65 +139,5 @@ class ProfileRepositoryImpl @Inject constructor(
             refreshTokenJob.join()
             userRoleJob.join()
         }
-    }
-
-    private fun resizeImage(
-        context: Context,
-        uri: Uri,
-        reqWidth: Int = 1024,
-        reqHeight: Int = 1024,
-    ): InputStream {
-        val originImageStream = context.contentResolver.openInputStream(uri)
-
-        originImageStream?.use { inputStream ->
-            val options = BitmapFactory.Options().apply {
-                inJustDecodeBounds = true
-            }
-            BitmapFactory.decodeStream(inputStream, null, options)
-
-            options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight)
-            options.inJustDecodeBounds = false
-
-            context.contentResolver.openInputStream(uri)?.use { newInputStream ->
-                val resizedBitmap = BitmapFactory.decodeStream(newInputStream, null, options)
-
-                val byteArrayOutputStream = ByteArrayOutputStream()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                    resizedBitmap?.compress(
-                        Bitmap.CompressFormat.WEBP_LOSSY, 100, byteArrayOutputStream
-                    )
-                } else {
-                    resizedBitmap?.compress(
-                        Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream
-                    )
-                }
-                val byteArray = byteArrayOutputStream.toByteArray()
-
-                return ByteArrayInputStream(byteArray)
-            }
-        }
-
-        throw IllegalArgumentException("Unable to open InputStream for the given URI")
-    }
-
-    private fun calculateInSampleSize(
-        options: BitmapFactory.Options,
-        reqWidth: Int,
-        reqHeight: Int
-    ): Int {
-        val (height: Int, width: Int) = options.run { outHeight to outWidth }
-        var inSampleSize = 1
-
-        if (height > reqHeight || width > reqWidth) {
-
-            val halfHeight: Int = height / 2
-            val halfWidth: Int = width / 2
-
-            while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
-                inSampleSize *= 2
-            }
-        }
-
-        return inSampleSize
     }
 }

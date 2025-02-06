@@ -4,20 +4,25 @@ import com.puzzle.data.fake.source.profile.FakeLocalProfileDataSource
 import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
 import com.puzzle.data.fake.source.user.FakeLocalUserDataSource
+import com.puzzle.data.image.ImageResizer
 import com.puzzle.network.model.matching.ValueTalkResponse
+import io.mockk.every
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.ByteArrayInputStream
 
 class ProfileRepositoryImplTest {
     private lateinit var profileDataSource: FakeProfileDataSource
     private lateinit var localProfileDataSource: FakeLocalProfileDataSource
     private lateinit var localTokenDataSource: FakeLocalTokenDataSource
     private lateinit var localUserDataSource: FakeLocalUserDataSource
-    private lateinit var matchingRepository: ProfileRepositoryImpl
+    private lateinit var profileRepository: ProfileRepositoryImpl
+    private lateinit var imageResizer: ImageResizer
 
     @BeforeEach
     fun setUp() {
@@ -25,11 +30,13 @@ class ProfileRepositoryImplTest {
         localProfileDataSource = FakeLocalProfileDataSource()
         localTokenDataSource = FakeLocalTokenDataSource()
         localUserDataSource = FakeLocalUserDataSource()
-        matchingRepository = ProfileRepositoryImpl(
+        imageResizer = mockk<ImageResizer>()
+        profileRepository = ProfileRepositoryImpl(
             profileDataSource = profileDataSource,
             localProfileDataSource = localProfileDataSource,
             localUserDataSource = localUserDataSource,
             localTokenDataSource = localTokenDataSource,
+            imageResizer = imageResizer,
         )
     }
 
@@ -54,7 +61,7 @@ class ProfileRepositoryImplTest {
         )
 
         // when
-        matchingRepository.loadValueTalks()
+        profileRepository.loadValueTalks()
 
         // then
         val storedTalks = localProfileDataSource.retrieveValueTalks()
@@ -82,7 +89,7 @@ class ProfileRepositoryImplTest {
         profileDataSource.setValueTalks(validValueTalks)
 
         // when
-        matchingRepository.loadValueTalks()
+        profileRepository.loadValueTalks()
 
         // then
         val storedTalks = localProfileDataSource.retrieveValueTalks()
@@ -96,8 +103,12 @@ class ProfileRepositoryImplTest {
 
     @Test
     fun `유저가 프로필 생성에 성공했을 경우 토큰과 유저 상태를 저장한다`() = runTest {
+        // given
+        val fakeInputStream = ByteArrayInputStream(ByteArray(0))
+        every { imageResizer.resizeImage(any(), any(), any()) } returns fakeInputStream
+
         // when
-        val result = matchingRepository.uploadProfile(
+        profileRepository.uploadProfile(
             birthdate = "2000-06-14",
             description = "안녕하세요 반갑습니다.",
             height = 250,
@@ -111,7 +122,7 @@ class ProfileRepositoryImplTest {
             snsActivityLevel = "활발",
             contacts = emptyList(),
             valuePicks = emptyList(),
-            valueTalks = emptyList()
+            valueTalks = emptyList(),
         )
 
         // then
