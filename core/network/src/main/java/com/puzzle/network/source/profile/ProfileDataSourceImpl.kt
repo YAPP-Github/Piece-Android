@@ -1,5 +1,6 @@
 package com.puzzle.network.source.profile
 
+import android.os.Build
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
@@ -33,10 +34,19 @@ class ProfileDataSourceImpl @Inject constructor(
         pieceApi.checkNickname(nickname).unwrapData()
 
     override suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String> {
+        val (imageFileExtension, imageFileName) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WEBP_MEDIA_TYPE to "profile_${UUID.randomUUID()}.webp"
+        } else {
+            JPEG_MEDIA_TYPE to "profile_${UUID.randomUUID()}.jpg"
+        }
+
+        val mediaType = imageFileExtension.toMediaTypeOrNull()
+            ?: throw IllegalArgumentException("Invalid media type: $imageFileExtension")
+
         val requestImage = MultipartBody.Part.createFormData(
             name = "file",
-            filename = "profile_${UUID.randomUUID()}.webp",
-            body = imageInputStream.readBytes().toRequestBody("image/webp".toMediaTypeOrNull())
+            filename = imageFileName,
+            body = imageInputStream.readBytes().toRequestBody(mediaType)
         )
 
         return pieceApi.uploadProfileImage(requestImage).unwrapData()
@@ -85,4 +95,9 @@ class ProfileDataSourceImpl @Inject constructor(
             contacts = contacts.associate { it.snsPlatform.name to it.content }
         )
     ).unwrapData()
+
+    companion object {
+        private const val WEBP_MEDIA_TYPE = "image/webp"
+        private const val JPEG_MEDIA_TYPE = "image/jpeg"
+    }
 }

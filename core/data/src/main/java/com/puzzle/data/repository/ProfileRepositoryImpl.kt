@@ -109,8 +109,8 @@ class ProfileRepositoryImpl @Inject constructor(
         valuePicks: List<com.puzzle.domain.model.profile.ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> = suspendRunCatching {
-        val uploadedImageUrl = resizeImage(context = context, uri = imageUrl.toUri())
-            .use { imageInputStream ->
+        val uploadedImageUrl =
+            resizeImage(context = context, uri = imageUrl.toUri()).use { imageInputStream ->
                 profileDataSource.uploadProfileImage(imageInputStream)
                     .getOrThrow()
             }
