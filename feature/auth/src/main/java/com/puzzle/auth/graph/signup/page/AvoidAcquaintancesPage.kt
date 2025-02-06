@@ -66,7 +66,6 @@ internal fun ColumnScope.AvoidAcquaintancesPage(
             .weight(0.7f),
     )
 
-
     Image(
         painter = painterResource(R.drawable.ic_avoid_acquaintances),
         contentDescription = null,
