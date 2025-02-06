@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,6 +29,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -88,6 +91,7 @@ internal fun OnboardingScreen(onStartButtonClick: () -> Unit) {
         OnboardingTopBar(
             currentPage = pagerState.currentPage,
             onSkipButtonClick = onStartButtonClick,
+            modifier = Modifier.padding(bottom = 49.dp),
         )
 
         HorizontalPager(
@@ -143,13 +147,14 @@ internal fun OnboardingScreen(onStartButtonClick: () -> Unit) {
 private fun OnboardingTopBar(
     currentPage: Int,
     onSkipButtonClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(start = 20.dp, end = 20.dp, bottom = 49.dp)
             .height(64.dp)
+            .padding(horizontal = 20.dp),
     ) {
         Image(
             painter = painterResource(R.drawable.ic_onboarding_logo),
@@ -166,7 +171,7 @@ private fun OnboardingTopBar(
             Text(
                 text = stringResource(R.string.skip),
                 style = PieceTheme.typography.bodyMM.copy(
-                    textDecoration = androidx.compose.ui.text.style.TextDecoration.Underline
+                    textDecoration = TextDecoration.Underline
                 ),
                 color = PieceTheme.colors.dark3,
                 modifier = Modifier.clickable { onSkipButtonClick() }
@@ -235,5 +240,38 @@ private fun OnboardingIndicator(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun OnboardingScreenPreview() {
+    PieceTheme {
+        Surface(
+            color = PieceTheme.colors.white,
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            OnboardingScreen {}
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun OnboardingTopBarPreview() {
+    PieceTheme {
+        OnboardingTopBar(
+            currentPage = 0,
+            onSkipButtonClick = {}
+        )
+    }
+}
+
+
+@Preview
+@Composable
+private fun OnboardingIndicatorPreview() {
+    PieceTheme {
+        OnboardingIndicator(total = 2, current = 0)
     }
 }
