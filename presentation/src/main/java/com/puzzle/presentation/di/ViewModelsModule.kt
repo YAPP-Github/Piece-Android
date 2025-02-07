@@ -8,6 +8,7 @@ import com.puzzle.auth.graph.signup.SignUpViewModel
 import com.puzzle.auth.graph.verification.VerificationViewModel
 import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
+import com.puzzle.profile.graph.basic.BasicProfileViewModel
 import com.puzzle.profile.graph.main.MainProfileViewModel
 import com.puzzle.profile.graph.register.RegisterProfileViewModel
 import com.puzzle.profile.graph.valuepick.ValuePickViewModel
@@ -77,4 +78,9 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(ValuePickViewModel::class)
     fun valuePickViewModelFactory(factory: ValuePickViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BasicProfileViewModel::class)
+    fun basicProfileViewModelFactory(factory: BasicProfileViewModel.Factory): AssistedViewModelFactory<*, *>
 }

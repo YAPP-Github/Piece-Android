@@ -24,7 +24,8 @@ class FakeProfileDataSource : ProfileDataSource {
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         Result.success(true)
 
-    override suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String> = Result.success("")
+    override suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String> =
+        Result.success("")
 
     override suspend fun uploadProfile(
         birthdate: String,

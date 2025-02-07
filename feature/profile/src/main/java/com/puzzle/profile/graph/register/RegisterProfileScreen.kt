@@ -247,7 +247,9 @@ private fun RegisterProfileScreen(
             val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.PickVisualMedia(),
                 onResult = { uri ->
-                    if (uri != null) { onProfileImageChanged(uri.toString()) }
+                    if (uri != null) {
+                        onProfileImageChanged(uri.toString())
+                    }
                 }
             )
 

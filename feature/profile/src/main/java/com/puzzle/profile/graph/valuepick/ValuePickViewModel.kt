@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.valuepick.contract.ValuePickIntent
 import com.puzzle.profile.graph.valuepick.contract.ValuePickSideEffect
@@ -41,7 +42,9 @@ class ValuePickViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: ValuePickIntent) {
         when (intent) {
-            is ValuePickIntent.Navigate -> _sideEffects.send(ValuePickSideEffect.Navigate(intent.navigationEvent))
+            ValuePickIntent.OnBackClick -> _sideEffects.send(
+                ValuePickSideEffect.Navigate(NavigationEvent.NavigateUp)
+            )
         }
     }
 
