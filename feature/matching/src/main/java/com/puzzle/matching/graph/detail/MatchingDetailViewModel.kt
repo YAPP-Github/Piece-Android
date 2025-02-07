@@ -10,6 +10,7 @@ import com.puzzle.common.event.PieceEvent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
@@ -27,13 +28,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
 ) : MavericksViewModel<MatchingDetailState>(initialState) {
-
-    private val matchUserId = 0 // Todo 임시
-
     private val intents = Channel<MatchingDetailIntent>(BUFFERED)
-
     private val _sideEffects = Channel<MatchingDetailSideEffect>(BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
+
+    private val matchUserId = 0 // Todo 임시
 
     init {
         intents.receiveAsFlow()
@@ -51,8 +50,8 @@ class MatchingDetailViewModel @AssistedInject constructor(
             MatchingDetailIntent.OnMatchingDetailCloseClick -> navigateTo(NavigationEvent.NavigateUp)
             MatchingDetailIntent.OnPreviousPageClick -> setPreviousPage()
             MatchingDetailIntent.OnNextPageClick -> setNextPage()
-            MatchingDetailIntent.OnBlockClick -> hideBottomSheet() //navigateTo(NavigationEvent.NavigateTo())
-            MatchingDetailIntent.OnReportClick -> hideBottomSheet() //navigateTo(NavigationEvent.NavigateTo())
+            MatchingDetailIntent.OnBlockClick -> onBlockClick()
+            MatchingDetailIntent.OnReportClick -> onReportClick()
         }
     }
 
@@ -67,6 +66,17 @@ class MatchingDetailViewModel @AssistedInject constructor(
             copy(currentPage = MatchingDetailState.MatchingDetailPage.getPreviousPage(currentPage))
         }
     }
+
+    private suspend fun onBlockClick() {
+        navigateTo(NavigationEvent.NavigateTo(MatchingGraphDest.BlockRoute(matchUserId)))
+        hideBottomSheet()
+    }
+
+    private suspend fun onReportClick() {
+        navigateTo(NavigationEvent.NavigateTo(MatchingGraphDest.ReportRoute(matchUserId)))
+        hideBottomSheet()
+    }
+
 
     private suspend fun navigateTo(navigationEvent: NavigationEvent) {
         _sideEffects.send(MatchingDetailSideEffect.Navigate(navigationEvent))

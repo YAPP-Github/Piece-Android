@@ -54,7 +54,7 @@ internal fun MatchingRoute(
 
     MatchingScreen(
         state = state,
-        navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToMatchingDetail) },
+        navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToReportDetail) },
         test = {
             viewModel.eventHelper.sendEvent(
                 PieceEvent.ShowSnackBar(
