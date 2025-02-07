@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.matching.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalk
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
 import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.PAGE_TRANSITION_DURATION
 import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.TEXT_DISPLAY_DURATION

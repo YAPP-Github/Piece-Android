@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.profile.ValuePick
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
 
 @Composable
