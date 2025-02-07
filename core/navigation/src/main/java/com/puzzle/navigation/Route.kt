@@ -59,3 +59,6 @@ sealed class ProfileGraphDest : Route {
     @Serializable
     data object BasicProfileRoute : Route
 }
+
+@Serializable
+data object OnboardingRoute : Route

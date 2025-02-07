@@ -1,5 +1,9 @@
 package com.puzzle.profile.graph.register
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,10 +44,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import coil3.compose.AsyncImage
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSolidButton
@@ -82,6 +91,7 @@ internal fun RegisterProfileRoute(
         state = state,
         navigate = { viewModel.onIntent(RegisterProfileIntent.Navigate(it)) },
         onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateNickName(it)) },
+        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateProfileImage(it)) },
         onDescribeMySelfChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateDescribeMySelf(it)) },
         onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateBirthday(it)) },
         onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateHeight(it)) },
@@ -167,6 +177,7 @@ private fun RegisterProfileScreen(
     state: RegisterProfileState,
     navigate: (NavigationEvent) -> Unit,
     onNickNameChanged: (String) -> Unit,
+    onProfileImageChanged: (String) -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
     onBirthdayChanged: (String) -> Unit,
     onHeightChanged: (String) -> Unit,
@@ -233,15 +244,39 @@ private fun RegisterProfileScreen(
                 modifier = Modifier.padding(top = 12.dp),
             )
 
+            val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.PickVisualMedia(),
+                onResult = { uri ->
+                    if (uri != null) {
+                        onProfileImageChanged(uri.toString())
+                    }
+                }
+            )
+
             Box(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 40.dp)
-                    .size(120.dp),
+                    .size(120.dp)
+                    .throttledClickable(throttleTime = 2000L) {
+                        singlePhotoPickerLauncher.launch(
+                            PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                        )
+                    },
             ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_profile_default),
+                AsyncImage(
+                    model = state.profileImageUri ?: R.drawable.ic_profile_default,
+                    placeholder = painterResource(R.drawable.ic_profile_default),
+                    contentScale = ContentScale.FillBounds,
+                    onError = { error ->
+                        Log.e(
+                            "RegisterProfileScreen", error.result.throwable.stackTraceToString()
+                        )
+                    },
                     contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(CircleShape),
                 )
 
                 Image(
@@ -525,10 +560,10 @@ private fun RegisterProfileScreen(
             SectionTitle(title = "연락처")
             state.contacts.forEachIndexed { idx, contact ->
                 val image = when (contact.snsPlatform) {
-                    SnsPlatform.KAKAO -> R.drawable.ic_sns_kakao
-                    SnsPlatform.OPENKAKAO -> R.drawable.ic_sns_openchatting
-                    SnsPlatform.INSTA -> R.drawable.ic_sns_instagram
-                    SnsPlatform.PHONE -> R.drawable.ic_sns_call
+                    SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+                    SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+                    SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+                    SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
                     else -> R.drawable.ic_delete_circle // 임시
                 }
 
@@ -608,6 +643,7 @@ private fun PreviewRegisterProfileScreen() {
             state = RegisterProfileState(),
             navigate = {},
             onNickNameChanged = {},
+            onProfileImageChanged = {},
             onDescribeMySelfChanged = {},
             onBirthdayChanged = {},
             onHeightChanged = {},

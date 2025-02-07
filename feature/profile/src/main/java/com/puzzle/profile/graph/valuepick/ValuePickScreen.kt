@@ -34,8 +34,8 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.matching.Answer
-import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.ValuePick
 import com.puzzle.profile.graph.valuepick.contract.ValuePickIntent
 import com.puzzle.profile.graph.valuepick.contract.ValuePickSideEffect
 import com.puzzle.profile.graph.valuepick.contract.ValuePickState

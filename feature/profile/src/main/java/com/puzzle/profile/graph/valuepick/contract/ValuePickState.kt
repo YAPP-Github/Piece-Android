@@ -1,8 +1,8 @@
 package com.puzzle.profile.graph.valuepick.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.matching.Answer
-import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.ValuePick
 
 data class ValuePickState(
     val valuePicks: List<ValuePick> = listOf(

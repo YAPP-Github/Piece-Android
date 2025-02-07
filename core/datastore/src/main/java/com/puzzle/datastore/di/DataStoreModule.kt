@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.puzzle.datastore.datasource.token.LocalTokenDataSource
+import com.puzzle.datastore.datasource.token.LocalTokenDataSourceImpl
+import com.puzzle.datastore.datasource.user.LocalUserDataSource
+import com.puzzle.datastore.datasource.user.LocalUserDataSourceImpl
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,7 +19,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataStoreModule {
+object DataStoreProvidesModule {
     private const val TOKEN_DATASTORE_NAME = "TOKENS_PREFERENCES"
     private val Context.tokenDataStore by preferencesDataStore(name = TOKEN_DATASTORE_NAME)
 
@@ -34,4 +39,21 @@ object DataStoreModule {
     fun provideUserDataStore(
         @ApplicationContext context: Context
     ): DataStore<Preferences> = context.userDataStore
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class DatastoreBindsModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindsLocalMatchingDataSource(
+        localTokenDataSourceImpl: LocalTokenDataSourceImpl,
+    ): LocalTokenDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsLocalUserDataSource(
+        localUserDataSourceImpl: LocalUserDataSourceImpl,
+    ): LocalUserDataSource
 }

@@ -1,6 +1,6 @@
 package com.puzzle.network.model.matching
 
-import com.puzzle.domain.model.matching.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalk
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable

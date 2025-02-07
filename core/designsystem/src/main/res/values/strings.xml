@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Onboarding -->
+    <string name="skip">건너뛰기</string>
+    <string name="start">시작하기</string>
+    <string name="one_day_one_matching_title">하루 한 번,\n1:1로 만나는 특별한 인연</string>
+    <string name="one_day_one_matching_description">매일 밤 10시, 새로운 매칭 조각이 도착해요.\n천천히 프로필을 살펴보고, 맞춰볼지 결정해보세요.</string>
+    <string name="camera_block_title">안심하고\n소중한 만남을 즐기세요</string>
+    <string name="camera_block_description">스크린샷은 제한되어 있어요.\n오직 이 공간에서만, 편안하게 인연을 찾아보세요.</string>
+
     <!--SignUp-->
     <string name="all_term_agree">약관 전체 동의</string>
     <string name="next">다음</string>
@@ -8,8 +16,8 @@
     <string name="avoid_acquaintances">아는 사람 차단하기</string>
     <string name="generate_profile">프로필 생성하기</string>
     <string name="avoid_acquaintances_description">연락처에 등록된 번호로 가입한 사용자는\n매칭 대상에서 제외되어, 개인정보가 보호됩니다.</string>
-    <string name="permission_camera">사진, 카메라 [필수]</string>
-    <string name="permission_camera_description">프로필 생성 시 사진 첨부를 위해 필요해요.</string>
+    <string name="permission_gallery">사진 [필수]</string>
+    <string name="permission_gallery_description">프로필 생성 시 사진 첨부를 위해 필요해요.</string>
     <string name="permission_notification">알림 [선택]</string>
     <string name="permission_notification_description">매칭 현황 등 중요 메시지 수신을 위해 필요해요.</string>
     <string name="permission_contacts">연락처 [선택]</string>

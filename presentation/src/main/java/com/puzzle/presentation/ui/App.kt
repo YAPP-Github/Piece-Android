@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,10 +35,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceSnackBar
+import com.puzzle.designsystem.component.PieceSnackBarHost
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
+import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.navigation.ProfileGraphDest.MainProfileRoute
 import com.puzzle.navigation.Route
@@ -60,7 +62,12 @@ fun App(
         .value?.destination
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+        snackbarHost = {
+            PieceSnackBarHost(
+                hostState = snackBarHostState,
+                snackbar = { snackBarData -> PieceSnackBar(snackBarData) },
+            )
+        },
         containerColor = PieceTheme.colors.white,
         bottomBar = {
             AnimatedVisibility(currentDestination?.shouldHideBottomNavigation() == false) {
@@ -154,6 +161,7 @@ private fun AppBottomBar(
 }
 
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
+    OnboardingRoute::class.qualifiedName,
     AuthGraph::class.qualifiedName,
     MatchingDetailRoute::class.qualifiedName,
     ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,

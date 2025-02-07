@@ -1,6 +1,6 @@
 package com.puzzle.data
 
-import com.puzzle.datastore.datasource.LocalTokenDataSource
+import com.puzzle.datastore.datasource.token.LocalTokenDataSource
 import com.puzzle.network.interceptor.TokenManager
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
