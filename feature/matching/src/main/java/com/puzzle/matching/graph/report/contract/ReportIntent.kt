@@ -1,4 +1,4 @@
-package com.puzzle.matching.graph.main.contract
+package com.puzzle.matching.graph.report.contract
 
 sealed class ReportIntent {
     data object NavigateToReportDetail : ReportIntent()

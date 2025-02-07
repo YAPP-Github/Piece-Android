@@ -8,8 +8,6 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
-import com.puzzle.matching.graph.main.contract.ReportIntent
-import com.puzzle.matching.graph.report.contract.ReportState
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent.NavigateTo
 import com.puzzle.navigation.NavigationHelper
