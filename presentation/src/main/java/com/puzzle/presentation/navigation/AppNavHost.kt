@@ -9,7 +9,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.puzzle.auth.navigation.authNavGraph
 import com.puzzle.matching.navigation.matchingNavGraph
-import com.puzzle.navigation.AuthGraph
+import com.puzzle.navigation.OnboardingRoute
+import com.puzzle.onboarding.navigation.onboardingNavigation
 import com.puzzle.profile.navigation.profileNavGraph
 import com.puzzle.setting.navigation.settingNavGraph
 
@@ -22,9 +23,10 @@ fun AppNavHost(
         navController = navController,
         popExitTransition = { fadeOut(tween(700)) },
         popEnterTransition = { fadeIn(tween(700)) },
-        startDestination = AuthGraph,
+        startDestination = OnboardingRoute,
         modifier = modifier,
     ) {
+        onboardingNavigation()
         authNavGraph()
         matchingNavGraph()
         profileNavGraph()
