@@ -87,6 +87,7 @@ internal fun RegisterProfileRoute(
             }
         }
     }
+
     RegisterProfileScreen(
         state = state,
         navigate = { viewModel.onIntent(RegisterProfileIntent.Navigate(it)) },

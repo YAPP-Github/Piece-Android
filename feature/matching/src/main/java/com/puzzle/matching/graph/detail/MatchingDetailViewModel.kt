@@ -1,9 +1,12 @@
 package com.puzzle.matching.graph.detail
 
+import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
+import com.puzzle.common.event.EventHelper
+import com.puzzle.common.event.PieceEvent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
@@ -21,13 +24,16 @@ import kotlinx.coroutines.launch
 
 class MatchingDetailViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingDetailState,
-    private val navigationHelper: NavigationHelper,
+    internal val navigationHelper: NavigationHelper,
+    private val eventHelper: EventHelper,
 ) : MavericksViewModel<MatchingDetailState>(initialState) {
+
+    private val matchUserId = 0 // Todo 임시
 
     private val intents = Channel<MatchingDetailIntent>(BUFFERED)
 
-    private val _sideEffect = Channel<MatchingDetailSideEffect>(BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val _sideEffects = Channel<MatchingDetailSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         intents.receiveAsFlow()
@@ -39,35 +45,39 @@ class MatchingDetailViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private fun processIntent(intent: MatchingDetailIntent) {
+    private suspend fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
-            MatchingDetailIntent.OnMatchingDetailCloseClick -> processOnMatchingDetailCloseClickIntent()
-            MatchingDetailIntent.OnPreviousPageClick -> processOnPreviousPageClickIntent()
-            MatchingDetailIntent.OnNextPageClick -> processOnNextPageClickIntent()
-            MatchingDetailIntent.OnMoreClick -> Unit
+            is MatchingDetailIntent.OnMoreClick -> showBottomSheet(intent.content)
+            MatchingDetailIntent.OnMatchingDetailCloseClick -> navigateTo(NavigationEvent.NavigateUp)
+            MatchingDetailIntent.OnPreviousPageClick -> setPreviousPage()
+            MatchingDetailIntent.OnNextPageClick -> setNextPage()
+            MatchingDetailIntent.OnBlockClick -> hideBottomSheet() //navigateTo(NavigationEvent.NavigateTo())
+            MatchingDetailIntent.OnReportClick -> hideBottomSheet() //navigateTo(NavigationEvent.NavigateTo())
         }
     }
 
-    private fun processOnNextPageClickIntent() {
+    private fun setNextPage() {
         setState {
             copy(currentPage = MatchingDetailState.MatchingDetailPage.getNextPage(currentPage))
         }
     }
 
-    private fun processOnPreviousPageClickIntent() {
+    private fun setPreviousPage() {
         setState {
             copy(currentPage = MatchingDetailState.MatchingDetailPage.getPreviousPage(currentPage))
         }
     }
 
-    private fun processOnMatchingDetailCloseClickIntent() {
-        navigationHelper.navigate(NavigationEvent.NavigateUp)
+    private suspend fun navigateTo(navigationEvent: NavigationEvent) {
+        _sideEffects.send(MatchingDetailSideEffect.Navigate(navigationEvent))
     }
 
-    private fun handleSideEffect(sideEffect: MatchingDetailSideEffect) {
-        when (sideEffect) {
-            else -> Unit
-        }
+    private fun showBottomSheet(content: @Composable () -> Unit) {
+        eventHelper.sendEvent(PieceEvent.ShowBottomSheet(content))
+    }
+
+    private fun hideBottomSheet() {
+        eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     @AssistedFactory
