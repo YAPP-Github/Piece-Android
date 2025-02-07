@@ -1,6 +1,7 @@
 package com.puzzle.profile.graph.basic.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
 
@@ -8,7 +9,7 @@ data class BasicProfileState(
     val profileScreenState: ScreenState = ScreenState.SAVED,
     val nickName: String = "수줍은 수달",
     val isCheckingButtonEnabled: Boolean = false,
-    val nickNameGuideMessage: NickNameGuideMessage = NickNameGuideMessage.DEFAULT,
+    val nickNameGuideMessage: NickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
     val description: String = "요리와 음악을 좋아하는",
     val descriptionInputState: InputState = InputState.DEFAULT,
     val birthdate: String = "19990909",
@@ -57,42 +58,77 @@ data class BasicProfileState(
 
     val nickNameStateInSavingProfile: NickNameGuideMessage =
         when {
-            nickName.isBlank() -> NickNameGuideMessage.NEEDS_TO_FILL
+            nickName.isBlank() -> {
+                NickNameGuideMessage.REQUIRED_FIELD
+            }
 
             nickName.length in 1..6 &&
-                    nickNameGuideMessage != NickNameGuideMessage.AVAILABLE ->
-                NickNameGuideMessage.NEEDS_DUPLICATE_CHECK
+                    nickNameGuideMessage != NickNameGuideMessage.AVAILABLE -> {
+                NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
+            }
 
-            nickNameGuideMessage == NickNameGuideMessage.DEFAULT -> nickNameGuideMessage
-
-            else ->
+            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> {
                 nickNameGuideMessage
+            }
+
+            else -> {
+                nickNameGuideMessage
+            }
         }
+}
 
-    enum class ScreenState {
-        EDITING,
-        SAVED,
-        SAVE_FAILED,
-    }
+enum class ScreenState {
+    EDITING,
+    SAVED,
+    SAVE_FAILED,
+}
 
-    enum class NickNameGuideMessage(val inputState: InputState) {
-        DEFAULT(inputState = InputState.DEFAULT),              // 기본 문구
-        NEEDS_TO_FILL(inputState = InputState.WARNIING),      // 글자 수 0
-        EXCEEDS_MAX_LENGTH(inputState = InputState.WARNIING),  // 글자 수 7 이상
-        ALREADY_IN_USE(inputState = InputState.WARNIING),     // API 결과: 중복
-        AVAILABLE(inputState = InputState.DEFAULT),           // API 결과: 사용 가능
-        NEEDS_DUPLICATE_CHECK(inputState = InputState.WARNIING), // 중복 검사 안하고 저장 버튼 눌렀을 때
-    }
+enum class NickNameGuideMessage(
+    val inputState: InputState,
+    val guideMessageId: Int
+) {
+    LENGTH_GUIDE(
+        inputState = InputState.DEFAULT,
+        guideMessageId = R.string.base_profile_nickname_length_guide
+    ),
+    REQUIRED_FIELD(
+        inputState = InputState.WARNIING,
+        guideMessageId = R.string.base_profile_nickname_required_field
+    ),
+    LENGTH_EXCEEDED_ERROR(
+        inputState = InputState.WARNIING,
+        guideMessageId = R.string.base_profile_nickname_length_exceed_error
+    ),
+    ALREADY_IN_USE(
+        inputState = InputState.WARNIING,
+        guideMessageId = R.string.base_profile_nickname_already_in_use
+    ),
+    AVAILABLE(
+        inputState = InputState.DEFAULT,
+        guideMessageId = R.string.base_profile_nickname_available
+    ),
+    DUPLICATE_CHECK_REQUIRED(
+        inputState = InputState.WARNIING,
+        guideMessageId = R.string.base_profile_nickname_duplicate_check_required
+    ),
+}
 
-    enum class InputState {
-        DEFAULT,
-        WARNIING,
-        ;
+enum class InputState {
+    DEFAULT,
+    WARNIING,
+    ;
 
-        companion object {
-            fun getInputState(fieldValue: String): InputState =
-                if (fieldValue.isBlank()) BasicProfileState.InputState.WARNIING
-                else BasicProfileState.InputState.DEFAULT
-        }
+    companion object {
+        fun getInputState(fieldValue: String?): InputState =
+            if (fieldValue.isNullOrBlank()) WARNIING
+            else DEFAULT
+
+        fun getInputState(fieldValue: Boolean?): InputState =
+            if (fieldValue == null) WARNIING
+            else DEFAULT
+
+        fun getInputState(fieldValue: List<Contact>): InputState =
+            if (fieldValue.isEmpty() || fieldValue.find { it.content.isBlank() } != null) WARNIING
+            else DEFAULT
     }
 }

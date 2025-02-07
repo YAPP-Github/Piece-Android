@@ -12,7 +12,7 @@ import com.puzzle.profile.graph.valuepick.ValuePickRoute
 import com.puzzle.profile.graph.valuetalk.ValueTalkRoute
 
 fun NavGraphBuilder.profileNavGraph() {
-    navigation<ProfileGraph>(startDestination = ProfileGraphDest.MainProfileRoute) {
+    navigation<ProfileGraph>(startDestination = ProfileGraphDest.RegisterProfileRoute) {
         composable<ProfileGraphDest.MainProfileRoute> {
             MainProfileRoute()
         }

@@ -53,7 +53,9 @@ import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
-import com.puzzle.profile.graph.basic.contract.BasicProfileState.InputState
+import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
+import com.puzzle.profile.graph.basic.contract.ScreenState
 import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
@@ -177,8 +179,8 @@ private fun BasicProfileScreen(
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
-    val isSaveButtonEnabled = state.profileScreenState == BasicProfileState.ScreenState.EDITING ||
-            state.profileScreenState == BasicProfileState.ScreenState.SAVE_FAILED
+    val isSaveButtonEnabled = state.profileScreenState == ScreenState.EDITING ||
+            state.profileScreenState == ScreenState.SAVE_FAILED
 
     Column(
         modifier = modifier
@@ -317,7 +319,7 @@ private fun BasicProfileScreen(
 @Composable
 private fun ColumnScope.SnsPlatformContent(
     contacts: List<Contact>,
-    screenState: BasicProfileState.ScreenState,
+    screenState: ScreenState,
     onContactChange: (Int, Contact) -> Unit,
     onSnsPlatformChange: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
@@ -325,7 +327,7 @@ private fun ColumnScope.SnsPlatformContent(
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && contacts.isEmpty()
+        screenState == ScreenState.SAVE_FAILED && contacts.isEmpty()
 
     SectionTitle(title = "연락처")
 
@@ -626,7 +628,7 @@ private fun BirthdateContent(
     val isSaveFailed: Boolean =
         birthdateInputState == InputState.WARNIING && birthdate.isBlank()
     var isInputFocused by remember { mutableStateOf(false) }
-    val isGuidanceVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
+    val isGuideMessageVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
 
     SectionTitle(title = "생년월일")
 
@@ -650,7 +652,7 @@ private fun BirthdateContent(
         modifier = modifier.onFocusChanged { isInputFocused = it.isFocused },
     )
 
-    AnimatedVisibility(visible = isGuidanceVisible) {
+    AnimatedVisibility(visible = isGuideMessageVisible) {
         Text(
             text = if (isSaveFailed) {
                 "필수 항목을 입력해 주세요."
@@ -746,7 +748,7 @@ private fun SelfDescriptionContent(
 @Composable
 private fun NickNameContent(
     nickName: String,
-    nickNameGuideMessage: BasicProfileState.NickNameGuideMessage,
+    nickNameGuideMessage: NickNameGuideMessage,
     isCheckingButtonAvailable: Boolean,
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
@@ -754,22 +756,13 @@ private fun NickNameContent(
 ) {
     val focusManager = LocalFocusManager.current
     var isInputFocused by remember { mutableStateOf(false) }
-    val isGuidanceVisible: Boolean = isInputFocused ||
+    val isGuideMessageVisible: Boolean = isInputFocused ||
             nickName.isNotBlank() ||
             nickNameGuideMessage.inputState == InputState.WARNIING
 
-    val inputGuideMessage = when (nickNameGuideMessage) {
-        BasicProfileState.NickNameGuideMessage.DEFAULT -> "6자 이하로 작성해 주세요."
-        BasicProfileState.NickNameGuideMessage.EXCEEDS_MAX_LENGTH -> "6자 이하로 작성해 주세요."
-        BasicProfileState.NickNameGuideMessage.ALREADY_IN_USE -> "이미 사용 중인 닉네임입니다."
-        BasicProfileState.NickNameGuideMessage.AVAILABLE -> "사용할 수 있는 닉네임입니다."
-        BasicProfileState.NickNameGuideMessage.NEEDS_DUPLICATE_CHECK -> "닉네임 중복 검사를 진행해 주세요."
-        BasicProfileState.NickNameGuideMessage.NEEDS_TO_FILL -> "필수 항목을 입력해 주세요."
-    }
-
     val textColor = when (nickNameGuideMessage.inputState) {
         InputState.DEFAULT ->
-            if (nickNameGuideMessage == BasicProfileState.NickNameGuideMessage.AVAILABLE) {
+            if (nickNameGuideMessage == NickNameGuideMessage.AVAILABLE) {
                 PieceTheme.colors.primaryDefault
             } else {
                 PieceTheme.colors.dark3
@@ -817,14 +810,14 @@ private fun NickNameContent(
         )
     }
 
-    AnimatedVisibility(visible = isGuidanceVisible) {
+    AnimatedVisibility(visible = isGuideMessageVisible) {
         Row(
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxWidth(),
         ) {
             Text(
-                text = inputGuideMessage,
+                text = stringResource(nickNameGuideMessage.guideMessageId),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = PieceTheme.typography.bodySM,
@@ -851,11 +844,11 @@ private fun NickNameContent(
 @Composable
 private fun PhotoContent(
     onEditPhotoClick: () -> Unit,
-    screenState: BasicProfileState.ScreenState,
+    screenState: ScreenState,
     modifier: Modifier = Modifier,
 ) {
     // TODO : 이미지 조건 추가, screenState == BasicProfileState.ScreenState.SAVE_FAILED && 이미지가 없을 경우
-    val isSaveFailed: Boolean = screenState == BasicProfileState.ScreenState.SAVE_FAILED
+    val isSaveFailed: Boolean = screenState == ScreenState.SAVE_FAILED
 
     Box(modifier = modifier) {
         Image(

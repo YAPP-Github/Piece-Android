@@ -8,6 +8,10 @@ import com.puzzle.navigation.NavigationEvent
 sealed class RegisterProfileIntent {
     data class Navigate(val navigationEvent: NavigationEvent) : RegisterProfileIntent()
     data class UpdateNickName(val nickName: String) : RegisterProfileIntent()
+    data class EditPhotoClick(val imageUri: String) : RegisterProfileIntent()
+    data object BackClick : RegisterProfileIntent()
+    data object SaveClick : RegisterProfileIntent()
+    data object DuplicationCheckClick : RegisterProfileIntent()
     data class UpdateProfileImage(val imageUri: String) : RegisterProfileIntent()
     data class UpdateDescribeMySelf(val description: String) : RegisterProfileIntent()
     data class UpdateBirthday(val birthday: String) : RegisterProfileIntent()

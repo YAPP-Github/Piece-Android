@@ -10,6 +10,9 @@ import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect.Navigate
@@ -48,6 +51,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.Navigate -> handleNavigation(intent)
             is RegisterProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
             is RegisterProfileIntent.UpdateProfileImage -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.EditPhotoClick -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.UpdateDescribeMySelf -> updateDescription(intent.description)
             is RegisterProfileIntent.UpdateBirthday -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.UpdateHeight -> updateHeight(intent.height)
@@ -61,6 +65,9 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
             is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
             RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
+            RegisterProfileIntent.BackClick -> Unit
+            RegisterProfileIntent.DuplicationCheckClick -> checkNickNameDuplication()
+            RegisterProfileIntent.SaveClick -> saveBasicProfile()
         }
     }
 
@@ -68,70 +75,194 @@ class RegisterProfileViewModel @AssistedInject constructor(
         _sideEffects.send(Navigate(intent.navigationEvent))
     }
 
-    private fun updateNickName(nickName: String) {
-        setState { copy(nickName = nickName) }
+    private fun updateProfileImage(imageUri: String) {
+        setState {
+            copy(
+                profileImageUri = imageUri,
+                profileImageUriInputState = InputState.DEFAULT
+            )
+        }
     }
 
-    private fun updateProfileImage(imageUri: String) {
-        setState { copy(profileImageUri = imageUri) }
+    private fun saveBasicProfile() {
+        withState { state ->
+            // 프로필이 미완성일 때
+            if (state.isProfileIncomplete) {
+                setState {
+                    copy(
+                        profileImageUriInputState = getInputState(state.profileImageUri),
+                        nickNameGuideMessage = nickNameStateInSavingProfile,
+                        descriptionInputState = getInputState(state.description),
+                        birthdateInputState = getInputState(state.birthdate),
+                        locationInputState = getInputState(state.location),
+                        heightInputState = getInputState(state.height),
+                        weightInputState = getInputState(state.weight),
+                        jobInputState = getInputState(state.job),
+                        isSmokeInputState = getInputState(state.isSmoke),
+                        isSnsActiveInputState = getInputState(state.isSnsActive),
+                        contactsInputState = getInputState(state.contacts),
+                    )
+                }
+                return@withState
+            }
+            // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
+            // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
+
+            setState {
+                copy(
+                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
+                )
+            }
+        }
+    }
+
+    private fun checkNickNameDuplication() {
+        setState {
+            // TODO: 실제 API 응답 처리
+            val isSuccess = true
+            copy(
+                isCheckingButtonEnabled = !isSuccess,
+                nickNameGuideMessage = if (isSuccess) {
+                    NickNameGuideMessage.AVAILABLE
+                } else {
+                    NickNameGuideMessage.ALREADY_IN_USE
+                }
+            )
+        }
+    }
+
+    private fun updateNickName(nickName: String) {
+        setState {
+            val newState = copy(
+                nickName = nickName,
+                nickNameGuideMessage = if (nickName.length > 6) {
+                    NickNameGuideMessage.LENGTH_EXCEEDED_ERROR
+                } else {
+                    NickNameGuideMessage.LENGTH_GUIDE
+                },
+            )
+
+            val isCheckingButtonEnabled = (nickName.length in 1..6)
+
+            newState.copy(
+                isCheckingButtonEnabled = isCheckingButtonEnabled
+            )
+        }
     }
 
     private fun updateDescription(description: String) {
-        setState { copy(description = description) }
+        setState {
+            copy(
+                description = description,
+                descriptionInputState = InputState.DEFAULT
+            )
+        }
     }
 
-    private fun updateBirthdate(birthday: String) {
-        setState { copy(birthdate = birthday) }
+    private fun updateBirthdate(birthdate: String) {
+        setState {
+            copy(
+                birthdate = birthdate,
+                birthdateInputState = InputState.DEFAULT
+            )
+        }
     }
 
     private fun updateHeight(height: String) {
-        setState { copy(height = height) }
+        setState {
+            copy(
+                height = height,
+                heightInputState = InputState.DEFAULT
+            )
+        }
     }
 
     private fun updateWeight(weight: String) {
-        setState { copy(weight = weight) }
+        setState {
+            copy(
+                weight = weight,
+                weightInputState = InputState.DEFAULT
+            )
+        }
     }
 
     private fun updateJob(job: String) {
-        setState { copy(job = job) }
+        setState {
+            copy(
+                job = job,
+                jobInputState = InputState.DEFAULT
+            )
+        }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
-    private fun updateLocation(region: String) {
-        setState { copy(location = region) }
+    private fun updateLocation(location: String) {
+        setState {
+            copy(
+                location = location,
+                locationInputState = InputState.DEFAULT,
+            )
+        }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
-    private fun updateIsSmoke(isSmoke: Boolean?) {
-        setState { copy(isSmoke = isSmoke) }
+    private fun updateIsSmoke(isSmoke: Boolean) {
+        setState {
+            copy(
+                isSmoke = isSmoke,
+                isSmokeInputState = InputState.DEFAULT
+            )
+        }
     }
 
-    private fun updateIsSnsActive(isSnsActivity: Boolean?) {
-        setState { copy(isSnsActive = isSnsActivity) }
+    private fun updateIsSnsActive(isSnsActive: Boolean) {
+        setState {
+            copy(
+                isSnsActive = isSnsActive,
+                isSnsActiveInputState = InputState.DEFAULT,
+            )
+        }
     }
 
     private fun addContact(snsPlatform: SnsPlatform) {
         setState {
-            val newContacts = contacts.toMutableList()
-            newContacts.add(Contact(snsPlatform = snsPlatform, content = ""))
-            copy(contacts = newContacts)
+            val newContacts = contacts.toMutableList().apply {
+                add(Contact(snsPlatform = snsPlatform, content = ""))
+            }
+
+            copy(
+                contacts = newContacts,
+                contactsInputState = InputState.DEFAULT,
+            )
         }
+
+
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun deleteContact(idx: Int) {
         setState {
-            val newContacts = contacts.toMutableList()
-            newContacts.removeAt(idx)
-            copy(contacts = newContacts)
+            val newContacts = contacts.toMutableList().apply {
+                removeAt(idx)
+            }
+
+            copy(
+                contacts = newContacts,
+                contactsInputState = InputState.DEFAULT,
+            )
         }
     }
 
     private fun updateContact(idx: Int, contact: Contact) {
         setState {
-            val newContacts = contacts.toMutableList()
-            newContacts[idx] = contact
-            copy(contacts = newContacts)
+            val newContacts = contacts.toMutableList().apply {
+                set(idx, contact)
+            }
+
+            copy(
+                contacts = newContacts,
+                contactsInputState = InputState.DEFAULT,
+            )
         }
     }
 
