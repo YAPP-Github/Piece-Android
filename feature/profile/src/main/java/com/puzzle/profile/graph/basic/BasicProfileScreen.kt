@@ -1,5 +1,6 @@
 package com.puzzle.profile.graph.basic
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,8 +20,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -621,6 +626,8 @@ private fun BirthdateContent(
 ) {
     val isSaveFailed: Boolean =
         birthdateInputState == InputState.WARNIING && birthdate.isBlank()
+    var isInputFocused by remember { mutableStateOf(false) }
+    val isGuidanceVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
 
     SectionTitle(title = "생년월일")
 
@@ -641,25 +648,27 @@ private fun BirthdateContent(
                 )
             }
         },
-        modifier = modifier,
+        modifier = modifier.onFocusChanged { isInputFocused = it.isFocused },
     )
 
-    Text(
-        text = if (isSaveFailed) {
-            "필수 항목을 입력해 주세요."
-        } else {
-            "6자리(YYMMDD) 형식으로 입력해 주세요."
-        },
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis,
-        style = PieceTheme.typography.bodySM,
-        color = if (isSaveFailed) {
-            PieceTheme.colors.error
-        } else {
-            PieceTheme.colors.dark3
-        },
-        modifier = Modifier.padding(top = 8.dp),
-    )
+    AnimatedVisibility(visible = isGuidanceVisible) {
+        Text(
+            text = if (isSaveFailed) {
+                "필수 항목을 입력해 주세요."
+            } else {
+                "6자리(YYMMDD) 형식으로 입력해 주세요."
+            },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = if (isSaveFailed) {
+                PieceTheme.colors.error
+            } else {
+                PieceTheme.colors.dark3
+            },
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
 }
 
 @Composable
@@ -671,6 +680,8 @@ private fun SelfDescriptionContent(
 ) {
     val isSaveFailed: Boolean =
         descriptionInputState == InputState.WARNIING
+    var isInputFocused by remember { mutableStateOf(false) }
+    val isGuidanceVisibe: Boolean = isInputFocused || description.isNotBlank() || isSaveFailed
 
     SectionTitle(title = "나를 표현하는 한 마디")
 
@@ -691,43 +702,45 @@ private fun SelfDescriptionContent(
                 )
             }
         },
-        modifier = modifier,
+        modifier = modifier.onFocusChanged { isInputFocused = it.isFocused },
     )
 
-    Row(
-        modifier = Modifier
-            .padding(top = 8.dp)
-            .fillMaxWidth(),
-    ) {
-        Text(
-            text = if (isSaveFailed) {
-                "필수 항목을 입력해 주세요."
-            } else {
-                "수식어 형태로 작성해주세요."
-            },
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = PieceTheme.typography.bodySM,
-            color = if (isSaveFailed) {
-                PieceTheme.colors.error
-            } else {
-                PieceTheme.colors.dark3
-            },
-            modifier = Modifier.weight(1f),
-        )
+    AnimatedVisibility(visible = isGuidanceVisibe) {
+        Row(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            Text(
+                text = if (isSaveFailed) {
+                    "필수 항목을 입력해 주세요."
+                } else {
+                    "수식어 형태로 작성해주세요."
+                },
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = if (isSaveFailed) {
+                    PieceTheme.colors.error
+                } else {
+                    PieceTheme.colors.dark3
+                },
+                modifier = Modifier.weight(1f),
+            )
 
-        Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                    append(description.length.toString())
-                }
-                append("/20")
-            },
-            maxLines = 1,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
-            modifier = Modifier.padding(start = 5.dp),
-        )
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                        append(description.length.toString())
+                    }
+                    append("/20")
+                },
+                maxLines = 1,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.padding(start = 5.dp),
+            )
+        }
     }
 }
 
@@ -741,6 +754,10 @@ private fun NickNameContent(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
+    var isInputFocused by remember { mutableStateOf(false) }
+    val isGuidanceVisible: Boolean = isInputFocused ||
+            nickName.isNotBlank() ||
+            nickNameGuideMessage.inputState == InputState.WARNIING
 
     val inputGuideMessage = when (nickNameGuideMessage) {
         BasicProfileState.NickNameGuideMessage.DEFAULT -> "6자 이하로 작성해 주세요."
@@ -785,7 +802,9 @@ private fun NickNameContent(
                     )
                 }
             },
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .weight(1f)
+                .onFocusChanged { isInputFocused = it.isFocused },
         )
 
         PieceSolidButton(
@@ -799,32 +818,34 @@ private fun NickNameContent(
         )
     }
 
-    Row(
-        modifier = Modifier
-            .padding(top = 8.dp)
-            .fillMaxWidth(),
-    ) {
-        Text(
-            text = inputGuideMessage,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = PieceTheme.typography.bodySM,
-            color = textColor,
-            modifier = Modifier.weight(1f),
-        )
+    AnimatedVisibility(visible = isGuidanceVisible) {
+        Row(
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            Text(
+                text = inputGuideMessage,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = textColor,
+                modifier = Modifier.weight(1f),
+            )
 
-        Text(
-            text = buildAnnotatedString {
-                withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                    append(nickName.length.toString())
-                }
-                append("/6")
-            },
-            maxLines = 1,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
-            modifier = Modifier.padding(start = 5.dp),
-        )
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                        append(nickName.length.toString())
+                    }
+                    append("/6")
+                },
+                maxLines = 1,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.padding(start = 5.dp),
+            )
+        }
     }
 }
 
