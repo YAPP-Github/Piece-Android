@@ -3,6 +3,7 @@ package com.puzzle.matching.navigation
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.puzzle.matching.graph.block.BlockRoute
 import com.puzzle.matching.graph.detail.MatchingDetailRoute
 import com.puzzle.matching.graph.main.MatchingRoute
 import com.puzzle.matching.graph.report.ReportRoute
@@ -26,7 +27,7 @@ fun NavGraphBuilder.matchingNavGraph() {
         }
 
         composable<MatchingGraphDest.BlockRoute> {
-            ReportRoute()
+            BlockRoute()
         }
     }
 }

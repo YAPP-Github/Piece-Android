@@ -40,6 +40,7 @@ import com.puzzle.designsystem.component.PieceSnackBarHost
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.navigation.ProfileGraphDest.MainProfileRoute
@@ -161,6 +162,8 @@ private fun AppBottomBar(
 
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     AuthGraph::class.qualifiedName,
+    MatchingGraphDest.BlockRoute::class.qualifiedName,
+    MatchingGraphDest.ReportRoute::class.qualifiedName,
     MatchingDetailRoute::class.qualifiedName,
     ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
     ProfileGraphDest.ValueTalkProfileRoute::class.qualifiedName,
