@@ -6,6 +6,7 @@ import com.puzzle.domain.model.profile.SnsPlatform
 
 data class RegisterProfileState(
     val nickName: String = "",
+    val profileImageUri: String? = null,
     val description: String = "",
     val birthdate: String = "",
     val location: String = "",
@@ -16,7 +17,7 @@ data class RegisterProfileState(
     val isSnsActive: Boolean? = null,
     val contacts: List<Contact> = listOf(
         Contact(
-            snsPlatform = SnsPlatform.KAKAO,
+            snsPlatform = SnsPlatform.KAKAO_TALK_ID,
             content = "",
         ),
     ),

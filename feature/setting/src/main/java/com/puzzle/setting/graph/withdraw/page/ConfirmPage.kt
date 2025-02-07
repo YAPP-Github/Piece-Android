@@ -36,17 +36,19 @@ internal fun ColumnScope.ConfirmPage(
         text = stringResource(R.string.confirm_page_second_header),
         style = PieceTheme.typography.bodySM,
         color = PieceTheme.colors.dark3,
-        modifier = modifier.padding(top = 12.dp, bottom = 60.dp),
+        modifier = modifier.padding(top = 12.dp),
     )
 
+    Spacer(modifier = Modifier.weight(2f))
+
     Image(
-        painter = painterResource(id = R.drawable.ic_image_default),
+        painter = painterResource(id = R.drawable.ic_leave),
         contentDescription = "일러스트",
         contentScale = ContentScale.Crop,
         modifier = modifier.fillMaxWidth(),
     )
 
-    Spacer(modifier = modifier.weight(1f))
+    Spacer(modifier = modifier.weight(5f))
 
     PieceSolidButton(
         label = stringResource(R.string.withdraw),

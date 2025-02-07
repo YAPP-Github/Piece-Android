@@ -47,6 +47,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         when (intent) {
             is RegisterProfileIntent.Navigate -> handleNavigation(intent)
             is RegisterProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
+            is RegisterProfileIntent.UpdateProfileImage -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.UpdateDescribeMySelf -> updateDescription(intent.description)
             is RegisterProfileIntent.UpdateBirthday -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.UpdateHeight -> updateHeight(intent.height)
@@ -69,6 +70,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private fun updateNickName(nickName: String) {
         setState { copy(nickName = nickName) }
+    }
+
+    private fun updateProfileImage(imageUri: String) {
+        setState { copy(profileImageUri = imageUri) }
     }
 
     private fun updateDescription(description: String) {

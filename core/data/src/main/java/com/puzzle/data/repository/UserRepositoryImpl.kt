@@ -1,6 +1,6 @@
 package com.puzzle.data.repository
 
-import com.puzzle.datastore.datasource.LocalUserDataSource
+import com.puzzle.datastore.datasource.user.LocalUserDataSource
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.UserRepository
 import kotlinx.coroutines.flow.first

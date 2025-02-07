@@ -86,7 +86,7 @@ kakao = "2.20.6"
 
 
 # https://coil-kt.github.io/coil/#jetpack-compose
-coil = "2.7.0"
+coil = "3.1.0"
 # https://airbnb.io/lottie/#/android-compose
 lottie-compose = "6.5.2"
 # https://github.com/skydoves/Cloudy
@@ -167,7 +167,8 @@ mavericks = { module = "com.airbnb.android:mavericks", version.ref = "mavericks"
 mavericks-compose = { module = "com.airbnb.android:mavericks-compose", version.ref = "mavericks" }
 mavericks-hilt = { module = "com.airbnb.android:mavericks-hilt", version.ref = "mavericks" }
 
-coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
 cloudy-compose = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 

@@ -2,6 +2,7 @@ package com.puzzle.matching.graph.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,10 +36,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.verticalScrollbar
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
+import com.puzzle.designsystem.component.SnackBarType
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingState
@@ -52,6 +55,14 @@ internal fun MatchingRoute(
     MatchingScreen(
         state = state,
         navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToMatchingDetail) },
+        test = {
+            viewModel.eventHelper.sendEvent(
+                PieceEvent.ShowSnackBar(
+                    "매칭을 거절했습니다",
+                    SnackBarType.Matching
+                )
+            )
+        },
     )
 }
 
@@ -59,6 +70,7 @@ internal fun MatchingRoute(
 internal fun MatchingScreen(
     state: MatchingState,
     navigateToMatchingDetail: () -> Unit,
+    test: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
 
@@ -99,7 +111,9 @@ internal fun MatchingScreen(
                 },
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.light1,
-                modifier = Modifier.padding(vertical = 12.dp),
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .clickable { test() },
             )
         }
 

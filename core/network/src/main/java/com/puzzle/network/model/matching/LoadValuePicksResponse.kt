@@ -1,7 +1,7 @@
 package com.puzzle.network.model.matching
 
-import com.puzzle.domain.model.matching.Answer
-import com.puzzle.domain.model.matching.ValuePick
+import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.ValuePick
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable

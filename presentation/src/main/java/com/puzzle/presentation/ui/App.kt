@@ -19,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +35,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceSnackBar
+import com.puzzle.designsystem.component.PieceSnackBarHost
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
@@ -60,7 +61,12 @@ fun App(
         .value?.destination
 
     Scaffold(
-        snackbarHost = { SnackbarHost(snackBarHostState) },
+        snackbarHost = {
+            PieceSnackBarHost(
+                hostState = snackBarHostState,
+                snackbar = { snackBarData -> PieceSnackBar(snackBarData) },
+            )
+        },
         containerColor = PieceTheme.colors.white,
         bottomBar = {
             AnimatedVisibility(currentDestination?.shouldHideBottomNavigation() == false) {

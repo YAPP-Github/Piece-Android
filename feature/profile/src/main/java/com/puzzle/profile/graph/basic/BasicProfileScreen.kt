@@ -49,6 +49,7 @@ import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
+import com.puzzle.profile.graph.basic.contract.BasicProfileState.InputState
 import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
@@ -172,8 +173,8 @@ private fun BasicProfileScreen(
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
-    val isSaveButtonEnabled = state.screenState == BasicProfileState.ScreenState.EDITING ||
-            state.screenState == BasicProfileState.ScreenState.SAVE_FAILED
+    val isSaveButtonEnabled = state.profileScreenState == BasicProfileState.ScreenState.EDITING ||
+            state.profileScreenState == BasicProfileState.ScreenState.SAVE_FAILED
 
     Column(
         modifier = modifier
@@ -207,7 +208,7 @@ private fun BasicProfileScreen(
 
         PhotoContent(
             onEditPhotoClick = {},
-            screenState = state.screenState,
+            screenState = state.profileScreenState,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 40.dp)
@@ -216,9 +217,8 @@ private fun BasicProfileScreen(
 
         NickNameContent(
             nickName = state.nickName,
-            screenState = state.screenState,
-            nickNameInputState = state.nickNameInputState,
-            isCheckingButtonAvailable = state.isCheckingButtonAvailable,
+            nickNameGuideMessage = state.nickNameGuideMessage,
+            isCheckingButtonAvailable = state.isCheckingButtonEnabled,
             onNickNameChanged = onNickNameChanged,
             onDuplicationCheckClick = onDuplicationCheckClick,
             modifier = Modifier
@@ -228,7 +228,7 @@ private fun BasicProfileScreen(
 
         SelfDescriptionContent(
             description = state.description,
-            screenState = state.screenState,
+            descriptionInputState = state.descriptionInputState,
             onDescribeMySelfChanged = onDescribeMySelfChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -237,7 +237,7 @@ private fun BasicProfileScreen(
 
         BirthdateContent(
             birthdate = state.birthdate,
-            screenState = state.screenState,
+            birthdateInputState = state.birthdateInputState,
             onBirthdayChanged = onBirthdayChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -246,7 +246,7 @@ private fun BasicProfileScreen(
 
         LocationContent(
             location = state.location,
-            screenState = state.screenState,
+            locationInputState = state.locationInputState,
             onLocationDropDownClicked = onLocationDropDownClicked,
             modifier = Modifier
                 .fillMaxWidth()
@@ -255,7 +255,7 @@ private fun BasicProfileScreen(
 
         HeightContent(
             height = state.height,
-            screenState = state.screenState,
+            heightInputState = state.heightInputState,
             onHeightChanged = onHeightChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -264,7 +264,7 @@ private fun BasicProfileScreen(
 
         WeightContent(
             weight = state.weight,
-            screenState = state.screenState,
+            weightInputState = state.weightInputState,
             onWeightChanged = onWeightChanged,
             modifier = Modifier
                 .padding(top = 8.dp)
@@ -273,7 +273,7 @@ private fun BasicProfileScreen(
 
         JobContent(
             job = state.job,
-            screenState = state.screenState,
+            jobInputState = state.jobInputState,
             onJobDropDownClicked = onJobDropDownClicked,
             modifier = Modifier
                 .fillMaxWidth()
@@ -298,7 +298,7 @@ private fun BasicProfileScreen(
 
         SnsPlatformContent(
             contacts = state.contacts,
-            screenState = state.screenState,
+            screenState = state.profileScreenState,
             onContactChange = onContactChange,
             onSnsPlatformChange = onSnsPlatformChange,
             onDeleteClick = onDeleteClick,
@@ -327,10 +327,10 @@ private fun ColumnScope.SnsPlatformContent(
 
     contacts.forEachIndexed { idx, contact ->
         val image = when (contact.snsPlatform) {
-            SnsPlatform.KAKAO -> R.drawable.ic_sns_kakao
-            SnsPlatform.OPENKAKAO -> R.drawable.ic_sns_openchatting
-            SnsPlatform.INSTA -> R.drawable.ic_sns_instagram
-            SnsPlatform.PHONE -> R.drawable.ic_sns_call
+            SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+            SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+            SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+            SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
             else -> R.drawable.ic_delete_circle // 임시
         }
 
@@ -443,12 +443,12 @@ private fun SmokeContent(
 @Composable
 private fun JobContent(
     job: String,
-    screenState: BasicProfileState.ScreenState,
+    jobInputState: InputState,
     onJobDropDownClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && job.isEmpty()
+        jobInputState == InputState.WARNIING && job.isEmpty()
 
     SectionTitle(title = "직업")
 
@@ -477,12 +477,12 @@ private fun JobContent(
 @Composable
 private fun WeightContent(
     weight: String,
-    screenState: BasicProfileState.ScreenState,
+    weightInputState: InputState,
     onWeightChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && weight.isEmpty()
+        weightInputState == InputState.WARNIING && weight.isBlank()
 
     SectionTitle(title = "몸무게")
 
@@ -529,12 +529,12 @@ private fun WeightContent(
 @Composable
 private fun HeightContent(
     height: String,
-    screenState: BasicProfileState.ScreenState,
+    heightInputState: InputState,
     onHeightChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && height.isEmpty()
+        heightInputState == InputState.WARNIING && height.isBlank()
 
     SectionTitle(title = "키")
 
@@ -583,12 +583,12 @@ private fun HeightContent(
 @Composable
 private fun LocationContent(
     location: String,
-    screenState: BasicProfileState.ScreenState,
+    locationInputState: InputState,
     onLocationDropDownClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && location.isEmpty()
+        locationInputState == InputState.WARNIING && location.isBlank()
 
     SectionTitle(title = "활동 지역")
 
@@ -615,12 +615,12 @@ private fun LocationContent(
 @Composable
 private fun BirthdateContent(
     birthdate: String,
-    screenState: BasicProfileState.ScreenState,
+    birthdateInputState: InputState,
     onBirthdayChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && birthdate.isEmpty()
+        birthdateInputState == InputState.WARNIING && birthdate.isBlank()
 
     SectionTitle(title = "생년월일")
 
@@ -665,12 +665,12 @@ private fun BirthdateContent(
 @Composable
 private fun SelfDescriptionContent(
     description: String,
-    screenState: BasicProfileState.ScreenState,
+    descriptionInputState: InputState,
     onDescribeMySelfChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == BasicProfileState.ScreenState.SAVE_FAILED && description.isEmpty()
+        descriptionInputState == InputState.WARNIING
 
     SectionTitle(title = "나를 표현하는 한 마디")
 
@@ -734,8 +734,7 @@ private fun SelfDescriptionContent(
 @Composable
 private fun NickNameContent(
     nickName: String,
-    screenState: BasicProfileState.ScreenState,
-    nickNameInputState: BasicProfileState.NickNameInputState,
+    nickNameGuideMessage: BasicProfileState.NickNameGuideMessage,
     isCheckingButtonAvailable: Boolean,
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
@@ -743,14 +742,24 @@ private fun NickNameContent(
 ) {
     val focusManager = LocalFocusManager.current
 
-    val inputGuideMessage = when (nickNameInputState) {
-        BasicProfileState.NickNameInputState.VALID_LENGTH -> "6자 이하로 작성해 주세요."
-        BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH -> "6자 이하로 작성해 주세요."
-        BasicProfileState.NickNameInputState.ALREADY_IN_USE -> "이미 사용 중인 닉네임입니다."
-        BasicProfileState.NickNameInputState.AVAILABLE -> "사용할 수 있는 닉네임입니다."
-        BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK -> "닉네임 중복 검사를 진행해 주세요."
-        BasicProfileState.NickNameInputState.EMPTY ->
-            if (screenState == BasicProfileState.ScreenState.SAVE_FAILED) "필수 항목을 입력해 주세요." else "6자 이하로 작성해 주세요."
+    val inputGuideMessage = when (nickNameGuideMessage) {
+        BasicProfileState.NickNameGuideMessage.DEFAULT -> "6자 이하로 작성해 주세요."
+        BasicProfileState.NickNameGuideMessage.EXCEEDS_MAX_LENGTH -> "6자 이하로 작성해 주세요."
+        BasicProfileState.NickNameGuideMessage.ALREADY_IN_USE -> "이미 사용 중인 닉네임입니다."
+        BasicProfileState.NickNameGuideMessage.AVAILABLE -> "사용할 수 있는 닉네임입니다."
+        BasicProfileState.NickNameGuideMessage.NEEDS_DUPLICATE_CHECK -> "닉네임 중복 검사를 진행해 주세요."
+        BasicProfileState.NickNameGuideMessage.NEEDS_TO_FILL -> "필수 항목을 입력해 주세요."
+    }
+
+    val textColor = when (nickNameGuideMessage.inputState) {
+        InputState.DEFAULT ->
+            if (nickNameGuideMessage == BasicProfileState.NickNameGuideMessage.AVAILABLE) {
+                PieceTheme.colors.primaryDefault
+            } else {
+                PieceTheme.colors.dark3
+            }
+
+        InputState.WARNIING -> PieceTheme.colors.error
     }
 
     SectionTitle(title = "닉네임")
@@ -790,11 +799,6 @@ private fun NickNameContent(
         )
     }
 
-    val errorColor =
-        nickNameInputState == BasicProfileState.NickNameInputState.EXCEEDS_MAX_LENGTH ||
-                (nickNameInputState == BasicProfileState.NickNameInputState.EMPTY && screenState == BasicProfileState.ScreenState.SAVE_FAILED) ||
-                nickNameInputState == BasicProfileState.NickNameInputState.NEEDS_DUPLICATE_CHECK
-
     Row(
         modifier = Modifier
             .padding(top = 8.dp)
@@ -805,16 +809,7 @@ private fun NickNameContent(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
-            color = when {
-                nickNameInputState == BasicProfileState.NickNameInputState.AVAILABLE ->
-                    PieceTheme.colors.primaryDefault
-
-                errorColor ->
-                    PieceTheme.colors.error
-
-                else ->
-                    PieceTheme.colors.dark3
-            },
+            color = textColor,
             modifier = Modifier.weight(1f),
         )
 

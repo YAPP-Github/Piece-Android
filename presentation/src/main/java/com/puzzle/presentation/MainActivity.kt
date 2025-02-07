@@ -1,6 +1,7 @@
 package com.puzzle.presentation
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
 
 //        // TODO(재확인 필요)
@@ -69,8 +70,14 @@ class MainActivity : ComponentActivity() {
                         launch {
                             eventHelper.eventFlow.collect { event ->
                                 when (event) {
-                                    is PieceEvent.ShowSnackBar ->
-                                        snackBarHostState.showSnackbar(event.msg)
+                                    is PieceEvent.ShowSnackBar -> {
+                                        scope.launch {
+                                            snackBarHostState.currentSnackbarData?.dismiss()
+                                            snackBarHostState.showSnackbar("${event.msg}/${event.type}")
+                                        }
+                                    }
+
+                                    PieceEvent.HideSnackBar -> snackBarHostState.currentSnackbarData?.dismiss()
 
                                     is PieceEvent.ShowBottomSheet -> {
                                         scope.launch {
@@ -151,8 +158,5 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
-    }
-
-    private suspend fun handlePieceEvent(event: PieceEvent) {
     }
 }
