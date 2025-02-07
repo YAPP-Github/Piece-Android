@@ -63,7 +63,7 @@ data class BasicProfileState(
                     nickNameGuideMessage != NickNameGuideMessage.AVAILABLE ->
                 NickNameGuideMessage.NEEDS_DUPLICATE_CHECK
 
-            nickNameGuideMessage == NickNameGuideMessage.DEFAULT ->  nickNameGuideMessage
+            nickNameGuideMessage == NickNameGuideMessage.DEFAULT -> nickNameGuideMessage
 
             else ->
                 nickNameGuideMessage

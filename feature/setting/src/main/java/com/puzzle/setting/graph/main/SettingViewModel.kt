@@ -1,6 +1,5 @@
 package com.puzzle.setting.graph.main
 
-import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
