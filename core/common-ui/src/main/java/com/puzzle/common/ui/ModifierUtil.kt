@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.puzzle.designsystem.foundation.PieceTheme
 
 fun Modifier.addFocusCleaner(
     focusManager: FocusManager,
@@ -81,7 +80,7 @@ fun Modifier.throttledClickable(
 fun Modifier.verticalScrollbar(
     state: LazyListState,
     width: Dp = 6.dp,
-    color: Color = PieceTheme.colors.light2,
+    color: Color,
 ): Modifier {
     val targetAlpha = if (state.isScrollInProgress) .7f else 0f
     val duration = if (state.isScrollInProgress) 150 else 1000

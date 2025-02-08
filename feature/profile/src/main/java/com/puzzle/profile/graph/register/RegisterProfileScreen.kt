@@ -6,7 +6,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -48,6 +47,7 @@ import coil3.compose.AsyncImage
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
@@ -248,7 +248,9 @@ private fun RegisterProfileScreen(
             val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.PickVisualMedia(),
                 onResult = { uri ->
-                    if (uri != null) { onProfileImageChanged(uri.toString()) }
+                    if (uri != null) {
+                        onProfileImageChanged(uri.toString())
+                    }
                 }
             )
 

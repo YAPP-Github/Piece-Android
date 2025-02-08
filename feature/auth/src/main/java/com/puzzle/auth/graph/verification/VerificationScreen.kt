@@ -2,7 +2,6 @@ package com.puzzle.auth.graph.verification
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +50,7 @@ import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus.VERIFIED
 import com.puzzle.common.ui.addFocusCleaner
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton

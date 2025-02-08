@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.puzzle.common.event.SnackBarType
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 import kotlinx.coroutines.delay
@@ -89,17 +90,6 @@ fun PieceSnackBar(
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.white,
         )
-    }
-}
-
-enum class SnackBarType {
-    TextOnly,
-    Info,
-    Matching;
-
-    companion object {
-        fun create(value: String): SnackBarType =
-            entries.find { it.name == value } ?: TextOnly
     }
 }
 

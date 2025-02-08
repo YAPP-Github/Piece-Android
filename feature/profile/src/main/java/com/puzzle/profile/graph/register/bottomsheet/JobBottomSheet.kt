@@ -1,7 +1,6 @@
 package com.puzzle.profile.graph.register.bottomsheet
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -19,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceBottomSheetHeader
 import com.puzzle.designsystem.component.PieceBottomSheetListItemDefault
