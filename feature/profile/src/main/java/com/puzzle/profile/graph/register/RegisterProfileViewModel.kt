@@ -9,6 +9,7 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -76,7 +77,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         withState { state ->
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
                 viewModelScope.launch {
-                    _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraph)))
+                    _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)))
                 }
             } else {
                 setState {
