@@ -3,14 +3,12 @@ package com.puzzle.profile.graph.register.contract
 import androidx.compose.runtime.Composable
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
-import com.puzzle.navigation.NavigationEvent
 
 sealed class RegisterProfileIntent {
-    data class Navigate(val navigationEvent: NavigationEvent) : RegisterProfileIntent()
     data class UpdateNickName(val nickName: String) : RegisterProfileIntent()
     data class EditPhotoClick(val imageUri: String) : RegisterProfileIntent()
     data object BackClick : RegisterProfileIntent()
-    data object SaveClick : RegisterProfileIntent()
+    data class SaveClick(val registerProfileState: RegisterProfileState) : RegisterProfileIntent()
     data object DuplicationCheckClick : RegisterProfileIntent()
     data class UpdateProfileImage(val imageUri: String) : RegisterProfileIntent()
     data class UpdateDescribeMySelf(val description: String) : RegisterProfileIntent()

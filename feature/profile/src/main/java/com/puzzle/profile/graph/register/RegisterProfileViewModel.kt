@@ -9,6 +9,8 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
@@ -46,9 +48,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: RegisterProfileIntent) {
+    private fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
-            is RegisterProfileIntent.Navigate -> handleNavigation(intent)
             is RegisterProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
             is RegisterProfileIntent.UpdateProfileImage -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.EditPhotoClick -> updateProfileImage(intent.imageUri)
@@ -64,55 +65,109 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.DeleteContact -> deleteContact(intent.idx)
             is RegisterProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
             is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
+            is RegisterProfileIntent.SaveClick -> saveProfile(intent.registerProfileState)
             RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
-            RegisterProfileIntent.BackClick -> Unit
+            RegisterProfileIntent.BackClick -> moveToPrevious()
             RegisterProfileIntent.DuplicationCheckClick -> checkNickNameDuplication()
-            RegisterProfileIntent.SaveClick -> saveBasicProfile()
         }
     }
 
-    private suspend fun handleNavigation(intent: RegisterProfileIntent.Navigate) {
-        _sideEffects.send(Navigate(intent.navigationEvent))
+    private fun moveToPrevious() {
+        withState { state ->
+            if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
+                viewModelScope.launch {
+                    _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraph)))
+                }
+            } else {
+                setState {
+                    copy(currentPage = RegisterProfileState.Page.getPreviousPage(state.currentPage))
+                }
+            }
+        }
     }
 
     private fun updateProfileImage(imageUri: String) {
         setState {
             copy(
                 profileImageUri = imageUri,
-                profileImageUriInputState = InputState.DEFAULT
+                profileImageUriInputState = InputState.DEFAULT,
             )
         }
     }
 
-    private fun saveBasicProfile() {
-        withState { state ->
-            // 프로필이 미완성일 때
-            if (state.isProfileIncomplete) {
-                setState {
-                    copy(
-                        profileImageUriInputState = getInputState(state.profileImageUri),
-                        nickNameGuideMessage = nickNameStateInSavingProfile,
-                        descriptionInputState = getInputState(state.description),
-                        birthdateInputState = getInputState(state.birthdate),
-                        locationInputState = getInputState(state.location),
-                        heightInputState = getInputState(state.height),
-                        weightInputState = getInputState(state.weight),
-                        jobInputState = getInputState(state.job),
-                        isSmokeInputState = getInputState(state.isSmoke),
-                        isSnsActiveInputState = getInputState(state.isSnsActive),
-                        contactsInputState = getInputState(state.contacts),
-                    )
-                }
-                return@withState
-            }
-            // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
-            // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
+    private fun saveProfile(state: RegisterProfileState) {
+        when (state.currentPage) {
+            RegisterProfileState.Page.BASIC_PROFILE -> saveBasicProfile(state)
+            RegisterProfileState.Page.VALUE_TALK -> saveValueTalk(state)
+            RegisterProfileState.Page.VALUE_PICK -> saveValuePick(state)
+            RegisterProfileState.Page.FINISH -> completeProfileRegister()
+        }
+    }
 
+    private fun completeProfileRegister() {
+        viewModelScope.launch {
+            _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraph)))
+        }
+    }
+
+    private fun saveValuePick(state: RegisterProfileState) {
+        setState {
+            copy(valuePicks = state.valuePicks)
+        }
+
+        if (!state.isValuePickComplete) {
+            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+            return
+        }
+
+        setState {
+            copy(currentPage = RegisterProfileState.Page.getNextPage(state.currentPage))
+        }
+    }
+
+    private fun saveValueTalk(state: RegisterProfileState) {
+        setState {
+            copy(valueTalks = state.valueTalks)
+        }
+
+        if (!state.isValueTalkComplete) {
+            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+            return
+        }
+
+        setState {
+            copy(currentPage = RegisterProfileState.Page.getNextPage(state.currentPage))
+        }
+    }
+
+    private fun saveBasicProfile(state: RegisterProfileState) {
+        // 프로필이 미완성일 때
+        if (!state.isBasicProfileComplete) {
             setState {
                 copy(
-                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
+                    profileImageUriInputState = getInputState(state.profileImageUri),
+                    nickNameGuideMessage = updatedNickNameGuideMessage,
+                    descriptionInputState = getInputState(state.description),
+                    birthdateInputState = getInputState(state.birthdate),
+                    locationInputState = getInputState(state.location),
+                    heightInputState = getInputState(state.height),
+                    weightInputState = getInputState(state.weight),
+                    jobInputState = getInputState(state.job),
+                    isSmokeInputState = getInputState(state.isSmoke),
+                    isSnsActiveInputState = getInputState(state.isSnsActive),
+                    contactsInputState = getInputState(state.contacts),
                 )
             }
+            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+            return
+        }
+        // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
+        // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
+        setState {
+            copy(
+                nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
+                currentPage = RegisterProfileState.Page.getNextPage(state.currentPage),
+            )
         }
     }
 
@@ -126,7 +181,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     NickNameGuideMessage.AVAILABLE
                 } else {
                     NickNameGuideMessage.ALREADY_IN_USE
-                }
+                },
             )
         }
     }
@@ -144,9 +199,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
             val isCheckingButtonEnabled = (nickName.length in 1..6)
 
-            newState.copy(
-                isCheckingButtonEnabled = isCheckingButtonEnabled
-            )
+            newState.copy(isCheckingButtonEnabled = isCheckingButtonEnabled)
         }
     }
 
@@ -154,7 +207,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 description = description,
-                descriptionInputState = InputState.DEFAULT
+                descriptionInputState = InputState.DEFAULT,
             )
         }
     }
@@ -163,7 +216,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 birthdate = birthdate,
-                birthdateInputState = InputState.DEFAULT
+                birthdateInputState = InputState.DEFAULT,
             )
         }
     }
@@ -172,7 +225,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 height = height,
-                heightInputState = InputState.DEFAULT
+                heightInputState = InputState.DEFAULT,
             )
         }
     }
@@ -181,7 +234,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 weight = weight,
-                weightInputState = InputState.DEFAULT
+                weightInputState = InputState.DEFAULT,
             )
         }
     }
@@ -190,7 +243,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 job = job,
-                jobInputState = InputState.DEFAULT
+                jobInputState = InputState.DEFAULT,
             )
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
@@ -210,7 +263,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 isSmoke = isSmoke,
-                isSmokeInputState = InputState.DEFAULT
+                isSmokeInputState = InputState.DEFAULT,
             )
         }
     }

@@ -59,8 +59,6 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileState
 @Composable
 internal fun BasicProfilePage(
     state: RegisterProfileState,
-    onSaveClick: () -> Unit,
-    onBackClick: () -> Unit,
     onEditPhotoClick: (String) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onNickNameChanged: (String) -> Unit,
@@ -861,8 +859,6 @@ private fun BasicProfilePagePreview() {
             onJobDropDownClicked = {},
             onSmokeStatusChanged = {},
             onSnsActivityChanged = {},
-            onBackClick = {},
-            onSaveClick = {},
             onDeleteClick = {},
             onContactChange = { _, _ -> },
             onSnsPlatformChange = {},

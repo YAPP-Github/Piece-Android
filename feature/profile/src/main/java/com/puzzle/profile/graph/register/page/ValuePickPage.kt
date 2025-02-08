@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
@@ -29,12 +30,10 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileState
 
 @Composable
 internal fun ValuePickPage(
-    state: RegisterProfileState,
-    onSaveClick: (List<ValuePick>) -> Unit,
-    onBackClick: () -> Unit,
+    valuePicks: List<ValuePick>,
+    onValuePickContentChange: (List<ValuePick>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var valuePicks: List<ValuePick> by remember { mutableStateOf(state.valuePicks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
     Column(
@@ -45,7 +44,7 @@ internal fun ValuePickPage(
         ValuePickCards(
             valuePicks = valuePicks,
             onContentChange = {
-                valuePicks = valuePicks.map { valuePick ->
+                val updatedValuePicks = valuePicks.map { valuePick ->
                     if (valuePick.id == it.id) {
                         it
                     } else {
@@ -53,7 +52,8 @@ internal fun ValuePickPage(
                     }
                 }
 
-                isContentEdited = valuePicks != state.valuePicks
+                isContentEdited = updatedValuePicks != valuePicks
+                onValuePickContentChange(updatedValuePicks)
             },
         )
     }
@@ -66,6 +66,26 @@ private fun ValuePickCards(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
+        item {
+            Text(
+                text = "가치관 Pick,\n당신의 연애 취향을 알려주세요",
+                style = PieceTheme.typography.headingLSB,
+                color = PieceTheme.colors.black,
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .padding(horizontal = 20.dp),
+            )
+
+            Text(
+                text = "선택한 답변으로 연애 스타일을 쉽게 확인할 수 있어요.\n서로의 우선순위와 취향을 이해하는 데 큰 도움이 될 거예요.",
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 16.dp)
+                    .padding(horizontal = 20.dp),
+            )
+        }
+
         itemsIndexed(valuePicks) { idx, item ->
             ValuePickCard(
                 item = item,
@@ -137,5 +157,17 @@ private fun ValuePickCard(
                 },
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ValueTalkPagePreview() {
+    PieceTheme {
+        ValuePickPage(
+            valuePicks = RegisterProfileState().valuePicks,
+            onValuePickContentChange = {},
+            modifier = Modifier.background(PieceTheme.colors.white)
+        )
     }
 }

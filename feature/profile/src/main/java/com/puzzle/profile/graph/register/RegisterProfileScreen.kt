@@ -1,6 +1,12 @@
 package com.puzzle.profile.graph.register
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,6 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -23,7 +32,8 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.navigation.NavigationEvent
+import com.puzzle.domain.model.profile.ValuePick
+import com.puzzle.domain.model.profile.ValueTalk
 import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
@@ -31,6 +41,9 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
 import com.puzzle.profile.graph.register.page.BasicProfilePage
+import com.puzzle.profile.graph.register.page.FinishPage
+import com.puzzle.profile.graph.register.page.ValuePickPage
+import com.puzzle.profile.graph.register.page.ValueTalkPage
 
 @Composable
 internal fun RegisterProfileRoute(
@@ -51,8 +64,7 @@ internal fun RegisterProfileRoute(
     }
     RegisterProfileScreen(
         state = state,
-        navigate = { viewModel.onIntent(RegisterProfileIntent.Navigate(it)) },
-        onSaveClick = { viewModel.onIntent(RegisterProfileIntent.SaveClick) },
+        onSaveClick = { viewModel.onIntent(RegisterProfileIntent.SaveClick(it)) },
         onBackClick = { viewModel.onIntent(RegisterProfileIntent.BackClick) },
         onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateProfileImage(it)) },
         onEditPhotoClick = { viewModel.onIntent(RegisterProfileIntent.EditPhotoClick(it)) },
@@ -66,8 +78,7 @@ internal fun RegisterProfileRoute(
         onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
         onAddContactClick = {
             viewModel.onIntent(
-                RegisterProfileIntent.ShowBottomSheet
-                {
+                RegisterProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
                         usingSnsPlatform = state.usingSnsPlatforms,
                         isEdit = false,
@@ -80,8 +91,7 @@ internal fun RegisterProfileRoute(
         },
         onSnsPlatformChange = { idx ->
             viewModel.onIntent(
-                RegisterProfileIntent.ShowBottomSheet
-                {
+                RegisterProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
                         usingSnsPlatform = state.usingSnsPlatforms,
                         nowSnsPlatform = state.contacts[idx].snsPlatform,
@@ -101,8 +111,7 @@ internal fun RegisterProfileRoute(
         },
         onJobDropDownClicked = {
             viewModel.onIntent(
-                RegisterProfileIntent.ShowBottomSheet
-                {
+                RegisterProfileIntent.ShowBottomSheet {
                     JobBottomSheet(
                         selectedJob = state.job,
                         updateSelectJob = {
@@ -116,8 +125,7 @@ internal fun RegisterProfileRoute(
         },
         onLocationDropDownClicked = {
             viewModel.onIntent(
-                RegisterProfileIntent.ShowBottomSheet
-                {
+                RegisterProfileIntent.ShowBottomSheet {
                     LocationBottomSheet(
                         selectedLocation = state.location,
                         updateSelectLocation = {
@@ -131,15 +139,18 @@ internal fun RegisterProfileRoute(
         onContactChange = { idx, contact ->
             viewModel.onIntent(RegisterProfileIntent.UpdateContact(idx, contact))
         },
+        onHomeClick = {
+
+        },
     )
 }
 
 @Composable
 private fun RegisterProfileScreen(
     state: RegisterProfileState,
-    navigate: (NavigationEvent) -> Unit,
     onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
+    onHomeClick: () -> Unit,
+    onSaveClick: (RegisterProfileState) -> Unit,
     onEditPhotoClick: (String) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onDuplicationCheckClick: () -> Unit,
@@ -159,6 +170,8 @@ private fun RegisterProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
+    var valueTalks: List<ValueTalk> by remember { mutableStateOf(state.valueTalks) }
+    var valuePicks: List<ValuePick> by remember { mutableStateOf(state.valuePicks) }
 
     Column(
         modifier = modifier
@@ -167,44 +180,78 @@ private fun RegisterProfileScreen(
     ) {
         PieceSubBackTopBar(
             title = "",
-            onBackClick = { navigate(NavigationEvent.NavigateUp) },
+            onBackClick = onBackClick,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
         )
 
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 20.dp, end = 20.dp),
-        ) {
-            BasicProfilePage(
-                state = state,
-                onSaveClick = onSaveClick,
-                onBackClick = onBackClick,
-                onEditPhotoClick = onEditPhotoClick,
-                onProfileImageChanged = onProfileImageChanged,
-                onNickNameChanged = onNickNameChanged,
-                onDescribeMySelfChanged = onDescribeMySelfChanged,
-                onBirthdayChanged = onBirthdayChanged,
-                onLocationDropDownClicked = onLocationDropDownClicked,
-                onHeightChanged = onHeightChanged,
-                onWeightChanged = onWeightChanged,
-                onJobDropDownClicked = onJobDropDownClicked,
-                onSmokeStatusChanged = onSmokeStatusChanged,
-                onSnsActivityChanged = onSnsActivityChanged,
-                onDuplicationCheckClick = onDuplicationCheckClick,
-                onContactChange = onContactChange,
-                onSnsPlatformChange = onSnsPlatformChange,
-                onAddContactClick = onAddContactClick,
-                onDeleteClick = onDeleteContactClick,
-                modifier = Modifier,
-            )
+        Box(modifier = Modifier.weight(1f)) {
+            AnimatedContent(
+                targetState = state.currentPage,
+                transitionSpec = {
+                    fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+                },
+                modifier = Modifier.fillMaxSize(),
+                label = "",
+            ) {
+                when (it) {
+                    RegisterProfileState.Page.BASIC_PROFILE ->
+                        BasicProfilePage(
+                            state = state,
+                            onEditPhotoClick = onEditPhotoClick,
+                            onProfileImageChanged = onProfileImageChanged,
+                            onNickNameChanged = onNickNameChanged,
+                            onDescribeMySelfChanged = onDescribeMySelfChanged,
+                            onBirthdayChanged = onBirthdayChanged,
+                            onLocationDropDownClicked = onLocationDropDownClicked,
+                            onHeightChanged = onHeightChanged,
+                            onWeightChanged = onWeightChanged,
+                            onJobDropDownClicked = onJobDropDownClicked,
+                            onSmokeStatusChanged = onSmokeStatusChanged,
+                            onSnsActivityChanged = onSnsActivityChanged,
+                            onDuplicationCheckClick = onDuplicationCheckClick,
+                            onContactChange = onContactChange,
+                            onSnsPlatformChange = onSnsPlatformChange,
+                            onAddContactClick = onAddContactClick,
+                            onDeleteClick = onDeleteContactClick,
+                            modifier = Modifier.padding(horizontal = 20.dp),
+                        )
+
+                    RegisterProfileState.Page.VALUE_TALK ->
+                        ValueTalkPage(
+                            valueTalks = valueTalks,
+                            onValueTalkContentChange = { updatedValueTalks ->
+                                valueTalks = updatedValueTalks
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+
+                    RegisterProfileState.Page.VALUE_PICK ->
+                        ValuePickPage(
+                            valuePicks = valuePicks,
+                            onValuePickContentChange = { updatedValuePicks ->
+                                valuePicks = updatedValuePicks
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                        )
+
+                    RegisterProfileState.Page.FINISH ->
+                        FinishPage(
+                            onHomeClick = onHomeClick,
+                            modifier = Modifier.fillMaxSize(),
+                        )
+                }
+            }
         }
 
         PieceSolidButton(
             label = stringResource(R.string.next),
             onClick = {
-                onSaveClick()
-//                navigate(TopLevelNavigateTo(MatchingRoute))
+                onSaveClick(
+                    state.copy(
+                        valueTalks = valueTalks,
+                        valuePicks = valuePicks,
+                    )
+                )
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -219,7 +266,6 @@ private fun PreviewRegisterProfileScreen() {
     PieceTheme {
         RegisterProfileScreen(
             state = RegisterProfileState(),
-            navigate = {},
             onNickNameChanged = {},
             onProfileImageChanged = {},
             onDescribeMySelfChanged = {},
@@ -238,7 +284,8 @@ private fun PreviewRegisterProfileScreen() {
             onAddContactClick = {},
             onDeleteContactClick = {},
             onContactChange = { _, _ -> },
-            modifier = Modifier.background(PieceTheme.colors.white)
+            modifier = Modifier.background(PieceTheme.colors.white),
+            onHomeClick = {}
         )
     }
 }

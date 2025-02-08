@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceTextInputLong
@@ -42,34 +43,31 @@ import kotlinx.coroutines.delay
 
 @Composable
 internal fun ValueTalkPage(
-    state: RegisterProfileState,
-    onSaveClick: (List<ValueTalk>) -> Unit,
-    onBackClick: () -> Unit,
+    valueTalks: List<ValueTalk>,
+    onValueTalkContentChange: (List<ValueTalk>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var valueTalks: List<ValueTalk> by remember { mutableStateOf(state.valueTalks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
     var editedValueTalkLabels: List<String> by remember { mutableStateOf(emptyList()) }
 
-    Column(modifier = modifier) {
-        ValueTalkCards(
-            valueTalks = valueTalks,
-            onContentChange = { editedValueTalk ->
-                valueTalks = valueTalks.map { valueTalk ->
-                    if (valueTalk.category == editedValueTalk.category) {
-                        if (!editedValueTalkLabels.contains(valueTalk.category)) {
-                            editedValueTalkLabels = editedValueTalkLabels + valueTalk.category
-                        }
-                        valueTalk.copy(answer = editedValueTalk.answer)
-                    } else {
-                        valueTalk
+    ValueTalkCards(
+        valueTalks = valueTalks,
+        onContentChange = { editedValueTalk ->
+            val updatedValueTalks = valueTalks.map { valueTalk ->
+                if (valueTalk.category == editedValueTalk.category) {
+                    if (!editedValueTalkLabels.contains(valueTalk.category)) {
+                        editedValueTalkLabels = editedValueTalkLabels + valueTalk.category
                     }
+                    valueTalk.copy(answer = editedValueTalk.answer)
+                } else {
+                    valueTalk
                 }
-
-                isContentEdited = valueTalks != state.valueTalks
-            },
-        )
-    }
+            }
+            isContentEdited = updatedValueTalks != valueTalks
+            onValueTalkContentChange(updatedValueTalks)
+        },
+        modifier = modifier,
+    )
 }
 
 @Composable
@@ -79,6 +77,26 @@ private fun ValueTalkCards(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
+        item {
+            Text(
+                text = "가치관 Talk,\n당신의 이야기를 들려주세요",
+                style = PieceTheme.typography.headingLSB,
+                color = PieceTheme.colors.black,
+                modifier = Modifier
+                    .padding(top = 20.dp)
+                    .padding(horizontal = 20.dp),
+            )
+
+            Text(
+                text = "AI 요약으로 내용을 더 잘 이해할 수 있도록 도와드려요.\n프로필 생성 후, '프로필-가치관 Talk'에서 확인해보세요!",
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier
+                    .padding(top = 12.dp, bottom = 16.dp)
+                    .padding(horizontal = 20.dp),
+            )
+        }
+
         itemsIndexed(valueTalks) { idx, item ->
             ValueTalkCard(
                 item = item,
@@ -215,6 +233,18 @@ fun HelpMessageRow(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ValueTalkPagePreview() {
+    PieceTheme {
+        ValueTalkPage(
+            valueTalks = RegisterProfileState().valueTalks,
+            onValueTalkContentChange = {},
+            modifier = Modifier.background(PieceTheme.colors.white)
+        )
     }
 }
 
