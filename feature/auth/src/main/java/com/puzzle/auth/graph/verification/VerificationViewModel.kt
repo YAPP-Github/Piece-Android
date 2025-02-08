@@ -11,7 +11,6 @@ import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.domain.model.auth.Timer
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.AuthRepository
-import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -105,7 +104,7 @@ class VerificationViewModel @AssistedInject constructor(
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
                         route = AuthGraphDest.SignUpRoute,
-                        popUpTo = AuthGraph,
+                        popUpTo = true,
                     )
                 )
 

@@ -175,7 +175,7 @@ private fun VerificationScreen(
                 navigate(
                     NavigationEvent.NavigateTo(
                         route = AuthGraphDest.SignUpRoute,
-                        popUpTo = AuthGraph,
+                        popUpTo = true,
                     )
                 )
             },

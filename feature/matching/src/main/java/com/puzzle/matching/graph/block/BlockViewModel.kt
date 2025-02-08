@@ -46,7 +46,7 @@ class BlockViewModel @AssistedInject constructor(
                 BlockSideEffect.Navigate(
                     NavigationEvent.NavigateTo(
                         route = MatchingGraphDest.MatchingRoute,
-                        popUpTo = MatchingGraphDest.BlockRoute(),
+                        popUpTo = true,
                     )
                 )
             )

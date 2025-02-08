@@ -124,15 +124,15 @@ class MainActivity : ComponentActivity() {
     ) {
         when (event) {
             is NavigationEvent.NavigateTo -> {
-                val navOptions = event.popUpTo?.let {
-                    navOptions {
-                        popUpTo(it) {
+                val navOptions = navOptions {
+                    if (event.popUpTo) {
+                        popUpTo(navController.currentDestination?.route ?: event.route) {
                             saveState = true
                             inclusive = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
+                    launchSingleTop = true
+                    restoreState = true
                 }
 
                 navController.navigate(
