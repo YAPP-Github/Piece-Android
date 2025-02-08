@@ -11,6 +11,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,12 +27,18 @@ import com.puzzle.designsystem.component.PieceModalBottomSheet
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.presentation.network.NetworkMonitor
 import com.puzzle.presentation.ui.App
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var networkMonitor: NetworkMonitor
+
     private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,6 +62,8 @@ class MainActivity : ComponentActivity() {
                     initialValue = ModalBottomSheetValue.Hidden,
                     skipHalfExpanded = true,
                 )
+
+                val networkState by networkMonitor.networkState.collectAsState()
 
                 LaunchedEffect(Unit) {
                     repeatOnStarted {
@@ -104,6 +113,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         App(
                             snackBarHostState = snackBarHostState,
+                            networkState = networkState,
                             navController = navController,
                             navigateToTopLevelDestination = { topLevelDestination ->
                                 navigationHelper.navigate(
