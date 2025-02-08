@@ -25,14 +25,24 @@ class NetworkMonitor @Inject constructor(
     )
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        private val networks = mutableSetOf<Network>()
+
         override fun onAvailable(network: Network) {
-            super.onAvailable(network)
-            _networkState.value = NetworkState.Connected
+            networks += network
+            updateNetworkState(networks)
         }
 
         override fun onLost(network: Network) {
-            super.onLost(network)
-            _networkState.value = NetworkState.NotConnected
+            networks -= network
+            updateNetworkState(networks)
+        }
+
+        private fun updateNetworkState(networks: Set<Network>) {
+            _networkState.value = if (networks.isNotEmpty()) {
+                NetworkState.Connected
+            } else {
+                NetworkState.NotConnected
+            }
         }
     }
 
