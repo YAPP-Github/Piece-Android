@@ -4,8 +4,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -102,6 +104,8 @@ private fun ValuePickCards(
                     color = PieceTheme.colors.light3,
                     modifier = Modifier.fillMaxWidth(),
                 )
+            } else {
+                Spacer(modifier = Modifier.height(60.dp))
             }
         }
     }
@@ -118,7 +122,7 @@ private fun ValuePickCard(
             Image(
                 painter = painterResource(R.drawable.ic_question),
                 contentDescription = "질문",
-                colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
+                colorFilter = ColorFilter.tint(PieceTheme.colors.primaryDefault),
                 modifier = Modifier
                     .size(20.dp)
                     .padding(start = 4.dp),

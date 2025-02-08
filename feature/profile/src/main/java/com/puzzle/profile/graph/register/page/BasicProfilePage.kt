@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -78,8 +77,14 @@ internal fun BasicProfilePage(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val focusManager = LocalFocusManager.current
 
-    Column(modifier = modifier.verticalScroll(scrollState)) {
+    Column(modifier = modifier
+        .verticalScroll(scrollState)
+        .clickable {
+            focusManager.clearFocus()
+        }
+    ) {
         Text(
             text = "간단한 정보로\n당신을 표현하세요",
             style = PieceTheme.typography.headingLSB,
@@ -94,16 +99,12 @@ internal fun BasicProfilePage(
             modifier = Modifier.padding(top = 12.dp),
         )
 
-
         PhotoContent(
             profileImageUri = state.profileImageUri,
             profileImageUriInputState = state.profileImageUriInputState,
             onEditPhotoClick = onEditPhotoClick,
             onProfileImageChanged = onProfileImageChanged,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 40.dp)
-                .size(120.dp),
+            modifier = Modifier.padding(top = 40.dp),
         )
 
         NickNameContent(
@@ -138,7 +139,10 @@ internal fun BasicProfilePage(
         LocationContent(
             location = state.location,
             locationInputState = state.locationInputState,
-            onLocationDropDownClicked = onLocationDropDownClicked,
+            onLocationDropDownClicked = {
+                focusManager.clearFocus()
+                onLocationDropDownClicked()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -165,7 +169,10 @@ internal fun BasicProfilePage(
         JobContent(
             job = state.job,
             jobInputState = state.jobInputState,
-            onJobDropDownClicked = onJobDropDownClicked,
+            onJobDropDownClicked = {
+                focusManager.clearFocus()
+                onJobDropDownClicked()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -192,13 +199,23 @@ internal fun BasicProfilePage(
         SnsPlatformContent(
             contacts = state.contacts,
             contactsInputState = state.contactsInputState,
-            onContactChange = onContactChange,
-            onSnsPlatformChange = onSnsPlatformChange,
-            onDeleteClick = onDeleteClick,
-            onAddContactClick = onAddContactClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            onContactChange = { idx, contact ->
+                focusManager.clearFocus()
+                onContactChange(idx, contact)
+            },
+            onSnsPlatformChange = {
+                focusManager.clearFocus()
+                onSnsPlatformChange(it)
+            },
+            onDeleteClick = {
+                focusManager.clearFocus()
+                onDeleteClick(it)
+            },
+            onAddContactClick = {
+                focusManager.clearFocus()
+                onAddContactClick()
+            },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -260,7 +277,7 @@ private fun ColumnScope.SnsPlatformContent(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp, bottom = 60.dp)
                     .clickable { onAddContactClick() },
             ) {
                 Text(
@@ -378,7 +395,7 @@ private fun JobContent(
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        jobInputState == InputState.WARNIING && job.isEmpty()
+        jobInputState == InputState.WARNIING && job.isBlank()
 
     SectionTitle(title = "직업")
 
@@ -560,7 +577,7 @@ private fun BirthdateContent(
         keyboardType = KeyboardType.Number,
         onValueChange = onBirthdayChanged,
         rightComponent = {
-            if (birthdate.isNotEmpty()) {
+            if (birthdate.isNotBlank()) {
                 Image(
                     painter = painterResource(R.drawable.ic_delete_circle),
                     contentDescription = null,
@@ -612,9 +629,11 @@ private fun SelfDescriptionContent(
         value = description,
         hint = "수식어 형태로 작성해 주세요",
         keyboardType = KeyboardType.Text,
-        onValueChange = onDescribeMySelfChanged,
+        onValueChange = {
+            if (it.length <= 20) onDescribeMySelfChanged(it)
+        },
         rightComponent = {
-            if (description.isNotEmpty()) {
+            if (description.isNotBlank()) {
                 Image(
                     painter = painterResource(R.drawable.ic_delete_circle),
                     contentDescription = null,
@@ -693,72 +712,76 @@ private fun NickNameContent(
         InputState.WARNIING -> PieceTheme.colors.error
     }
 
-    SectionTitle(title = "닉네임")
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
+    Column(
+        modifier = modifier
     ) {
-        PieceTextInputDefault(
-            value = nickName,
-            hint = "6자 이하로 작성해주세요",
-            keyboardType = KeyboardType.Text,
-            onValueChange = onNickNameChanged,
-            rightComponent = {
-                if (nickName.isNotEmpty()) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_delete_circle),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(20.dp)
-                            .clickable { onNickNameChanged("") }
-                    )
-                }
-            },
-            modifier = Modifier
-                .weight(1f)
-                .onFocusChanged { isInputFocused = it.isFocused },
-        )
+        SectionTitle(title = "닉네임")
 
-        PieceSolidButton(
-            label = "중복검사",
-            onClick = {
-                onDuplicationCheckClick()
-                focusManager.clearFocus()
-            },
-            enabled = isCheckingButtonAvailable,
-            modifier = Modifier.padding(start = 8.dp),
-        )
-    }
-
-    AnimatedVisibility(visible = isGuideMessageVisible) {
         Row(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = 8.dp),
         ) {
-            Text(
-                text = stringResource(nickNameGuideMessage.guideMessageId),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = textColor,
-                modifier = Modifier.weight(1f),
+            PieceTextInputDefault(
+                value = nickName,
+                hint = "6자 이하로 작성해주세요",
+                keyboardType = KeyboardType.Text,
+                onValueChange = onNickNameChanged,
+                rightComponent = {
+                    if (nickName.isNotBlank()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(20.dp)
+                                .clickable { onNickNameChanged("") }
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .onFocusChanged { isInputFocused = it.isFocused },
             )
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                        append(nickName.length.toString())
-                    }
-                    append("/6")
+            PieceSolidButton(
+                label = "중복검사",
+                onClick = {
+                    onDuplicationCheckClick()
+                    focusManager.clearFocus()
                 },
-                maxLines = 1,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.dark3,
-                modifier = Modifier.padding(start = 5.dp),
+                enabled = isCheckingButtonAvailable,
+                modifier = Modifier.padding(start = 8.dp),
             )
+        }
+
+        AnimatedVisibility(visible = isGuideMessageVisible) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    text = stringResource(nickNameGuideMessage.guideMessageId),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = textColor,
+                    modifier = Modifier.weight(1f),
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                            append(nickName.length.toString())
+                        }
+                        append("/6")
+                    },
+                    maxLines = 1,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.dark3,
+                    modifier = Modifier.padding(start = 5.dp),
+                )
+            }
         }
     }
 }
@@ -785,50 +808,55 @@ private fun PhotoContent(
         }
     )
 
-    Box(
-        modifier = modifier.throttledClickable(throttleTime = 2000L) {
-            singlePhotoPickerLauncher.launch(
-                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
-            )
-        },
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth()
     ) {
-        AsyncImage(
-            model = profileImageUri ?: R.drawable.ic_profile_default,
-            placeholder = painterResource(R.drawable.ic_profile_default),
-            contentScale = ContentScale.FillBounds,
-            onError = { error ->
-                Log.e(
-                    "RegisterProfileScreen", error.result.throwable.stackTraceToString()
+        Box(
+            modifier = Modifier.throttledClickable(throttleTime = 2000L) {
+                singlePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
             },
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .clip(CircleShape),
-        )
+        ) {
+            AsyncImage(
+                model = profileImageUri ?: R.drawable.ic_profile_default,
+                placeholder = painterResource(R.drawable.ic_profile_default),
+                contentScale = ContentScale.FillBounds,
+                onError = { error ->
+                    Log.e(
+                        "RegisterProfileScreen", error.result.throwable.stackTraceToString()
+                    )
+                },
+                contentDescription = null,
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape),
+            )
 
-        Image(
-            painter = if (isSaveFailed) {
-                painterResource(R.drawable.ic_photo_error)
-            } else {
-                painterResource(R.drawable.ic_edit)
-            },
-            contentDescription = null,
-            modifier = Modifier.align(Alignment.BottomEnd)
-        )
-    }
+            Image(
+                painter = if (isSaveFailed) {
+                    painterResource(R.drawable.ic_photo_error)
+                } else {
+                    painterResource(R.drawable.ic_edit)
+                },
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.BottomEnd)
+            )
+        }
 
-    AnimatedVisibility(
-        visible = isSaveFailed
-    ) {
-        Text(
-            text = "필수 항목을 입력해 주세요.",
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.error,
-            modifier = Modifier.padding(top = 8.dp),
-        )
+        AnimatedVisibility(
+            visible = isSaveFailed
+        ) {
+            Text(
+                text = "필수 항목을 입력해 주세요.",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
     }
 }
 
