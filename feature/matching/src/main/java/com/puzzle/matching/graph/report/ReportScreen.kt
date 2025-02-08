@@ -1,5 +1,6 @@
 package com.puzzle.matching.graph.report
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,6 +24,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
@@ -97,13 +99,13 @@ internal fun ReportScreen(
             onDismissRequest = { isReportDialogShow = false },
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "${userName}님을\n신고하시겠습니까 ?",
-                    subText = "신고하면 되돌릴 수 없으니,\n신중한 신고 부탁드립니다.",
+                    title = stringResource(R.string.report_main_title, userName),
+                    subText = stringResource(R.string.report_subtitle),
                 )
             },
             dialogBottom = {
                 PieceDialogBottom(
-                    leftButtonText = "취소",
+                    leftButtonText = stringResource(R.string.cancel),
                     rightButtonText = stringResource(R.string.report),
                     onLeftButtonClick = { isReportDialogShow = false },
                     onRightButtonClick = { onReportClick() },
@@ -117,13 +119,13 @@ internal fun ReportScreen(
             onDismissRequest = {},
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "${userName}님을 신고했습니다.",
-                    subText = "신고된 내용은 신속하게 검토하여\n조치하겠습니다.",
+                    title = stringResource(R.string.report_done_title, userName),
+                    subText = stringResource(R.string.report_done_subtitle),
                 )
             },
             dialogBottom = {
                 PieceSolidButton(
-                    label = "홈으로",
+                    label = stringResource(R.string.report_home),
                     onClick = { onReportDoneClick() },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -149,57 +151,59 @@ internal fun ReportScreen(
         HorizontalDivider(
             color = PieceTheme.colors.light2,
             thickness = 1.dp,
+            modifier = Modifier.padding(bottom = 6.dp),
         )
 
-        if (isKeyboardVisible) {
-            PieceRadio(
-                selected = true,
-                label = ReportState.ReportReason.OTHER.label,
-                onSelectedChange = {
-                    onReasonClick(ReportState.ReportReason.OTHER)
-                },
-                modifier = Modifier.padding(top = 6.dp, start = 20.dp, end = 20.dp),
-            )
-        } else {
-            Text(
-                text = "${userName}님을\n신고하시겠습니까?",
-                textAlign = TextAlign.Start,
-                style = PieceTheme.typography.headingLSB,
-                color = PieceTheme.colors.black,
-                modifier = Modifier.padding(
-                    top = 20.dp,
-                    bottom = 12.dp,
-                    start = 20.dp,
-                    end = 20.dp
-                ),
-            )
-
-            Text(
-                text = "신고된 내용은 신속하게 검토하여 조치하겠습니다.",
-                textAlign = TextAlign.Start,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.dark2,
-                modifier = Modifier.padding(bottom = 40.dp, start = 20.dp, end = 20.dp),
-            )
-
-            ReportState.ReportReason.entries.forEach { reason ->
-                PieceRadio(
-                    selected = (reason == state.selectedReason),
-                    label = reason.label,
-                    onSelectedChange = {
-                        onReasonClick(reason)
-                        if (reason != ReportState.ReportReason.OTHER) {
-                            textInput = ""
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp),
+        AnimatedVisibility(visible = !isKeyboardVisible) {
+            Column {
+                Text(
+                    text = stringResource(R.string.report_main_title, userName),
+                    textAlign = TextAlign.Start,
+                    style = PieceTheme.typography.headingLSB,
+                    color = PieceTheme.colors.black,
+                    modifier = Modifier.padding(
+                        top = 14.dp,
+                        bottom = 12.dp,
+                        start = 20.dp,
+                        end = 20.dp
+                    ),
                 )
+
+                Text(
+                    text = stringResource(R.string.report_main_subtitle),
+                    textAlign = TextAlign.Start,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.dark2,
+                    modifier = Modifier.padding(bottom = 40.dp, start = 20.dp, end = 20.dp),
+                )
+
+                ReportState.ReportReason.entries.forEach { reason ->
+                    if (reason == ReportState.ReportReason.OTHER) return@forEach
+
+                    PieceRadio(
+                        selected = (reason == state.selectedReason),
+                        label = reason.label,
+                        onSelectedChange = { onReasonClick(reason) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                    )
+                }
             }
         }
 
-        if (state.selectedReason == ReportState.ReportReason.OTHER) {
+        PieceRadio(
+            selected = state.selectedReason == ReportState.ReportReason.OTHER,
+            label = ReportState.ReportReason.OTHER.label,
+            onSelectedChange = {
+                keyboardController?.hide()
+                isKeyboardVisible = false
+                onReasonClick(ReportState.ReportReason.OTHER)
+            },
+            modifier = Modifier.padding(start = 20.dp, end = 20.dp),
+        )
+
+        AnimatedVisibility(state.selectedReason == ReportState.ReportReason.OTHER) {
             PieceTextInputLong(
                 value = textInput,
                 onValueChange = { input -> textInput = input },
@@ -225,7 +229,7 @@ internal fun ReportScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         PieceSolidButton(
-            label = "다음",
+            label = stringResource(R.string.next),
             enabled = isNextButtonEnabled,
             onClick = {
                 coroutineScope.launch {
@@ -237,6 +241,57 @@ internal fun ReportScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp, top = 12.dp, start = 20.dp, end = 20.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ReportScreenPreview() {
+    PieceTheme {
+        ReportScreen(
+            state = ReportState(
+                selectedReason = ReportState.ReportReason.INAPPROPRIATE_INTRODUCTION
+            ),
+            userName = "수줍은 수달",
+            onBackClick = {},
+            onReasonClick = {},
+            onReportClick = {},
+            onReportDoneClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ReportScreenOtherReasonPreview() {
+    PieceTheme {
+        ReportScreen(
+            state = ReportState(
+                selectedReason = ReportState.ReportReason.OTHER
+            ),
+            userName = "수줍은 수달",
+            onBackClick = {},
+            onReasonClick = {},
+            onReportClick = {},
+            onReportDoneClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ReportDoneDialogPreview() {
+    PieceTheme {
+        ReportScreen(
+            state = ReportState(
+                isReportDone = true
+            ),
+            userName = "수줍은 수달",
+            onBackClick = {},
+            onReasonClick = {},
+            onReportClick = {},
+            onReportDoneClick = {}
         )
     }
 }

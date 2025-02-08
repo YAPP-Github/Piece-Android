@@ -65,8 +65,17 @@
     <string name="valuepick_refuse">매칭 거절하기</string>
     <string name="valuepick_similar">나와 같은</string>
 
-    <!--Value Talk-->
+    <!-- Report -->
     <string name="report">신고하기</string>
+    <string name="report_subtitle">신고하면 되돌릴 수 없으니,\n신중한 신고 부탁드립니다.</string>
+    <string name="report_done_title">%1$s님을 신고했습니다.</string>
+    <string name="report_done_subtitle">신고된 내용은 신속하게 검토하여\n조치하겠습니다.</string>
+    <string name="report_main_title">%1$s님을\n신고하시겠습니까?</string>
+    <string name="report_main_subtitle">신고된 내용은 신속하게 검토하여 조치하겠습니다.</string>
+    <string name="cancel">취소</string>
+    <string name="report_home">홈으로</string>
+
+    <!-- Block -->
     <string name="block">차단하기</string>
 
     <!--Setting-->
