@@ -161,17 +161,21 @@ private fun AppBottomBar(
 }
 
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
-    AuthGraph::class.qualifiedName,
-    MatchingGraphDest.BlockRoute::class.qualifiedName,
-    MatchingGraphDest.ReportRoute::class.qualifiedName,
-    MatchingDetailRoute::class.qualifiedName,
-    ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
-    ProfileGraphDest.ValueTalkProfileRoute::class.qualifiedName,
-    SettingGraphDest.WithdrawRoute::class.qualifiedName,
+    AuthGraph::class,
+    MatchingGraphDest.BlockRoute::class,
+    MatchingGraphDest.ReportRoute::class,
+    MatchingDetailRoute::class,
+    ProfileGraphDest.RegisterProfileRoute::class,
+    ProfileGraphDest.ValueTalkProfileRoute::class,
+    SettingGraphDest.WithdrawRoute::class,
 )
 
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
-    this?.hierarchy?.any { destination -> destination.route in HIDDEN_BOTTOM_NAV_ROUTES } ?: false
+    this?.hierarchy?.any { destination ->
+        HIDDEN_BOTTOM_NAV_ROUTES.any {
+            destination.route?.startsWith(it.qualifiedName ?: "") == true
+        }
+    } ?: false
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any { it.hasRoute(route) } == true
