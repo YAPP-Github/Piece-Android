@@ -27,7 +27,6 @@ class MatchingViewModel @AssistedInject constructor(
     internal val eventHelper: EventHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
     private val intents = Channel<MatchingIntent>(BUFFERED)
-
     private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
     val sideEffect = _sideEffect.receiveAsFlow()
 

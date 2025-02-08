@@ -229,7 +229,7 @@ fun PieceImageDialog(
             )
 
             AsyncImage(
-                model = R.drawable.ic_image_default,
+                model = imageUri ?: R.drawable.ic_image_default,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.ic_image_default),

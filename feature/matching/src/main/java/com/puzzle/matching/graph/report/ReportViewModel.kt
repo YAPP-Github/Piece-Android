@@ -1,6 +1,5 @@
 package com.puzzle.matching.graph.report
 
-import androidx.lifecycle.SavedStateHandle
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
@@ -13,20 +12,8 @@ import dagger.assisted.AssistedInject
 
 class ReportViewModel @AssistedInject constructor(
     @Assisted initialState: ReportState,
-    private val savedStateHandle: SavedStateHandle,
     internal val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<ReportState>(initialState) {
-    val userId = requireNotNull(savedStateHandle.get<String>("userId")) { "userId is required." }
-
-    init {
-        val userName =
-            requireNotNull(savedStateHandle.get<String>("userName")) { "userName is required." }
-
-        setState {
-            copy(userName = userName)
-        }
-    }
-
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<ReportViewModel, ReportState> {

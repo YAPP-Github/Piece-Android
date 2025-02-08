@@ -27,6 +27,7 @@ import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.matching.graph.block.contract.BlockIntent
 import com.puzzle.matching.graph.block.contract.BlockState
 
 @Composable
@@ -37,8 +38,9 @@ internal fun BlockRoute(
 
     BlockScreen(
         state = state,
-        onBackClick = {},
-        onBlockButtonClick = {},
+        onBackClick = { viewModel.onIntent(BlockIntent.OnBackClick) },
+        onBlockButtonClick = { viewModel.onIntent(BlockIntent.OnBlockButtonClick) },
+        onBlockDoneClick = { viewModel.onIntent(BlockIntent.OnBlockDoneClick) },
     )
 }
 
@@ -47,6 +49,7 @@ internal fun BlockScreen(
     state: BlockState,
     onBackClick: () -> Unit,
     onBlockButtonClick: () -> Unit,
+    onBlockDoneClick: () -> Unit,
 ) {
     var isBlockDialogShow by remember { mutableStateOf(false) }
 
@@ -65,6 +68,27 @@ internal fun BlockScreen(
                     rightButtonText = "차단하기",
                     onLeftButtonClick = { isBlockDialogShow = false },
                     onRightButtonClick = { onBlockButtonClick() },
+                )
+            },
+        )
+    }
+
+    if (state.isBlockDone) {
+        PieceDialog(
+            onDismissRequest = {},
+            dialogTop = {
+                PieceDialogDefaultTop(
+                    title = "${state.userName}님을 차단했습니다.",
+                    subText = "매칭이 즉시 종료되며,\n상대방에게 차단 사실을 알리지 않습니다.",
+                )
+            },
+            dialogBottom = {
+                PieceSolidButton(
+                    label = "홈으로",
+                    onClick = { onBlockDoneClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 20.dp, top = 12.dp),
                 )
             },
         )
@@ -156,8 +180,10 @@ internal fun BlockScreen(
 
         PieceSolidButton(
             label = "다음",
-            onClick = {},
-            modifier = Modifier.fillMaxWidth(),
+            onClick = { isBlockDialogShow = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp, top = 12.dp),
         )
     }
 }
@@ -170,6 +196,7 @@ private fun PreviewBlockScreen() {
             state = BlockState(),
             onBackClick = {},
             onBlockButtonClick = {},
+            onBlockDoneClick = {},
         )
     }
 }

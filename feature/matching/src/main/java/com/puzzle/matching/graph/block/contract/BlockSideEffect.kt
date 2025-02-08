@@ -1,3 +1,7 @@
 package com.puzzle.matching.graph.block.contract
 
-sealed class BlockSideEffect
+import com.puzzle.navigation.NavigationEvent
+
+sealed class BlockSideEffect {
+    data class Navigate(val navigationEvent: NavigationEvent) : BlockSideEffect()
+}

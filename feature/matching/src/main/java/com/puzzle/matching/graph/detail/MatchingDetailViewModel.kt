@@ -67,19 +67,39 @@ class MatchingDetailViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun onBlockClick() {
-        navigateTo(NavigationEvent.NavigateTo(MatchingGraphDest.BlockRoute(matchUserId)))
-        hideBottomSheet()
+    private fun onBlockClick() {
+        withState {
+            navigateTo(
+                NavigationEvent.NavigateTo(
+                    MatchingGraphDest.BlockRoute(
+                        userId = matchUserId,
+                        userName = it.nickName,
+                    )
+                )
+            )
+
+            hideBottomSheet()
+        }
     }
 
-    private suspend fun onReportClick() {
-        navigateTo(NavigationEvent.NavigateTo(MatchingGraphDest.ReportRoute(matchUserId)))
-        hideBottomSheet()
+    private fun onReportClick() {
+        withState {
+            navigateTo(
+                NavigationEvent.NavigateTo(
+                    MatchingGraphDest.ReportRoute(
+                        userId = matchUserId,
+                        userName = it.nickName,
+                    )
+                )
+            )
+
+            hideBottomSheet()
+        }
     }
 
 
-    private suspend fun navigateTo(navigationEvent: NavigationEvent) {
-        _sideEffects.send(MatchingDetailSideEffect.Navigate(navigationEvent))
+    private fun navigateTo(navigationEvent: NavigationEvent) {
+        _sideEffects.trySend(MatchingDetailSideEffect.Navigate(navigationEvent))
     }
 
     private fun showBottomSheet(content: @Composable () -> Unit) {
