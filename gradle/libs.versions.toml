@@ -39,7 +39,7 @@ ksp = "2.1.0-1.0.29"
 
 ## Hilt
 # https://github.com/google/dagger/releases
-hilt = "2.51.1"
+hilt = "2.55"
 # https://developer.android.com/jetpack/androidx/releases/hilt
 hiltNavigationCompose = "1.2.0"
 
