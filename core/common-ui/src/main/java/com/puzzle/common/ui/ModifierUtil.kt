@@ -4,8 +4,10 @@ import androidx.compose.animation.core.Spring.StiffnessMediumLow
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,14 +42,33 @@ fun Modifier.addFocusCleaner(
 }
 
 @Composable
+fun Modifier.clickable(
+    enabled: Boolean = true,
+    isRipple: Boolean = false,
+    onClick: () -> Unit,
+): Modifier = composed {
+    this.clickable(
+        indication = if (isRipple) LocalIndication.current else null,
+        interactionSource = remember { MutableInteractionSource() },
+        enabled = enabled,
+        onClick = onClick,
+    )
+}
+
+@Composable
 fun Modifier.throttledClickable(
     throttleTime: Long,
     enabled: Boolean = true,
+    isRipple: Boolean = false,
     onClick: () -> Unit,
 ): Modifier = composed {
     var lastClickTime by remember { mutableLongStateOf(0L) }
 
-    this.clickable(enabled = enabled) {
+    this.clickable(
+        indication = if (isRipple) LocalIndication.current else null,
+        interactionSource = remember { MutableInteractionSource() },
+        enabled = enabled,
+    ) {
         val currentTime = System.currentTimeMillis()
         if (currentTime - lastClickTime >= throttleTime) {
             onClick()
@@ -62,7 +83,6 @@ fun Modifier.verticalScrollbar(
     width: Dp = 6.dp,
     color: Color = PieceTheme.colors.light2,
 ): Modifier {
-
     val targetAlpha = if (state.isScrollInProgress) .7f else 0f
     val duration = if (state.isScrollInProgress) 150 else 1000
 

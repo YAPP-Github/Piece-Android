@@ -1,6 +1,6 @@
 package com.puzzle.setting.graph.withdraw.page
 
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,7 +31,6 @@ import com.puzzle.setting.graph.withdraw.contract.WithdrawState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ColumnScope.ReasonPage(
     selectedReason: WithdrawState.WithdrawReason?,
@@ -43,50 +40,50 @@ internal fun ColumnScope.ReasonPage(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var textInput by remember { mutableStateOf("") }
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    var isKeyboardVisible by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val isNextButtonEnabled = selectedReason != null &&
-            (selectedReason != WithdrawState.WithdrawReason.Other || textInput.isNotEmpty())
 
-    if (isKeyboardVisible) {
-        PieceRadio(
-            selected = true,
-            label = WithdrawState.WithdrawReason.Other.label,
-            onSelectedChange = { onReasonsClick(WithdrawState.WithdrawReason.Other) },
-            modifier = modifier.padding(top = 6.dp),
-        )
-    } else {
-        Text(
-            text = stringResource(R.string.reason_page_header),
-            style = PieceTheme.typography.headingLSB,
-            color = PieceTheme.colors.black,
-            modifier = modifier.padding(top = 20.dp),
-        )
-
-        Text(
-            text = stringResource(R.string.reason_page_second_header),
-            style = PieceTheme.typography.bodySM,
-            color = PieceTheme.colors.dark3,
-            modifier = modifier.padding(top = 12.dp, bottom = 40.dp),
-        )
-
-        WithdrawState.WithdrawReason.entries.forEach { reason ->
-            PieceRadio(
-                selected = (reason == selectedReason),
-                label = reason.label,
-                onSelectedChange = {
-                    onReasonsClick(reason)
-                    if (reason != WithdrawState.WithdrawReason.Other) {
-                        textInput = ""
-                    }
-                },
-                modifier = modifier,
+    var isKeyboardVisible by remember { mutableStateOf(false) }
+    AnimatedVisibility(visible = !isKeyboardVisible) {
+        Column {
+            Text(
+                text = stringResource(R.string.reason_page_header),
+                style = PieceTheme.typography.headingLSB,
+                color = PieceTheme.colors.black,
+                modifier = modifier.padding(top = 20.dp),
             )
+
+            Text(
+                text = stringResource(R.string.reason_page_second_header),
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.dark3,
+                modifier = modifier.padding(top = 12.dp, bottom = 40.dp),
+            )
+
+            WithdrawState.WithdrawReason.entries.forEach { reason ->
+                if (reason == WithdrawState.WithdrawReason.Other) return@forEach
+
+                PieceRadio(
+                    selected = (reason == selectedReason),
+                    label = reason.label,
+                    onSelectedChange = { onReasonsClick(reason) },
+                    modifier = modifier,
+                )
+            }
         }
     }
 
-    if (selectedReason == WithdrawState.WithdrawReason.Other) {
+    PieceRadio(
+        selected = selectedReason == WithdrawState.WithdrawReason.Other,
+        label = WithdrawState.WithdrawReason.Other.label,
+        onSelectedChange = {
+            keyboardController?.hide()
+            isKeyboardVisible = false
+            onReasonsClick(WithdrawState.WithdrawReason.Other)
+        },
+        modifier = modifier.padding(top = 6.dp),
+    )
+
+    AnimatedVisibility(selectedReason == WithdrawState.WithdrawReason.Other) {
         PieceTextInputLong(
             value = textInput,
             onValueChange = { input -> textInput = input },
@@ -95,23 +92,17 @@ internal fun ColumnScope.ReasonPage(
             modifier = modifier
                 .fillMaxWidth()
                 .height(160.dp)
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .onFocusEvent { focusState ->
-                    isKeyboardVisible = focusState.isFocused
-
-                    if (focusState.isFocused) {
-                        coroutineScope.launch {
-                            bringIntoViewRequester.bringIntoView()
-                        }
-                    }
-                },
+                .onFocusEvent { focusState -> isKeyboardVisible = focusState.isFocused },
         )
     }
 
     Spacer(modifier = modifier.weight(1f))
 
+    val isNextButtonEnabled = selectedReason != null &&
+            (selectedReason != WithdrawState.WithdrawReason.Other || textInput.isNotEmpty())
     PieceSolidButton(
         label = "다음",
+        enabled = isNextButtonEnabled,
         onClick = {
             coroutineScope.launch {
                 keyboardController?.hide()
@@ -119,10 +110,9 @@ internal fun ColumnScope.ReasonPage(
                 onNextClick()
             }
         },
-        enabled = isNextButtonEnabled,
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp),
+            .padding(top = 12.dp, bottom = 10.dp),
     )
 }
 

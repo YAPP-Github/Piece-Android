@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.relocation.BringIntoViewRequester
-import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -86,14 +84,10 @@ internal fun ReportScreen(
 ) {
     val coroutineScope = rememberCoroutineScope()
     var textInput by remember { mutableStateOf("") }
-    var isKeyboardVisible by remember { mutableStateOf(false) }
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val focusManager = LocalFocusManager.current
-    var isReportDialogShow by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val isNextButtonEnabled = state.selectedReason != null &&
-            (state.selectedReason != ReportState.ReportReason.OTHER || textInput.isNotEmpty())
 
+    var isReportDialogShow by remember { mutableStateOf(false) }
     if (isReportDialogShow) {
         PieceDialog(
             onDismissRequest = { isReportDialogShow = false },
@@ -154,6 +148,7 @@ internal fun ReportScreen(
             modifier = Modifier.padding(bottom = 6.dp),
         )
 
+        var isKeyboardVisible by remember { mutableStateOf(false) }
         AnimatedVisibility(visible = !isKeyboardVisible) {
             Column {
                 Text(
@@ -213,21 +208,14 @@ internal fun ReportScreen(
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp)
                     .height(160.dp)
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    .onFocusEvent { focusState ->
-                        isKeyboardVisible = focusState.isFocused
-
-                        if (focusState.isFocused) {
-                            coroutineScope.launch {
-                                bringIntoViewRequester.bringIntoView()
-                            }
-                        }
-                    },
+                    .onFocusEvent { focusState -> isKeyboardVisible = focusState.isFocused },
             )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
+        val isNextButtonEnabled = state.selectedReason != null &&
+                (state.selectedReason != ReportState.ReportReason.OTHER || textInput.isNotEmpty())
         PieceSolidButton(
             label = stringResource(R.string.next),
             enabled = isNextButtonEnabled,
