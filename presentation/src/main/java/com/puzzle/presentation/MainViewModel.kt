@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
+import com.puzzle.domain.model.user.UserRole.NONE
 import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
 import com.puzzle.domain.model.user.UserRole.USER
+import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
@@ -16,6 +18,7 @@ import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val termsRepository: TermsRepository,
     private val userRepository: UserRepository,
     private val profileRepository: ProfileRepository,
@@ -83,6 +87,10 @@ class MainViewModel @Inject constructor(
     }
 
     private fun checkRedirection() = viewModelScope.launch {
+        // 토큰이 만료 되었을경우 종료
+        authRepository.checkTokenHealth().onFailure { return@launch }
+
+        // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
         val userRole = async { userRepository.getUserRole() }
             .await()
             .getOrElse { return@launch }
@@ -106,7 +114,12 @@ class MainViewModel @Inject constructor(
                 )
             }
 
-            else -> Unit
+            NONE -> navigationHelper.navigate(
+                NavigationEvent.NavigateTo(
+                    route = OnboardingRoute,
+                    popUpTo = AuthGraphDest.LoginRoute,
+                )
+            )
         }
     }.also { _isInitialized.value = true }
 }

@@ -48,6 +48,8 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun checkTokenHealth(): Result<Unit> = authDataSource.checkTokenHealth()
+
     override suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
         authDataSource.requestAuthCode(phoneNumber)
 
