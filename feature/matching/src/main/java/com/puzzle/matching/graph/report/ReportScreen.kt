@@ -68,7 +68,14 @@ internal fun ReportRoute(
         userName = userName,
         onBackClick = { viewModel.onIntent(ReportIntent.OnBackClick) },
         onReasonClick = { reason -> viewModel.onIntent(ReportIntent.SelectReportReason(reason)) },
-        onReportClick = { viewModel.onIntent(ReportIntent.OnReportButtonClick) },
+        onReportClick = { reason ->
+            viewModel.onIntent(
+                ReportIntent.OnReportButtonClick(
+                    userId = userId,
+                    reason = reason,
+                )
+            )
+        },
         onReportDoneClick = { viewModel.onIntent(ReportIntent.OnReportDoneClick) },
     )
 }
@@ -79,7 +86,7 @@ internal fun ReportScreen(
     userName: String,
     onBackClick: () -> Unit,
     onReasonClick: (ReportState.ReportReason) -> Unit,
-    onReportClick: () -> Unit,
+    onReportClick: (String) -> Unit,
     onReportDoneClick: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -102,7 +109,12 @@ internal fun ReportScreen(
                     leftButtonText = stringResource(R.string.cancel),
                     rightButtonText = stringResource(R.string.report),
                     onLeftButtonClick = { isReportDialogShow = false },
-                    onRightButtonClick = { onReportClick() },
+                    onRightButtonClick = {
+                        onReportClick(
+                            if (state.selectedReason == ReportState.ReportReason.OTHER) textInput
+                            else state.selectedReason?.label ?: ""
+                        )
+                    },
                 )
             },
         )

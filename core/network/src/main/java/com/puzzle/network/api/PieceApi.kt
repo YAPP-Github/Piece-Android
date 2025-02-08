@@ -8,6 +8,7 @@ import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
+import com.puzzle.network.model.matching.ReportUserRequest
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.terms.AgreeTermsRequest
@@ -54,4 +55,7 @@ interface PieceApi {
 
     @POST("/api/terms/agree")
     suspend fun agreeTerms(@Body agreeTermsRequest: AgreeTermsRequest): Result<ApiResponse<Unit>>
+
+    @POST("/api/reports")
+    suspend fun reportUser(@Body reportUserRequest: ReportUserRequest): Result<ApiResponse<Unit>>
 }

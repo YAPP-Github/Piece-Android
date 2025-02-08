@@ -4,6 +4,8 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
+import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.matching.graph.report.contract.ReportIntent
 import com.puzzle.matching.graph.report.contract.ReportSideEffect
 import com.puzzle.matching.graph.report.contract.ReportState
@@ -22,7 +24,9 @@ import kotlinx.coroutines.launch
 
 class ReportViewModel @AssistedInject constructor(
     @Assisted initialState: ReportState,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ReportState>(initialState) {
     private val intents = Channel<ReportIntent>(BUFFERED)
     private val _sideEffects = Channel<ReportSideEffect>(BUFFERED)
@@ -44,7 +48,11 @@ class ReportViewModel @AssistedInject constructor(
                 ReportSideEffect.Navigate(NavigationEvent.NavigateUp)
             )
 
-            ReportIntent.OnReportButtonClick -> reportUser()
+            is ReportIntent.OnReportButtonClick -> reportUser(
+                userId = intent.userId,
+                reason = intent.reason
+            )
+
             ReportIntent.OnReportDoneClick -> _sideEffects.send(
                 ReportSideEffect.Navigate(
                     NavigationEvent.NavigateTo(
@@ -60,11 +68,10 @@ class ReportViewModel @AssistedInject constructor(
         }
     }
 
-    private fun reportUser() {
-        // Todo
-        setState {
-            copy(isReportDone = true)
-        }
+    private fun reportUser(userId: Int, reason: String) = viewModelScope.launch {
+        matchingRepository.reportUser(userId = userId, reason = reason)
+            .onSuccess { setState { copy(isReportDone = true) } }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory
