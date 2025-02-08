@@ -199,10 +199,7 @@ internal fun BasicProfilePage(
         SnsPlatformContent(
             contacts = state.contacts,
             contactsInputState = state.contactsInputState,
-            onContactChange = { idx, contact ->
-                focusManager.clearFocus()
-                onContactChange(idx, contact)
-            },
+            onContactChange = onContactChange,
             onSnsPlatformChange = {
                 focusManager.clearFocus()
                 onSnsPlatformChange(it)
@@ -252,7 +249,7 @@ private fun ColumnScope.SnsPlatformContent(
             onDropDownClick = { onSnsPlatformChange(idx) },
             onDeleteClick = { onDeleteClick(idx) },
             isMandatory = (idx == 0),
-            modifier = modifier,
+            modifier = Modifier.padding(top = 8.dp),
         )
     }
 
