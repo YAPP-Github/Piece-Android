@@ -42,6 +42,7 @@ import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
+import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.navigation.ProfileGraphDest.MainProfileRoute
 import com.puzzle.navigation.Route
@@ -49,11 +50,14 @@ import com.puzzle.navigation.SettingGraph
 import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
+import com.puzzle.presentation.network.NetworkScreen
+import com.puzzle.presentation.network.NetworkState
 import kotlin.reflect.KClass
 
 @Composable
 fun App(
     snackBarHostState: SnackbarHostState,
+    networkState: NetworkState,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     navigateToTopLevelDestination: (Route) -> Unit,
@@ -103,6 +107,8 @@ fun App(
             modifier = contentModifier,
         )
     }
+
+    NetworkScreen(networkState)
 }
 
 @Composable
@@ -161,12 +167,15 @@ private fun AppBottomBar(
 }
 
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
+    OnboardingRoute::class,
     AuthGraph::class,
     MatchingGraphDest.BlockRoute::class,
     MatchingGraphDest.ReportRoute::class,
     MatchingDetailRoute::class,
     ProfileGraphDest.RegisterProfileRoute::class,
     ProfileGraphDest.ValueTalkProfileRoute::class,
+    ProfileGraphDest.ValuePickProfileRoute::class,
+    ProfileGraphDest.BasicProfileRoute::class,
     SettingGraphDest.WithdrawRoute::class,
 )
 

@@ -10,6 +10,7 @@ import com.puzzle.matching.graph.block.BlockViewModel
 import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
 import com.puzzle.matching.graph.report.ReportViewModel
+import com.puzzle.profile.graph.basic.BasicProfileViewModel
 import com.puzzle.profile.graph.main.MainProfileViewModel
 import com.puzzle.profile.graph.register.RegisterProfileViewModel
 import com.puzzle.profile.graph.valuepick.ValuePickViewModel
@@ -89,4 +90,9 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(BlockViewModel::class)
     fun blockViewModelFactory(factory: BlockViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(BasicProfileViewModel::class)
+    fun basicProfileViewModelFactory(factory: BasicProfileViewModel.Factory): AssistedViewModelFactory<*, *>
 }

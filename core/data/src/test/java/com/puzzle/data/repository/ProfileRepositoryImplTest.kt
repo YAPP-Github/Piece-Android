@@ -1,10 +1,10 @@
 package com.puzzle.data.repository
 
-import com.puzzle.data.spy.image.SpyImageResizer
 import com.puzzle.data.fake.source.profile.FakeLocalProfileDataSource
 import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
 import com.puzzle.data.fake.source.user.FakeLocalUserDataSource
+import com.puzzle.data.spy.image.SpyImageResizer
 import com.puzzle.network.model.matching.ValueTalkResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
