@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -41,8 +42,8 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
 
-//        // TODO(재확인 필요)
-//        WindowCompat.setDecorFitsSystemWindows(window, true)
+        // TODO(재확인 필요)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         setContent {
             viewModel.apply {

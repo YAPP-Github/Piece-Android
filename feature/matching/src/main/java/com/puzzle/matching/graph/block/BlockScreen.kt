@@ -32,12 +32,15 @@ import com.puzzle.matching.graph.block.contract.BlockState
 
 @Composable
 internal fun BlockRoute(
+    userId: Int,
+    userName: String,
     viewModel: BlockViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
 
     BlockScreen(
         state = state,
+        userName = userName,
         onBackClick = { viewModel.onIntent(BlockIntent.OnBackClick) },
         onBlockButtonClick = { viewModel.onIntent(BlockIntent.OnBlockButtonClick) },
         onBlockDoneClick = { viewModel.onIntent(BlockIntent.OnBlockDoneClick) },
@@ -47,6 +50,7 @@ internal fun BlockRoute(
 @Composable
 internal fun BlockScreen(
     state: BlockState,
+    userName: String,
     onBackClick: () -> Unit,
     onBlockButtonClick: () -> Unit,
     onBlockDoneClick: () -> Unit,
@@ -58,7 +62,7 @@ internal fun BlockScreen(
             onDismissRequest = { isBlockDialogShow = false },
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "${state.userName}님을\n차단하시겠습니까 ?",
+                    title = "${userName}님을\n차단하시겠습니까 ?",
                     subText = "차단하면 상대방을 영영 만날 수 없게 되며,\n되돌릴 수 없습니다.",
                 )
             },
@@ -78,7 +82,7 @@ internal fun BlockScreen(
             onDismissRequest = {},
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "${state.userName}님을 차단했습니다.",
+                    title = "${userName}님을 차단했습니다.",
                     subText = "매칭이 즉시 종료되며,\n상대방에게 차단 사실을 알리지 않습니다.",
                 )
             },
@@ -105,7 +109,7 @@ internal fun BlockScreen(
         )
 
         Text(
-            text = "${state.userName}님을\n차단하시겠어요?",
+            text = "${userName}님을\n차단하시겠어요?",
             textAlign = TextAlign.Start,
             style = PieceTheme.typography.headingMSB,
             color = PieceTheme.colors.black,
@@ -194,6 +198,7 @@ private fun PreviewBlockScreen() {
     PieceTheme {
         BlockScreen(
             state = BlockState(),
+            userName = "수줍은 수달",
             onBackClick = {},
             onBlockButtonClick = {},
             onBlockDoneClick = {},

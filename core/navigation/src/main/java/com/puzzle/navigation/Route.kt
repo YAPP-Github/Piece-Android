@@ -40,10 +40,10 @@ sealed class MatchingGraphDest : Route {
     data object MatchingDetailRoute : MatchingGraphDest()
 
     @Serializable
-    data class ReportRoute(val userId: Int = -1, val userName: String = "") : MatchingGraphDest()
+    data class ReportRoute(val userId: Int, val userName: String) : MatchingGraphDest()
 
     @Serializable
-    data class BlockRoute(val userId: Int = -1, val userName: String = "") : MatchingGraphDest()
+    data class BlockRoute(val userId: Int, val userName: String) : MatchingGraphDest()
 }
 
 @Serializable

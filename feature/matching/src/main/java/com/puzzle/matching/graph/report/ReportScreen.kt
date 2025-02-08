@@ -8,6 +8,8 @@ import com.puzzle.matching.graph.report.contract.ReportState
 
 @Composable
 internal fun ReportRoute(
+    userId: Int,
+    userName: String,
     viewModel: ReportViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
