@@ -11,6 +11,7 @@ class MatchingDataSource @Inject constructor(
     private val pieceApi: PieceApi
 ) {
     suspend fun reportUser(userId: Int, reason: String): Result<Unit> =
-        pieceApi.reportUser(ReportUserRequest(userId = userId, reason = reason))
-            .unwrapData()
+        pieceApi.reportUser(ReportUserRequest(userId = userId, reason = reason)).unwrapData()
+
+    suspend fun blockUser(userId: Int): Result<Unit> = pieceApi.blockUser(userId).unwrapData()
 }

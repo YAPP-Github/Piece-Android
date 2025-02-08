@@ -9,4 +9,6 @@ class MatchingRepositoryImpl @Inject constructor(
 ) : MatchingRepository {
     override suspend fun reportUser(userId: Int, reason: String): Result<Unit> =
         matchingDataSource.reportUser(userId = userId, reason = reason)
+
+    override suspend fun blockUser(userId: Int): Result<Unit> = matchingDataSource.blockUser(userId)
 }

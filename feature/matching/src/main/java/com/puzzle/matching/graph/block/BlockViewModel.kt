@@ -4,6 +4,8 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
+import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.matching.graph.block.contract.BlockIntent
 import com.puzzle.matching.graph.block.contract.BlockSideEffect
 import com.puzzle.matching.graph.block.contract.BlockState
@@ -22,7 +24,9 @@ import kotlinx.coroutines.launch
 
 class BlockViewModel @AssistedInject constructor(
     @Assisted initialState: BlockState,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<BlockState>(initialState) {
     private val intents = Channel<BlockIntent>(BUFFERED)
     private val _sideEffects = Channel<BlockSideEffect>(BUFFERED)
@@ -41,7 +45,7 @@ class BlockViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: BlockIntent) {
         when (intent) {
             BlockIntent.OnBackClick -> _sideEffects.send(BlockSideEffect.Navigate(NavigationEvent.NavigateUp))
-            BlockIntent.OnBlockButtonClick -> blockUser()
+            is BlockIntent.OnBlockButtonClick -> blockUser(intent.userId)
             BlockIntent.OnBlockDoneClick -> _sideEffects.send(
                 BlockSideEffect.Navigate(
                     NavigationEvent.NavigateTo(
@@ -53,12 +57,10 @@ class BlockViewModel @AssistedInject constructor(
         }
     }
 
-    private fun blockUser() {
-        // Todo
-
-        setState {
-            copy(isBlockDone = true)
-        }
+    private fun blockUser(userId: Int) = viewModelScope.launch {
+        matchingRepository.blockUser(userId = userId)
+            .onSuccess { setState { copy(isBlockDone = true) } }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory

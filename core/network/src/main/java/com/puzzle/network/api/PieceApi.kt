@@ -20,6 +20,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PieceApi {
@@ -58,4 +59,7 @@ interface PieceApi {
 
     @POST("/api/reports")
     suspend fun reportUser(@Body reportUserRequest: ReportUserRequest): Result<ApiResponse<Unit>>
+
+    @POST("/api/matches/blocks/users/{userId}")
+    suspend fun blockUser(@Path("userId") userId: Int): Result<ApiResponse<Unit>>
 }

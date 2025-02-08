@@ -59,7 +59,7 @@ internal fun BlockRoute(
         state = state,
         userName = userName,
         onBackClick = { viewModel.onIntent(BlockIntent.OnBackClick) },
-        onBlockButtonClick = { viewModel.onIntent(BlockIntent.OnBlockButtonClick) },
+        onBlockButtonClick = { viewModel.onIntent(BlockIntent.OnBlockButtonClick(userId)) },
         onBlockDoneClick = { viewModel.onIntent(BlockIntent.OnBlockDoneClick) },
     )
 }

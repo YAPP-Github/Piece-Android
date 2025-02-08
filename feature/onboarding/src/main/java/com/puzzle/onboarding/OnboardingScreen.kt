@@ -66,7 +66,7 @@ internal fun OnboardingRoute(viewModel: OnboardingViewModel = hiltViewModel()) {
                 OnboardingIntent.Navigate(
                     NavigationEvent.NavigateTo(
                         route = AuthGraphDest.LoginRoute,
-                        popUpTo = OnboardingRoute,
+                        popUpTo = true,
                     )
                 )
             )
