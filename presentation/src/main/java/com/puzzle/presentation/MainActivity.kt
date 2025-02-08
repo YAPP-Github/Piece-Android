@@ -130,12 +130,10 @@ class MainActivity : ComponentActivity() {
                                 ?: navController.graph.startDestinationRoute
                                 ?: AuthGraph.toString()
                         ) {
-                            saveState = true
                             inclusive = true
                         }
                     }
                     launchSingleTop = true
-                    restoreState = true
                 }
 
                 navController.navigate(

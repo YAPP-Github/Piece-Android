@@ -6,8 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +15,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -26,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubBackTopBar
@@ -56,9 +54,6 @@ internal fun WithdrawRoute(
 
     WithdrawScreen(
         state = state,
-        onSameReasonClick = {
-            viewModel.onIntent(WithdrawIntent.OnSameReasonClick)
-        },
         onReasonsClick = {
             viewModel.onIntent(WithdrawIntent.OnReasonsClick(it))
         },
@@ -77,7 +72,6 @@ internal fun WithdrawRoute(
 @Composable
 private fun WithdrawScreen(
     state: WithdrawState,
-    onSameReasonClick: () -> Unit,
     onReasonsClick: (WithdrawState.WithdrawReason) -> Unit,
     onWithdrawClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -97,12 +91,7 @@ private fun WithdrawScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(PieceTheme.colors.white)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    focusManager.clearFocus()
-                }
+                .addFocusCleaner(focusManager)
                 .imePadding(),
         ) {
             PieceSubBackTopBar(
@@ -121,7 +110,6 @@ private fun WithdrawScreen(
             when (it) {
                 WithdrawState.WithdrawPage.REASON -> ReasonPage(
                     selectedReason = state.selectedReason,
-                    onSameReasonClick = onSameReasonClick,
                     onReasonsClick = onReasonsClick,
                     onNextClick = onNextClick,
                     modifier = Modifier
@@ -149,7 +137,6 @@ private fun PreviewSettingScreen() {
                 isLoading = false,
                 selectedReason = null,
             ),
-            onSameReasonClick = {},
             onReasonsClick = {},
             onWithdrawClick = {},
             onNextClick = {},

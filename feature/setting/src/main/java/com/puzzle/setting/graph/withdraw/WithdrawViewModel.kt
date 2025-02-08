@@ -43,7 +43,6 @@ class WithdrawViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: WithdrawIntent) {
         when (intent) {
-            WithdrawIntent.OnSameReasonClick -> selectReason(null)
             is WithdrawIntent.OnReasonsClick -> selectReason(intent.withdrawReason)
             WithdrawIntent.OnNextClick -> moveToWithdrawPage()
             WithdrawIntent.OnWithdrawClick -> withdraw()
@@ -65,7 +64,7 @@ class WithdrawViewModel @AssistedInject constructor(
         _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)))
     }
 
-    private fun selectReason(reason: WithdrawState.WithdrawReason?) {
+    private fun selectReason(reason: WithdrawState.WithdrawReason) {
         setState {
             val selectedReason =
                 if (this.selectedReason == reason) {

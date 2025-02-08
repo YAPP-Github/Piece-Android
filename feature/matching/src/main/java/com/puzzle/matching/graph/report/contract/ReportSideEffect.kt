@@ -1,3 +1,7 @@
 package com.puzzle.matching.graph.report.contract
 
-sealed class ReportSideEffect
+import com.puzzle.navigation.NavigationEvent
+
+sealed class ReportSideEffect {
+    data class Navigate(val navigationEvent: NavigationEvent) : ReportSideEffect()
+}

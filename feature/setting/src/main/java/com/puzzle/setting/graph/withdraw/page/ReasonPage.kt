@@ -4,13 +4,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -36,11 +33,10 @@ import com.puzzle.setting.graph.withdraw.contract.WithdrawState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun ColumnScope.ReasonPage(
     selectedReason: WithdrawState.WithdrawReason?,
-    onSameReasonClick: () -> Unit,
     onReasonsClick: (WithdrawState.WithdrawReason) -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -48,20 +44,16 @@ internal fun ColumnScope.ReasonPage(
     val coroutineScope = rememberCoroutineScope()
     var textInput by remember { mutableStateOf("") }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
-    val isKeyboardOpen = WindowInsets.isImeVisible
+    var isKeyboardVisible by remember { mutableStateOf(false) }
     val keyboardController = LocalSoftwareKeyboardController.current
     val isNextButtonEnabled = selectedReason != null &&
             (selectedReason != WithdrawState.WithdrawReason.Other || textInput.isNotEmpty())
 
-    if (isKeyboardOpen) {
+    if (isKeyboardVisible) {
         PieceRadio(
             selected = true,
             label = WithdrawState.WithdrawReason.Other.label,
-            onSelectedChange = {
-                if (selectedReason == WithdrawState.WithdrawReason.Other) {
-                    onSameReasonClick()
-                }
-            },
+            onSelectedChange = { onReasonsClick(WithdrawState.WithdrawReason.Other) },
             modifier = modifier.padding(top = 6.dp),
         )
     } else {
@@ -105,6 +97,8 @@ internal fun ColumnScope.ReasonPage(
                 .height(160.dp)
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .onFocusEvent { focusState ->
+                    isKeyboardVisible = focusState.isFocused
+
                     if (focusState.isFocused) {
                         coroutineScope.launch {
                             bringIntoViewRequester.bringIntoView()
@@ -143,7 +137,6 @@ private fun PreviewConfirmPage() {
         ) {
             ReasonPage(
                 WithdrawState.WithdrawReason.Other,
-                {},
                 {},
                 {},
             )

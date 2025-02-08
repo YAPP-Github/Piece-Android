@@ -25,8 +25,8 @@ class BlockViewModel @AssistedInject constructor(
     internal val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<BlockState>(initialState) {
     private val intents = Channel<BlockIntent>(BUFFERED)
-    private val _sideEffect = Channel<BlockSideEffect>(BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val _sideEffects = Channel<BlockSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         intents.receiveAsFlow()
@@ -40,9 +40,9 @@ class BlockViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: BlockIntent) {
         when (intent) {
-            BlockIntent.OnBackClick -> _sideEffect.send(BlockSideEffect.Navigate(NavigationEvent.NavigateUp))
+            BlockIntent.OnBackClick -> _sideEffects.send(BlockSideEffect.Navigate(NavigationEvent.NavigateUp))
             BlockIntent.OnBlockButtonClick -> blockUser()
-            BlockIntent.OnBlockDoneClick -> _sideEffect.send(
+            BlockIntent.OnBlockDoneClick -> _sideEffects.send(
                 BlockSideEffect.Navigate(
                     NavigationEvent.NavigateTo(
                         route = MatchingGraphDest.MatchingRoute,

@@ -9,17 +9,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -28,6 +32,7 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.block.contract.BlockIntent
+import com.puzzle.matching.graph.block.contract.BlockSideEffect
 import com.puzzle.matching.graph.block.contract.BlockState
 
 @Composable
@@ -37,6 +42,18 @@ internal fun BlockRoute(
     viewModel: BlockViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(viewModel) {
+        lifecycleOwner.repeatOnStarted {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is BlockSideEffect.Navigate -> viewModel.navigationHelper
+                        .navigate(sideEffect.navigationEvent)
+                }
+            }
+        }
+    }
 
     BlockScreen(
         state = state,
@@ -69,7 +86,7 @@ internal fun BlockScreen(
             dialogBottom = {
                 PieceDialogBottom(
                     leftButtonText = "취소",
-                    rightButtonText = "차단하기",
+                    rightButtonText = stringResource(R.string.block),
                     onLeftButtonClick = { isBlockDialogShow = false },
                     onRightButtonClick = { onBlockButtonClick() },
                 )
@@ -104,14 +121,14 @@ internal fun BlockScreen(
             .padding(horizontal = 20.dp),
     ) {
         PieceSubBackTopBar(
-            title = "차단하기",
+            title = stringResource(R.string.block),
             onBackClick = onBackClick,
         )
 
         Text(
-            text = "${userName}님을\n차단하시겠어요?",
+            text = "${userName}님을\n차단하시겠습니까?",
             textAlign = TextAlign.Start,
-            style = PieceTheme.typography.headingMSB,
+            style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
             modifier = Modifier.padding(top = 20.dp, bottom = 12.dp),
         )
