@@ -79,13 +79,13 @@ internal fun BlockScreen(
             onDismissRequest = { isBlockDialogShow = false },
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "${userName}님을\n차단하시겠습니까 ?",
-                    subText = "차단하면 상대방을 영영 만날 수 없게 되며,\n되돌릴 수 없습니다.",
+                    title = stringResource(R.string.block_dialog_title, userName),
+                    subText = stringResource(R.string.block_dialog_subtitle),
                 )
             },
             dialogBottom = {
                 PieceDialogBottom(
-                    leftButtonText = "취소",
+                    leftButtonText = stringResource(R.string.cancel),
                     rightButtonText = stringResource(R.string.block),
                     onLeftButtonClick = { isBlockDialogShow = false },
                     onRightButtonClick = { onBlockButtonClick() },
@@ -99,13 +99,13 @@ internal fun BlockScreen(
             onDismissRequest = {},
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "${userName}님을 차단했습니다.",
-                    subText = "매칭이 즉시 종료되며,\n상대방에게 차단 사실을 알리지 않습니다.",
+                    title = stringResource(R.string.block_done_title, userName),
+                    subText = stringResource(R.string.block_done_subtitle),
                 )
             },
             dialogBottom = {
                 PieceSolidButton(
-                    label = "홈으로",
+                    label = stringResource(R.string.report_home),
                     onClick = { onBlockDoneClick() },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,12 +121,12 @@ internal fun BlockScreen(
             .padding(horizontal = 20.dp),
     ) {
         PieceSubBackTopBar(
-            title = stringResource(R.string.block),
+            title = stringResource(R.string.block_title),
             onBackClick = onBackClick,
         )
 
         Text(
-            text = "${userName}님을\n차단하시겠습니까?",
+            text = stringResource(R.string.block_main_title, userName),
             textAlign = TextAlign.Start,
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
@@ -134,7 +134,7 @@ internal fun BlockScreen(
         )
 
         Text(
-            text = "차단하면 상대방의 매칭이 즉시 종료되며,\n상대방에게 차단 사실을 알리지 않습니다.",
+            text = stringResource(R.string.block_main_subtitle),
             textAlign = TextAlign.Start,
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark2,
@@ -154,7 +154,7 @@ internal fun BlockScreen(
                 )
 
                 Text(
-                    text = "차단하는 즉시\n상대방과의 매칭이 종료됩니다.",
+                    text = stringResource(R.string.block_matching_end),
                     style = PieceTheme.typography.bodyMSB,
                     color = PieceTheme.colors.dark1,
                 )
@@ -172,7 +172,7 @@ internal fun BlockScreen(
                 )
 
                 Text(
-                    text = "차단된 상대와\n더 이상 매칭되지 않습니다.",
+                    text = stringResource(R.string.block_no_more_matching),
                     style = PieceTheme.typography.bodyMSB,
                     color = PieceTheme.colors.dark1,
                 )
@@ -190,7 +190,7 @@ internal fun BlockScreen(
                 )
 
                 Text(
-                    text = "상대방에게 \n차단한 사실을 알리지 않습니다.",
+                    text = stringResource(R.string.block_no_notification),
                     style = PieceTheme.typography.bodyMSB,
                     color = PieceTheme.colors.dark1,
                 )
@@ -200,7 +200,7 @@ internal fun BlockScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         PieceSolidButton(
-            label = "다음",
+            label = stringResource(R.string.next),
             onClick = { isBlockDialogShow = true },
             modifier = Modifier
                 .fillMaxWidth()
