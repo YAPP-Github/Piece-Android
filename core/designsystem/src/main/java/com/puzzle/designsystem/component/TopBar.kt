@@ -135,8 +135,7 @@ fun PieceSubCloseTopBar(
                 modifier = Modifier
                     .size(32.dp)
                     .clickable { onCloseClick() }
-                    .align(Alignment.CenterEnd)
-                    .background(PieceTheme.colors.white),
+                    .align(Alignment.CenterEnd),
             )
         }
     }

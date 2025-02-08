@@ -25,6 +25,7 @@ import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.component.PieceModalBottomSheet
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.presentation.ui.App
@@ -88,9 +89,7 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     PieceEvent.HideBottomSheet -> {
-                                        scope.launch {
-                                            sheetState.hide()
-                                        }
+                                        scope.launch { sheetState.hide() }
                                     }
                                 }
                             }
@@ -126,7 +125,11 @@ class MainActivity : ComponentActivity() {
             is NavigationEvent.NavigateTo -> {
                 val navOptions = navOptions {
                     if (event.popUpTo) {
-                        popUpTo(navController.currentDestination?.route ?: event.route) {
+                        popUpTo(
+                            navController.currentBackStackEntry?.destination?.route
+                                ?: navController.graph.startDestinationRoute
+                                ?: AuthGraph.toString()
+                        ) {
                             saveState = true
                             inclusive = true
                         }

@@ -57,7 +57,6 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
 
@@ -171,14 +170,7 @@ private fun VerificationScreen(
 
         PieceSolidButton(
             label = stringResource(R.string.verification_submit),
-            onClick = {
-                navigate(
-                    NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.SignUpRoute,
-                        popUpTo = true,
-                    )
-                )
-            },
+            onClick = { navigate(NavigationEvent.NavigateTo(AuthGraphDest.SignUpRoute)) },
             enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier
                 .fillMaxWidth()

@@ -167,7 +167,7 @@ private fun MatchingDetailScreen(
 
             DialogType.PROFILE_IMAGE_DETAIL -> {
                 PieceImageDialog(
-                    imageUri = "https://data.onnada.com/character/202301/2042390482_867dcf19_939696.jpg",
+                    imageUri = state.imageUri,
                     buttonLabel = "매칭 수락하기",
                     onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },
@@ -290,7 +290,6 @@ private fun MatchingDetailContent(
                         birthYear = state.birthYear,
                         age = state.age,
                         height = state.height,
-                        religion = state.religion,
                         activityRegion = state.activityRegion,
                         occupation = state.occupation,
                         smokeStatue = state.smokeStatue,
