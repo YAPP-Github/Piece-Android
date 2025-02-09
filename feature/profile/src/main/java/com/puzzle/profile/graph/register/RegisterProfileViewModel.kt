@@ -9,7 +9,13 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.navigation.AuthGraph
+import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect.Navigate
@@ -43,95 +49,275 @@ class RegisterProfileViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: RegisterProfileIntent) {
+    private fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
-            is RegisterProfileIntent.Navigate -> handleNavigation(intent)
-            is RegisterProfileIntent.UpdateNickName -> updateNickName(intent.nickName)
-            is RegisterProfileIntent.UpdateProfileImage -> updateProfileImage(intent.imageUri)
-            is RegisterProfileIntent.UpdateDescribeMySelf -> updateDescription(intent.description)
-            is RegisterProfileIntent.UpdateBirthday -> updateBirthdate(intent.birthday)
-            is RegisterProfileIntent.UpdateHeight -> updateHeight(intent.height)
-            is RegisterProfileIntent.UpdateWeight -> updateWeight(intent.weight)
-            is RegisterProfileIntent.UpdateJob -> updateJob(intent.job)
-            is RegisterProfileIntent.UpdateRegion -> updateLocation(intent.region)
-            is RegisterProfileIntent.UpdateSmokeStatus -> updateIsSmoke(intent.isSmoke)
-            is RegisterProfileIntent.UpdateSnsActivity -> updateIsSnsActive(intent.isSnsActivity)
-            is RegisterProfileIntent.AddContact -> addContact(intent.snsPlatform)
-            is RegisterProfileIntent.DeleteContact -> deleteContact(intent.idx)
-            is RegisterProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
+            is RegisterProfileIntent.OnNickNameChange -> updateNickName(intent.nickName)
+            is RegisterProfileIntent.OnPhotoeClick -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.OnEditPhotoClick -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.OnSelfDescribtionChange -> updateDescription(intent.description)
+            is RegisterProfileIntent.OnBirthdayChange -> updateBirthdate(intent.birthday)
+            is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
+            is RegisterProfileIntent.OnWeightChange -> updateWeight(intent.weight)
+            is RegisterProfileIntent.OnJobClick -> updateJob(intent.job)
+            is RegisterProfileIntent.OnRegionClick -> updateLocation(intent.region)
+            is RegisterProfileIntent.OnIsSmokeClick -> updateIsSmoke(intent.isSmoke)
+            is RegisterProfileIntent.OnSnsActivityClick -> updateIsSnsActive(intent.isSnsActivity)
+            is RegisterProfileIntent.OnAddContactClick -> addContact(intent.snsPlatform)
+            is RegisterProfileIntent.OnDeleteContactClick -> deleteContact(intent.idx)
+            is RegisterProfileIntent.OnContactSelect -> updateContact(intent.idx, intent.contact)
             is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
+            is RegisterProfileIntent.OnSaveClick -> saveProfile(intent.registerProfileState)
             RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
+            RegisterProfileIntent.OnBackClick -> moveToPrevious()
+            RegisterProfileIntent.OnDuplicationCheckClick -> checkNickNameDuplication()
         }
     }
 
-    private suspend fun handleNavigation(intent: RegisterProfileIntent.Navigate) {
-        _sideEffects.send(Navigate(intent.navigationEvent))
-    }
-
-    private fun updateNickName(nickName: String) {
-        setState { copy(nickName = nickName) }
+    private fun moveToPrevious() {
+        withState { state ->
+            if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
+                viewModelScope.launch {
+                    _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)))
+                }
+            } else {
+                RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+                    setState { copy(currentPage = nextPage) }
+                }
+            }
+        }
     }
 
     private fun updateProfileImage(imageUri: String) {
-        setState { copy(profileImageUri = imageUri) }
+        setState {
+            copy(
+                profileImageUri = imageUri,
+                profileImageUriInputState = InputState.DEFAULT,
+            )
+        }
+    }
+
+    private fun saveProfile(state: RegisterProfileState) {
+        when (state.currentPage) {
+            RegisterProfileState.Page.BASIC_PROFILE -> saveBasicProfile(state)
+            RegisterProfileState.Page.VALUE_TALK -> saveValueTalk(state)
+            RegisterProfileState.Page.VALUE_PICK -> saveValuePick(state)
+            RegisterProfileState.Page.FINISH -> completeProfileRegister()
+        }
+    }
+
+    private fun completeProfileRegister() {
+        viewModelScope.launch {
+            _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraph)))
+        }
+    }
+
+    private fun saveValuePick(state: RegisterProfileState) {
+        setState {
+            copy(valuePicks = state.valuePicks)
+        }
+
+        if (!state.isValuePickComplete) {
+            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+            return
+        }
+
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
+        }
+    }
+
+    private fun saveValueTalk(state: RegisterProfileState) {
+        setState {
+            copy(valueTalks = state.valueTalks)
+        }
+
+        if (!state.isValueTalkComplete) {
+            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+            return
+        }
+
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
+        }
+    }
+
+    private fun saveBasicProfile(state: RegisterProfileState) {
+        // 프로필이 미완성일 때
+        if (!state.isBasicProfileComplete) {
+            setState {
+                copy(
+                    profileImageUriInputState = getInputState(state.profileImageUri),
+                    nickNameGuideMessage = updatedNickNameGuideMessage,
+                    descriptionInputState = getInputState(state.description),
+                    birthdateInputState = getInputState(state.birthdate),
+                    locationInputState = getInputState(state.location),
+                    heightInputState = getInputState(state.height),
+                    weightInputState = getInputState(state.weight),
+                    jobInputState = getInputState(state.job),
+                    isSmokeInputState = getInputState(state.isSmoke),
+                    isSnsActiveInputState = getInputState(state.isSnsActive),
+                    contactsInputState = getInputState(state.contacts),
+                )
+            }
+            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+            return
+        }
+        // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState {
+                copy(
+                    currentPage = nextPage,
+                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
+                )
+            }
+        }
+    }
+
+    private fun checkNickNameDuplication() {
+        setState {
+            // TODO: 실제 API 응답 처리
+            val isSuccess = true
+            copy(
+                isCheckingButtonEnabled = !isSuccess,
+                nickNameGuideMessage = if (isSuccess) {
+                    NickNameGuideMessage.AVAILABLE
+                } else {
+                    NickNameGuideMessage.ALREADY_IN_USE
+                },
+            )
+        }
+    }
+
+    private fun updateNickName(nickName: String) {
+        setState {
+            val newState = copy(
+                nickName = nickName,
+                nickNameGuideMessage = if (nickName.length > 6) {
+                    NickNameGuideMessage.LENGTH_EXCEEDED_ERROR
+                } else {
+                    NickNameGuideMessage.LENGTH_GUIDE
+                },
+            )
+
+            val isCheckingButtonEnabled = (nickName.length in 1..6)
+
+            newState.copy(isCheckingButtonEnabled = isCheckingButtonEnabled)
+        }
     }
 
     private fun updateDescription(description: String) {
-        setState { copy(description = description) }
+        setState {
+            copy(
+                description = description,
+                descriptionInputState = InputState.DEFAULT,
+            )
+        }
     }
 
-    private fun updateBirthdate(birthday: String) {
-        setState { copy(birthdate = birthday) }
+    private fun updateBirthdate(birthdate: String) {
+        setState {
+            copy(
+                birthdate = birthdate,
+                birthdateInputState = InputState.DEFAULT,
+            )
+        }
     }
 
     private fun updateHeight(height: String) {
-        setState { copy(height = height) }
+        setState {
+            copy(
+                height = height,
+                heightInputState = InputState.DEFAULT,
+            )
+        }
     }
 
     private fun updateWeight(weight: String) {
-        setState { copy(weight = weight) }
+        setState {
+            copy(
+                weight = weight,
+                weightInputState = InputState.DEFAULT,
+            )
+        }
     }
 
     private fun updateJob(job: String) {
-        setState { copy(job = job) }
+        setState {
+            copy(
+                job = job,
+                jobInputState = InputState.DEFAULT,
+            )
+        }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
-    private fun updateLocation(region: String) {
-        setState { copy(location = region) }
+    private fun updateLocation(location: String) {
+        setState {
+            copy(
+                location = location,
+                locationInputState = InputState.DEFAULT,
+            )
+        }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
-    private fun updateIsSmoke(isSmoke: Boolean?) {
-        setState { copy(isSmoke = isSmoke) }
+    private fun updateIsSmoke(isSmoke: Boolean) {
+        setState {
+            copy(
+                isSmoke = isSmoke,
+                isSmokeInputState = InputState.DEFAULT,
+            )
+        }
     }
 
-    private fun updateIsSnsActive(isSnsActivity: Boolean?) {
-        setState { copy(isSnsActive = isSnsActivity) }
+    private fun updateIsSnsActive(isSnsActive: Boolean) {
+        setState {
+            copy(
+                isSnsActive = isSnsActive,
+                isSnsActiveInputState = InputState.DEFAULT,
+            )
+        }
     }
 
     private fun addContact(snsPlatform: SnsPlatform) {
         setState {
-            val newContacts = contacts.toMutableList()
-            newContacts.add(Contact(snsPlatform = snsPlatform, content = ""))
-            copy(contacts = newContacts)
+            val newContacts = contacts.toMutableList().apply {
+                add(Contact(snsPlatform = snsPlatform, content = ""))
+            }
+
+            copy(
+                contacts = newContacts,
+                contactsInputState = InputState.DEFAULT,
+            )
         }
+
+
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
     }
 
     private fun deleteContact(idx: Int) {
         setState {
-            val newContacts = contacts.toMutableList()
-            newContacts.removeAt(idx)
-            copy(contacts = newContacts)
+            val newContacts = contacts.toMutableList().apply {
+                removeAt(idx)
+            }
+
+            copy(
+                contacts = newContacts,
+                contactsInputState = InputState.DEFAULT,
+            )
         }
     }
 
     private fun updateContact(idx: Int, contact: Contact) {
         setState {
-            val newContacts = contacts.toMutableList()
-            newContacts[idx] = contact
-            copy(contacts = newContacts)
+            val newContacts = contacts.toMutableList().apply {
+                set(idx, contact)
+            }
+
+            copy(
+                contacts = newContacts,
+                contactsInputState = InputState.DEFAULT,
+            )
         }
     }
 

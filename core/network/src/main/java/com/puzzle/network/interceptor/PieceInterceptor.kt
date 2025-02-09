@@ -26,6 +26,8 @@ class PieceInterceptor @Inject constructor(
     private fun isAccessTokenUsed(request: Request): Boolean {
         return when (request.url.encodedPath) {
             "/api/common/health" -> false
+            "/api/login/token/refresh" -> false
+            "/api/login/token/health-check" -> false
             "/api/login/oauth" -> false
             "/api/terms" -> false
             "/api/valueTalks" -> false
