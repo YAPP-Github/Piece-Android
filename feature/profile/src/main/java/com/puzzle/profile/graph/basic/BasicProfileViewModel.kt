@@ -14,7 +14,10 @@ import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
-import com.puzzle.profile.graph.basic.contract.BasicProfileState.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
+import com.puzzle.profile.graph.basic.contract.ScreenState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -82,7 +85,7 @@ class BasicProfileViewModel @AssistedInject constructor(
             if (state.isProfileIncomplete) {
                 setState {
                     copy(
-                        profileScreenState = BasicProfileState.ScreenState.SAVE_FAILED,
+                        profileScreenState = ScreenState.SAVE_FAILED,
                         nickNameGuideMessage = nickNameStateInSavingProfile,
                         descriptionInputState = getInputState(state.description),
                         birthdateInputState = getInputState(state.birthdate),
@@ -98,15 +101,15 @@ class BasicProfileViewModel @AssistedInject constructor(
             // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
             val isSuccess = true
             val updatedScreenState = if (isSuccess) {
-                BasicProfileState.ScreenState.SAVED
+                ScreenState.SAVED
             } else {
-                BasicProfileState.ScreenState.SAVE_FAILED
+                ScreenState.SAVE_FAILED
             }
 
             setState {
                 copy(
                     profileScreenState = updatedScreenState,
-                    nickNameGuideMessage = BasicProfileState.NickNameGuideMessage.DEFAULT,
+                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
                 )
             }
         }
@@ -119,9 +122,9 @@ class BasicProfileViewModel @AssistedInject constructor(
             copy(
                 isCheckingButtonEnabled = !isSuccess,
                 nickNameGuideMessage = if (isSuccess) {
-                    BasicProfileState.NickNameGuideMessage.AVAILABLE
+                    NickNameGuideMessage.AVAILABLE
                 } else {
-                    BasicProfileState.NickNameGuideMessage.ALREADY_IN_USE
+                    NickNameGuideMessage.ALREADY_IN_USE
                 }
             )
         }
@@ -132,9 +135,9 @@ class BasicProfileViewModel @AssistedInject constructor(
             val newState = copy(
                 nickName = nickName,
                 nickNameGuideMessage = if (nickName.length > 6) {
-                    BasicProfileState.NickNameGuideMessage.EXCEEDS_MAX_LENGTH
+                    NickNameGuideMessage.LENGTH_EXCEEDED_ERROR
                 } else {
-                    BasicProfileState.NickNameGuideMessage.DEFAULT
+                    NickNameGuideMessage.LENGTH_GUIDE
                 },
             )
 
@@ -143,7 +146,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
@@ -162,11 +165,11 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
-                descriptionInputState = BasicProfileState.InputState.DEFAULT
+                descriptionInputState = InputState.DEFAULT
             )
         }
     }
@@ -181,11 +184,11 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
-                birthdateInputState = BasicProfileState.InputState.DEFAULT
+                birthdateInputState = InputState.DEFAULT
             )
         }
     }
@@ -200,11 +203,11 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
-                heightInputState = BasicProfileState.InputState.DEFAULT
+                heightInputState = InputState.DEFAULT
             )
         }
     }
@@ -219,11 +222,11 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
-                weightInputState = BasicProfileState.InputState.DEFAULT
+                weightInputState = InputState.DEFAULT
             )
         }
     }
@@ -238,11 +241,11 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
-                jobInputState = BasicProfileState.InputState.DEFAULT
+                jobInputState = InputState.DEFAULT
             )
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
@@ -258,11 +261,11 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
-                locationInputState = BasicProfileState.InputState.DEFAULT
+                locationInputState = InputState.DEFAULT
             )
         }
         eventHelper.sendEvent(PieceEvent.HideBottomSheet)
@@ -278,7 +281,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
@@ -296,7 +299,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
@@ -311,14 +314,14 @@ class BasicProfileViewModel @AssistedInject constructor(
             }
             val newState = copy(
                 contacts = newContacts,
-                profileScreenState = BasicProfileState.ScreenState.SAVED,
+                profileScreenState = ScreenState.SAVED,
             )
 
             val isProfileEdited = newState != initialState
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
@@ -337,14 +340,14 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             val newState = copy(
                 contacts = newContacts,
-                profileScreenState = BasicProfileState.ScreenState.SAVED,
+                profileScreenState = ScreenState.SAVED,
             )
 
             val isProfileEdited = newState != initialState
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },
@@ -360,14 +363,14 @@ class BasicProfileViewModel @AssistedInject constructor(
 
             val newState = copy(
                 contacts = newContacts,
-                profileScreenState = BasicProfileState.ScreenState.SAVED,
+                profileScreenState = ScreenState.SAVED,
             )
 
             val isProfileEdited = newState != initialState
 
             newState.copy(
                 profileScreenState = if (isProfileEdited) {
-                    BasicProfileState.ScreenState.EDITING
+                    ScreenState.EDITING
                 } else {
                     profileScreenState
                 },

@@ -1,30 +1,34 @@
-package com.puzzle.profile.graph.basic
+package com.puzzle.profile.graph.register.page
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,133 +40,27 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.airbnb.mvrx.compose.collectAsState
-import com.airbnb.mvrx.compose.mavericksViewModel
-import com.puzzle.common.ui.repeatOnStarted
+import coil3.compose.AsyncImage
+import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSolidButton
-import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.component.PieceTextInputDropDown
 import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
-import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
-import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
-import com.puzzle.profile.graph.basic.contract.BasicProfileState
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
-import com.puzzle.profile.graph.basic.contract.ScreenState
-import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
-import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
-import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
+import com.puzzle.profile.graph.register.contract.RegisterProfileState
 
 @Composable
-internal fun BasicProfileRoute(
-    viewModel: BasicProfileViewModel = mavericksViewModel()
-) {
-    val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is BasicProfileSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
-
-    BasicProfileScreen(
-        state = state,
-        onSaveClick = { viewModel.onIntent(BasicProfileIntent.SaveBasicProfile) },
-        onBackClick = { viewModel.onIntent(BasicProfileIntent.OnBackClick) },
-        onNickNameChanged = { viewModel.onIntent(BasicProfileIntent.UpdateNickName(it)) },
-        onDuplicationCheckClick = { viewModel.onIntent(BasicProfileIntent.CheckNickNameDuplication) },
-        onDescribeMySelfChanged = { viewModel.onIntent(BasicProfileIntent.UpdateDescribeMySelf(it)) },
-        onBirthdayChanged = { viewModel.onIntent(BasicProfileIntent.UpdateBirthday(it)) },
-        onHeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateHeight(it)) },
-        onWeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateWeight(it)) },
-        onSmokeStatusChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSmokeStatus(it)) },
-        onSnsActivityChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSnsActivity(it)) },
-        onAddContactClick = {
-            viewModel.onIntent(
-                BasicProfileIntent.ShowBottomSheet {
-                    ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
-                        isEdit = false,
-                        onButtonClicked = {
-                            viewModel.onIntent(BasicProfileIntent.AddContact(it))
-                        },
-                    )
-                }
-            )
-        },
-        onSnsPlatformChange = { idx ->
-            viewModel.onIntent(
-                BasicProfileIntent.ShowBottomSheet {
-                    ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
-                        nowSnsPlatform = state.contacts[idx].snsPlatform,
-                        isEdit = true,
-                        onButtonClicked = {
-                            viewModel.onIntent(
-                                BasicProfileIntent.UpdateContact(
-                                    idx, state.contacts[idx].copy(snsPlatform = it)
-                                )
-                            )
-
-                            viewModel.onIntent(BasicProfileIntent.HideBottomSheet)
-                        },
-                    )
-                }
-            )
-        },
-        onJobDropDownClicked = {
-            viewModel.onIntent(
-                BasicProfileIntent.ShowBottomSheet {
-                    JobBottomSheet(
-                        selectedJob = state.job,
-                        updateSelectJob = {
-                            viewModel.onIntent(
-                                BasicProfileIntent.UpdateJob(it)
-                            )
-                        },
-                    )
-                }
-            )
-        },
-        onLocationDropDownClicked = {
-            viewModel.onIntent(
-                BasicProfileIntent.ShowBottomSheet {
-                    LocationBottomSheet(
-                        selectedLocation = state.location,
-                        updateSelectLocation = {
-                            viewModel.onIntent(BasicProfileIntent.UpdateRegion(it))
-                        },
-                    )
-                }
-            )
-        },
-        onDeleteClick = { viewModel.onIntent(BasicProfileIntent.DeleteContact(it)) },
-        onContactChange = { idx, contact ->
-            viewModel.onIntent(BasicProfileIntent.UpdateContact(idx, contact))
-        },
-    )
-}
-
-@Composable
-private fun BasicProfileScreen(
-    state: BasicProfileState,
-    onSaveClick: () -> Unit,
-    onBackClick: () -> Unit,
+internal fun BasicProfilePage(
+    state: RegisterProfileState,
+    onEditPhotoClick: (String) -> Unit,
+    onProfileImageChanged: (String) -> Unit,
     onNickNameChanged: (String) -> Unit,
-    onDuplicationCheckClick: () -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
     onBirthdayChanged: (String) -> Unit,
     onLocationDropDownClicked: () -> Unit,
@@ -171,6 +69,7 @@ private fun BasicProfileScreen(
     onJobDropDownClicked: () -> Unit,
     onSmokeStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
+    onDuplicationCheckClick: () -> Unit,
     onContactChange: (Int, Contact) -> Unit,
     onSnsPlatformChange: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
@@ -179,46 +78,33 @@ private fun BasicProfileScreen(
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
-    val isSaveButtonEnabled = state.profileScreenState == ScreenState.EDITING ||
-            state.profileScreenState == ScreenState.SAVE_FAILED
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(PieceTheme.colors.white)
-            .verticalScroll(scrollState)
-            .padding(horizontal = 20.dp)
-            .padding(top = 24.dp, bottom = 60.dp),
+    Column(modifier = modifier
+        .verticalScroll(scrollState)
+        .clickable {
+            focusManager.clearFocus()
+        }
     ) {
-        PieceSubTopBar(
-            title = "기본 정보 수정",
-            onNavigationClick = onBackClick,
-            rightComponent = {
-                Text(
-                    text = stringResource(R.string.value_pick_profile_topbar_save),
-                    style = PieceTheme.typography.bodyMM,
-                    color = if (isSaveButtonEnabled) {
-                        PieceTheme.colors.primaryDefault
-                    } else {
-                        PieceTheme.colors.dark3
-                    },
-                    modifier = Modifier.clickable {
-                        if (isSaveButtonEnabled) {
-                            onSaveClick()
-                            focusManager.clearFocus()
-                        }
-                    },
-                )
-            },
+        Text(
+            text = stringResource(R.string.basic_profile_page_header),
+            style = PieceTheme.typography.headingLSB,
+            color = PieceTheme.colors.black,
+            modifier = Modifier.padding(top = 20.dp),
+        )
+
+        Text(
+            text = stringResource(R.string.basic_profile_page_sub_header),
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark3,
+            modifier = Modifier.padding(top = 12.dp),
         )
 
         PhotoContent(
-            onEditPhotoClick = {},
-            screenState = state.profileScreenState,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 40.dp)
-                .size(120.dp),
+            profileImageUri = state.profileImageUri,
+            profileImageUriInputState = state.profileImageUriInputState,
+            onEditPhotoClick = onEditPhotoClick,
+            onProfileImageChanged = onProfileImageChanged,
+            modifier = Modifier.padding(top = 40.dp),
         )
 
         NickNameContent(
@@ -253,7 +139,10 @@ private fun BasicProfileScreen(
         LocationContent(
             location = state.location,
             locationInputState = state.locationInputState,
-            onLocationDropDownClicked = onLocationDropDownClicked,
+            onLocationDropDownClicked = {
+                focusManager.clearFocus()
+                onLocationDropDownClicked()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -280,7 +169,10 @@ private fun BasicProfileScreen(
         JobContent(
             job = state.job,
             jobInputState = state.jobInputState,
-            onJobDropDownClicked = onJobDropDownClicked,
+            onJobDropDownClicked = {
+                focusManager.clearFocus()
+                onJobDropDownClicked()
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp)
@@ -288,6 +180,7 @@ private fun BasicProfileScreen(
 
         SmokeContent(
             isSmoke = state.isSmoke,
+            isSmokeInputState = state.isSmokeInputState,
             onSmokeStatusChanged = onSmokeStatusChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -296,6 +189,7 @@ private fun BasicProfileScreen(
 
         SnsActivityContent(
             isSnsActive = state.isSnsActive,
+            isSnsActiveInputState = state.isSnsActiveInputState,
             onSnsActivityChanged = onSnsActivityChanged,
             modifier = Modifier
                 .fillMaxWidth()
@@ -304,22 +198,30 @@ private fun BasicProfileScreen(
 
         SnsPlatformContent(
             contacts = state.contacts,
-            screenState = state.profileScreenState,
+            contactsInputState = state.contactsInputState,
             onContactChange = onContactChange,
-            onSnsPlatformChange = onSnsPlatformChange,
-            onDeleteClick = onDeleteClick,
-            onAddContactClick = onAddContactClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
+            onSnsPlatformChange = {
+                focusManager.clearFocus()
+                onSnsPlatformChange(it)
+            },
+            onDeleteClick = {
+                focusManager.clearFocus()
+                onDeleteClick(it)
+            },
+            onAddContactClick = {
+                focusManager.clearFocus()
+                onAddContactClick()
+            },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
+
 @Composable
 private fun ColumnScope.SnsPlatformContent(
     contacts: List<Contact>,
-    screenState: ScreenState,
+    contactsInputState: InputState,
     onContactChange: (Int, Contact) -> Unit,
     onSnsPlatformChange: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
@@ -327,9 +229,9 @@ private fun ColumnScope.SnsPlatformContent(
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        screenState == ScreenState.SAVE_FAILED && contacts.isEmpty()
+        contactsInputState == InputState.WARNIING
 
-    SectionTitle(title = "연락처")
+    SectionTitle(title = stringResource(R.string.basic_profile_contact_header))
 
     contacts.forEachIndexed { idx, contact ->
         val image = when (contact.snsPlatform) {
@@ -347,7 +249,7 @@ private fun ColumnScope.SnsPlatformContent(
             onDropDownClick = { onSnsPlatformChange(idx) },
             onDeleteClick = { onDeleteClick(idx) },
             isMandatory = (idx == 0),
-            modifier = modifier,
+            modifier = Modifier.padding(top = 8.dp),
         )
     }
 
@@ -355,26 +257,28 @@ private fun ColumnScope.SnsPlatformContent(
         visible = contacts.size < 4,
         modifier = Modifier.fillMaxWidth(),
     ) {
-        if (isSaveFailed) {
-            Text(
-                text = "필수 항목을 입력해 주세요.",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.error,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        } else {
+        Column {
+            if (isSaveFailed) {
+                Text(
+                    text = stringResource(R.string.basic_profile_required_field),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.error,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp, bottom = 60.dp)
                     .clickable { onAddContactClick() },
             ) {
                 Text(
-                    text = "연락처 추가하기",
+                    text = stringResource(R.string.basic_profile_contact_add),
                     style = PieceTheme.typography.bodyMSB,
                     color = PieceTheme.colors.primaryDefault,
                 )
@@ -390,58 +294,92 @@ private fun ColumnScope.SnsPlatformContent(
 
 @Composable
 private fun SnsActivityContent(
-    isSnsActive: Boolean,
+    isSnsActive: Boolean?,
+    isSnsActiveInputState: InputState,
     onSnsActivityChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SectionTitle(title = "SNS 활동")
+    val isSaveFailed: Boolean =
+        isSnsActiveInputState == InputState.WARNIING && isSnsActive == null
+
+    SectionTitle(title = stringResource(R.string.basic_profile_sns_activity_header))
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
         PieceChip(
-            label = "활동",
-            selected = isSnsActive,
+            label = stringResource(R.string.basic_profile_sns_activity_active),
+            selected = isSnsActive ?: false,
             onChipClicked = { onSnsActivityChanged(true) },
             enabled = true,
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
-            label = "은둔",
-            selected = !isSnsActive,
+            label = stringResource(R.string.basic_profile_sns_activity_inactive),
+            selected = isSnsActive?.not() ?: false,
             onChipClicked = { onSnsActivityChanged(false) },
             enabled = true,
             modifier = Modifier.weight(1f),
+        )
+    }
+
+    AnimatedVisibility(
+        visible = isSaveFailed
+    ) {
+        Text(
+            text = stringResource(R.string.basic_profile_required_field),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.error,
+            modifier = Modifier.padding(top = 8.dp),
         )
     }
 }
 
 @Composable
 private fun SmokeContent(
-    isSmoke: Boolean,
+    isSmoke: Boolean?,
+    isSmokeInputState: InputState,
     onSmokeStatusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    SectionTitle(title = "흡연")
+    val isSaveFailed: Boolean =
+        isSmokeInputState == InputState.WARNIING && isSmoke == null
+
+    SectionTitle(title = stringResource(R.string.basic_profile_issmoking_header))
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
         PieceChip(
-            label = "흡연",
-            selected = isSmoke,
+            label = stringResource(R.string.basic_profile_issmoking_smoking),
+            selected = isSmoke ?: false,
             onChipClicked = { onSmokeStatusChanged(true) },
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
-            label = "비흡연",
-            selected = !isSmoke,
+            label = stringResource(R.string.basic_profile_issmoking_not_smoking),
+            selected = isSmoke?.not() ?: false,
             onChipClicked = { onSmokeStatusChanged(false) },
             modifier = Modifier.weight(1f),
+        )
+    }
+
+    AnimatedVisibility(
+        visible = isSaveFailed
+    ) {
+        Text(
+            text = stringResource(R.string.basic_profile_required_field),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.error,
+            modifier = Modifier.padding(top = 8.dp),
         )
     }
 }
@@ -454,9 +392,9 @@ private fun JobContent(
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
-        jobInputState == InputState.WARNIING && job.isEmpty()
+        jobInputState == InputState.WARNIING && job.isBlank()
 
-    SectionTitle(title = "직업")
+    SectionTitle(title = stringResource(R.string.basic_profile_job_header))
 
     PieceTextInputDropDown(
         value = job,
@@ -467,16 +405,14 @@ private fun JobContent(
     AnimatedVisibility(
         visible = isSaveFailed
     ) {
-        if (isSaveFailed) {
-            Text(
-                text = "필수 항목을 입력해 주세요.",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.error,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-        }
+        Text(
+            text = stringResource(R.string.basic_profile_required_field),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.error,
+            modifier = Modifier.padding(top = 8.dp),
+        )
     }
 }
 
@@ -490,7 +426,7 @@ private fun WeightContent(
     val isSaveFailed: Boolean =
         weightInputState == InputState.WARNIING && weight.isBlank()
 
-    SectionTitle(title = "몸무게")
+    SectionTitle(title = stringResource(R.string.basic_profile_weight_header))
 
     PieceTextInputDefault(
         value = weight,
@@ -502,7 +438,7 @@ private fun WeightContent(
         },
         rightComponent = {
             Text(
-                text = "kg",
+                text = stringResource(R.string.basic_profile_weight_unit),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
             )
@@ -511,8 +447,8 @@ private fun WeightContent(
     )
 
     val errorMessage = when {
-        isSaveFailed -> "필수 항목을 입력해 주세요."
-        weight.length > 3 -> "숫자가 정확한 지 확인해 주세요"
+        isSaveFailed -> stringResource(R.string.basic_profile_required_field)
+        weight.length > 3 -> stringResource(R.string.basic_profile_number_validation_check)
         else -> null
     }
 
@@ -542,7 +478,7 @@ private fun HeightContent(
     val isSaveFailed: Boolean =
         heightInputState == InputState.WARNIING && height.isBlank()
 
-    SectionTitle(title = "키")
+    SectionTitle(title = stringResource(R.string.basic_profile_height_header))
 
     PieceTextInputDefault(
         value = height,
@@ -554,7 +490,7 @@ private fun HeightContent(
         },
         rightComponent = {
             Text(
-                text = "cm",
+                text = stringResource(R.string.basic_profile_height_unit),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
             )
@@ -563,9 +499,9 @@ private fun HeightContent(
     )
 
     val errorMessage = when {
-        isSaveFailed -> "필수 항목을 입력해 주세요."
+        isSaveFailed -> stringResource(R.string.basic_profile_required_field)
         // TODO : 소수점으로 입력하는 경우가 있을 것, 이 부분은 조금 더 고민 필요
-        height.length > 5 -> "숫자가 정확한 지 확인해 주세요"
+        height.length > 5 -> stringResource(R.string.basic_profile_number_validation_check)
         else -> null
     }
 
@@ -596,7 +532,7 @@ private fun LocationContent(
     val isSaveFailed: Boolean =
         locationInputState == InputState.WARNIING && location.isBlank()
 
-    SectionTitle(title = "활동 지역")
+    SectionTitle(title = stringResource(R.string.basic_profile_region))
 
     PieceTextInputDropDown(
         value = location,
@@ -608,7 +544,7 @@ private fun LocationContent(
         visible = isSaveFailed
     ) {
         Text(
-            text = "필수 항목을 입력해 주세요.",
+            text = stringResource(R.string.basic_profile_required_field),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
@@ -630,15 +566,15 @@ private fun BirthdateContent(
     var isInputFocused by remember { mutableStateOf(false) }
     val isGuideMessageVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
 
-    SectionTitle(title = "생년월일")
+    SectionTitle(title = stringResource(R.string.basic_profile_birthday))
 
     PieceTextInputDefault(
         value = birthdate,
-        hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
+        hint = stringResource(R.string.basic_profile_birthday_guide),
         keyboardType = KeyboardType.Number,
         onValueChange = onBirthdayChanged,
         rightComponent = {
-            if (birthdate.isNotEmpty()) {
+            if (birthdate.isNotBlank()) {
                 Image(
                     painter = painterResource(R.drawable.ic_delete_circle),
                     contentDescription = null,
@@ -655,9 +591,9 @@ private fun BirthdateContent(
     AnimatedVisibility(visible = isGuideMessageVisible) {
         Text(
             text = if (isSaveFailed) {
-                "필수 항목을 입력해 주세요."
+                stringResource(R.string.basic_profile_required_field)
             } else {
-                "6자리(YYMMDD) 형식으로 입력해 주세요."
+                stringResource(R.string.basic_profile_birthday_guide)
             },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -682,17 +618,19 @@ private fun SelfDescriptionContent(
     val isSaveFailed: Boolean =
         descriptionInputState == InputState.WARNIING
     var isInputFocused by remember { mutableStateOf(false) }
-    val isGuidanceVisibe: Boolean = isInputFocused || description.isNotBlank() || isSaveFailed
+    val isGuidanceVisible: Boolean = isInputFocused || description.isNotBlank() || isSaveFailed
 
-    SectionTitle(title = "나를 표현하는 한 마디")
+    SectionTitle(title = stringResource(R.string.basic_profile_self_description_header))
 
     PieceTextInputDefault(
         value = description,
-        hint = "수식어 형태로 작성해 주세요",
+        hint = stringResource(R.string.basic_profile_self_description_guide),
         keyboardType = KeyboardType.Text,
-        onValueChange = onDescribeMySelfChanged,
+        onValueChange = {
+            if (it.length <= 20) onDescribeMySelfChanged(it)
+        },
         rightComponent = {
-            if (description.isNotEmpty()) {
+            if (description.isNotBlank()) {
                 Image(
                     painter = painterResource(R.drawable.ic_delete_circle),
                     contentDescription = null,
@@ -706,7 +644,7 @@ private fun SelfDescriptionContent(
         modifier = modifier.onFocusChanged { isInputFocused = it.isFocused },
     )
 
-    AnimatedVisibility(visible = isGuidanceVisibe) {
+    AnimatedVisibility(visible = isGuidanceVisible) {
         Row(
             modifier = Modifier
                 .padding(top = 8.dp)
@@ -714,9 +652,9 @@ private fun SelfDescriptionContent(
         ) {
             Text(
                 text = if (isSaveFailed) {
-                    "필수 항목을 입력해 주세요."
+                    stringResource(R.string.basic_profile_required_field)
                 } else {
-                    "수식어 형태로 작성해주세요."
+                    stringResource(R.string.basic_profile_self_description_guide)
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -734,7 +672,7 @@ private fun SelfDescriptionContent(
                     withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
                         append(description.length.toString())
                     }
-                    append("/20")
+                    append("/" + stringResource(R.string.basic_profile_self_description_limit))
                 },
                 maxLines = 1,
                 style = PieceTheme.typography.bodySM,
@@ -771,104 +709,151 @@ private fun NickNameContent(
         InputState.WARNIING -> PieceTheme.colors.error
     }
 
-    SectionTitle(title = "닉네임")
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
+    Column(
+        modifier = modifier
     ) {
-        PieceTextInputDefault(
-            value = nickName,
-            hint = "6자 이하로 작성해주세요",
-            keyboardType = KeyboardType.Text,
-            onValueChange = onNickNameChanged,
-            rightComponent = {
-                if (nickName.isNotEmpty()) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_delete_circle),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .size(20.dp)
-                            .clickable { onNickNameChanged("") }
-                    )
-                }
-            },
-            modifier = Modifier
-                .weight(1f)
-                .onFocusChanged { isInputFocused = it.isFocused },
-        )
+        SectionTitle(title = stringResource(R.string.basic_profile_nickname_header))
 
-        PieceSolidButton(
-            label = "중복검사",
-            onClick = {
-                onDuplicationCheckClick()
-                focusManager.clearFocus()
-            },
-            enabled = isCheckingButtonAvailable,
-            modifier = Modifier.padding(start = 8.dp),
-        )
-    }
-
-    AnimatedVisibility(visible = isGuideMessageVisible) {
         Row(
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(top = 8.dp),
         ) {
-            Text(
-                text = stringResource(nickNameGuideMessage.guideMessageId),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = textColor,
-                modifier = Modifier.weight(1f),
+            PieceTextInputDefault(
+                value = nickName,
+                hint = stringResource(R.string.basic_profile_nickname_length_guide),
+                keyboardType = KeyboardType.Text,
+                onValueChange = onNickNameChanged,
+                rightComponent = {
+                    if (nickName.isNotBlank()) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_delete_circle),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(20.dp)
+                                .clickable { onNickNameChanged("") }
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .weight(1f)
+                    .onFocusChanged { isInputFocused = it.isFocused },
             )
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                        append(nickName.length.toString())
-                    }
-                    append("/6")
+            PieceSolidButton(
+                label = stringResource(R.string.basic_profile_nickname_duplication_check),
+                onClick = {
+                    onDuplicationCheckClick()
+                    focusManager.clearFocus()
                 },
-                maxLines = 1,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.dark3,
-                modifier = Modifier.padding(start = 5.dp),
+                enabled = isCheckingButtonAvailable,
+                modifier = Modifier.padding(start = 8.dp),
             )
+        }
+
+        AnimatedVisibility(visible = isGuideMessageVisible) {
+            Row(
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    text = stringResource(nickNameGuideMessage.guideMessageId),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = PieceTheme.typography.bodySM,
+                    color = textColor,
+                    modifier = Modifier.weight(1f),
+                )
+
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                            append(nickName.length.toString())
+                        }
+                        append("/" + stringResource(R.string.basic_profile_nickname_length_limit))
+                    },
+                    maxLines = 1,
+                    style = PieceTheme.typography.bodySM,
+                    color = PieceTheme.colors.dark3,
+                    modifier = Modifier.padding(start = 5.dp),
+                )
+            }
         }
     }
 }
 
 @Composable
 private fun PhotoContent(
-    onEditPhotoClick: () -> Unit,
-    screenState: ScreenState,
+    onEditPhotoClick: (String) -> Unit,
+    profileImageUriInputState: InputState,
+    onProfileImageChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
+    profileImageUri: String? = null,
 ) {
     // TODO : 이미지 조건 추가, screenState == BasicProfileState.ScreenState.SAVE_FAILED && 이미지가 없을 경우
-    val isSaveFailed: Boolean = screenState == ScreenState.SAVE_FAILED
+    val isSaveFailed: Boolean =
+        profileImageUriInputState == InputState.WARNIING && profileImageUri == null
 
-    Box(modifier = modifier) {
-        Image(
-            painter = painterResource(R.drawable.ic_profile_default),
-            contentDescription = null,
-        )
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                onProfileImageChanged(uri.toString())
+                onEditPhotoClick(uri.toString())
+            }
+        }
+    )
 
-        Image(
-            painter = if (isSaveFailed) {
-                painterResource(R.drawable.ic_photo_error)
-            } else {
-                painterResource(R.drawable.ic_edit)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Box(
+            modifier = Modifier.throttledClickable(throttleTime = 2000L) {
+                singlePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             },
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .clickable {
-                    onEditPhotoClick()
-                }
-        )
+        ) {
+            AsyncImage(
+                model = profileImageUri ?: R.drawable.ic_profile_default,
+                placeholder = painterResource(R.drawable.ic_profile_default),
+                contentScale = ContentScale.FillBounds,
+                onError = { error ->
+                    Log.e(
+                        "RegisterProfileScreen", error.result.throwable.stackTraceToString()
+                    )
+                },
+                contentDescription = null,
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape),
+            )
+
+            Image(
+                painter = if (isSaveFailed) {
+                    painterResource(R.drawable.ic_photo_error)
+                } else {
+                    painterResource(R.drawable.ic_edit)
+                },
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.BottomEnd)
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isSaveFailed
+        ) {
+            Text(
+                text = stringResource(R.string.basic_profile_required_field),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
     }
 }
 
@@ -884,14 +869,13 @@ private fun SectionTitle(title: String) {
 
 @Preview
 @Composable
-private fun BasicProfilePreview() {
+private fun BasicProfilePagePreview() {
     PieceTheme {
-        BasicProfileScreen(
-            state = BasicProfileState(),
-            onDuplicationCheckClick = {},
-            onSaveClick = {},
-            onBackClick = {},
+        BasicProfilePage(
+            state = RegisterProfileState(),
             onNickNameChanged = {},
+            onProfileImageChanged = {},
+            onEditPhotoClick = {},
             onDescribeMySelfChanged = {},
             onBirthdayChanged = {},
             onLocationDropDownClicked = {},
@@ -899,11 +883,12 @@ private fun BasicProfilePreview() {
             onWeightChanged = {},
             onJobDropDownClicked = {},
             onSmokeStatusChanged = {},
-            onSnsPlatformChange = {},
-            onContactChange = { _, _ -> },
             onSnsActivityChanged = {},
             onDeleteClick = {},
-            onAddContactClick = {},
+            onContactChange = { _, _ -> },
+            onSnsPlatformChange = {},
+            onDuplicationCheckClick = {},
+            onAddContactClick = {}
         )
     }
 }

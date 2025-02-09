@@ -155,7 +155,7 @@ fun PieceTextInputLong(
         textStyle = PieceTheme.typography.bodyMM,
         cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
         decorationBox = { innerTextField ->
-            val isCharCountVisible: Boolean = limit != null && !readOnly
+            val isCharCountVisible: Boolean = limit != null && !readOnly && isFocused
             Box {
                 Box(modifier = Modifier.padding(bottom = if (isCharCountVisible) 36.dp else 0.dp)) {
                     if (value.isEmpty()) {

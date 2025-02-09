@@ -197,7 +197,7 @@ private fun ValuePickCard(
             Image(
                 painter = painterResource(R.drawable.ic_question),
                 contentDescription = "질문",
-                colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
+                colorFilter = ColorFilter.tint(PieceTheme.colors.primaryDefault),
                 modifier = Modifier
                     .size(20.dp)
                     .padding(start = 4.dp),

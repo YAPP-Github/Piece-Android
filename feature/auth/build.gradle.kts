@@ -10,7 +10,11 @@ android {
     defaultConfig {
         val localProperties = Properties()
         localProperties.load(project.rootProject.file("local.properties").bufferedReader())
-        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${localProperties["GOOGLE_WEB_CLIENT_ID"]}\"")
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"${localProperties["GOOGLE_WEB_CLIENT_ID"]}\""
+        )
     }
 
     buildFeatures {
