@@ -80,7 +80,7 @@ private fun ValueTalkCards(
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
             Text(
-                text = "가치관 Talk,\n당신의 이야기를 들려주세요",
+                text = stringResource(R.string.value_talk_profile_page_header),
                 style = PieceTheme.typography.headingLSB,
                 color = PieceTheme.colors.black,
                 modifier = Modifier
@@ -89,7 +89,7 @@ private fun ValueTalkCards(
             )
 
             Text(
-                text = "AI 요약으로 내용을 더 잘 이해할 수 있도록 도와드려요.\n프로필 생성 후, '프로필-가치관 Talk'에서 확인해보세요!",
+                text = stringResource(R.string.value_talk_profile_page_sub_header),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
                 modifier = Modifier

@@ -89,27 +89,27 @@ enum class NickNameGuideMessage(
 ) {
     LENGTH_GUIDE(
         inputState = InputState.DEFAULT,
-        guideMessageId = R.string.base_profile_nickname_length_guide
+        guideMessageId = R.string.basic_profile_nickname_length_guide
     ),
     REQUIRED_FIELD(
         inputState = InputState.WARNIING,
-        guideMessageId = R.string.base_profile_nickname_required_field
+        guideMessageId = R.string.basic_profile_required_field
     ),
     LENGTH_EXCEEDED_ERROR(
         inputState = InputState.WARNIING,
-        guideMessageId = R.string.base_profile_nickname_length_exceed_error
+        guideMessageId = R.string.basic_profile_nickname_length_exceed_error
     ),
     ALREADY_IN_USE(
         inputState = InputState.WARNIING,
-        guideMessageId = R.string.base_profile_nickname_already_in_use
+        guideMessageId = R.string.basic_profile_nickname_already_in_use
     ),
     AVAILABLE(
         inputState = InputState.DEFAULT,
-        guideMessageId = R.string.base_profile_nickname_available
+        guideMessageId = R.string.basic_profile_nickname_available
     ),
     DUPLICATE_CHECK_REQUIRED(
         inputState = InputState.WARNIING,
-        guideMessageId = R.string.base_profile_nickname_duplicate_check_required
+        guideMessageId = R.string.basic_profile_nickname_duplicate_check_required
     ),
 }
 

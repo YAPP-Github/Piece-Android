@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
@@ -27,7 +28,7 @@ internal fun FinishPage(
 ) {
     Column(modifier = modifier) {
         Text(
-            text = "프로필 작성을 마쳤습니다!",
+            text = stringResource(R.string.finish_register_profile_header),
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
             modifier = Modifier
@@ -38,7 +39,7 @@ internal fun FinishPage(
         )
 
         Text(
-            text = "작성 후 24시간 이내에 심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.",
+            text = stringResource(R.string.finish_register_profile_sub_header),
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark3,
             modifier = Modifier
@@ -66,7 +67,7 @@ internal fun FinishPage(
         )
 
         Text(
-            text = "홈으로",
+            text = stringResource(R.string.finish_register_profile_tohome),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(bottom = 20.dp)

@@ -86,14 +86,14 @@ internal fun BasicProfilePage(
         }
     ) {
         Text(
-            text = "간단한 정보로\n당신을 표현하세요",
+            text = stringResource(R.string.basic_profile_page_header),
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
             modifier = Modifier.padding(top = 20.dp),
         )
 
         Text(
-            text = "작성 후에도 언제든 수정 가능하니,\n편안하게 작성해 주세요.",
+            text = stringResource(R.string.basic_profile_page_sub_header),
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.dark3,
             modifier = Modifier.padding(top = 12.dp),
@@ -231,7 +231,7 @@ private fun ColumnScope.SnsPlatformContent(
     val isSaveFailed: Boolean =
         contactsInputState == InputState.WARNIING
 
-    SectionTitle(title = "연락처")
+    SectionTitle(title = stringResource(R.string.basic_profile_contact_header))
 
     contacts.forEachIndexed { idx, contact ->
         val image = when (contact.snsPlatform) {
@@ -260,7 +260,7 @@ private fun ColumnScope.SnsPlatformContent(
         Column {
             if (isSaveFailed) {
                 Text(
-                    text = "필수 항목을 입력해 주세요.",
+                    text = stringResource(R.string.basic_profile_required_field),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     style = PieceTheme.typography.bodySM,
@@ -278,7 +278,7 @@ private fun ColumnScope.SnsPlatformContent(
                     .clickable { onAddContactClick() },
             ) {
                 Text(
-                    text = "연락처 추가하기",
+                    text = stringResource(R.string.basic_profile_contact_add),
                     style = PieceTheme.typography.bodyMSB,
                     color = PieceTheme.colors.primaryDefault,
                 )
@@ -302,14 +302,14 @@ private fun SnsActivityContent(
     val isSaveFailed: Boolean =
         isSnsActiveInputState == InputState.WARNIING && isSnsActive == null
 
-    SectionTitle(title = "SNS 활동")
+    SectionTitle(title = stringResource(R.string.basic_profile_sns_activity_header))
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
         PieceChip(
-            label = "활동",
+            label = stringResource(R.string.basic_profile_sns_activity_active),
             selected = isSnsActive ?: false,
             onChipClicked = { onSnsActivityChanged(true) },
             enabled = true,
@@ -317,7 +317,7 @@ private fun SnsActivityContent(
         )
 
         PieceChip(
-            label = "은둔",
+            label = stringResource(R.string.basic_profile_sns_activity_inactive),
             selected = isSnsActive?.not() ?: false,
             onChipClicked = { onSnsActivityChanged(false) },
             enabled = true,
@@ -329,7 +329,7 @@ private fun SnsActivityContent(
         visible = isSaveFailed
     ) {
         Text(
-            text = "필수 항목을 입력해 주세요.",
+            text = stringResource(R.string.basic_profile_required_field),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
@@ -349,21 +349,21 @@ private fun SmokeContent(
     val isSaveFailed: Boolean =
         isSmokeInputState == InputState.WARNIING && isSmoke == null
 
-    SectionTitle(title = "흡연")
+    SectionTitle(title = stringResource(R.string.basic_profile_issmoking_header))
 
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier,
     ) {
         PieceChip(
-            label = "흡연",
+            label = stringResource(R.string.basic_profile_issmoking_smoking),
             selected = isSmoke ?: false,
             onChipClicked = { onSmokeStatusChanged(true) },
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
-            label = "비흡연",
+            label = stringResource(R.string.basic_profile_issmoking_not_smoking),
             selected = isSmoke?.not() ?: false,
             onChipClicked = { onSmokeStatusChanged(false) },
             modifier = Modifier.weight(1f),
@@ -374,7 +374,7 @@ private fun SmokeContent(
         visible = isSaveFailed
     ) {
         Text(
-            text = "필수 항목을 입력해 주세요.",
+            text = stringResource(R.string.basic_profile_required_field),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
@@ -394,7 +394,7 @@ private fun JobContent(
     val isSaveFailed: Boolean =
         jobInputState == InputState.WARNIING && job.isBlank()
 
-    SectionTitle(title = "직업")
+    SectionTitle(title = stringResource(R.string.basic_profile_job_header))
 
     PieceTextInputDropDown(
         value = job,
@@ -406,7 +406,7 @@ private fun JobContent(
         visible = isSaveFailed
     ) {
         Text(
-            text = "필수 항목을 입력해 주세요.",
+            text = stringResource(R.string.basic_profile_required_field),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
@@ -426,7 +426,7 @@ private fun WeightContent(
     val isSaveFailed: Boolean =
         weightInputState == InputState.WARNIING && weight.isBlank()
 
-    SectionTitle(title = "몸무게")
+    SectionTitle(title = stringResource(R.string.basic_profile_weight_header))
 
     PieceTextInputDefault(
         value = weight,
@@ -438,7 +438,7 @@ private fun WeightContent(
         },
         rightComponent = {
             Text(
-                text = "kg",
+                text = stringResource(R.string.basic_profile_weight_unit),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
             )
@@ -447,8 +447,8 @@ private fun WeightContent(
     )
 
     val errorMessage = when {
-        isSaveFailed -> "필수 항목을 입력해 주세요."
-        weight.length > 3 -> "숫자가 정확한 지 확인해 주세요"
+        isSaveFailed -> stringResource(R.string.basic_profile_required_field)
+        weight.length > 3 -> stringResource(R.string.basic_profile_number_validation_check)
         else -> null
     }
 
@@ -478,7 +478,7 @@ private fun HeightContent(
     val isSaveFailed: Boolean =
         heightInputState == InputState.WARNIING && height.isBlank()
 
-    SectionTitle(title = "키")
+    SectionTitle(title = stringResource(R.string.basic_profile_height_header))
 
     PieceTextInputDefault(
         value = height,
@@ -490,7 +490,7 @@ private fun HeightContent(
         },
         rightComponent = {
             Text(
-                text = "cm",
+                text = stringResource(R.string.basic_profile_height_unit),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
             )
@@ -499,9 +499,9 @@ private fun HeightContent(
     )
 
     val errorMessage = when {
-        isSaveFailed -> "필수 항목을 입력해 주세요."
+        isSaveFailed -> stringResource(R.string.basic_profile_required_field)
         // TODO : 소수점으로 입력하는 경우가 있을 것, 이 부분은 조금 더 고민 필요
-        height.length > 5 -> "숫자가 정확한 지 확인해 주세요"
+        height.length > 5 -> stringResource(R.string.basic_profile_number_validation_check)
         else -> null
     }
 
@@ -532,7 +532,7 @@ private fun LocationContent(
     val isSaveFailed: Boolean =
         locationInputState == InputState.WARNIING && location.isBlank()
 
-    SectionTitle(title = "활동 지역")
+    SectionTitle(title = stringResource(R.string.basic_profile_region))
 
     PieceTextInputDropDown(
         value = location,
@@ -544,7 +544,7 @@ private fun LocationContent(
         visible = isSaveFailed
     ) {
         Text(
-            text = "필수 항목을 입력해 주세요.",
+            text = stringResource(R.string.basic_profile_required_field),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
@@ -566,11 +566,11 @@ private fun BirthdateContent(
     var isInputFocused by remember { mutableStateOf(false) }
     val isGuideMessageVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
 
-    SectionTitle(title = "생년월일")
+    SectionTitle(title = stringResource(R.string.basic_profile_birthday))
 
     PieceTextInputDefault(
         value = birthdate,
-        hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
+        hint = stringResource(R.string.basic_profile_birthday_guide),
         keyboardType = KeyboardType.Number,
         onValueChange = onBirthdayChanged,
         rightComponent = {
@@ -591,9 +591,9 @@ private fun BirthdateContent(
     AnimatedVisibility(visible = isGuideMessageVisible) {
         Text(
             text = if (isSaveFailed) {
-                "필수 항목을 입력해 주세요."
+                stringResource(R.string.basic_profile_required_field)
             } else {
-                "6자리(YYMMDD) 형식으로 입력해 주세요."
+                stringResource(R.string.basic_profile_birthday_guide)
             },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -620,11 +620,11 @@ private fun SelfDescriptionContent(
     var isInputFocused by remember { mutableStateOf(false) }
     val isGuidanceVisible: Boolean = isInputFocused || description.isNotBlank() || isSaveFailed
 
-    SectionTitle(title = "나를 표현하는 한 마디")
+    SectionTitle(title = stringResource(R.string.basic_profile_self_description_header))
 
     PieceTextInputDefault(
         value = description,
-        hint = "수식어 형태로 작성해 주세요",
+        hint = stringResource(R.string.basic_profile_self_description_guide),
         keyboardType = KeyboardType.Text,
         onValueChange = {
             if (it.length <= 20) onDescribeMySelfChanged(it)
@@ -652,9 +652,9 @@ private fun SelfDescriptionContent(
         ) {
             Text(
                 text = if (isSaveFailed) {
-                    "필수 항목을 입력해 주세요."
+                    stringResource(R.string.basic_profile_required_field)
                 } else {
-                    "수식어 형태로 작성해주세요."
+                    stringResource(R.string.basic_profile_self_description_guide)
                 },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -672,7 +672,7 @@ private fun SelfDescriptionContent(
                     withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
                         append(description.length.toString())
                     }
-                    append("/20")
+                    append(stringResource(R.string.basic_profile_self_description_limit))
                 },
                 maxLines = 1,
                 style = PieceTheme.typography.bodySM,
@@ -712,7 +712,7 @@ private fun NickNameContent(
     Column(
         modifier = modifier
     ) {
-        SectionTitle(title = "닉네임")
+        SectionTitle(title = stringResource(R.string.basic_profile_nickname_header))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -720,7 +720,7 @@ private fun NickNameContent(
         ) {
             PieceTextInputDefault(
                 value = nickName,
-                hint = "6자 이하로 작성해주세요",
+                hint = stringResource(R.string.basic_profile_nickname_length_guide),
                 keyboardType = KeyboardType.Text,
                 onValueChange = onNickNameChanged,
                 rightComponent = {
@@ -741,7 +741,7 @@ private fun NickNameContent(
             )
 
             PieceSolidButton(
-                label = "중복검사",
+                label = stringResource(R.string.basic_profile_nickname_duplication_check),
                 onClick = {
                     onDuplicationCheckClick()
                     focusManager.clearFocus()
@@ -771,7 +771,7 @@ private fun NickNameContent(
                         withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
                             append(nickName.length.toString())
                         }
-                        append("/6")
+                        append(stringResource(R.string.basic_profile_nickname_length_limit))
                     },
                     maxLines = 1,
                     style = PieceTheme.typography.bodySM,
@@ -846,7 +846,7 @@ private fun PhotoContent(
             visible = isSaveFailed
         ) {
             Text(
-                text = "필수 항목을 입력해 주세요.",
+                text = stringResource(R.string.basic_profile_required_field),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = PieceTheme.typography.bodySM,

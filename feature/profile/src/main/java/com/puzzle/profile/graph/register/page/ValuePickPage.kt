@@ -22,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
@@ -70,7 +71,7 @@ private fun ValuePickCards(
     LazyColumn(modifier = modifier.fillMaxSize()) {
         item {
             Text(
-                text = "가치관 Pick,\n당신의 연애 취향을 알려주세요",
+                text = stringResource(R.string.value_pick_profile_page_header),
                 style = PieceTheme.typography.headingLSB,
                 color = PieceTheme.colors.black,
                 modifier = Modifier
@@ -79,7 +80,7 @@ private fun ValuePickCards(
             )
 
             Text(
-                text = "선택한 답변으로 연애 스타일을 쉽게 확인할 수 있어요.\n서로의 우선순위와 취향을 이해하는 데 큰 도움이 될 거예요.",
+                text = stringResource(R.string.value_pick_profile_page_sub_header),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
                 modifier = Modifier
