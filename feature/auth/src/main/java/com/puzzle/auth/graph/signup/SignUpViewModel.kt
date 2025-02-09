@@ -1,5 +1,6 @@
 package com.puzzle.auth.graph.signup
 
+import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
@@ -57,6 +58,10 @@ class SignUpViewModel @AssistedInject constructor(
             is SignUpIntent.OnDisEnabledButtonClick -> _sideEffects.send(
                 SignUpSideEffect.ShowSnackBar("필수 권한을 허용해주세요")
             )
+
+            is SignUpIntent.OnAvoidAcquaintancesClick -> {
+                Log.d("test", intent.phoneNumbers.toString())
+            }
 
             is SignUpIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
         }
