@@ -17,12 +17,12 @@ data class ValueTalkResponse(
     val id: Int?,
     val category: String?,
     val title: String?,
-    val guide: String?,
+    val guides: List<String>?,
 ) {
     fun toDomain() = ValueTalk(
         id = id ?: UNKNOWN_INT,
         category = category ?: UNKNOWN_STRING,
         title = title ?: UNKNOWN_STRING,
-        helpMessages = emptyList() // Todo 서버에서 API 스키마 변경해줘야 함
+        guides = guides ?: emptyList() // Todo 서버에서 API 스키마 변경해줘야 함
     )
 }

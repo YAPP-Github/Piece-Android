@@ -172,7 +172,7 @@
     <string name="value_talk_profile_topbar_save">저장</string>
     <string name="value_talk_profile_topbar_edit">수정</string>
     <string name="value_talk_profile_aisummary_title">AI 요약</string>
-    <string name="value_talk_profile_helpmessage_title">도움말</string>
+    <string name="value_talk_profile_guide_title">도움말</string>
     <string name="value_talk_profile_page_header">가치관 Talk,\n당신의 이야기를 들려주세요</string>
     <string name="value_talk_profile_page_sub_header"> </string>
 

@@ -153,7 +153,7 @@ data class RegisterProfileState(
             title = "어떠한 사람과 어떠한 연애를 하고 싶은지 들려주세요",
             answer = "",
             summary = "",
-            helpMessages = listOf(
+            guides = listOf(
                 "함께 하고 싶은 데이트 스타일은 무엇인가요?",
                 "이상적인 관계의 모습을 적어 보세요",
                 "연인과 함께 만들고 싶은 추억이 있나요?",
@@ -166,7 +166,7 @@ data class RegisterProfileState(
             title = "무엇을 할 때 가장 행복한가요?\n요즘 어떠한 것에 관심을 두고 있나요?",
             answer = "",
             summary = "",
-            helpMessages = listOf(
+            guides = listOf(
                 "당신의 삶을 즐겁게 만드는 것들은 무엇인가요?",
                 "일상에서 소소한 행복을 느끼는 순간을 적어보세요",
                 "최근에 몰입했던 취미가 있다면 소개해 주세요",
@@ -179,7 +179,7 @@ data class RegisterProfileState(
             title = "어떤 일을 하며 무엇을 목표로 살아가나요?\n인생에서 이루고 싶은 꿈은 무엇인가요?",
             answer = "",
             summary = "",
-            helpMessages = listOf(
+            guides = listOf(
                 "당신의 직업은 무엇인가요?",
                 "앞으로 하고 싶은 일에 대해 이야기해주세요",
                 "어떤 일을 할 때 가장 큰 성취감을 느끼나요?",

@@ -117,7 +117,7 @@ class MainViewModel @Inject constructor(
             NONE -> navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     route = OnboardingRoute,
-                    popUpTo = AuthGraphDest.LoginRoute,
+                    popUpTo = true,
                 )
             )
         }

@@ -6,7 +6,7 @@ data class ValueTalk(
     val title: String = "",
     val answer: String = "",
     val summary: String = "",
-    val helpMessages: List<String> = emptyList(),
+    val guides: List<String> = emptyList(),
 )
 
 data class ValueTalkAnswer(

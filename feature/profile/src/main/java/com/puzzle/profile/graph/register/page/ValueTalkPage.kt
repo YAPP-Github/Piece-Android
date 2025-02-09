@@ -152,8 +152,8 @@ private fun ValueTalkCard(
             modifier = Modifier.fillMaxWidth()
         )
 
-        HelpMessageRow(
-            helpMessages = item.helpMessages,
+        GuideRow(
+            guides = item.guides,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp)
@@ -162,8 +162,8 @@ private fun ValueTalkCard(
 }
 
 @Composable
-fun HelpMessageRow(
-    helpMessages: List<String>,
+fun GuideRow(
+    guides: List<String>,
     modifier: Modifier = Modifier,
 ) {
     // 각 Row의 높이는 고정되어 있으므로 고정값 사용
@@ -171,11 +171,11 @@ fun HelpMessageRow(
     val density = LocalDensity.current
     val rowHeightPx = with(density) { rowHeightDp.toPx() }
     // 총 높이 = rowHeightPx * 메시지 개수
-    val totalHeightPx = rowHeightPx * helpMessages.size
+    val totalHeightPx = rowHeightPx * guides.size
 
     // ScrollState를 이용한 자동 스크롤
     val scrollState = rememberScrollState()
-    var isHelpMessageVisible by remember { mutableStateOf(true) }
+    var isGuideVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -183,10 +183,10 @@ fun HelpMessageRow(
             val target = scrollState.value + rowHeightPx.toInt()
 
             if (target >= totalHeightPx.toInt() - rowHeightPx.toInt()) {
-                isHelpMessageVisible = false
+                isGuideVisible = false
                 delay(1000)
                 scrollState.scrollTo(0)
-                isHelpMessageVisible = true
+                isGuideVisible = true
             } else {
                 scrollState.animateScrollTo(
                     value = target,
@@ -204,7 +204,7 @@ fun HelpMessageRow(
         modifier = modifier,
     ) {
         Text(
-            text = stringResource(id = R.string.value_talk_profile_helpmessage_title),
+            text = stringResource(id = R.string.value_talk_profile_guide_title),
             style = PieceTheme.typography.bodySR,
             color = PieceTheme.colors.subDefault,
             modifier = Modifier
@@ -214,7 +214,7 @@ fun HelpMessageRow(
         )
 
         AnimatedVisibility(
-            visible = isHelpMessageVisible,
+            visible = isGuideVisible,
             enter = fadeIn(tween(durationMillis = 500, easing = LinearEasing)),
             exit = fadeOut(tween(durationMillis = 500, easing = LinearEasing)),
         ) {
@@ -224,7 +224,7 @@ fun HelpMessageRow(
                     .height(rowHeightDp)
                     .verticalScroll(state = scrollState, enabled = false),
             ) {
-                helpMessages.forEach { message ->
+                guides.forEach { message ->
                     Text(
                         text = message,
                         style = PieceTheme.typography.bodySR,

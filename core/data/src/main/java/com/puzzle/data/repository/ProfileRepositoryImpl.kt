@@ -64,7 +64,7 @@ class ProfileRepositoryImpl @Inject constructor(
                 id = it.id,
                 title = it.title,
                 category = it.category,
-                helpMessages = it.helpMessages,
+                helpMessages = it.guides,
             )
         }
 

@@ -15,6 +15,6 @@ data class ValueTalkEntity(
         id = id,
         category = category,
         title = title,
-        helpMessages = helpMessages,
+        guides = helpMessages,
     )
 }

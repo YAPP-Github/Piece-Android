@@ -46,13 +46,13 @@ class ProfileRepositoryImplTest {
                     id = null,
                     category = null,
                     title = null,
-                    guide = null
+                    guides = null
                 ),
                 ValueTalkResponse(
                     id = 1,
                     category = "음주",
                     title = "술자리에 대한 대화",
-                    guide = null
+                    guides = null
                 )
             )
         )
@@ -74,13 +74,13 @@ class ProfileRepositoryImplTest {
                 id = 1,
                 title = "술자리에 대한 대화",
                 category = "음주",
-                guide = null
+                guides = null
             ),
             ValueTalkResponse(
                 id = 2,
                 title = "취미 공유하기",
                 category = "취미",
-                guide = null
+                guides = null
             )
         )
         profileDataSource.setValueTalks(validValueTalks)
