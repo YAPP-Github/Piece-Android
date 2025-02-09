@@ -64,18 +64,18 @@ internal fun RegisterProfileRoute(
     }
     RegisterProfileScreen(
         state = state,
-        onSaveClick = { viewModel.onIntent(RegisterProfileIntent.SaveClick(it)) },
-        onBackClick = { viewModel.onIntent(RegisterProfileIntent.BackClick) },
-        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateProfileImage(it)) },
-        onEditPhotoClick = { viewModel.onIntent(RegisterProfileIntent.EditPhotoClick(it)) },
-        onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.DuplicationCheckClick) },
-        onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateNickName(it)) },
-        onDescribeMySelfChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateDescribeMySelf(it)) },
-        onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateBirthday(it)) },
-        onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateHeight(it)) },
-        onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateWeight(it)) },
-        onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSmokeStatus(it)) },
-        onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.UpdateSnsActivity(it)) },
+        onSaveClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
+        onBackClick = { viewModel.onIntent(RegisterProfileIntent.OnBackClick) },
+        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.OnPhotoeClick(it)) },
+        onEditPhotoClick = { viewModel.onIntent(RegisterProfileIntent.OnEditPhotoClick(it)) },
+        onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
+        onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.OnNickNameChange(it)) },
+        onDescribeMySelfChanged = { viewModel.onIntent(RegisterProfileIntent.OnSelfDescribtionChange(it)) },
+        onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.OnBirthdayChange(it)) },
+        onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnHeightChange(it)) },
+        onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnWeightChange(it)) },
+        onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.OnIsSmokeClick(it)) },
+        onSnsActivityChanged = { viewModel.onIntent(RegisterProfileIntent.OnSnsActivityClick(it)) },
         onAddContactClick = {
             viewModel.onIntent(
                 RegisterProfileIntent.ShowBottomSheet {
@@ -83,7 +83,7 @@ internal fun RegisterProfileRoute(
                         usingSnsPlatform = state.usingSnsPlatforms,
                         isEdit = false,
                         onButtonClicked = {
-                            viewModel.onIntent(RegisterProfileIntent.AddContact(it))
+                            viewModel.onIntent(RegisterProfileIntent.OnAddContactClick(it))
                         },
                     )
                 }
@@ -98,7 +98,7 @@ internal fun RegisterProfileRoute(
                         isEdit = true,
                         onButtonClicked = {
                             viewModel.onIntent(
-                                RegisterProfileIntent.UpdateContact(
+                                RegisterProfileIntent.OnContactSelect(
                                     idx, state.contacts[idx].copy(snsPlatform = it)
                                 )
                             )
@@ -116,7 +116,7 @@ internal fun RegisterProfileRoute(
                         selectedJob = state.job,
                         updateSelectJob = {
                             viewModel.onIntent(
-                                RegisterProfileIntent.UpdateJob(it)
+                                RegisterProfileIntent.OnJobClick(it)
                             )
                         },
                     )
@@ -129,15 +129,15 @@ internal fun RegisterProfileRoute(
                     LocationBottomSheet(
                         selectedLocation = state.location,
                         updateSelectLocation = {
-                            viewModel.onIntent(RegisterProfileIntent.UpdateRegion(it))
+                            viewModel.onIntent(RegisterProfileIntent.OnRegionClick(it))
                         },
                     )
                 }
             )
         },
-        onDeleteContactClick = { viewModel.onIntent(RegisterProfileIntent.DeleteContact(it)) },
+        onDeleteContactClick = { viewModel.onIntent(RegisterProfileIntent.OnDeleteContactClick(it)) },
         onContactChange = { idx, contact ->
-            viewModel.onIntent(RegisterProfileIntent.UpdateContact(idx, contact))
+            viewModel.onIntent(RegisterProfileIntent.OnContactSelect(idx, contact))
         },
         onHomeClick = {
 
