@@ -40,4 +40,6 @@ class AuthDataSourceImpl @Inject constructor(
                 code = code,
             )
         ).unwrapData()
+
+    override suspend fun checkTokenHealth(): Result<Unit> = pieceApi.checkTokenHealth().unwrapData()
 }
