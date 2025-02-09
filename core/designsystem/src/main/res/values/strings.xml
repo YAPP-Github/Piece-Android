@@ -114,7 +114,7 @@
     <!--Base Profile-->
     <string name="basic_profile_nickname_header">닉네임</string>
     <string name="basic_profile_nickname_duplication_check">중복검사</string>
-    <string name="basic_profile_nickname_length_limit">/6</string>
+    <string name="basic_profile_nickname_length_limit">6</string>
     <string name="basic_profile_nickname_length_guide">6자 이하로 작성해 주세요.</string>
     <string name="basic_profile_nickname_length_exceed_error">6자 이하로 작성해 주세요.</string>
     <string name="basic_profile_nickname_already_in_use">이미 사용 중인 닉네임입니다.</string>
@@ -142,7 +142,7 @@
     <string name="basic_profile_birthday_guide">6자리(YYMMDD) 형식으로 입력해 주세요</string>
     <string name="basic_profile_self_description_header">나를 표현하는 한 마디</string>
     <string name="basic_profile_self_description_guide">수식어 형태로 작성해 주세요</string>
-    <string name="basic_profile_self_description_limit">/20</string>
+    <string name="basic_profile_self_description_limit">20</string>
 
     <!--Value Talk-->
     <string name="value_talk_profile_topbar_title">가치관 Talk</string>
@@ -152,7 +152,7 @@
     <string name="value_talk_profile_aisummary_title">AI 요약</string>
     <string name="value_talk_profile_helpmessage_title">도움말</string>
     <string name="value_talk_profile_page_header">가치관 Talk,\n당신의 이야기를 들려주세요</string>
-    <string name="value_talk_profile_page_sub_header">AI 요약으로 내용을 더 잘 이해할 수 있도록 도와드려요.\n프로필 생성 후, '프로필-가치관 Talk'에서 확인해보세요!</string>
+    <string name="value_talk_profile_page_sub_header"> </string>
 
     <!--Value Pick-->
     <string name="value_pick_profile_topbar_title">가치관 Pick</string>

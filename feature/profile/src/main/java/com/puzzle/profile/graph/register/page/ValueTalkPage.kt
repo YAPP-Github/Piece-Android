@@ -89,7 +89,7 @@ private fun ValueTalkCards(
             )
 
             Text(
-                text = stringResource(R.string.value_talk_profile_page_sub_header),
+                text = "AI 요약으로 내용을 더 잘 이해할 수 있도록 도와드려요.\n프로필 생성 후, '프로필-가치관 Talk'에서 확인해보세요!",
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
                 modifier = Modifier

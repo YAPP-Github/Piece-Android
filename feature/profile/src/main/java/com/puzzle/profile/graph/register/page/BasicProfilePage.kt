@@ -672,7 +672,7 @@ private fun SelfDescriptionContent(
                     withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
                         append(description.length.toString())
                     }
-                    append(stringResource(R.string.basic_profile_self_description_limit))
+                    append("/" + stringResource(R.string.basic_profile_self_description_limit))
                 },
                 maxLines = 1,
                 style = PieceTheme.typography.bodySM,
@@ -771,7 +771,7 @@ private fun NickNameContent(
                         withStyle(SpanStyle(color = PieceTheme.colors.primaryDefault)) {
                             append(nickName.length.toString())
                         }
-                        append(stringResource(R.string.basic_profile_nickname_length_limit))
+                        append("/" + stringResource(R.string.basic_profile_nickname_length_limit))
                     },
                     maxLines = 1,
                     style = PieceTheme.typography.bodySM,
