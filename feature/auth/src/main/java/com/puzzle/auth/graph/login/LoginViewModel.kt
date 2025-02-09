@@ -65,7 +65,7 @@ class LoginViewModel @AssistedInject constructor(
             navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     route = AuthGraphDest.VerificationRoute,
-                    popUpTo = AuthGraphDest.LoginRoute,
+                    popUpTo = true,
                 )
             )
         }.onFailure { errorHelper.sendError(it) }

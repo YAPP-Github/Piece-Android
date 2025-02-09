@@ -6,7 +6,3 @@ plugins {
 android {
     namespace = "com.puzzle.common.ui"
 }
-
-dependencies {
-    implementation(projects.core.designsystem)
-}

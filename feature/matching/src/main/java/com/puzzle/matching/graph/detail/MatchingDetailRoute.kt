@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +32,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.clickable
+import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -42,8 +45,10 @@ import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.matching.graph.detail.bottomsheet.MatchingDetailMoreBottomSheet
 import com.puzzle.matching.graph.detail.common.constant.DialogType
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
+import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState.MatchingDetailPage
 import com.puzzle.matching.graph.detail.page.BasicInfoPage
@@ -57,12 +62,35 @@ internal fun MatchingDetailRoute(
 ) {
     val state by viewModel.collectAsState()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(viewModel) {
+        lifecycleOwner.repeatOnStarted {
+            viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is MatchingDetailSideEffect.Navigate -> viewModel.navigationHelper
+                        .navigate(sideEffect.navigationEvent)
+                }
+            }
+        }
+    }
+
     MatchingDetailScreen(
         state = state,
         onCloseClick = { viewModel.onIntent(MatchingDetailIntent.OnMatchingDetailCloseClick) },
         onPreviousPageClick = { viewModel.onIntent(MatchingDetailIntent.OnPreviousPageClick) },
         onNextPageClick = { viewModel.onIntent(MatchingDetailIntent.OnNextPageClick) },
-        onMoreClick = { viewModel.onIntent(MatchingDetailIntent.OnMoreClick) },
+        onMoreClick = {
+            viewModel.onIntent(
+                MatchingDetailIntent.OnMoreClick(
+                    {
+                        MatchingDetailMoreBottomSheet(
+                            onReportClicked = { viewModel.onIntent(MatchingDetailIntent.OnReportClick) },
+                            onBlockClicked = { viewModel.onIntent(MatchingDetailIntent.OnBlockClick) },
+                        )
+                    }
+                )
+            )
+        },
         onDeclineClick = { },
         onAcceptClick = { },
         onShowPicturesClick = { },
@@ -139,7 +167,7 @@ private fun MatchingDetailScreen(
 
             DialogType.PROFILE_IMAGE_DETAIL -> {
                 PieceImageDialog(
-                    imageUri = "https://data.onnada.com/character/202301/2042390482_867dcf19_939696.jpg",
+                    imageUri = state.imageUri,
                     buttonLabel = "매칭 수락하기",
                     onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },
@@ -262,7 +290,6 @@ private fun MatchingDetailContent(
                         birthYear = state.birthYear,
                         age = state.age,
                         height = state.height,
-                        religion = state.religion,
                         activityRegion = state.activityRegion,
                         occupation = state.occupation,
                         smokeStatue = state.smokeStatue,

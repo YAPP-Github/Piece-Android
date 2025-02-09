@@ -2,7 +2,6 @@ package com.puzzle.matching.graph.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,11 +36,12 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.event.SnackBarType
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.verticalScrollbar
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
-import com.puzzle.designsystem.component.SnackBarType
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingState
@@ -54,7 +54,7 @@ internal fun MatchingRoute(
 
     MatchingScreen(
         state = state,
-        navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToMatchingDetail) },
+        navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToReportDetail) },
         test = {
             viewModel.eventHelper.sendEvent(
                 PieceEvent.ShowSnackBar(
@@ -235,7 +235,10 @@ internal fun MatchingScreen(
                         .fillMaxWidth()
                         .weight(1f)
                         .heightIn(max = 191.dp)
-                        .verticalScrollbar(state = listState),
+                        .verticalScrollbar(
+                            state = listState,
+                            color = PieceTheme.colors.light2
+                        ),
                 ) {
                     items(
                         items = mutableListOf(

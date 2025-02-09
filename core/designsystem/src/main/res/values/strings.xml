@@ -62,7 +62,6 @@
     <string name="basicinfocard_age_suffix">년생</string>
     <string name="basicinfocard_height">키</string>
     <string name="basicinfocard_height_unit">cm</string>
-    <string name="basicinfocard_religion">종교</string>
     <string name="basicinfocard_activityRegion">활동 지역</string>
     <string name="basicinfocard_occupation">직업</string>
     <string name="basicinfocard_smokeStatue">흡연</string>
@@ -73,6 +72,29 @@
     <string name="valuepick_different">나와 다른</string>
     <string name="valuepick_refuse">매칭 거절하기</string>
     <string name="valuepick_similar">나와 같은</string>
+
+    <!-- Report -->
+    <string name="report">신고하기</string>
+    <string name="report_subtitle">신고하면 되돌릴 수 없으니,\n신중한 신고 부탁드립니다.</string>
+    <string name="report_done_title">%1$s님을 신고했습니다.</string>
+    <string name="report_done_subtitle">신고된 내용은 신속하게 검토하여\n조치하겠습니다.</string>
+    <string name="report_main_title">%1$s님을\n신고하시겠습니까?</string>
+    <string name="report_main_subtitle">신고된 내용은 신속하게 검토하여 조치하겠습니다.</string>
+    <string name="cancel">취소</string>
+    <string name="report_home">홈으로</string>
+
+    <!-- Block -->
+    <string name="block">차단하기</string>
+    <string name="block_title">차단</string>
+    <string name="block_main_title">%1$s님을\n차단하시겠습니까?</string>
+    <string name="block_main_subtitle">차단하면 상대방의 매칭이 즉시 종료되며,\n상대방에게 차단 사실을 알리지 않습니다.</string>
+    <string name="block_dialog_title">%1$s님을\n차단하시겠습니까 ?</string>
+    <string name="block_dialog_subtitle">차단하면 상대방을 영영 만날 수 없게 되며,\n되돌릴 수 없습니다.</string>
+    <string name="block_done_title">%1$s님을 차단했습니다.</string>
+    <string name="block_done_subtitle">매칭이 즉시 종료되며,\n상대방에게 차단 사실을 알리지 않습니다.</string>
+    <string name="block_matching_end">차단하는 즉시\n상대방과의 매칭이 종료됩니다.</string>
+    <string name="block_no_more_matching">차단된 상대와\n더 이상 매칭되지 않습니다.</string>
+    <string name="block_no_notification">상대방에게 \n차단한 사실을 알리지 않습니다.</string>
 
     <!--Setting-->
     <string name="withdraw_page">탈퇴하기</string>

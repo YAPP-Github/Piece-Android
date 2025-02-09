@@ -27,7 +27,6 @@ class MatchingViewModel @AssistedInject constructor(
     internal val eventHelper: EventHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
     private val intents = Channel<MatchingIntent>(BUFFERED)
-
     private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
     val sideEffect = _sideEffect.receiveAsFlow()
 
@@ -43,7 +42,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
-            MatchingIntent.NavigateToMatchingDetail -> navigateToMatchingDetail()
+            MatchingIntent.NavigateToReportDetail -> navigateToMatchingDetail()
         }
     }
 

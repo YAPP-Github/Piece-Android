@@ -40,6 +40,7 @@ import com.puzzle.designsystem.component.PieceSnackBarHost
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.navigation.ProfileGraphDest
@@ -166,18 +167,24 @@ private fun AppBottomBar(
 }
 
 private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
-    OnboardingRoute::class.qualifiedName,
-    AuthGraph::class.qualifiedName,
-    MatchingDetailRoute::class.qualifiedName,
-    ProfileGraphDest.RegisterProfileRoute::class.qualifiedName,
-    ProfileGraphDest.ValueTalkProfileRoute::class.qualifiedName,
-    ProfileGraphDest.ValuePickProfileRoute::class.qualifiedName,
-    ProfileGraphDest.BasicProfileRoute::class.qualifiedName,
-    SettingGraphDest.WithdrawRoute::class.qualifiedName,
+    OnboardingRoute::class,
+    AuthGraph::class,
+    MatchingGraphDest.BlockRoute::class,
+    MatchingGraphDest.ReportRoute::class,
+    MatchingDetailRoute::class,
+    ProfileGraphDest.RegisterProfileRoute::class,
+    ProfileGraphDest.ValueTalkProfileRoute::class,
+    ProfileGraphDest.ValuePickProfileRoute::class,
+    ProfileGraphDest.BasicProfileRoute::class,
+    SettingGraphDest.WithdrawRoute::class,
 )
 
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
-    this?.hierarchy?.any { destination -> destination.route in HIDDEN_BOTTOM_NAV_ROUTES } ?: false
+    this?.hierarchy?.any { destination ->
+        HIDDEN_BOTTOM_NAV_ROUTES.any {
+            destination.route?.startsWith(it.qualifiedName ?: "") == true
+        }
+    } ?: false
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any { it.hasRoute(route) } == true

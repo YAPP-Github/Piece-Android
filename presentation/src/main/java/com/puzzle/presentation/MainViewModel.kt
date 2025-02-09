@@ -100,7 +100,7 @@ class MainViewModel @Inject constructor(
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
                         route = AuthGraphDest.VerificationRoute,
-                        popUpTo = AuthGraphDest.LoginRoute,
+                        popUpTo = true,
                     )
                 )
             }
@@ -109,7 +109,7 @@ class MainViewModel @Inject constructor(
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
                         route = MatchingGraphDest.MatchingRoute,
-                        popUpTo = AuthGraphDest.LoginRoute,
+                        popUpTo = true,
                     )
                 )
             }

@@ -1,7 +1,6 @@
 package com.puzzle.common.event
 
 import androidx.compose.runtime.Composable
-import com.puzzle.designsystem.component.SnackBarType
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -28,3 +27,16 @@ sealed class PieceEvent {
     data class ShowBottomSheet(val content: @Composable () -> Unit) : PieceEvent()
     data object HideBottomSheet : PieceEvent()
 }
+
+
+enum class SnackBarType {
+    TextOnly,
+    Info,
+    Matching;
+
+    companion object {
+        fun create(value: String): SnackBarType =
+            entries.find { it.name == value } ?: TextOnly
+    }
+}
+

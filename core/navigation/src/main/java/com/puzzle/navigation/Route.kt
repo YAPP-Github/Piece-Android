@@ -38,6 +38,12 @@ sealed class MatchingGraphDest : Route {
 
     @Serializable
     data object MatchingDetailRoute : MatchingGraphDest()
+
+    @Serializable
+    data class ReportRoute(val userId: Int, val userName: String) : MatchingGraphDest()
+
+    @Serializable
+    data class BlockRoute(val userId: Int, val userName: String) : MatchingGraphDest()
 }
 
 @Serializable

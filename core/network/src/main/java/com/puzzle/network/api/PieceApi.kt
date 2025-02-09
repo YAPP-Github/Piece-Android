@@ -8,6 +8,7 @@ import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
+import com.puzzle.network.model.matching.ReportUserRequest
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.terms.AgreeTermsRequest
@@ -19,6 +20,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PieceApi {
@@ -57,4 +59,10 @@ interface PieceApi {
 
     @POST("/api/terms/agree")
     suspend fun agreeTerms(@Body agreeTermsRequest: AgreeTermsRequest): Result<ApiResponse<Unit>>
+
+    @POST("/api/reports")
+    suspend fun reportUser(@Body reportUserRequest: ReportUserRequest): Result<ApiResponse<Unit>>
+
+    @POST("/api/matches/blocks/users/{userId}")
+    suspend fun blockUser(@Path("userId") userId: Int): Result<ApiResponse<Unit>>
 }

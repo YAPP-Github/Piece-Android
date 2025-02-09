@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -25,6 +26,7 @@ import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.component.PieceModalBottomSheet
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.presentation.network.NetworkMonitor
@@ -48,8 +50,8 @@ class MainActivity : ComponentActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
 
-//        // TODO(재확인 필요)
-//        WindowCompat.setDecorFitsSystemWindows(window, true)
+        // TODO(재확인 필요)
+        WindowCompat.setDecorFitsSystemWindows(window, true)
 
         setContent {
             viewModel.apply {
@@ -96,9 +98,7 @@ class MainActivity : ComponentActivity() {
                                     }
 
                                     PieceEvent.HideBottomSheet -> {
-                                        scope.launch {
-                                            sheetState.hide()
-                                        }
+                                        scope.launch { sheetState.hide() }
                                     }
                                 }
                             }
@@ -133,15 +133,17 @@ class MainActivity : ComponentActivity() {
     ) {
         when (event) {
             is NavigationEvent.NavigateTo -> {
-                val navOptions = event.popUpTo?.let {
-                    navOptions {
-                        popUpTo(it) {
-                            saveState = true
+                val navOptions = navOptions {
+                    if (event.popUpTo) {
+                        popUpTo(
+                            navController.currentBackStackEntry?.destination?.route
+                                ?: navController.graph.startDestinationRoute
+                                ?: AuthGraph.toString()
+                        ) {
                             inclusive = true
                         }
-                        launchSingleTop = true
-                        restoreState = true
                     }
+                    launchSingleTop = true
                 }
 
                 navController.navigate(

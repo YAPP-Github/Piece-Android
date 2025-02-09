@@ -2,7 +2,6 @@ package com.puzzle.auth.graph.verification
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,13 +50,13 @@ import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus.VERIFIED
 import com.puzzle.common.ui.addFocusCleaner
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
 
@@ -171,14 +170,7 @@ private fun VerificationScreen(
 
         PieceSolidButton(
             label = stringResource(R.string.verification_submit),
-            onClick = {
-                navigate(
-                    NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.SignUpRoute,
-                        popUpTo = AuthGraph,
-                    )
-                )
-            },
+            onClick = { navigate(NavigationEvent.NavigateTo(AuthGraphDest.SignUpRoute)) },
             enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier
                 .fillMaxWidth()

@@ -13,7 +13,6 @@ data class MatchingDetailState(
     val age: String = "25",
     val birthYear: String = "00",
     val height: String = "254",
-    val religion: String = "무교",
     val occupation: String = "개발자",
     val activityRegion: String = "서울특별시",
     val smokeStatue: String = "비흡연",
@@ -71,7 +70,8 @@ data class MatchingDetailState(
             ),
             isSimilarToMe = false,
         )
-    )
+    ),
+    val imageUri: String = "",
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {

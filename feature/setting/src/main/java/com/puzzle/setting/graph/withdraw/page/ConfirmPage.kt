@@ -56,7 +56,7 @@ internal fun ColumnScope.ConfirmPage(
         enabled = true,
         modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp),
+            .padding(top = 12.dp, bottom = 10.dp),
     )
 }
 

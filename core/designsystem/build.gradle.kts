@@ -8,6 +8,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.commonUi)
+
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
 }
