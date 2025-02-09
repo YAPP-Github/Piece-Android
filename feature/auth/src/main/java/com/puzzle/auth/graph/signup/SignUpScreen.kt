@@ -131,8 +131,9 @@ private fun SignUpScreen(
                 )
 
                 SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesPage(
+                    isBlockContactsDone = state.isBlockContactsDone,
                     onBackClick = onBackClick,
-                    onTryNextClick = onNextClick,
+                    goNextStep = onNextClick,
                     onAvoidAcquaintancesClick = onAvoidAcquaintancesClick,
                 )
 
