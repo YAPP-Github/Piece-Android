@@ -246,20 +246,20 @@ data class RegisterProfileState(
         ;
 
         companion object {
-            fun getNextPage(currentPage: Page): Page =
+            fun getNextPage(currentPage: Page): Page? =
                 when (currentPage) {
                     BASIC_PROFILE -> VALUE_TALK
                     VALUE_TALK -> VALUE_PICK
                     VALUE_PICK -> FINISH
-                    FINISH -> FINISH
+                    else -> null
                 }
 
-            fun getPreviousPage(currentPage: Page): Page =
+            fun getPreviousPage(currentPage: Page): Page? =
                 when (currentPage) {
-                    BASIC_PROFILE -> BASIC_PROFILE
-                    VALUE_TALK -> BASIC_PROFILE
-                    VALUE_PICK -> VALUE_TALK
                     FINISH -> VALUE_PICK
+                    VALUE_PICK -> VALUE_TALK
+                    VALUE_TALK -> BASIC_PROFILE
+                    else -> null
                 }
         }
     }

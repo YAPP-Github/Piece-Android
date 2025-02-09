@@ -80,8 +80,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)))
                 }
             } else {
-                setState {
-                    copy(currentPage = RegisterProfileState.Page.getPreviousPage(state.currentPage))
+                RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+                    setState { copy(currentPage = nextPage) }
                 }
             }
         }
@@ -121,8 +121,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        setState {
-            copy(currentPage = RegisterProfileState.Page.getNextPage(state.currentPage))
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
         }
     }
 
@@ -136,8 +136,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        setState {
-            copy(currentPage = RegisterProfileState.Page.getNextPage(state.currentPage))
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
         }
     }
 
@@ -163,12 +163,13 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
         // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
-        // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
-        setState {
-            copy(
-                nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
-                currentPage = RegisterProfileState.Page.getNextPage(state.currentPage),
-            )
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState {
+                copy(
+                    currentPage = nextPage,
+                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
+                )
+            }
         }
     }
 
