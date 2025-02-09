@@ -8,5 +8,5 @@ interface AuthDataSource {
     suspend fun loginOauth(provider: OAuthProvider, token: String): Result<LoginOauthResponse>
     suspend fun requestAuthCode(phoneNumber: String): Result<Unit>
     suspend fun verifyAuthCode(phoneNumber: String, code: String): Result<VerifyAuthCodeResponse>
-    suspend fun checkTokenHealth(): Result<Unit>
+    suspend fun checkTokenHealth(token: String): Result<Unit>
 }

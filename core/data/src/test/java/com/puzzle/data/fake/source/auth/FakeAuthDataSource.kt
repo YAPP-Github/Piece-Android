@@ -27,7 +27,7 @@ class FakeAuthDataSource : AuthDataSource {
         return Result.success(verifyResponse)
     }
 
-    override suspend fun checkTokenHealth(): Result<Unit> {
+    override suspend fun checkTokenHealth(token: String): Result<Unit> {
         return Result.success(Unit)
     }
 }
