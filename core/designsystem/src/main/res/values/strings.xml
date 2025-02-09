@@ -73,6 +73,16 @@
     <string name="valuepick_refuse">매칭 거절하기</string>
     <string name="valuepick_similar">나와 같은</string>
 
+    <!-- Matching Contact -->
+    <string name="maching_contact_header">님과 퍼즐 완성!</string>
+    <string name="maching_contact_sub_header">망설이지 말고 연락해 보세요\n두 분의 평화로운 사랑을 피스가 응원헤요</string>
+    <string name="maching_contact_kakao_id">카카오톡 아이디</string>
+    <string name="maching_contact_open_chat_id">카카오톡 오픈채팅방</string>
+    <string name="maching_contact_insta_id">인스타 아이디</string>
+    <string name="maching_contact_phone_number">전화번호</string>
+    <string name="maching_contact_null"> </string>
+
+
     <!-- Report -->
     <string name="report">신고하기</string>
     <string name="report_subtitle">신고하면 되돌릴 수 없으니,\n신중한 신고 부탁드립니다.</string>
@@ -183,7 +193,6 @@
     <string name="value_pick_profile_topbar_edit">수정</string>
     <string name="value_pick_profile_page_header">가치관 Pick,\n당신의 연애 취향을 알려주세요</string>
     <string name="value_pick_profile_page_sub_header">선택한 답변으로 연애 스타일을 쉽게 확인할 수 있어요.\n서로의 우선순위와 취향을 이해하는 데 큰 도움이 될 거예요.</string>
-
 
     <!--Finish    -->
     <string name="finish_register_profile_header">프로필 작성을 마쳤습니다!</string>

@@ -7,6 +7,7 @@ import com.puzzle.auth.graph.login.LoginViewModel
 import com.puzzle.auth.graph.signup.SignUpViewModel
 import com.puzzle.auth.graph.verification.VerificationViewModel
 import com.puzzle.matching.graph.block.BlockViewModel
+import com.puzzle.matching.graph.contact.ContactViewModel
 import com.puzzle.matching.graph.detail.MatchingDetailViewModel
 import com.puzzle.matching.graph.main.MatchingViewModel
 import com.puzzle.matching.graph.report.ReportViewModel
@@ -95,4 +96,9 @@ interface ViewModelsModule {
     @IntoMap
     @ViewModelKey(BasicProfileViewModel::class)
     fun basicProfileViewModelFactory(factory: BasicProfileViewModel.Factory): AssistedViewModelFactory<*, *>
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ContactViewModel::class)
+    fun contactViewModelFactory(factory: ContactViewModel.Factory): AssistedViewModelFactory<*, *>
 }
