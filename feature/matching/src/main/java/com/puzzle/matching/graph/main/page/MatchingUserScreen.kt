@@ -39,9 +39,13 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.match.MatchStatus
+import com.puzzle.matching.graph.main.contract.MatchingState
 
 @Composable
 internal fun MatchingUserScreen(
+    matchInfo: MatchInfo,
     onMatchingDetailClick: () -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -98,28 +102,7 @@ internal fun MatchingUserScreen(
                 .background(PieceTheme.colors.white)
                 .padding(20.dp),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.ic_matching_loading),
-                    contentDescription = null,
-                )
-
-                Text(
-                    text = "오픈 전",
-                    style = PieceTheme.typography.bodySSB,
-                    color = PieceTheme.colors.dark2
-                )
-
-                Text(
-                    text = stringResource(R.string.check_the_matching_pieces),
-                    style = PieceTheme.typography.bodySM,
-                    color = PieceTheme.colors.dark3
-                )
-            }
+            MatchStatusRow(matchInfo.matchStatus)
 
             Column {
                 Text(
@@ -252,6 +235,34 @@ internal fun MatchingUserScreen(
 }
 
 @Composable
+private fun MatchStatusRow(
+    matchStatus: MatchStatus,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Image(
+            painter = painterResource(R.drawable.ic_matching_loading),
+            contentDescription = null,
+        )
+
+        Text(
+            text = "오픈 전",
+            style = PieceTheme.typography.bodySSB,
+            color = PieceTheme.colors.dark2
+        )
+
+        Text(
+            text = stringResource(R.string.check_the_matching_pieces),
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.dark3
+        )
+    }
+}
+
+@Composable
 private fun ValueTag(value: String) {
     Box(
         modifier = Modifier
@@ -274,6 +285,17 @@ private fun ValueTag(value: String) {
 private fun PreviewMatchingUserScreen() {
     PieceTheme {
         MatchingUserScreen(
+            matchInfo = MatchInfo(
+                matchId = 1,
+                matchStatus = MatchStatus.WAITING,
+                description = "안녕하세요. 저는 활발하고 긍정적인 성격의 소유자입니다.",
+                nickname = "별빛소녀",
+                birthYear = "1995",
+                location = "서울특별시",
+                job = "마케팅 전문가",
+                matchedValueCount = 3,
+                matchedValueList = listOf("여행", "음악", "영화")
+            ),
             onMatchingDetailClick = {},
         )
     }
