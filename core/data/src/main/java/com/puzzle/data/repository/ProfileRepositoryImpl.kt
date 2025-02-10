@@ -1,6 +1,5 @@
 package com.puzzle.data.repository
 
-import android.util.Log
 import com.puzzle.common.suspendRunCatching
 import com.puzzle.data.image.ImageResizer
 import com.puzzle.database.model.matching.ValuePickAnswerEntity

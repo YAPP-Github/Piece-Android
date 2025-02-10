@@ -257,18 +257,21 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
     }
 
-    private fun checkNickNameDuplication() {
-        setState {
-            // TODO: 실제 API 응답 처리
-            val isSuccess = true
-            copy(
-                isCheckingButtonEnabled = !isSuccess,
-                nickNameGuideMessage = if (isSuccess) {
-                    NickNameGuideMessage.AVAILABLE
-                } else {
-                    NickNameGuideMessage.ALREADY_IN_USE
-                },
-            )
+    private fun checkNickNameDuplication() = withState { state ->
+        viewModelScope.launch {
+            profileRepository.checkNickname(state.nickname)
+                .onSuccess { result ->
+                    setState {
+                        copy(
+                            isCheckingButtonEnabled = !result,
+                            nickNameGuideMessage = if (result) {
+                                NickNameGuideMessage.AVAILABLE
+                            } else {
+                                NickNameGuideMessage.ALREADY_IN_USE
+                            },
+                        )
+                    }
+                }.onFailure { errorHelper.sendError(it) }
         }
     }
 
