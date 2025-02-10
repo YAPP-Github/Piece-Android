@@ -9,8 +9,8 @@ import com.puzzle.network.model.profile.UploadProfileResponse
 import java.io.InputStream
 
 interface ProfileDataSource {
-    suspend fun loadValuePicks(): Result<LoadValuePicksResponse>
-    suspend fun loadValueTalks(): Result<LoadValueTalksResponse>
+    suspend fun loadValuePickQuestions(): Result<LoadValuePicksResponse>
+    suspend fun loadValueTalkQuestions(): Result<LoadValueTalksResponse>
     suspend fun checkNickname(nickname: String): Result<Boolean>
     suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String>
     suspend fun uploadProfile(
@@ -22,7 +22,6 @@ interface ProfileDataSource {
         job: String,
         location: String,
         nickname: String,
-        phoneNumber: String,
         smokingStatus: String,
         snsActivityLevel: String,
         contacts: List<Contact>,

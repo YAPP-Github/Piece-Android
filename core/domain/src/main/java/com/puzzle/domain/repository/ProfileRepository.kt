@@ -1,17 +1,17 @@
 package com.puzzle.domain.repository
 
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.ValuePick
 import com.puzzle.domain.model.profile.ValuePickAnswer
-import com.puzzle.domain.model.profile.ValueTalk
+import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkAnswer
+import com.puzzle.domain.model.profile.ValueTalkQuestion
 
 interface ProfileRepository {
-    suspend fun loadValuePicks(): Result<Unit>
-    suspend fun retrieveValuePick(): Result<List<ValuePick>>
+    suspend fun loadValuePickQuestions(): Result<Unit>
+    suspend fun retrieveValuePickQuestion(): Result<List<ValuePickQuestion>>
 
-    suspend fun loadValueTalks(): Result<Unit>
-    suspend fun retrieveValueTalk(): Result<List<ValueTalk>>
+    suspend fun loadValueTalkQuestions(): Result<Unit>
+    suspend fun retrieveValueTalkQuestion(): Result<List<ValueTalkQuestion>>
 
     suspend fun checkNickname(nickname: String): Result<Boolean>
     suspend fun uploadProfile(
@@ -23,7 +23,6 @@ interface ProfileRepository {
         job: String,
         location: String,
         nickname: String,
-        phoneNumber: String,
         smokingStatus: String,
         snsActivityLevel: String,
         contacts: List<Contact>,

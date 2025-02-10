@@ -1,6 +1,6 @@
 package com.puzzle.network.model.matching
 
-import com.puzzle.domain.model.profile.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable
@@ -19,10 +19,10 @@ data class ValueTalkResponse(
     val title: String?,
     val guides: List<String>?,
 ) {
-    fun toDomain() = ValueTalk(
+    fun toDomain() = ValueTalkQuestion(
         id = id ?: UNKNOWN_INT,
         category = category ?: UNKNOWN_STRING,
         title = title ?: UNKNOWN_STRING,
-        guides = guides ?: emptyList() // Todo 서버에서 API 스키마 변경해줘야 함
+        guides = guides ?: emptyList(),
     )
 }

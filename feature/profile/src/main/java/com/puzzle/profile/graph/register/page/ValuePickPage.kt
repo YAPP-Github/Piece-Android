@@ -28,13 +28,13 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.profile.ValuePick
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
+import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 
 @Composable
 internal fun ValuePickPage(
-    valuePicks: List<ValuePick>,
-    onValuePickContentChange: (List<ValuePick>) -> Unit,
+    valuePicks: List<ValuePickRegisterRO>,
+    onValuePickContentChange: (List<ValuePickRegisterRO>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
@@ -64,8 +64,8 @@ internal fun ValuePickPage(
 
 @Composable
 private fun ValuePickCards(
-    valuePicks: List<ValuePick>,
-    onContentChange: (ValuePick) -> Unit,
+    valuePicks: List<ValuePickRegisterRO>,
+    onContentChange: (ValuePickRegisterRO) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -114,8 +114,8 @@ private fun ValuePickCards(
 
 @Composable
 private fun ValuePickCard(
-    item: ValuePick,
-    onContentChange: (ValuePick) -> Unit,
+    item: ValuePickRegisterRO,
+    onContentChange: (ValuePickRegisterRO) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -144,7 +144,7 @@ private fun ValuePickCard(
             modifier = Modifier.padding(bottom = 24.dp),
         )
 
-        item.answers.forEachIndexed { index, answer ->
+        item.answerOptions.forEachIndexed { index, answer ->
             PieceChip(
                 label = answer.content,
                 selected = answer.number == item.selectedAnswer,
@@ -153,7 +153,7 @@ private fun ValuePickCard(
                         item.copy(selectedAnswer = answer.number)
                     )
                 },
-                modifier = if (index < item.answers.size - 1) {
+                modifier = if (index < item.answerOptions.size - 1) {
                     Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)

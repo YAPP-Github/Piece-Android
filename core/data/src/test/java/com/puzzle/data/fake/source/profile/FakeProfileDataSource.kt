@@ -15,10 +15,10 @@ class FakeProfileDataSource : ProfileDataSource {
     private var valuePicks = listOf<ValuePickResponse>()
     private var valueTalks = listOf<ValueTalkResponse>()
 
-    override suspend fun loadValuePicks(): Result<LoadValuePicksResponse> =
+    override suspend fun loadValuePickQuestions(): Result<LoadValuePicksResponse> =
         Result.success(LoadValuePicksResponse(responses = valuePicks))
 
-    override suspend fun loadValueTalks(): Result<LoadValueTalksResponse> =
+    override suspend fun loadValueTalkQuestions(): Result<LoadValueTalksResponse> =
         Result.success(LoadValueTalksResponse(responses = valueTalks))
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
@@ -36,7 +36,6 @@ class FakeProfileDataSource : ProfileDataSource {
         job: String,
         location: String,
         nickname: String,
-        phoneNumber: String,
         smokingStatus: String,
         snsActivityLevel: String,
         contacts: List<Contact>,

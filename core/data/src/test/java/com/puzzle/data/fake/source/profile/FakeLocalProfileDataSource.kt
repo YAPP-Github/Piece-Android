@@ -8,20 +8,20 @@ class FakeLocalProfileDataSource : LocalProfileDataSource {
     private var valuePicks = listOf<ValuePickEntity>()
     private var valueTalks = listOf<ValueTalkEntity>()
 
-    override suspend fun retrieveValuePicks(): List<ValuePickEntity> {
+    override suspend fun retrieveValuePickQuestions(): List<ValuePickEntity> {
         return valuePicks
     }
 
-    override suspend fun replaceValuePicks(valuePicks: List<ValuePickEntity>): Result<Unit> {
+    override suspend fun replaceValuePickQuestions(valuePicks: List<ValuePickEntity>): Result<Unit> {
         this.valuePicks = valuePicks
         return Result.success(Unit)
     }
 
-    override suspend fun retrieveValueTalks(): List<ValueTalkEntity> {
+    override suspend fun retrieveValueTalkQuestions(): List<ValueTalkEntity> {
         return valueTalks
     }
 
-    override suspend fun replaceValueTalks(valueTalks: List<ValueTalkEntity>): Result<Unit> {
+    override suspend fun replaceValueTalkQuestions(valueTalks: List<ValueTalkEntity>): Result<Unit> {
         this.valueTalks = valueTalks
         return Result.success(Unit)
     }
