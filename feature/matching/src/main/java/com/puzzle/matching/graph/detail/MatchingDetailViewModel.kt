@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
@@ -25,8 +27,10 @@ import kotlinx.coroutines.launch
 
 class MatchingDetailViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingDetailState,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<MatchingDetailState>(initialState) {
     private val intents = Channel<MatchingDetailIntent>(BUFFERED)
     private val _sideEffects = Channel<MatchingDetailSideEffect>(BUFFERED)
@@ -52,6 +56,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
             MatchingDetailIntent.OnNextPageClick -> setNextPage()
             MatchingDetailIntent.OnBlockClick -> onBlockClick()
             MatchingDetailIntent.OnReportClick -> onReportClick()
+            MatchingDetailIntent.OnAcceptClick -> acceptMatching()
         }
     }
 
@@ -97,6 +102,18 @@ class MatchingDetailViewModel @AssistedInject constructor(
         }
     }
 
+    private fun acceptMatching() = viewModelScope.launch {
+        matchingRepository.acceptMatching()
+            .onSuccess {
+                navigationHelper.navigate(
+                    NavigationEvent.NavigateTo(
+                        route = MatchingGraphDest.MatchingRoute,
+                        popUpTo = true,
+                    )
+                )
+            }
+            .onFailure { errorHelper.sendError(it) }
+    }
 
     private fun navigateTo(navigationEvent: NavigationEvent) {
         _sideEffects.trySend(MatchingDetailSideEffect.Navigate(navigationEvent))
