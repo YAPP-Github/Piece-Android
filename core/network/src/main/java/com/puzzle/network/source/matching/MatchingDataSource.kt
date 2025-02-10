@@ -16,11 +16,11 @@ class MatchingDataSource @Inject constructor(
         pieceApi.reportUser(ReportUserRequest(userId = userId, reason = reason)).unwrapData()
 
     suspend fun blockUser(userId: Int): Result<Unit> = pieceApi.blockUser(userId).unwrapData()
-
     suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit> =
         pieceApi.blockContacts(BlockContactsRequest(phoneNumbers)).unwrapData()
 
     suspend fun getMatchInfo(): Result<GetMatchInfoResponse> = pieceApi.getMatchInfo().unwrapData()
 
     suspend fun checkMatchingPiece(): Result<Unit> = pieceApi.checkMatchingPiece().unwrapData()
+    suspend fun acceptMatching(): Result<Unit> = pieceApi.acceptMatching().unwrapData()
 }

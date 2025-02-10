@@ -77,4 +77,7 @@ interface PieceApi {
 
     @PATCH("/api/matches/pieces/check")
     suspend fun checkMatchingPiece(): Result<ApiResponse<Unit>>
+
+    @POST("/api/matches/accept")
+    suspend fun acceptMatching(): Result<ApiResponse<Unit>>
 }

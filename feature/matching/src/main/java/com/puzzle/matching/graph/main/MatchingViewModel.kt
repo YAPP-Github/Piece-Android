@@ -88,7 +88,11 @@ class MatchingViewModel @AssistedInject constructor(
     }
 
     private fun acceptMatching() = viewModelScope.launch {
-
+        matchingRepository.acceptMatching()
+            .onSuccess {
+                setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.MATCHED)) }
+            }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory

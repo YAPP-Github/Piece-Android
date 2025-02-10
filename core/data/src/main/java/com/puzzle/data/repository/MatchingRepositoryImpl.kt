@@ -20,4 +20,6 @@ class MatchingRepositoryImpl @Inject constructor(
 
     override suspend fun checkMatchingPiece(): Result<Unit> =
         matchingDataSource.checkMatchingPiece()
+
+    override suspend fun acceptMatching(): Result<Unit> = matchingDataSource.acceptMatching()
 }

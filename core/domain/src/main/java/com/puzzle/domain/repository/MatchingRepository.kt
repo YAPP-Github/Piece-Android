@@ -8,4 +8,5 @@ interface MatchingRepository {
     suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit>
     suspend fun getMatchInfo(): Result<MatchInfo>
     suspend fun checkMatchingPiece(): Result<Unit>
+    suspend fun acceptMatching(): Result<Unit>
 }
