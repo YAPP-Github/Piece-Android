@@ -76,31 +76,6 @@ internal fun MatchingScreen(
     }
 }
 
-@Composable
-internal fun MatchingTopBar() {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .padding(vertical = 14.dp)
-            .fillMaxWidth()
-            .height(60.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.matching_title),
-            style = PieceTheme.typography.branding,
-            color = PieceTheme.colors.white,
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Image(
-            painter = painterResource(R.drawable.ic_alarm),
-            contentDescription = "",
-            modifier = Modifier.size(32.dp),
-        )
-    }
-}
-
 @Preview
 @Composable
 private fun PreviewMatchingPendingScreen() {

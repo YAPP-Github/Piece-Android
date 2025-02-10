@@ -2,7 +2,6 @@ package com.puzzle.setting.graph.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import com.puzzle.common.ui.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
@@ -105,7 +105,8 @@ private fun SettingScreen(
     ) {
         PieceMainTopBar(
             title = stringResource(R.string.setting_screen),
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 19.dp),
+            textStyle = PieceTheme.typography.branding,
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         HorizontalDivider(
