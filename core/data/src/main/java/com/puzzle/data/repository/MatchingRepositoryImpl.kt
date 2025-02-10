@@ -1,5 +1,6 @@
 package com.puzzle.data.repository
 
+import com.puzzle.domain.model.match.MatchInfo
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.network.source.matching.MatchingDataSource
 import javax.inject.Inject
@@ -13,4 +14,7 @@ class MatchingRepositoryImpl @Inject constructor(
     override suspend fun blockUser(userId: Int): Result<Unit> = matchingDataSource.blockUser(userId)
     override suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit> =
         matchingDataSource.blockContacts(phoneNumbers)
+
+    override suspend fun getMatchInfo(): Result<MatchInfo> = matchingDataSource.getMatchInfo()
+        .mapCatching { response -> response.toDomain() }
 }

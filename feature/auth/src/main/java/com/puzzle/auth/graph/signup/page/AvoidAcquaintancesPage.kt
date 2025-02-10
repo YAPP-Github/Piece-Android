@@ -56,7 +56,7 @@ internal fun AvoidAcquaintancesPage(
 
     LaunchedEffect(showBlockContactsCompletePopUp) {
         if (showBlockContactsCompletePopUp) {
-            delay(3000L)
+            delay(2000L)
             showBlockContactsCompletePopUp = false
         }
     }

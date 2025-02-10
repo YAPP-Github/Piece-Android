@@ -5,11 +5,15 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
+import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.user.UserRole
+import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.NavigationEvent.NavigateTo
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -24,13 +28,18 @@ import kotlinx.coroutines.launch
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
     private val navigationHelper: NavigationHelper,
+    private val matchingRepository: MatchingRepository,
+    private val userRepository: UserRepository,
     internal val eventHelper: EventHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
     private val intents = Channel<MatchingIntent>(BUFFERED)
-    private val _sideEffect = Channel<MatchingSideEffect>(BUFFERED)
-    val sideEffect = _sideEffect.receiveAsFlow()
+    private val _sideEffects = Channel<MatchingSideEffect>(BUFFERED)
+    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initMatchInfo()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
@@ -46,14 +55,24 @@ class MatchingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleSideEffect(sideEffect: MatchingSideEffect) {
-        when (sideEffect) {
-            else -> Unit
-        }
+    private fun initMatchInfo() = viewModelScope.launch {
+        userRepository.getUserRole()
+            .onSuccess { userRole ->
+                if (userRole == UserRole.USER) {
+                    getMatchInfo()
+                }
+
+                setState { copy(userRole = userRole) }
+            }
+            .onFailure { errorHelper.sendError(it) }
     }
 
+    private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
+        .onSuccess { setState { copy(matchInfo = it) } }
+        .onFailure { errorHelper.sendError(it) }
+
     private fun navigateToMatchingDetail() =
-        navigationHelper.navigate(NavigateTo(MatchingGraphDest.MatchingDetailRoute))
+        navigationHelper.navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute))
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<MatchingViewModel, MatchingState> {
