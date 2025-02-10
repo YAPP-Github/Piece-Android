@@ -1,6 +1,5 @@
 package com.puzzle.profile.graph.register
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
@@ -14,6 +13,7 @@ import com.puzzle.domain.model.profile.SnsPlatform
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.repository.ProfileRepository
+import com.puzzle.domain.usecase.profile.UploadProfileUseCase
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 
 class RegisterProfileViewModel @AssistedInject constructor(
     @Assisted initialState: RegisterProfileState,
+    private val uploadProfileUseCase: UploadProfileUseCase,
     private val profileRepository: ProfileRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
@@ -93,8 +94,6 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private suspend fun retrieveValuePick() {
         profileRepository.retrieveValuePickQuestion()
             .onSuccess { valuePickQuestions ->
-                Log.d("test", "retrieveValuePick 호출 ${valuePickQuestions}")
-
                 setState {
                     copy(
                         valuePicks = valuePickQuestions.map {
@@ -114,7 +113,6 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private suspend fun retrieveValueTalk() {
         profileRepository.retrieveValueTalkQuestion()
             .onSuccess { valueTalkQuestions ->
-                Log.d("test", "retrieveValueTalk 호출 ${valueTalkQuestions}")
                 val result = valueTalkQuestions.map {
                     ValueTalkRegisterRO(
                         id = it.id,
@@ -129,8 +127,6 @@ class RegisterProfileViewModel @AssistedInject constructor(
                         valueTalks = result
                     )
                 }
-
-                Log.d("test", result.toString())
             }
             .onFailure { errorHelper.sendError(it) }
     }
@@ -183,7 +179,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            profileRepository.uploadProfile(
+            uploadProfileUseCase(
                 birthdate = state.birthdate,
                 description = state.description,
                 height = state.height.toInt(),
