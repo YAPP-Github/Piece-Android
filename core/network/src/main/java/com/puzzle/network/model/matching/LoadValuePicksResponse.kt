@@ -1,7 +1,7 @@
 package com.puzzle.network.model.matching
 
 import com.puzzle.domain.model.profile.Answer
-import com.puzzle.domain.model.profile.ValuePick
+import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable
@@ -20,7 +20,7 @@ data class ValuePickResponse(
     val question: String?,
     val answers: List<ValuePickAnswerResponse>?,
 ) {
-    fun toDomain() = ValuePick(
+    fun toDomain() = ValuePickQuestion(
         id = id ?: UNKNOWN_INT,
         category = category ?: UNKNOWN_STRING,
         question = question ?: UNKNOWN_STRING,

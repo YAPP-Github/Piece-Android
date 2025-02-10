@@ -58,10 +58,10 @@ class ProfileRepositoryImplTest {
         )
 
         // when
-        profileRepository.loadValueTalks()
+        profileRepository.loadValueTalkQuestions()
 
         // then
-        val storedTalks = localProfileDataSource.retrieveValueTalks()
+        val storedTalks = localProfileDataSource.retrieveValueTalkQuestions()
         assertTrue(storedTalks.all { it.id != null })
         assertTrue(storedTalks.size == 1)
     }
@@ -86,10 +86,10 @@ class ProfileRepositoryImplTest {
         profileDataSource.setValueTalks(validValueTalks)
 
         // when
-        profileRepository.loadValueTalks()
+        profileRepository.loadValueTalkQuestions()
 
         // then
-        val storedTalks = localProfileDataSource.retrieveValueTalks()
+        val storedTalks = localProfileDataSource.retrieveValueTalkQuestions()
         assertTrue(storedTalks.size == validValueTalks.size)
         assertTrue(
             storedTalks.all { entity ->

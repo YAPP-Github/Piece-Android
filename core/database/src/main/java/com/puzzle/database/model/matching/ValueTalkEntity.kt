@@ -2,7 +2,7 @@ package com.puzzle.database.model.matching
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.puzzle.domain.model.profile.ValueTalk
+import com.puzzle.domain.model.profile.ValueTalkQuestion
 
 @Entity(tableName = "value_talk")
 data class ValueTalkEntity(
@@ -11,7 +11,7 @@ data class ValueTalkEntity(
     val title: String,
     val helpMessages: List<String>,
 ) {
-    fun toDomain() = ValueTalk(
+    fun toDomain() = ValueTalkQuestion(
         id = id,
         category = category,
         title = title,

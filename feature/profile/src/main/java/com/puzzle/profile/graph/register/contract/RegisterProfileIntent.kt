@@ -7,11 +7,11 @@ import com.puzzle.domain.model.profile.SnsPlatform
 sealed class RegisterProfileIntent {
     data class OnNickNameChange(val nickName: String) : RegisterProfileIntent()
     data class OnEditPhotoClick(val imageUri: String) : RegisterProfileIntent()
-    data class OnPhotoeClick(val imageUri: String) : RegisterProfileIntent()
+    data class OnPhotoClick(val imageUri: String) : RegisterProfileIntent()
     data object OnBackClick : RegisterProfileIntent()
     data class OnSaveClick(val registerProfileState: RegisterProfileState) : RegisterProfileIntent()
     data object OnDuplicationCheckClick : RegisterProfileIntent()
-    data class OnSelfDescribtionChange(val description: String) : RegisterProfileIntent()
+    data class OnSelfDescriptionChange(val description: String) : RegisterProfileIntent()
     data class OnBirthdayChange(val birthday: String) : RegisterProfileIntent()
     data class OnHeightChange(val height: String) : RegisterProfileIntent()
     data class OnWeightChange(val weight: String) : RegisterProfileIntent()

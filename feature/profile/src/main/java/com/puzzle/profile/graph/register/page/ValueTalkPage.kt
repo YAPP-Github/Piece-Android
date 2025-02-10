@@ -36,16 +36,16 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.profile.ValueTalk
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
 import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.PAGE_TRANSITION_DURATION
 import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.TEXT_DISPLAY_DURATION
+import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import kotlinx.coroutines.delay
 
 @Composable
 internal fun ValueTalkPage(
-    valueTalks: List<ValueTalk>,
-    onValueTalkContentChange: (List<ValueTalk>) -> Unit,
+    valueTalks: List<ValueTalkRegisterRO>,
+    onValueTalkContentChange: (List<ValueTalkRegisterRO>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
@@ -73,8 +73,8 @@ internal fun ValueTalkPage(
 
 @Composable
 private fun ValueTalkCards(
-    valueTalks: List<ValueTalk>,
-    onContentChange: (ValueTalk) -> Unit,
+    valueTalks: List<ValueTalkRegisterRO>,
+    onContentChange: (ValueTalkRegisterRO) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -123,8 +123,8 @@ private fun ValueTalkCards(
 
 @Composable
 private fun ValueTalkCard(
-    item: ValueTalk,
-    onContentChange: (ValueTalk) -> Unit,
+    item: ValueTalkRegisterRO,
+    onContentChange: (ValueTalkRegisterRO) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {

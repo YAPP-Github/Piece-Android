@@ -2,12 +2,10 @@ package com.puzzle.profile.graph.register.contract
 
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.ValuePick
-import com.puzzle.domain.model.profile.ValuePickAnswer
-import com.puzzle.domain.model.profile.ValueTalk
-import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
+import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 
 data class RegisterProfileState(
     val currentPage: Page = Page.BASIC_PROFILE,
@@ -34,10 +32,8 @@ data class RegisterProfileState(
     val isSnsActiveInputState: InputState = InputState.DEFAULT,
     val contacts: List<Contact> = emptyList(),
     val contactsInputState: InputState = InputState.DEFAULT,
-    val valuePicks: List<ValuePick> = emptyList(),
-    val valuePickAnswer: List<ValuePickAnswer> = emptyList(),
-    val valueTalks: List<ValueTalk> = emptyList(),
-    val valueTalkAnswer: List<ValueTalkAnswer> = emptyList(),
+    val valuePicks: List<ValuePickRegisterRO> = emptyList(),
+    val valueTalks: List<ValueTalkRegisterRO> = emptyList(),
 ) : MavericksState {
 
     val isValuePickComplete: Boolean =

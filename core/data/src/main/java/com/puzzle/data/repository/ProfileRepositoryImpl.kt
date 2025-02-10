@@ -2,17 +2,17 @@ package com.puzzle.data.repository
 
 import com.puzzle.common.suspendRunCatching
 import com.puzzle.data.image.ImageResizer
-import com.puzzle.database.model.matching.ValuePickAnswer
+import com.puzzle.database.model.matching.ValuePickAnswerEntity
 import com.puzzle.database.model.matching.ValuePickEntity
-import com.puzzle.database.model.matching.ValuePickQuestion
+import com.puzzle.database.model.matching.ValuePickQuestionEntity
 import com.puzzle.database.model.matching.ValueTalkEntity
 import com.puzzle.database.source.profile.LocalProfileDataSource
 import com.puzzle.datastore.datasource.token.LocalTokenDataSource
 import com.puzzle.datastore.datasource.user.LocalUserDataSource
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.ValuePick
-import com.puzzle.domain.model.profile.ValueTalk
+import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkAnswer
+import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.source.profile.ProfileDataSource
@@ -27,21 +27,21 @@ class ProfileRepositoryImpl @Inject constructor(
     private val localTokenDataSource: LocalTokenDataSource,
     private val localUserDataSource: LocalUserDataSource,
 ) : ProfileRepository {
-    override suspend fun loadValuePicks(): Result<Unit> = suspendRunCatching {
-        val valuePicks = profileDataSource.loadValuePicks()
+    override suspend fun loadValuePickQuestions(): Result<Unit> = suspendRunCatching {
+        val valuePicks = profileDataSource.loadValuePickQuestions()
             .getOrThrow()
             .toDomain()
             .filter { it.id != UNKNOWN_INT }
 
         val valuePickEntities = valuePicks.map { valuePick ->
             ValuePickEntity(
-                valuePickQuestion = ValuePickQuestion(
+                valuePickQuestion = ValuePickQuestionEntity(
                     id = valuePick.id,
                     category = valuePick.category,
                     question = valuePick.question,
                 ),
                 answers = valuePick.answers.map { answer ->
-                    ValuePickAnswer(
+                    ValuePickAnswerEntity(
                         questionsId = valuePick.id,
                         number = answer.number,
                         content = answer.content,
@@ -50,11 +50,11 @@ class ProfileRepositoryImpl @Inject constructor(
             )
         }
 
-        localProfileDataSource.replaceValuePicks(valuePickEntities)
+        localProfileDataSource.replaceValuePickQuestions(valuePickEntities)
     }
 
-    override suspend fun loadValueTalks(): Result<Unit> = suspendRunCatching {
-        val valueTalks = profileDataSource.loadValueTalks()
+    override suspend fun loadValueTalkQuestions(): Result<Unit> = suspendRunCatching {
+        val valueTalks = profileDataSource.loadValueTalkQuestions()
             .getOrThrow()
             .toDomain()
             .filter { it.id != UNKNOWN_INT }
@@ -68,18 +68,20 @@ class ProfileRepositoryImpl @Inject constructor(
             )
         }
 
-        localProfileDataSource.replaceValueTalks(valueTalkEntities)
+        localProfileDataSource.replaceValueTalkQuestions(valueTalkEntities)
     }
 
-    override suspend fun retrieveValuePick(): Result<List<ValuePick>> = suspendRunCatching {
-        localProfileDataSource.retrieveValuePicks()
-            .map(ValuePickEntity::toDomain)
-    }
+    override suspend fun retrieveValuePickQuestion(): Result<List<ValuePickQuestion>> =
+        suspendRunCatching {
+            localProfileDataSource.retrieveValuePickQuestions()
+                .map(ValuePickEntity::toDomain)
+        }
 
-    override suspend fun retrieveValueTalk(): Result<List<ValueTalk>> = suspendRunCatching {
-        localProfileDataSource.retrieveValueTalks()
-            .map(ValueTalkEntity::toDomain)
-    }
+    override suspend fun retrieveValueTalkQuestion(): Result<List<ValueTalkQuestion>> =
+        suspendRunCatching {
+            localProfileDataSource.retrieveValueTalkQuestions()
+                .map(ValueTalkEntity::toDomain)
+        }
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         profileDataSource.checkNickname(nickname)
@@ -93,7 +95,6 @@ class ProfileRepositoryImpl @Inject constructor(
         job: String,
         location: String,
         nickname: String,
-        phoneNumber: String,
         smokingStatus: String,
         snsActivityLevel: String,
         contacts: List<Contact>,
@@ -115,7 +116,6 @@ class ProfileRepositoryImpl @Inject constructor(
             job = job,
             location = location,
             nickname = nickname,
-            phoneNumber = phoneNumber,
             smokingStatus = smokingStatus,
             snsActivityLevel = snsActivityLevel,
             contacts = contacts,

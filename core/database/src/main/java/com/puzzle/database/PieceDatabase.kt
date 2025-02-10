@@ -7,16 +7,16 @@ import com.puzzle.database.converter.PieceConverters
 import com.puzzle.database.dao.TermsDao
 import com.puzzle.database.dao.ValuePicksDao
 import com.puzzle.database.dao.ValueTalksDao
-import com.puzzle.database.model.matching.ValuePickAnswer
-import com.puzzle.database.model.matching.ValuePickQuestion
+import com.puzzle.database.model.matching.ValuePickAnswerEntity
+import com.puzzle.database.model.matching.ValuePickQuestionEntity
 import com.puzzle.database.model.matching.ValueTalkEntity
 import com.puzzle.database.model.terms.TermEntity
 
 @Database(
     entities = [
         TermEntity::class,
-        ValuePickQuestion::class,
-        ValuePickAnswer::class,
+        ValuePickQuestionEntity::class,
+        ValuePickAnswerEntity::class,
         ValueTalkEntity::class,
     ],
     version = 1,

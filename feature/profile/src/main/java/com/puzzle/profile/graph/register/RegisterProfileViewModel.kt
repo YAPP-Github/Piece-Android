@@ -23,6 +23,8 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect.Navigate
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
+import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -59,9 +61,9 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
             is RegisterProfileIntent.OnNickNameChange -> updateNickName(intent.nickName)
-            is RegisterProfileIntent.OnPhotoeClick -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.OnPhotoClick -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.OnEditPhotoClick -> updateProfileImage(intent.imageUri)
-            is RegisterProfileIntent.OnSelfDescribtionChange -> updateDescription(intent.description)
+            is RegisterProfileIntent.OnSelfDescriptionChange -> updateDescription(intent.description)
             is RegisterProfileIntent.OnBirthdayChange -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
             is RegisterProfileIntent.OnWeightChange -> updateWeight(intent.weight)
@@ -71,11 +73,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.OnSnsActivityClick -> updateIsSnsActive(intent.isSnsActivity)
             is RegisterProfileIntent.OnAddContactClick -> addContact(intent.snsPlatform)
             is RegisterProfileIntent.OnDeleteContactClick -> deleteContact(intent.idx)
-            is RegisterProfileIntent.OnContactSelect -> updateContact(
-                intent.idx,
-                intent.contact
-            )
-
+            is RegisterProfileIntent.OnContactSelect -> updateContact(intent.idx, intent.contact)
             is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
             is RegisterProfileIntent.OnSaveClick -> saveProfile(intent.registerProfileState)
             RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
@@ -92,14 +90,16 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     private suspend fun retrieveValuePick() {
-        profileRepository.retrieveValuePick()
+        profileRepository.retrieveValuePickQuestion()
             .onSuccess {
                 setState {
                     copy(
-                        valuePicks = it,
-                        valuePickAnswer = it.map {
-                            ValuePickAnswer(
-                                valuePickId = it.id,
+                        valuePicks = it.map {
+                            ValuePickRegisterRO(
+                                id = it.id,
+                                category = it.category,
+                                question = it.question,
+                                answers = it.answers,
                                 selectedAnswer = null,
                             )
                         }
@@ -109,17 +109,19 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     private suspend fun retrieveValueTalk() {
-        profileRepository.retrieveValueTalk()
+        profileRepository.retrieveValueTalkQuestion()
             .onSuccess {
                 setState {
                     copy(
-                        valueTalks = it,
-                        valueTalkAnswer = it.map {
-                            ValueTalkAnswer(
-                                valueTalkId = it.id,
+                        valueTalks = it.map {
+                            ValueTalkRegisterRO(
+                                id = it.id,
+                                category = it.category,
+                                title = it.title,
+                                guides = it.guides,
                                 answer = "",
                             )
-                        }
+                        },
                     )
                 }
             }
@@ -173,8 +175,36 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
-            setState { copy(currentPage = nextPage) }
+        viewModelScope.launch {
+            profileRepository.uploadProfile(
+                birthdate = state.birthdate,
+                description = state.description,
+                height = state.height.toInt(),
+                weight = state.weight.toInt(),
+                imageUrl = state.profileImageUri.toString(),
+                job = state.job,
+                location = state.location,
+                nickname = state.nickname,
+                smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
+                snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
+                contacts = state.contacts,
+                valuePicks = state.valuePicks.map {
+                    ValuePickAnswer(
+                        valuePickId = it.id,
+                        selectedAnswer = it.selectedAnswer,
+                    )
+                },
+                valueTalks = state.valueTalks.map {
+                    ValueTalkAnswer(
+                        valueTalkId = it.id,
+                        answer = it.answer,
+                    )
+                },
+            ).onSuccess {
+                RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+                    setState { copy(currentPage = nextPage) }
+                }
+            }.onFailure { errorHelper.sendError(it) }
         }
     }
 
@@ -186,27 +216,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        viewModelScope.launch {
-            profileRepository.uploadProfile(
-                birthdate = state.birthdate,
-                description = state.description,
-                height = state.height.toInt(),
-                weight = state.weight.toInt(),
-                imageUrl = state.profileImageUri.toString(),
-                job = state.job,
-                location = state.location,
-                nickname = state.nickname,
-                phoneNumber = "",
-                smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
-                snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
-                contacts = state.contacts,
-                valuePicks = state.valuePickAnswer,
-                valueTalks = state.valueTalkAnswer,
-            )
-
-            RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
-                setState { copy(currentPage = nextPage) }
-            }
+        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
         }
     }
 

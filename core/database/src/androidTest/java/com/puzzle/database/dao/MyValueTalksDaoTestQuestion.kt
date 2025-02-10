@@ -14,7 +14,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class ValueTalksDaoTest {
+class MyValueTalksDaoTestQuestion {
     private lateinit var valueTalksDao: ValueTalksDao
     private lateinit var db: PieceDatabase
 

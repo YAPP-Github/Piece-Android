@@ -77,12 +77,12 @@ class MainViewModel @Inject constructor(
     }
 
     private suspend fun loadValuePicks() {
-        profileRepository.loadValuePicks()
+        profileRepository.loadValuePickQuestions()
             .onFailure { errorHelper.sendError(it) }
     }
 
     private suspend fun loadValueTalks() {
-        profileRepository.loadValueTalks()
+        profileRepository.loadValueTalkQuestions()
             .onFailure { errorHelper.sendError(it) }
     }
 

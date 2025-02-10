@@ -4,9 +4,9 @@ import com.puzzle.database.model.matching.ValuePickEntity
 import com.puzzle.database.model.matching.ValueTalkEntity
 
 interface LocalProfileDataSource {
-    suspend fun retrieveValuePicks(): List<ValuePickEntity>
-    suspend fun replaceValuePicks(valuePicks: List<ValuePickEntity>): Result<Unit>
+    suspend fun retrieveValuePickQuestions(): List<ValuePickEntity>
+    suspend fun replaceValuePickQuestions(valuePicks: List<ValuePickEntity>): Result<Unit>
 
-    suspend fun retrieveValueTalks(): List<ValueTalkEntity>
-    suspend fun replaceValueTalks(valueTalks: List<ValueTalkEntity>): Result<Unit>
+    suspend fun retrieveValueTalkQuestions(): List<ValueTalkEntity>
+    suspend fun replaceValueTalkQuestions(valueTalks: List<ValueTalkEntity>): Result<Unit>
 }

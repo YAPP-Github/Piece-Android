@@ -13,13 +13,13 @@ class LocalProfileDataSourceImpl @Inject constructor(
     private val valuePicksDao: ValuePicksDao,
     private val valueTalksDao: ValueTalksDao,
 ) : LocalProfileDataSource {
-    override suspend fun retrieveValuePicks() = valuePicksDao.getValuePicks()
-    override suspend fun replaceValuePicks(valuePicks: List<ValuePickEntity>) = suspendRunCatching {
+    override suspend fun retrieveValuePickQuestions() = valuePicksDao.getValuePicks()
+    override suspend fun replaceValuePickQuestions(valuePicks: List<ValuePickEntity>) = suspendRunCatching {
         valuePicks.forEach { valuePicksDao.replaceValuePicks(it) }
     }
 
-    override suspend fun retrieveValueTalks() = valueTalksDao.getValueTalks()
-    override suspend fun replaceValueTalks(valueTalks: List<ValueTalkEntity>) = suspendRunCatching {
+    override suspend fun retrieveValueTalkQuestions() = valueTalksDao.getValueTalks()
+    override suspend fun replaceValueTalkQuestions(valueTalks: List<ValueTalkEntity>) = suspendRunCatching {
         valueTalks.forEach { valueTalksDao.replaceValueTalks(it) }
     }
 }
