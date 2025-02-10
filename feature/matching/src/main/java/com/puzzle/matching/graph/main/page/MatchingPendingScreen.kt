@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -58,7 +59,7 @@ internal fun MatchingPendingScreen(
                 .background(PieceTheme.colors.white.copy(alpha = 0.1f)),
         ) {
             Text(
-                text = "심사가 완료되면 소중한 인연이 공개됩니다.",
+                text = stringResource(R.string.matching_pending_description),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.light1,
                 modifier = Modifier.padding(vertical = 12.dp),
@@ -87,23 +88,27 @@ internal fun MatchingPendingScreen(
             )
 
             Text(
-                text = "작성 후 24시간 이내에 심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.",
+                text = stringResource(R.string.matching_pending_subtext),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 34.dp),
             )
 
+            Spacer(modifier = Modifier.weight(1f))
+
             Image(
                 painter = painterResource(R.drawable.ic_user_pending_home),
                 contentDescription = null,
                 modifier = Modifier
-                    .size(240.dp)
+                    .size(260.dp)
                     .padding(bottom = 14.dp),
             )
 
+            Spacer(modifier = Modifier.weight(1f))
+
             PieceSolidButton(
-                label = "내 프로필 확인하기",
+                label = stringResource(R.string.check_my_profile),
                 onClick = onCheckMyProfileClick,
                 modifier = Modifier
                     .fillMaxWidth()
