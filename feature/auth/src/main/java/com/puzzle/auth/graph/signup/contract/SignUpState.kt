@@ -7,6 +7,7 @@ data class SignUpState(
     val terms: List<Term> = emptyList(),
     val termsCheckedInfo: Map<Int, Boolean> = emptyMap(),
     val signUpPage: SignUpPage = SignUpPage.TermPage,
+    val isBlockContactsDone: Boolean = false,
 ) : MavericksState {
     val areAllRequiredTermsAgreed = terms.filter { it.required }
         .all { termsCheckedInfo.getOrDefault(it.id, false) }

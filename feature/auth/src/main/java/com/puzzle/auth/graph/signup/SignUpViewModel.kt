@@ -10,6 +10,7 @@ import com.puzzle.auth.graph.signup.contract.SignUpSideEffect.Navigate
 import com.puzzle.auth.graph.signup.contract.SignUpState
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
@@ -17,6 +18,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -25,6 +27,7 @@ import kotlinx.coroutines.launch
 class SignUpViewModel @AssistedInject constructor(
     @Assisted initialState: SignUpState,
     private val termsRepository: TermsRepository,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
     internal val eventHelper: EventHelper,
@@ -58,6 +61,7 @@ class SignUpViewModel @AssistedInject constructor(
                 SignUpSideEffect.ShowSnackBar("필수 권한을 허용해주세요")
             )
 
+            is SignUpIntent.OnAvoidAcquaintancesClick -> blockContacts(intent.phoneNumbers)
             is SignUpIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
         }
     }
@@ -128,6 +132,16 @@ class SignUpViewModel @AssistedInject constructor(
                 setState { copy(signUpPage = it) }
             }
         }
+    }
+
+    private fun blockContacts(phoneNumbers: List<String>) = viewModelScope.launch {
+        matchingRepository.blockContacts(phoneNumbers)
+            .onSuccess {
+                setState { copy(isBlockContactsDone = true) }
+                delay(3100L)
+                onNextClick()
+            }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory

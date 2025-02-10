@@ -11,4 +11,6 @@ class MatchingRepositoryImpl @Inject constructor(
         matchingDataSource.reportUser(userId = userId, reason = reason)
 
     override suspend fun blockUser(userId: Int): Result<Unit> = matchingDataSource.blockUser(userId)
+    override suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit> =
+        matchingDataSource.blockContacts(phoneNumbers)
 }
