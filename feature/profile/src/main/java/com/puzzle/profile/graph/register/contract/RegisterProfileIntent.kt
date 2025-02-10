@@ -12,7 +12,7 @@ sealed class RegisterProfileIntent {
     data class OnSaveClick(val registerProfileState: RegisterProfileState) : RegisterProfileIntent()
     data object OnDuplicationCheckClick : RegisterProfileIntent()
     data class OnSelfDescriptionChange(val description: String) : RegisterProfileIntent()
-    data class OnBirthdayChange(val birthday: String) : RegisterProfileIntent()
+    data class OnBirthdateChange(val birthday: String) : RegisterProfileIntent()
     data class OnHeightChange(val height: String) : RegisterProfileIntent()
     data class OnWeightChange(val weight: String) : RegisterProfileIntent()
     data class OnJobClick(val job: String) : RegisterProfileIntent()

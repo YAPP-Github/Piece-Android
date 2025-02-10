@@ -66,7 +66,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.OnPhotoClick -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.OnEditPhotoClick -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.OnSelfDescriptionChange -> updateDescription(intent.description)
-            is RegisterProfileIntent.OnBirthdayChange -> updateBirthdate(intent.birthday)
+            is RegisterProfileIntent.OnBirthdateChange -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
             is RegisterProfileIntent.OnWeightChange -> updateWeight(intent.weight)
             is RegisterProfileIntent.OnJobClick -> updateJob(intent.job)

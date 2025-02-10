@@ -62,7 +62,7 @@ internal fun BasicProfilePage(
     onProfileImageChanged: (String) -> Unit,
     onNickNameChanged: (String) -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
-    onBirthdayChanged: (String) -> Unit,
+    onBirthdateChanged: (String) -> Unit,
     onLocationDropDownClicked: () -> Unit,
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
@@ -130,7 +130,7 @@ internal fun BasicProfilePage(
         BirthdateContent(
             birthdate = state.birthdate,
             birthdateInputState = state.birthdateInputState,
-            onBirthdayChanged = onBirthdayChanged,
+            onBirthdateChanged = onBirthdateChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -558,7 +558,7 @@ private fun LocationContent(
 private fun BirthdateContent(
     birthdate: String,
     birthdateInputState: InputState,
-    onBirthdayChanged: (String) -> Unit,
+    onBirthdateChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
@@ -572,7 +572,7 @@ private fun BirthdateContent(
         value = birthdate,
         hint = stringResource(R.string.basic_profile_birthday_guide),
         keyboardType = KeyboardType.Number,
-        onValueChange = onBirthdayChanged,
+        onValueChange = onBirthdateChanged,
         rightComponent = {
             if (birthdate.isNotBlank()) {
                 Image(
@@ -581,7 +581,7 @@ private fun BirthdateContent(
                     modifier = Modifier
                         .padding(start = 8.dp)
                         .size(20.dp)
-                        .clickable { onBirthdayChanged("") },
+                        .clickable { onBirthdateChanged("") },
                 )
             }
         },
@@ -877,7 +877,7 @@ private fun BasicProfilePagePreview() {
             onProfileImageChanged = {},
             onEditPhotoClick = {},
             onDescribeMySelfChanged = {},
-            onBirthdayChanged = {},
+            onBirthdateChanged = {},
             onLocationDropDownClicked = {},
             onHeightChanged = {},
             onWeightChanged = {},

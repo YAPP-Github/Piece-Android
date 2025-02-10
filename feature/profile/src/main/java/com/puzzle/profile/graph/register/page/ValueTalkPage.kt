@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.profile.graph.register.contract.RegisterProfileState
 import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.PAGE_TRANSITION_DURATION
 import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.TEXT_DISPLAY_DURATION
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
@@ -49,15 +48,15 @@ internal fun ValueTalkPage(
     modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
-    var editedValueTalkLabels: List<String> by remember { mutableStateOf(emptyList()) }
+    var editedValueTalkLabels: List<Int> by remember { mutableStateOf(emptyList()) }
 
     ValueTalkCards(
         valueTalks = valueTalks,
         onContentChange = { editedValueTalk ->
             val updatedValueTalks = valueTalks.map { valueTalk ->
-                if (valueTalk.category == editedValueTalk.category) {
-                    if (!editedValueTalkLabels.contains(valueTalk.category)) {
-                        editedValueTalkLabels = editedValueTalkLabels + valueTalk.category
+                if (valueTalk.id == editedValueTalk.id) {
+                    if (!editedValueTalkLabels.contains(valueTalk.id)) {
+                        editedValueTalkLabels = editedValueTalkLabels + valueTalk.id
                     }
                     valueTalk.copy(answer = editedValueTalk.answer)
                 } else {
