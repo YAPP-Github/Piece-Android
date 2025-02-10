@@ -20,8 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.AccessibilityManager
-import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -100,15 +98,9 @@ fun PieceSnackBarHost(
     snackbar: @Composable (SnackbarData) -> Unit = { Snackbar(it) }
 ) {
     val currentSnackbarData = hostState.currentSnackbarData
-    val accessibilityManager = LocalAccessibilityManager.current
     LaunchedEffect(currentSnackbarData) {
         if (currentSnackbarData != null) {
-            val duration =
-                currentSnackbarData.visuals.duration.toMillis(
-                    currentSnackbarData.visuals.actionLabel != null,
-                    accessibilityManager
-                )
-            delay(duration)
+            delay(2000L)
             currentSnackbarData.dismiss()
         }
     }
@@ -118,27 +110,6 @@ fun PieceSnackBarHost(
         modifier = modifier,
         label = "",
         content = { current -> if (current != null) snackbar(current) },
-    )
-}
-
-private fun SnackbarDuration.toMillis(
-    hasAction: Boolean,
-    accessibilityManager: AccessibilityManager?
-): Long {
-    val original =
-        when (this) {
-            SnackbarDuration.Indefinite -> Long.MAX_VALUE
-            SnackbarDuration.Long -> 10000L
-            SnackbarDuration.Short -> 4000L
-        }
-    if (accessibilityManager == null) {
-        return original
-    }
-    return accessibilityManager.calculateRecommendedTimeoutMillis(
-        original,
-        containsIcons = true,
-        containsText = true,
-        containsControls = hasAction
     )
 }
 

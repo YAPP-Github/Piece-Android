@@ -1,7 +1,8 @@
 package com.puzzle.common
 
-import org.junit.Assert.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import java.time.LocalDateTime
 
 class TimeUtilTest {
@@ -43,5 +44,31 @@ class TimeUtilTest {
 
         // then
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `유효한 YYYYMMDD 문자열을 YYYY-MM-DD 형식으로 변환한다`() {
+        assertEquals("2023-05-15", "20230515".toBirthDate())
+        assertEquals("1990-01-01", "19900101".toBirthDate())
+        assertEquals("2025-12-31", "20251231".toBirthDate())
+    }
+
+    @Test
+    fun `잘못된 형식에 대해 IllegalArgumentException을 발생시킨다`() {
+        assertThrows<IllegalArgumentException> { "2023051".toBirthDate() }
+        assertThrows<IllegalArgumentException> { "202305155".toBirthDate() }
+        assertThrows<IllegalArgumentException> { "abcdefgh".toBirthDate() }
+        assertThrows<IllegalArgumentException> { "2023/05/15".toBirthDate() }
+    }
+
+    @Test
+    fun `빈 문자열에 대해 IllegalArgumentException을 발생시킨다`() {
+        assertThrows<IllegalArgumentException> { "".toBirthDate() }
+    }
+
+    @Test
+    fun `공백이 포함된 문자열에 대해 IllegalArgumentException을 발생시킨다`() {
+        assertThrows<IllegalArgumentException> { "2023 0515".toBirthDate() }
+        assertThrows<IllegalArgumentException> { " 20230515 ".toBirthDate() }
     }
 }

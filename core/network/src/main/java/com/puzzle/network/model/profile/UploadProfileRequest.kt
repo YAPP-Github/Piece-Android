@@ -14,7 +14,6 @@ data class UploadProfileRequest(
     val job: String,
     val location: String,
     val nickname: String,
-    val phoneNumber: String,
     val smokingStatus: String,
     val snsActivityLevel: String,
     val valuePicks: List<ValuePickAnswerRequest?>,

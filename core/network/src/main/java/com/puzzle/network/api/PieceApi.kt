@@ -21,6 +21,7 @@ import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -40,10 +41,10 @@ interface PieceApi {
     suspend fun loadTerms(): Result<ApiResponse<LoadTermsResponse>>
 
     @GET("/api/valuePicks")
-    suspend fun loadValuePicks(): Result<ApiResponse<LoadValuePicksResponse>>
+    suspend fun loadValuePickQuestions(): Result<ApiResponse<LoadValuePicksResponse>>
 
     @GET("/api/valueTalks")
-    suspend fun loadValueTalks(): Result<ApiResponse<LoadValueTalksResponse>>
+    suspend fun loadValueTalkQuestions(): Result<ApiResponse<LoadValueTalksResponse>>
 
     @GET("/api/login/token/health-check")
     suspend fun checkTokenHealth(@Query("token") token: String): Result<ApiResponse<Unit>>
@@ -57,6 +58,7 @@ interface PieceApi {
     @POST("/api/profiles")
     suspend fun uploadProfile(@Body uploadProfileRequest: UploadProfileRequest): Result<ApiResponse<UploadProfileResponse>>
 
+    @Multipart
     @POST("/api/profiles/images")
     suspend fun uploadProfileImage(@Part file: MultipartBody.Part): Result<ApiResponse<String>>
 
