@@ -12,8 +12,6 @@ import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
-import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -51,7 +49,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
-            MatchingIntent.NavigateToReportDetail -> navigateToMatchingDetail()
+            is MatchingIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
         }
     }
 
@@ -70,9 +68,6 @@ class MatchingViewModel @AssistedInject constructor(
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
         .onSuccess { setState { copy(matchInfo = it) } }
         .onFailure { errorHelper.sendError(it) }
-
-    private fun navigateToMatchingDetail() =
-        navigationHelper.navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute))
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<MatchingViewModel, MatchingState> {

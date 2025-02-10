@@ -14,6 +14,8 @@ import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.matching.graph.main.page.MatchingPendingScreen
 import com.puzzle.matching.graph.main.page.MatchingUserScreen
+import com.puzzle.navigation.MatchingGraphDest
+import com.puzzle.navigation.NavigationEvent
 
 @Composable
 internal fun MatchingRoute(
@@ -30,14 +32,22 @@ internal fun MatchingRoute(
 
     MatchingScreen(
         state = state,
-        navigateToMatchingDetail = { viewModel.onIntent(MatchingIntent.NavigateToReportDetail) },
+        onMatchingDetailClick = {
+            viewModel.onIntent(
+                MatchingIntent.Navigate(
+                    NavigationEvent.NavigateTo(
+                        MatchingGraphDest.MatchingDetailRoute
+                    )
+                )
+            )
+        },
     )
 }
 
 @Composable
 internal fun MatchingScreen(
     state: MatchingState,
-    navigateToMatchingDetail: () -> Unit,
+    onMatchingDetailClick: () -> Unit,
 ) {
     when (state.userRole) {
         UserRole.PENDING -> MatchingPendingScreen(
@@ -45,7 +55,7 @@ internal fun MatchingScreen(
         )
 
         UserRole.USER -> MatchingUserScreen(
-            onMatchingDetailClick = navigateToMatchingDetail,
+            onMatchingDetailClick = onMatchingDetailClick,
         )
 
         else -> Unit
