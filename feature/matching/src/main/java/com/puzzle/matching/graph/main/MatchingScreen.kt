@@ -37,6 +37,7 @@ internal fun MatchingRoute(
 
     MatchingScreen(
         state = state,
+        onButtonClick = { viewModel.onIntent(MatchingIntent.OnButtonClick) },
         onMatchingDetailClick = {
             viewModel.onIntent(
                 MatchingIntent.Navigate(
@@ -52,6 +53,7 @@ internal fun MatchingRoute(
 @Composable
 internal fun MatchingScreen(
     state: MatchingState,
+    onButtonClick: () -> Unit,
     onMatchingDetailClick: () -> Unit,
 ) {
     when (state.userRole) {
@@ -68,6 +70,7 @@ internal fun MatchingScreen(
                 state.matchInfo?.let {
                     MatchingUserScreen(
                         matchInfo = state.matchInfo,
+                        onButtonClick = onButtonClick,
                         onMatchingDetailClick = onMatchingDetailClick,
                     )
                 } ?: MatchingLoadingScreen()
@@ -130,6 +133,7 @@ private fun PreviewMatchingUserScreen() {
                     "바깥 데이트 스킨십도 가능",
                 )
             ),
+            onButtonClick = {},
             onMatchingDetailClick = {},
         )
     }

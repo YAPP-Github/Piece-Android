@@ -17,4 +17,7 @@ class MatchingRepositoryImpl @Inject constructor(
 
     override suspend fun getMatchInfo(): Result<MatchInfo> = matchingDataSource.getMatchInfo()
         .mapCatching { response -> response.toDomain() }
+
+    override suspend fun checkMatchingPiece(): Result<Unit> =
+        matchingDataSource.checkMatchingPiece()
 }

@@ -6,6 +6,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.UserRepository
@@ -49,6 +50,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
+            MatchingIntent.OnButtonClick -> processOnButtonClick()
             is MatchingIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
         }
     }
@@ -68,6 +70,26 @@ class MatchingViewModel @AssistedInject constructor(
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
         .onSuccess { setState { copy(matchInfo = it) } }
         .onFailure { errorHelper.sendError(it) }
+
+    private fun processOnButtonClick() = withState { state ->
+        when (state.matchInfo?.matchStatus) {
+            MatchStatus.BEFORE_OPEN -> checkMatchingPiece()
+            MatchStatus.GREEN_LIGHT -> acceptMatching()
+            else -> {}
+        }
+    }
+
+    private fun checkMatchingPiece() = viewModelScope.launch {
+        matchingRepository.checkMatchingPiece()
+            .onSuccess {
+                setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.RESPONDED)) }
+            }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun acceptMatching() = viewModelScope.launch {
+
+    }
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<MatchingViewModel, MatchingState> {

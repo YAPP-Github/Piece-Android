@@ -21,4 +21,6 @@ class MatchingDataSource @Inject constructor(
         pieceApi.blockContacts(BlockContactsRequest(phoneNumbers)).unwrapData()
 
     suspend fun getMatchInfo(): Result<GetMatchInfoResponse> = pieceApi.getMatchInfo().unwrapData()
+
+    suspend fun checkMatchingPiece(): Result<Unit> = pieceApi.checkMatchingPiece().unwrapData()
 }

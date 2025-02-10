@@ -20,6 +20,7 @@ import com.puzzle.network.model.token.RefreshTokenResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -73,4 +74,7 @@ interface PieceApi {
 
     @GET("/api/matches/infos")
     suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>
+
+    @PATCH("/api/matches/pieces/check")
+    suspend fun checkMatchingPiece(): Result<ApiResponse<Unit>>
 }

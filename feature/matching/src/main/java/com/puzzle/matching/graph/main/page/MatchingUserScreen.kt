@@ -46,6 +46,7 @@ import com.puzzle.domain.model.match.MatchStatus.WAITING
 @Composable
 internal fun MatchingUserScreen(
     matchInfo: MatchInfo,
+    onButtonClick: () -> Unit,
     onMatchingDetailClick: () -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -211,7 +212,8 @@ internal fun MatchingUserScreen(
 
                 PieceSolidButton(
                     label = stringResource(R.string.check_matching_pieces),
-                    onClick = onMatchingDetailClick,
+                    enabled = matchInfo.matchStatus != MatchStatus.RESPONDED,
+                    onClick = onButtonClick,
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .fillMaxWidth(),
@@ -329,6 +331,7 @@ private fun PreviewMatchingUserScreen() {
                     "바깥 데이트 스킨십도 가능",
                 )
             ),
+            onButtonClick = {},
             onMatchingDetailClick = {},
         )
     }

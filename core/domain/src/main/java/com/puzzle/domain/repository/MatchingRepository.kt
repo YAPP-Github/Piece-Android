@@ -7,4 +7,5 @@ interface MatchingRepository {
     suspend fun blockUser(userId: Int): Result<Unit>
     suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit>
     suspend fun getMatchInfo(): Result<MatchInfo>
+    suspend fun checkMatchingPiece(): Result<Unit>
 }
