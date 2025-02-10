@@ -1,33 +1,21 @@
 package com.puzzle.matching.graph.main
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
-import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.matching.graph.main.page.MatchingPendingScreen
 import com.puzzle.matching.graph.main.page.MatchingUserScreen
+import com.puzzle.matching.graph.main.page.MatchingWaitingScreen
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 
@@ -68,9 +56,17 @@ internal fun MatchingScreen(
             onCheckMyProfileClick = {},
         )
 
-        UserRole.USER -> MatchingUserScreen(
-            onMatchingDetailClick = onMatchingDetailClick,
-        )
+        UserRole.USER -> {
+            if (state.matchInfo?.matchStatus == MatchStatus.WAITING) {
+                MatchingWaitingScreen(
+                    onCheckMyProfileClick = {},
+                )
+            } else {
+                MatchingUserScreen(
+                    onMatchingDetailClick = onMatchingDetailClick,
+                )
+            }
+        }
 
         else -> Unit
     }
@@ -81,6 +77,16 @@ internal fun MatchingScreen(
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
+            onCheckMyProfileClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewMatchingWaitingScreen() {
+    PieceTheme {
+        MatchingWaitingScreen(
             onCheckMyProfileClick = {},
         )
     }

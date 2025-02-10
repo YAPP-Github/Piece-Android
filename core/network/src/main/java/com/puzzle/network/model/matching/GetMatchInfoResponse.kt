@@ -1,6 +1,7 @@
 package com.puzzle.network.model.matching
 
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
 
@@ -17,7 +18,7 @@ data class GetMatchInfoResponse(
 ) {
     fun toDomain() = MatchInfo(
         matchId = matchId ?: UNKNOWN_INT,
-        matchStatus = matchStatus ?: UNKNOWN_STRING,
+        matchStatus = MatchStatus.create(matchStatus),
         description = description ?: "",
         nickname = nickname ?: UNKNOWN_STRING,
         birthYear = birthYear ?: UNKNOWN_STRING,
