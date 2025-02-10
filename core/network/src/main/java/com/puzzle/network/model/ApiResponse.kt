@@ -9,11 +9,8 @@ data class ApiResponse<T>(
     val data: T?,
 )
 
-internal fun <T> Result<ApiResponse<T>>.unwrapData(): Result<T> {
-    return this.map { response ->
-        response.data ?: Unit as T
-    }
-}
+internal fun <T> Result<ApiResponse<T>>.unwrapData(): Result<T> =
+    this.mapCatching { response -> response.data ?: Unit as T }
 
 const val UNKNOWN_INT = -1
 const val UNKNOWN_STRING = "UNKNOWN"

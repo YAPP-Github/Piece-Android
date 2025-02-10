@@ -25,7 +25,7 @@ import com.puzzle.designsystem.component.PieceBottomSheetListItemDefault
 import com.puzzle.designsystem.component.PieceBottomSheetListItemExpandable
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceTextInputDefault
-import com.puzzle.profile.graph.register.contract.Location
+import com.puzzle.profile.graph.register.contract.RegisterProfileState.Location
 import kotlinx.coroutines.delay
 
 @Composable

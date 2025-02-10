@@ -44,7 +44,7 @@ interface PieceApi {
     suspend fun loadValueTalks(): Result<ApiResponse<LoadValueTalksResponse>>
 
     @GET("/api/login/token/health-check")
-    suspend fun checkTokenHealth(): Result<ApiResponse<Unit>>
+    suspend fun checkTokenHealth(@Query("token") token: String): Result<ApiResponse<Unit>>
 
     @POST("/api/auth/refresh")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Result<ApiResponse<RefreshTokenResponse>>

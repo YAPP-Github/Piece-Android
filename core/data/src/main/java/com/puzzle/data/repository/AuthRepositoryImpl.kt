@@ -7,6 +7,7 @@ import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.network.source.auth.AuthDataSource
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +49,10 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkTokenHealth(): Result<Unit> = authDataSource.checkTokenHealth()
+    override suspend fun checkTokenHealth(): Result<Unit> = suspendRunCatching {
+        val accessToken = localTokenDataSource.accessToken.first()
+        authDataSource.checkTokenHealth(accessToken).getOrThrow()
+    }
 
     override suspend fun requestAuthCode(phoneNumber: String): Result<Unit> =
         authDataSource.requestAuthCode(phoneNumber)
