@@ -28,9 +28,11 @@ interface ValuePicksDao {
     suspend fun clearValuePicks()
 
     @Transaction
-    suspend fun replaceValuePicks(valuePick: ValuePickEntity) {
+    suspend fun replaceValuePicks(vararg valuePicks: ValuePickEntity) {
         clearValuePicks()
-        insertValuePickQuestion(valuePick.valuePickQuestion)
-        insertValuePickAnswers(valuePick.answers)
+        valuePicks.forEach { valuePick ->
+            insertValuePickQuestion(valuePick.valuePickQuestion)
+            insertValuePickAnswers(valuePick.answers)
+        }
     }
 }

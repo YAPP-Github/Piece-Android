@@ -91,17 +91,25 @@ class MyValueTalksDaoTestQuestion {
         valueTalksDao.insertValueTalks(oldValueTalk)
 
         // when
-        val newValueTalk = ValueTalkEntity(
-            id = 2,
-            category = "새로운 카테고리",
-            title = "새로운 제목",
-            helpMessages = listOf("새로운 메시지 1", "새로운 메시지 2")
+        val newValueTalk = listOf(
+            ValueTalkEntity(
+                id = 2,
+                category = "새로운 카테고리",
+                title = "새로운 제목",
+                helpMessages = listOf("새로운 메시지 1", "새로운 메시지 2")
+            ),
+            ValueTalkEntity(
+                id = 3,
+                category = "새로운 카테고리",
+                title = "새로운 제목",
+                helpMessages = listOf("새로운 메시지 3", "새로운 메시지 4")
+            )
         )
 
-        valueTalksDao.replaceValueTalks(newValueTalk)
+        valueTalksDao.replaceValueTalks(*newValueTalk.toTypedArray())
         val actual = valueTalksDao.getValueTalks()
 
         // then
-        assertEquals(listOf(newValueTalk), actual)
+        assertEquals(newValueTalk, actual)
     }
 }

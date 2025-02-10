@@ -177,6 +177,6 @@ class MyValuePicksDaoTestQuestion {
         val actual = valuePicksDao.getValuePicks()
 
         // then
-        assertEquals(listOf(expected), actual)
+        assertEquals(expected, actual)
     }
 }

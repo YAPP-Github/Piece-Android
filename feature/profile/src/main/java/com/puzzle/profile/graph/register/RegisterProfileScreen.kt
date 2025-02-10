@@ -178,8 +178,8 @@ private fun RegisterProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
-    var valueTalks: List<ValueTalkRegisterRO> by remember { mutableStateOf(state.valueTalks) }
-    var valuePicks: List<ValuePickRegisterRO> by remember { mutableStateOf(state.valuePicks) }
+    var valueTalks: List<ValueTalkRegisterRO> by remember(state.valueTalks) { mutableStateOf(state.valueTalks) }
+    var valuePicks: List<ValuePickRegisterRO> by remember(state.valuePicks) { mutableStateOf(state.valuePicks) }
 
     Column(
         modifier = modifier

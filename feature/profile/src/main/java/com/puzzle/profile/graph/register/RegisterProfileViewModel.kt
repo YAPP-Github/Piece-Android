@@ -1,5 +1,6 @@
 package com.puzzle.profile.graph.register
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
@@ -92,6 +93,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private suspend fun retrieveValuePick() {
         profileRepository.retrieveValuePickQuestion()
             .onSuccess { valuePickQuestions ->
+                Log.d("test", "retrieveValuePick 호출 ${valuePickQuestions}")
+
                 setState {
                     copy(
                         valuePicks = valuePickQuestions.map {
@@ -111,19 +114,23 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private suspend fun retrieveValueTalk() {
         profileRepository.retrieveValueTalkQuestion()
             .onSuccess { valueTalkQuestions ->
-                setState {
-                    copy(
-                        valueTalks = valueTalkQuestions.map {
-                            ValueTalkRegisterRO(
-                                id = it.id,
-                                category = it.category,
-                                title = it.title,
-                                guides = it.guides,
-                                answer = "",
-                            )
-                        },
+                Log.d("test", "retrieveValueTalk 호출 ${valueTalkQuestions}")
+                val result = valueTalkQuestions.map {
+                    ValueTalkRegisterRO(
+                        id = it.id,
+                        category = it.category,
+                        title = it.title,
+                        guides = it.guides,
+                        answer = "",
                     )
                 }
+                setState {
+                    copy(
+                        valueTalks = result
+                    )
+                }
+
+                Log.d("test", result.toString())
             }
             .onFailure { errorHelper.sendError(it) }
     }
