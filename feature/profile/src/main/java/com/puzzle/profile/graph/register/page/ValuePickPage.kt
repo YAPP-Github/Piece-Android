@@ -144,7 +144,7 @@ private fun ValuePickCard(
             modifier = Modifier.padding(bottom = 24.dp),
         )
 
-        item.answers.forEachIndexed { index, answer ->
+        item.answerOptions.forEachIndexed { index, answer ->
             PieceChip(
                 label = answer.content,
                 selected = answer.number == item.selectedAnswer,
@@ -153,7 +153,7 @@ private fun ValuePickCard(
                         item.copy(selectedAnswer = answer.number)
                     )
                 },
-                modifier = if (index < item.answers.size - 1) {
+                modifier = if (index < item.answerOptions.size - 1) {
                     Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)

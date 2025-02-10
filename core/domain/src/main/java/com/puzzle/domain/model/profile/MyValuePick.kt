@@ -4,6 +4,6 @@ data class MyValuePick(
     val id: Int,
     val category: String,
     val question: String,
-    val answers: List<Answer>,
+    val answerOptions: List<AnswerOption>,
     val selectedAnswer: Int,
 )

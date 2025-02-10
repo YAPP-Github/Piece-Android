@@ -49,7 +49,7 @@ import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubButton
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.AnswerOption
 import com.puzzle.domain.model.profile.OpponentValuePick
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
@@ -296,7 +296,7 @@ private fun ValuePickCard(
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp),
         )
 
-        valuePickQuestion.answers.forEachIndexed { idx, answer ->
+        valuePickQuestion.answerOptions.forEachIndexed { idx, answer ->
             PieceSubButton(
                 label = answer.content,
                 onClick = {},
@@ -323,9 +323,9 @@ private fun ProfileValuePickPagePreview() {
                 OpponentValuePick(
                     category = "음주",
                     question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
-                    answers = listOf(
-                        Answer(1, "함께 술을 즐기고 싶어요"),
-                        Answer(2, "같이 술을 즐길 수 없어도 괜찮아요")
+                    answerOptions = listOf(
+                        AnswerOption(1, "함께 술을 즐기고 싶어요"),
+                        AnswerOption(2, "같이 술을 즐길 수 없어도 괜찮아요")
                     ),
                     selectedAnswer = 1,
                     isSameWithMe = true,
@@ -333,9 +333,9 @@ private fun ProfileValuePickPagePreview() {
                 OpponentValuePick(
                     category = "만남 빈도",
                     question = "주말에 얼마나 자주 데이트를 하고싶나요?",
-                    answers = listOf(
-                        Answer(1, "주말에는 최대한 같이 있고 싶어요"),
-                        Answer(2, "하루 정도는 각자 보내고 싶어요")
+                    answerOptions = listOf(
+                        AnswerOption(1, "주말에는 최대한 같이 있고 싶어요"),
+                        AnswerOption(2, "하루 정도는 각자 보내고 싶어요")
                     ),
                     selectedAnswer = 1,
                     isSameWithMe = false,
@@ -343,9 +343,9 @@ private fun ProfileValuePickPagePreview() {
                 OpponentValuePick(
                     category = "연락 빈도",
                     question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
-                    answers = listOf(
-                        Answer(1, "바빠도 최대한 자주 연락하고 싶어요"),
-                        Answer(2, "연락은 생각날 때만 종종 해도 괜찮아요")
+                    answerOptions = listOf(
+                        AnswerOption(1, "바빠도 최대한 자주 연락하고 싶어요"),
+                        AnswerOption(2, "연락은 생각날 때만 종종 해도 괜찮아요")
                     ),
                     selectedAnswer = 1,
                     isSameWithMe = true,
@@ -353,9 +353,9 @@ private fun ProfileValuePickPagePreview() {
                 OpponentValuePick(
                     category = "연락 방식",
                     question = "연락할 때 어떤 방법을 더 좋아하나요?",
-                    answers = listOf(
-                        Answer(1, "전화보다는 문자나 카톡이 좋아요"),
-                        Answer(2, "문자나 카톡보다는 전화가 좋아요")
+                    answerOptions = listOf(
+                        AnswerOption(1, "전화보다는 문자나 카톡이 좋아요"),
+                        AnswerOption(2, "문자나 카톡보다는 전화가 좋아요")
                     ),
                     selectedAnswer = 1,
                     isSameWithMe = false,

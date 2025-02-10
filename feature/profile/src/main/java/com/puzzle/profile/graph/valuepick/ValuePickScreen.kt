@@ -34,7 +34,7 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.AnswerOption
 import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 import com.puzzle.profile.graph.valuepick.contract.ValuePickIntent
 import com.puzzle.profile.graph.valuepick.contract.ValuePickSideEffect
@@ -218,7 +218,7 @@ private fun ValuePickCard(
             modifier = Modifier.padding(bottom = 24.dp),
         )
 
-        item.answers.forEachIndexed { index, answer ->
+        item.answerOptions.forEachIndexed { index, answer ->
             PieceChip(
                 label = answer.content,
                 selected = answer.number == item.selectedAnswer,
@@ -228,7 +228,7 @@ private fun ValuePickCard(
                     )
                 },
                 enabled = screenState == ScreenState.EDITING,
-                modifier = if (index < item.answers.size - 1) {
+                modifier = if (index < item.answerOptions.size - 1) {
                     Modifier
                         .fillMaxWidth()
                         .padding(bottom = 8.dp)
@@ -252,12 +252,12 @@ private fun ValuePickPreview() {
                         category = "음주",
                         question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
                         selectedAnswer = 1,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "함께 술을 즐기고 싶어요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "같이 술을 즐길 수 없어도 괜찮아요."
                             )
@@ -268,12 +268,12 @@ private fun ValuePickPreview() {
                         category = "만남 빈도",
                         question = "주말에 얼마나 자주 데이트를 하고싶나요?",
                         selectedAnswer = 1,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "주말에는 최대한 같이 있고 싶어요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "하루 정도는 각자 보내고 싶어요."
                             )
@@ -284,12 +284,12 @@ private fun ValuePickPreview() {
                         category = "연락 빈도",
                         question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
                         selectedAnswer = 1,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "바빠도 최대한 자주 연락하고 싶어요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "연락은 생각날 때만 종종 해도 괜찮아요"
                             )
@@ -300,12 +300,12 @@ private fun ValuePickPreview() {
                         category = "연락 방식",
                         question = "연락할 때 어떤 방법을 더 좋아하나요?",
                         selectedAnswer = 1,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "전화보다는 문자나 카톡이 좋아요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "문자나 카톡보다는 전화가 좋아요"
                             )
@@ -316,12 +316,12 @@ private fun ValuePickPreview() {
                         category = "데이트",
                         question = "공공장소에서 연인 티를 내는 것에 대해 어떻게 생각하나요?",
                         selectedAnswer = 2,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "밖에서 연인 티내는건 조금 부담스러워요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "밖에서도 자연스럽게 연인 티내고 싶어요"
                             )
@@ -332,12 +332,12 @@ private fun ValuePickPreview() {
                         category = "장거리 연애",
                         question = "장거리 연애에 대해 어떻게 생각하나요?",
                         selectedAnswer = 1,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "믿음이 있다면 장거리 연애도 괜찮아요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "장거리 연애는 조금 힘들어요"
                             )
@@ -348,12 +348,12 @@ private fun ValuePickPreview() {
                         category = "SNS",
                         question = "연인이 활발한 SNS 활동을 하거나 게스타라면 기분이 어떨 것 같나요?",
                         selectedAnswer = 2,
-                        answers = listOf(
-                            Answer(
+                        answerOptions = listOf(
+                            AnswerOption(
                                 number = 1,
                                 content = "연인의 SNS 활동, 크게 상관 없어요",
                             ),
-                            Answer(
+                            AnswerOption(
                                 number = 2,
                                 content = "SNS 활동과 게스타는 조금 불편해요"
                             )

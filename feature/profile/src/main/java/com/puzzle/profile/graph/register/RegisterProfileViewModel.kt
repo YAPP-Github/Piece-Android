@@ -101,7 +101,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                                 id = it.id,
                                 category = it.category,
                                 question = it.question,
-                                answers = it.answers,
+                                answerOptions = it.answerOptions,
                                 selectedAnswer = null,
                             )
                         }

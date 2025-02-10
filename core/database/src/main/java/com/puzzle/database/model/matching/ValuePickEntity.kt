@@ -6,7 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.AnswerOption
 import com.puzzle.domain.model.profile.ValuePickQuestion
 
 data class ValuePickEntity(
@@ -22,8 +22,8 @@ data class ValuePickEntity(
         id = valuePickQuestion.id,
         category = valuePickQuestion.category,
         question = valuePickQuestion.question,
-        answers = answers.map {
-            Answer(
+        answerOptions = answers.map {
+            AnswerOption(
                 number = it.number,
                 content = it.content,
             )

@@ -4,10 +4,10 @@ data class ValuePickQuestion(
     val id: Int,
     val category: String,
     val question: String,
-    val answers: List<Answer>,
+    val answerOptions: List<AnswerOption>,
 )
 
-data class Answer(
+data class AnswerOption(
     val number: Int,
     val content: String,
 )

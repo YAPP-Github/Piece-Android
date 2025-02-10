@@ -1,6 +1,6 @@
 package com.puzzle.network.model.matching
 
-import com.puzzle.domain.model.profile.Answer
+import com.puzzle.domain.model.profile.AnswerOption
 import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
@@ -24,7 +24,7 @@ data class ValuePickResponse(
         id = id ?: UNKNOWN_INT,
         category = category ?: UNKNOWN_STRING,
         question = question ?: UNKNOWN_STRING,
-        answers = answers?.map(ValuePickAnswerResponse::toDomain) ?: emptyList()
+        answerOptions = answers?.map(ValuePickAnswerResponse::toDomain) ?: emptyList()
     )
 }
 
@@ -33,7 +33,7 @@ data class ValuePickAnswerResponse(
     val number: Int?,
     val content: String?,
 ) {
-    fun toDomain() = Answer(
+    fun toDomain() = AnswerOption(
         number = number ?: UNKNOWN_INT,
         content = content ?: UNKNOWN_STRING,
     )

@@ -40,7 +40,7 @@ class ProfileRepositoryImpl @Inject constructor(
                     category = valuePick.category,
                     question = valuePick.question,
                 ),
-                answers = valuePick.answers.map { answer ->
+                answers = valuePick.answerOptions.map { answer ->
                     ValuePickAnswerEntity(
                         questionsId = valuePick.id,
                         number = answer.number,
