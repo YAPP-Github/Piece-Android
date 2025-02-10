@@ -1,11 +1,12 @@
 package com.puzzle.profile.graph.valuetalk.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.profile.ValueTalkQuestion
+import com.puzzle.profile.graph.valuetalk.model.MyValueTalkRO
 
 data class ValueTalkState(
-    val valueTalkQuestions: List<ValueTalkQuestion> = listOf(
-        ValueTalkQuestion(
+    val valueTalkQuestions: List<MyValueTalkRO> = listOf(
+        MyValueTalkRO(
+            id = 1,
             category = "연애관",
             title = "어떠한 사람과 어떠한 연애를 하고 싶은지 들려주세요",
             answer = "저는 연애에서 서로의 존중과 신뢰가 가장 중요하다고 생각합니다. 진정한 소통을 통해 서로의 감정을 이해하고, 함께 성장할 수 있는 관계를 원합니다. 일상 속 작은 것에도 감사하며, 서로의 꿈과 목표를 지지하고 응원하는 파트너가 되고 싶습니다. 또한, 유머와 즐거움을 잃지 않으며, 함께하는 순간들을 소중히 여기고 싶습니다. 사랑은 서로를 더 나은 사람으로 만들어주는 힘이 있다고 믿습니다. 서로에게 긍정적인 영향을 주며 행복한 시간을 함께하고 싶습니다!",
@@ -18,7 +19,8 @@ data class ValueTalkState(
                 "연인 관계를 통해 어떤 가치를 얻고 싶나요?",
             ),
         ),
-        ValueTalkQuestion(
+        MyValueTalkRO(
+            id = 2,
             category = "관심사와 취향",
             title = "무엇을 할 때 가장 행복한가요?\n요즘 어떠한 것에 관심을 두고 있나요?",
             answer = "저는 다양한 취미와 관심사를 가진 사람입니다. 음악을 사랑하여 콘서트에 자주 가고, 특히 인디 음악과 재즈에 매력을 느낍니다. 요리도 좋아해 새로운 레시피에 도전하는 것을 즐깁니다. 여행을 통해 새로운 맛과 문화를 경험하는 것도 큰 기쁨입니다. 또, 자연을 사랑해서 주말마다 하이킹이나 캠핑을 자주 떠납니다. 영화와 책도 좋아해, 좋은 이야기와 감동을 나누는 시간을 소중히 여깁니다. 서로의 취향을 공유하며 즐거운 시간을 보낼 수 있기를 기대합니다!",
@@ -31,7 +33,8 @@ data class ValueTalkState(
                 "요즘 마음을 사로잡은 콘텐츠를 공유해 보세요",
             ),
         ),
-        ValueTalkQuestion(
+        MyValueTalkRO(
+            id = 3,
             category = "꿈과 목표",
             title = "어떤 일을 하며 무엇을 목표로 살아가나요?\n인생에서 이루고 싶은 꿈은 무엇인가요?",
             answer = "안녕하세요! 저는 삶의 매 순간을 소중히 여기며, 꿈과 목표를 이루기 위해 노력하는 사람입니다. 제 가장 큰 꿈은 여행을 통해 다양한 문화와 사람들을 경험하고, 그 과정에서 얻은 지혜를 나누는 것입니다. 또한, LGBTQ+ 커뮤니티를 위한 긍정적인 변화를 이끌어내고 싶습니다. 내가 이루고자 하는 목표는 나 자신을 발전시키고, 사랑하는 사람들과 함께 행복한 순간들을 만드는 것입니다. 서로의 꿈을 지지하며 함께 성장할 수 있는 관계를 기대합니다!",

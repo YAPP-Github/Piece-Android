@@ -327,7 +327,7 @@ private fun ProfileValuePickPagePreview() {
                         Answer(1, "함께 술을 즐기고 싶어요"),
                         Answer(2, "같이 술을 즐길 수 없어도 괜찮아요")
                     ),
-                    answerNumber = 1,
+                    selectedAnswer = 1,
                     isSameWithMe = true,
                 ),
                 OpponentValuePick(
@@ -337,7 +337,7 @@ private fun ProfileValuePickPagePreview() {
                         Answer(1, "주말에는 최대한 같이 있고 싶어요"),
                         Answer(2, "하루 정도는 각자 보내고 싶어요")
                     ),
-                    answerNumber = 1,
+                    selectedAnswer = 1,
                     isSameWithMe = false,
                 ),
                 OpponentValuePick(
@@ -347,7 +347,7 @@ private fun ProfileValuePickPagePreview() {
                         Answer(1, "바빠도 최대한 자주 연락하고 싶어요"),
                         Answer(2, "연락은 생각날 때만 종종 해도 괜찮아요")
                     ),
-                    answerNumber = 1,
+                    selectedAnswer = 1,
                     isSameWithMe = true,
                 ),
                 OpponentValuePick(
@@ -357,7 +357,7 @@ private fun ProfileValuePickPagePreview() {
                         Answer(1, "전화보다는 문자나 카톡이 좋아요"),
                         Answer(2, "문자나 카톡보다는 전화가 좋아요")
                     ),
-                    answerNumber = 1,
+                    selectedAnswer = 1,
                     isSameWithMe = false,
                 ),
             ),

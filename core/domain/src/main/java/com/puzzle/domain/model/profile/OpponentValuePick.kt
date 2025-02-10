@@ -4,6 +4,6 @@ data class OpponentValuePick(
     val category: String,
     val question: String,
     val answers: List<Answer>,
-    val answerNumber: Int,
+    val selectedAnswer: Int,
     val isSameWithMe: Boolean,
 )

@@ -1,10 +1,10 @@
-package com.puzzle.domain.model.profile
+package com.puzzle.profile.graph.valuetalk.model
 
-data class MyValueTalk(
+data class MyValueTalkRO(
     val id: Int,
     val category: String,
     val title: String,
     val answer: String,
-    val guides: List<String>,
     val summary: String,
+    val guides: List<String>,
 )

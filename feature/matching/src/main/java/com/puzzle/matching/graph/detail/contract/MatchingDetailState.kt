@@ -1,8 +1,8 @@
 package com.puzzle.matching.graph.detail.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.profile.ValuePickQuestion
-import com.puzzle.domain.model.profile.ValueTalkQuestion
+import com.puzzle.domain.model.profile.OpponentValuePick
+import com.puzzle.domain.model.profile.OpponentValueTalk
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
@@ -15,8 +15,8 @@ data class MatchingDetailState(
     val occupation: String = "개발자",
     val activityRegion: String = "서울특별시",
     val smokeStatue: String = "비흡연",
-    val talkCards: List<ValueTalkQuestion> = emptyList(),
-    val pickCards: List<ValuePickQuestion> = emptyList(),
+    val talkCards: List<OpponentValueTalk> = emptyList(),
+    val pickCards: List<OpponentValuePick> = emptyList(),
     val imageUri: String = "",
 ) : MavericksState {
 

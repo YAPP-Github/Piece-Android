@@ -91,10 +91,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private suspend fun retrieveValuePick() {
         profileRepository.retrieveValuePickQuestion()
-            .onSuccess {
+            .onSuccess { valuePickQuestions ->
                 setState {
                     copy(
-                        valuePicks = it.map {
+                        valuePicks = valuePickQuestions.map {
                             ValuePickRegisterRO(
                                 id = it.id,
                                 category = it.category,
@@ -110,10 +110,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private suspend fun retrieveValueTalk() {
         profileRepository.retrieveValueTalkQuestion()
-            .onSuccess {
+            .onSuccess { valueTalkQuestions ->
                 setState {
                     copy(
-                        valueTalks = it.map {
+                        valueTalks = valueTalkQuestions.map {
                             ValueTalkRegisterRO(
                                 id = it.id,
                                 category = it.category,
@@ -188,10 +188,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
                 smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
                 snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
                 contacts = state.contacts,
-                valuePicks = state.valuePicks.map {
+                valuePicks = state.valuePicks.map { valuePick ->
                     ValuePickAnswer(
-                        valuePickId = it.id,
-                        selectedAnswer = it.selectedAnswer,
+                        valuePickId = valuePick.id,
+                        selectedAnswer = valuePick.selectedAnswer,
                     )
                 },
                 valueTalks = state.valueTalks.map {
