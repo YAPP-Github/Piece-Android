@@ -16,5 +16,5 @@ data class Answer(
 
 data class ValuePickAnswer(
     val valuePickId: Int,
-    val selectedAnswer: Int,
+    val selectedAnswer: Int?,
 )

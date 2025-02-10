@@ -108,7 +108,7 @@ internal fun BasicProfilePage(
         )
 
         NickNameContent(
-            nickName = state.nickName,
+            nickName = state.nickname,
             nickNameGuideMessage = state.nickNameGuideMessage,
             isCheckingButtonAvailable = state.isCheckingButtonEnabled,
             onNickNameChanged = onNickNameChanged,
