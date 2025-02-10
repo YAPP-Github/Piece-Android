@@ -48,16 +48,12 @@ internal fun ValueTalkPage(
     modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
-    var editedValueTalkLabels: List<Int> by remember { mutableStateOf(emptyList()) }
 
     ValueTalkCards(
         valueTalks = valueTalks,
         onContentChange = { editedValueTalk ->
             val updatedValueTalks = valueTalks.map { valueTalk ->
                 if (valueTalk.id == editedValueTalk.id) {
-                    if (!editedValueTalkLabels.contains(valueTalk.id)) {
-                        editedValueTalkLabels = editedValueTalkLabels + valueTalk.id
-                    }
                     valueTalk.copy(answer = editedValueTalk.answer)
                 } else {
                     valueTalk
