@@ -38,6 +38,7 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.matching.graph.main.MatchingTopBar
 
 @Composable
 internal fun MatchingUserScreen(
@@ -51,18 +52,7 @@ internal fun MatchingUserScreen(
             .background(PieceTheme.colors.black)
             .padding(horizontal = 20.dp),
     ) {
-        PieceMainTopBar(
-            title = stringResource(R.string.matching_title),
-            titleColor = PieceTheme.colors.white,
-            rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_alarm),
-                    contentDescription = "",
-                    modifier = Modifier.size(32.dp),
-                )
-            },
-            modifier = Modifier.padding(vertical = 14.dp),
-        )
+        MatchingTopBar()
 
         Box(
             contentAlignment = Alignment.Center,
