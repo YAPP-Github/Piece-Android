@@ -37,8 +37,6 @@ class MatchingViewModel @AssistedInject constructor(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
-        initMatchInfo()
-
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
@@ -55,7 +53,7 @@ class MatchingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun initMatchInfo() = viewModelScope.launch {
+    internal fun initMatchInfo() = viewModelScope.launch {
         userRepository.getUserRole()
             .onSuccess { userRole ->
                 if (userRole == UserRole.USER) {

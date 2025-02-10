@@ -27,12 +27,15 @@ internal fun MatchingRoute(
     viewModel: MatchingViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
+
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(viewModel) {
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
             }
         }
+
+        viewModel.initMatchInfo()
     }
 
     MatchingScreen(
@@ -41,9 +44,7 @@ internal fun MatchingRoute(
         onMatchingDetailClick = {
             viewModel.onIntent(
                 MatchingIntent.Navigate(
-                    NavigationEvent.NavigateTo(
-                        MatchingGraphDest.MatchingDetailRoute
-                    )
+                    NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute)
                 )
             )
         },
