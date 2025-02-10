@@ -24,11 +24,11 @@ import javax.inject.Singleton
 class ProfileDataSourceImpl @Inject constructor(
     private val pieceApi: PieceApi,
 ) : ProfileDataSource {
-    override suspend fun loadValuePicks(): Result<LoadValuePicksResponse> =
-        pieceApi.loadValuePicks().unwrapData()
+    override suspend fun loadValuePickQuestions(): Result<LoadValuePicksResponse> =
+        pieceApi.loadValuePickQuestions().unwrapData()
 
-    override suspend fun loadValueTalks(): Result<LoadValueTalksResponse> =
-        pieceApi.loadValueTalks().unwrapData()
+    override suspend fun loadValueTalkQuestions(): Result<LoadValueTalksResponse> =
+        pieceApi.loadValueTalkQuestions().unwrapData()
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         pieceApi.checkNickname(nickname).unwrapData()
@@ -61,7 +61,6 @@ class ProfileDataSourceImpl @Inject constructor(
         job: String,
         location: String,
         nickname: String,
-        phoneNumber: String,
         smokingStatus: String,
         snsActivityLevel: String,
         contacts: List<Contact>,
@@ -77,13 +76,12 @@ class ProfileDataSourceImpl @Inject constructor(
             job = job,
             location = location,
             nickname = nickname,
-            phoneNumber = phoneNumber,
             smokingStatus = smokingStatus,
             snsActivityLevel = snsActivityLevel,
             valuePicks = valuePicks.map {
                 ValuePickAnswerRequest(
                     valuePickId = it.valuePickId,
-                    selectedAnswer = it.selectedAnswer
+                    selectedAnswer = it.selectedAnswer!!,
                 )
             },
             valueTalks = valueTalks.map {

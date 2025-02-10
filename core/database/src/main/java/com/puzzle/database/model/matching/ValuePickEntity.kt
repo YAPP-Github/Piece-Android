@@ -6,34 +6,33 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import com.puzzle.domain.model.profile.Answer
-import com.puzzle.domain.model.profile.ValuePick
+import com.puzzle.domain.model.profile.AnswerOption
+import com.puzzle.domain.model.profile.ValuePickQuestion
 
 data class ValuePickEntity(
-    @Embedded val valuePickQuestion: ValuePickQuestion,
+    @Embedded val valuePickQuestion: ValuePickQuestionEntity,
     @Relation(
         parentColumn = "id",
         entityColumn = "questionsId",
-        entity = ValuePickAnswer::class,
+        entity = ValuePickAnswerEntity::class,
     )
-    val answers: List<ValuePickAnswer>,
+    val answers: List<ValuePickAnswerEntity>,
 ) {
-    fun toDomain() = ValuePick(
+    fun toDomain() = ValuePickQuestion(
         id = valuePickQuestion.id,
         category = valuePickQuestion.category,
         question = valuePickQuestion.question,
-        answers = answers.map {
-            Answer(
+        answerOptions = answers.map {
+            AnswerOption(
                 number = it.number,
                 content = it.content,
             )
         },
-        isSimilarToMe = false,
     )
 }
 
 @Entity(tableName = "value_pick_question")
-data class ValuePickQuestion(
+data class ValuePickQuestionEntity(
     @PrimaryKey val id: Int,
     val category: String,
     val question: String,
@@ -43,7 +42,7 @@ data class ValuePickQuestion(
     tableName = "value_pick_answer",
     foreignKeys = [
         ForeignKey(
-            entity = ValuePickQuestion::class,
+            entity = ValuePickQuestionEntity::class,
             parentColumns = ["id"],
             childColumns = ["questionsId"],
             onDelete = ForeignKey.CASCADE
@@ -51,7 +50,7 @@ data class ValuePickQuestion(
     ],
     indices = [Index("questionsId")]
 )
-data class ValuePickAnswer(
+data class ValuePickAnswerEntity(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val questionsId: Int,
     val number: Int,
