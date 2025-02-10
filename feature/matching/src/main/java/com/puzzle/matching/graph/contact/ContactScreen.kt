@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,8 +38,13 @@ import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.matching.graph.contact.contract.ContactIntent
 import com.puzzle.matching.graph.contact.contract.ContactSideEffect
 import com.puzzle.matching.graph.contact.contract.ContactState
+import com.puzzle.matching.graph.contact.contract.getContactIconId
+import com.puzzle.matching.graph.contact.contract.getContactNameId
+import com.puzzle.matching.graph.contact.contract.getSelectedContactIconId
+import com.puzzle.matching.graph.contact.contract.getUnSelectedContactIconId
 
 @Composable
 internal fun ContactRoute(
@@ -62,8 +66,15 @@ internal fun ContactRoute(
 
     ContactScreen(
         state = state,
-        onCloseClick = {},
-        onContactClick = {},
+        onCloseClick = {
+            viewModel.onIntent(ContactIntent.OnCloseClick)
+        },
+        onContactClick = {
+            viewModel.onIntent(ContactIntent.OnContactClick(it))
+        },
+        onCopyClick = {
+            viewModel.onIntent(ContactIntent.OnCopyClick)
+        },
     )
 }
 
@@ -72,6 +83,7 @@ private fun ContactScreen(
     state: ContactState,
     onCloseClick: () -> Unit,
     onContactClick: (Contact) -> Unit,
+    onCopyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box {
@@ -89,128 +101,138 @@ private fun ContactScreen(
                     .padding(vertical = 14.dp),
             )
 
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                        append(state.nickName)
-                    }
-                    append(stringResource(R.string.maching_contact_header))
-                },
-                style = PieceTheme.typography.headingLSB,
-                modifier = Modifier.padding(top = 20.dp),
-            )
-
-            Text(
-                text = stringResource(R.string.maching_contact_sub_header),
-                textAlign = TextAlign.Center,
-                style = PieceTheme.typography.bodyMR,
-                color = PieceTheme.colors.dark1,
-                modifier = Modifier.padding(top = 8.dp),
-            )
-
-            Image(
-                painter = painterResource(R.drawable.ic_textinput_check),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(300.dp)
-                    .padding(top = 48.dp),
-            )
+            ContactBody(nickName = state.nickName)
 
             Spacer(modifier = Modifier.weight(1f))
 
             state.selectedContact?.let { selectedContact ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                ContactInfo(
+                    selectedContact = selectedContact,
+                    contacts = state.contacts,
+                    onContactClick = onContactClick,
+                    onCopyClick = onCopyClick,
                     modifier = Modifier
-                        .wrapContentSize()
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(color = PieceTheme.colors.white)
-                        .fillMaxWidth(),
-                ) {
-                    Row(
-                        modifier = Modifier.padding(top = 24.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val (contactIconId, contactNameId) = when (selectedContact.snsPlatform) {
-                            SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao to R.string.maching_contact_kakao_id
-                            SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting to R.string.maching_contact_open_chat_id
-                            SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram to R.string.maching_contact_insta_id
-                            SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call to R.string.maching_contact_phone_number
-                            SnsPlatform.UNKNOWN -> R.drawable.ic_info to R.string.maching_contact_null
-                        }
+                        .fillMaxWidth()
+                )
+            }
+        }
+    }
+}
 
-                        Image(
-                            painter = painterResource(contactIconId),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                        )
+@Composable
+private fun ContactBody(nickName: String) {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                append(nickName)
+            }
+            append(stringResource(R.string.maching_contact_header))
+        },
+        style = PieceTheme.typography.headingLSB,
+        modifier = Modifier.padding(top = 20.dp),
+    )
 
-                        Text(
-                            text = stringResource(contactNameId),
-                            textAlign = TextAlign.Center,
-                            style = PieceTheme.typography.bodySSB,
-                            color = PieceTheme.colors.dark3,
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
-                    }
+    Text(
+        text = stringResource(R.string.maching_contact_sub_header),
+        textAlign = TextAlign.Center,
+        style = PieceTheme.typography.bodyMR,
+        color = PieceTheme.colors.dark1,
+        modifier = Modifier.padding(top = 8.dp),
+    )
 
-                    Row(
-                        modifier = Modifier.padding(top = 8.dp, bottom = 24.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = selectedContact.content,
-                            textAlign = TextAlign.Center,
-                            style = PieceTheme.typography.headingMSB,
-                            color = PieceTheme.colors.black,
-                        )
+    Image(
+        painter = painterResource(R.drawable.ic_textinput_check),
+        contentDescription = null,
+        modifier = Modifier
+            .size(300.dp)
+            .padding(top = 48.dp),
+    )
+}
 
-                        Image(
-                            painter = painterResource(R.drawable.ic_copy),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(20.dp)
-                                .padding(start = 8.dp),
-                        )
-                    }
+@Composable
+private fun ContactInfo(
+    selectedContact: Contact,
+    contacts: List<Contact>,
+    onContactClick: (Contact) -> Unit,
+    onCopyClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val contactIconId: Int? = selectedContact.snsPlatform.getContactIconId()
+    val contactNameId: Int? = selectedContact.snsPlatform.getContactNameId()
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(color = PieceTheme.colors.white)
+            .padding(vertical = 24.dp, horizontal = 32.dp)
+            .fillMaxWidth(),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (contactIconId != null && contactNameId != null) {
+                Image(
+                    painter = painterResource(contactIconId),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+
+                Text(
+                    text = stringResource(contactNameId),
+                    textAlign = TextAlign.Center,
+                    style = PieceTheme.typography.bodySSB,
+                    color = PieceTheme.colors.dark3,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier.padding(top = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = selectedContact.content,
+                textAlign = TextAlign.Center,
+                style = PieceTheme.typography.headingMSB,
+                color = PieceTheme.colors.black,
+            )
+
+            Image(
+                painter = painterResource(R.drawable.ic_copy),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(20.dp)
+                    .padding(start = 8.dp)
+                    .clickable {
+                        onCopyClick()
+                    },
+            )
+        }
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.padding(top = 21.dp, bottom = 10.dp),
+    ) {
+        contacts.forEach {
+            val contactOnOffIconId =
+                if (selectedContact == it) {
+                    it.snsPlatform.getSelectedContactIconId()
+                } else {
+                    it.snsPlatform.getUnSelectedContactIconId()
                 }
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.padding(top = 21.dp),
-                ) {
-                    state.contacts.forEach {
-                        val contactIconId =
-                            if (selectedContact == it) {
-                                when (selectedContact.snsPlatform) {
-                                    SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_kakao_on
-                                    SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_open_chat_on
-                                    SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_insta_on
-                                    SnsPlatform.PHONE_NUMBER -> R.drawable.ic_phone_on
-                                    SnsPlatform.UNKNOWN -> R.drawable.ic_info
-                                }
-                            } else {
-                                when (it.snsPlatform) {
-                                    SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_kakao_off
-                                    SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_open_chat_off
-                                    SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_insta_off
-                                    SnsPlatform.PHONE_NUMBER -> R.drawable.ic_phone_off
-                                    SnsPlatform.UNKNOWN -> R.drawable.ic_info
-                                }
-                            }
-
-                        Image(
-                            painter = painterResource(contactIconId),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(52.dp)
-                                .clickable {
-                                    onContactClick(it)
-                                },
-                        )
-                    }
-                }
+            if (contactOnOffIconId != null) {
+                Image(
+                    painter = painterResource(contactOnOffIconId),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(52.dp)
+                        .clickable {
+                            onContactClick(it)
+                        },
+                )
             }
         }
     }
@@ -264,6 +286,7 @@ private fun ContactScreenPreview() {
             ),
             onCloseClick = {},
             onContactClick = {},
+            onCopyClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }

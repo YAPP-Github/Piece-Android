@@ -5,9 +5,11 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.profile.Contact
 import com.puzzle.matching.graph.contact.contract.ContactIntent
 import com.puzzle.matching.graph.contact.contract.ContactSideEffect
 import com.puzzle.matching.graph.contact.contract.ContactState
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -40,9 +42,24 @@ class ContactViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: ContactIntent) {
         when (intent) {
-
-            else -> {}
+            ContactIntent.OnCloseClick -> moveToBackScreen()
+            is ContactIntent.OnContactClick -> updateSelectedContact(intent.selectedContact)
+            ContactIntent.OnCopyClick -> copyContactContent()
         }
+    }
+
+    private fun updateSelectedContact(selectedContact: Contact) {
+        setState {
+            copy(selectedContact = selectedContact)
+        }
+    }
+
+    private fun copyContactContent() {
+        // TODO : preference 저장?
+    }
+
+    private suspend fun moveToBackScreen() {
+        _sideEffects.send(ContactSideEffect.Navigate(NavigationEvent.NavigateUp))
     }
 
     @AssistedFactory
