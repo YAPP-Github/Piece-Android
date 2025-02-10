@@ -33,6 +33,21 @@
     <string name="accept_matching">매칭 수락하기</string>
     <string name="check_matching_pieces">매칭 조각 확인하기</string>
     <string name="check_my_profile">내 프로필 확인하기</string>
+    <string name="responded">응답 완료</string>
+    <string name="matched">매칭 완료</string>
+    <string name="green_light">그린라이트</string>
+    <string name="precious_connection_start">소중한 인연이 시작되기까지 </string>
+    <string name="time_remaining"> 남았어요</string>
+    <string name="nickname_format">%s입니다</string>
+    <string name="birth_year_format">%s년생</string>
+    <string name="value_count_format">%d개</string>
+    <string name="before_open">오픈 전</string>
+    <string name="waiting_for_response">응답 대기중</string>
+    <string name="please_respond_to_matching">매칭에 응답해주세요!</string>
+    <string name="waiting_for_other_response">상대방의 응답을 기다려봐요!</string>
+    <string name="other_accepted_matching">상대방이 매칭을 수락했어요!</string>
+    <string name="connected_with_other">상대방과 연결되었어요!</string>
+    <string name="check_contact">연락처 확인하기</string>
 
     <!--login-->
     <string name="login_description">서로의 빈 곳을 채우며 맞물리는 퍼즐처럼.\n서로의 가치관과 마음이 연결되는 순간을 만들어갑니다.</string>

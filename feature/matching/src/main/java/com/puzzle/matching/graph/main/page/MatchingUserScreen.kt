@@ -41,6 +41,10 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.match.MatchInfo
 import com.puzzle.domain.model.match.MatchStatus
+import com.puzzle.domain.model.match.MatchStatus.BEFORE_OPEN
+import com.puzzle.domain.model.match.MatchStatus.GREEN_LIGHT
+import com.puzzle.domain.model.match.MatchStatus.MATCHED
+import com.puzzle.domain.model.match.MatchStatus.RESPONDED
 import com.puzzle.domain.model.match.MatchStatus.WAITING
 
 @Composable
@@ -81,13 +85,11 @@ internal fun MatchingUserScreen(
         ) {
             Text(
                 text = buildAnnotatedString {
-                    append("소중한 인연이 시작되기까지 ")
-
+                    append(stringResource(R.string.precious_connection_start))
                     withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
                         append("02:32:75")
                     }
-
-                    append(" 남았어요")
+                    append(stringResource(R.string.time_remaining))
                 },
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.light1,
@@ -115,7 +117,7 @@ internal fun MatchingUserScreen(
                 )
 
                 Text(
-                    text = "${matchInfo.nickname}입니다",
+                    text = stringResource(R.string.nickname_format, matchInfo.nickname),
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     style = PieceTheme.typography.headingLSB,
@@ -128,7 +130,10 @@ internal fun MatchingUserScreen(
                     modifier = Modifier.padding(top = 12.dp),
                 ) {
                     Text(
-                        text = "${matchInfo.birthYear}년생",
+                        text = stringResource(
+                            R.string.value_count_format,
+                            matchInfo.matchedValueCount
+                        ),
                         style = PieceTheme.typography.bodyMM,
                         color = PieceTheme.colors.dark2,
                     )
@@ -210,8 +215,15 @@ internal fun MatchingUserScreen(
                     }
                 }
 
+                val label = when (matchInfo.matchStatus) {
+                    MatchStatus.BEFORE_OPEN -> stringResource(R.string.check_matching_pieces)
+                    MatchStatus.WAITING, GREEN_LIGHT -> stringResource(R.string.accept_matching)
+                    MatchStatus.RESPONDED -> stringResource(R.string.responded)
+                    MATCHED -> stringResource(R.string.check_contact)
+                    else -> ""
+                }
                 PieceSolidButton(
-                    label = stringResource(R.string.check_matching_pieces),
+                    label = label,
                     enabled = matchInfo.matchStatus != MatchStatus.RESPONDED,
                     onClick = onButtonClick,
                     modifier = Modifier
@@ -230,37 +242,37 @@ private fun MatchStatusRow(
     val (imageRes, tag, description) = when (matchStatus) {
         MatchStatus.BEFORE_OPEN -> Triple(
             R.drawable.ic_matching_loading,
-            "오픈 전",
+            stringResource(R.string.before_open),
             stringResource(R.string.check_the_matching_pieces)
         )
 
         MatchStatus.WAITING -> Triple(
             R.drawable.ic_matching_loading,
-            "응답 대기중",
-            "매칭에 응답해주세요!"
+            stringResource(R.string.waiting_for_response),
+            stringResource(R.string.please_respond_to_matching)
         )
 
         MatchStatus.RESPONDED -> Triple(
             R.drawable.ic_matching_check,
-            "응답 완료",
-            "상대방의 응답을 기다려봐요!"
+            stringResource(R.string.responded),
+            stringResource(R.string.waiting_for_other_response)
         )
 
         MatchStatus.GREEN_LIGHT -> Triple(
             R.drawable.ic_matching_heart,
-            "그린라이트",
-            "상대방이 매칭을 수락했어요!"
+            stringResource(R.string.green_light),
+            stringResource(R.string.other_accepted_matching)
         )
 
         MatchStatus.MATCHED -> Triple(
             R.drawable.ic_matching_check,
-            "매칭 완료",
-            "상대방과 연결되었어요!"
+            stringResource(R.string.matched),
+            stringResource(R.string.connected_with_other)
         )
 
         else -> Triple(
             R.drawable.ic_matching_loading,
-            "오픈 전",
+            stringResource(R.string.before_open),
             stringResource(R.string.check_the_matching_pieces)
         )
     }
@@ -306,7 +318,6 @@ private fun ValueTag(value: String) {
     }
 }
 
-
 @Preview
 @Composable
 private fun PreviewMatchingUserScreen() {
@@ -339,17 +350,90 @@ private fun PreviewMatchingUserScreen() {
 
 @Preview
 @Composable
-fun PreviewMatchStatusRows() {
+private fun PreviewMatchingUserScreen2() {
     PieceTheme {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            MatchStatus.entries.forEach { status ->
-                MatchStatusRow(matchStatus = status)
-            }
-        }
+        MatchingUserScreen(
+            matchInfo = MatchInfo(
+                matchId = 1,
+                matchStatus = RESPONDED,
+                description = "음악과 요리를 좋아하는",
+                nickname = "수줍은 수달",
+                birthYear = "02",
+                location = "광주광역시",
+                job = "학생",
+                matchedValueCount = 7,
+                matchedValueList = listOf(
+                    "바깥 데이트 스킨십도 가능",
+                    "함께 술을 즐기고 싶어요",
+                    "커밍아웃은 가까운 친구에게만 했어요",
+                    "바깥 데이트 스킨십도 가능",
+                    "함께 술을 즐기고 싶어요",
+                    "커밍아웃은 가까운 친구에게만 했어요",
+                    "바깥 데이트 스킨십도 가능",
+                )
+            ),
+            onButtonClick = {},
+            onMatchingDetailClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewMatchingUserScreen3() {
+    PieceTheme {
+        MatchingUserScreen(
+            matchInfo = MatchInfo(
+                matchId = 1,
+                matchStatus = GREEN_LIGHT,
+                description = "음악과 요리를 좋아하는",
+                nickname = "수줍은 수달",
+                birthYear = "02",
+                location = "광주광역시",
+                job = "학생",
+                matchedValueCount = 7,
+                matchedValueList = listOf(
+                    "바깥 데이트 스킨십도 가능",
+                    "함께 술을 즐기고 싶어요",
+                    "커밍아웃은 가까운 친구에게만 했어요",
+                    "바깥 데이트 스킨십도 가능",
+                    "함께 술을 즐기고 싶어요",
+                    "커밍아웃은 가까운 친구에게만 했어요",
+                    "바깥 데이트 스킨십도 가능",
+                )
+            ),
+            onButtonClick = {},
+            onMatchingDetailClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun PreviewMatchingUserScreen4() {
+    PieceTheme {
+        MatchingUserScreen(
+            matchInfo = MatchInfo(
+                matchId = 1,
+                matchStatus = BEFORE_OPEN,
+                description = "음악과 요리를 좋아하는",
+                nickname = "수줍은 수달",
+                birthYear = "02",
+                location = "광주광역시",
+                job = "학생",
+                matchedValueCount = 7,
+                matchedValueList = listOf(
+                    "바깥 데이트 스킨십도 가능",
+                    "함께 술을 즐기고 싶어요",
+                    "커밍아웃은 가까운 친구에게만 했어요",
+                    "바깥 데이트 스킨십도 가능",
+                    "함께 술을 즐기고 싶어요",
+                    "커밍아웃은 가까운 친구에게만 했어요",
+                    "바깥 데이트 스킨십도 가능",
+                )
+            ),
+            onButtonClick = {},
+            onMatchingDetailClick = {},
+        )
     }
 }

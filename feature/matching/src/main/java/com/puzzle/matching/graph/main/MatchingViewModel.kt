@@ -75,7 +75,12 @@ class MatchingViewModel @AssistedInject constructor(
         when (state.matchInfo?.matchStatus) {
             MatchStatus.BEFORE_OPEN -> checkMatchingPiece()
             MatchStatus.GREEN_LIGHT -> acceptMatching()
-            else -> {}
+            MatchStatus.MATCHED -> {
+                // Todo 연락처 공개 페이지로 이동
+                // navigationHelper.navigate()
+            }
+
+            else -> Unit
         }
     }
 
