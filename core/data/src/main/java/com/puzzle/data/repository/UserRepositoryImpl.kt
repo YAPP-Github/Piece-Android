@@ -13,6 +13,5 @@ class UserRepositoryImpl @Inject constructor(
     override suspend fun getUserRole(): Result<UserRole> = suspendRunCatching {
         val userRoleString = localUserDataSource.userRole.first()
         UserRole.create(userRoleString)
-        UserRole.PENDING // for Test
     }
 }
