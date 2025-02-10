@@ -1,11 +1,5 @@
 package com.puzzle.profile.graph.register
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -32,9 +26,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
-import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PiecePageIndicator
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -78,7 +72,13 @@ internal fun RegisterProfileRoute(
         onEditPhotoClick = { viewModel.onIntent(RegisterProfileIntent.OnEditPhotoClick(it)) },
         onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
         onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.OnNickNameChange(it)) },
-        onDescribeMySelfChanged = { viewModel.onIntent(RegisterProfileIntent.OnSelfDescribtionChange(it)) },
+        onDescribeMySelfChanged = {
+            viewModel.onIntent(
+                RegisterProfileIntent.OnSelfDescribtionChange(
+                    it
+                )
+            )
+        },
         onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.OnBirthdayChange(it)) },
         onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnHeightChange(it)) },
         onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnWeightChange(it)) },
@@ -191,6 +191,13 @@ private fun RegisterProfileScreen(
             onBackClick = onBackClick,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
         )
+
+        if (state.currentPage != RegisterProfileState.Page.FINISH) {
+            PiecePageIndicator(
+                currentStep = state.currentPage.ordinal+1,
+                totalSteps = RegisterProfileState.Page.entries.size,
+            )
+        }
 
         Box(modifier = Modifier.weight(1f)) {
             AnimatedContent(

@@ -10,5 +10,6 @@ sealed class SignUpIntent {
     data object OnBackClick : SignUpIntent()
     data object OnNextClick : SignUpIntent()
     data object OnDisEnabledButtonClick : SignUpIntent()
+    data class OnAvoidAcquaintancesClick(val phoneNumbers: List<String>) : SignUpIntent()
     data class Navigate(val navigationEvent: NavigationEvent) : SignUpIntent()
 }

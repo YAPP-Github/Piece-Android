@@ -1,5 +1,7 @@
 package com.puzzle.auth.graph.signup
 
+import android.content.Context
+import android.provider.ContactsContract
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -14,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
@@ -38,6 +41,7 @@ internal fun SignUpRoute(
     viewModel: SignUpViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel) {
@@ -66,6 +70,10 @@ internal fun SignUpRoute(
         onBackClick = { viewModel.onIntent(SignUpIntent.OnBackClick) },
         onNextClick = { viewModel.onIntent(SignUpIntent.OnNextClick) },
         onDisEnabledButtonClick = { viewModel.onIntent(SignUpIntent.OnDisEnabledButtonClick) },
+        onAvoidAcquaintancesClick = {
+            val phoneNumbers = readContactPhoneNumbers(context)
+            viewModel.onIntent(SignUpIntent.OnAvoidAcquaintancesClick(phoneNumbers))
+        },
         navigate = { event -> viewModel.onIntent(SignUpIntent.Navigate(event)) }
     )
 }
@@ -80,6 +88,7 @@ private fun SignUpScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     onDisEnabledButtonClick: () -> Unit,
+    onAvoidAcquaintancesClick: () -> Unit,
     navigate: (NavigationEvent) -> Unit,
 ) {
     val (selectedTermIdx, setSelectedTermIdx) = rememberSaveable { mutableStateOf<Int?>(null) }
@@ -122,9 +131,10 @@ private fun SignUpScreen(
                 )
 
                 SignUpState.SignUpPage.AvoidAcquaintancesPage -> AvoidAcquaintancesPage(
+                    isBlockContactsDone = state.isBlockContactsDone,
                     onBackClick = onBackClick,
-                    onTryNextClick = onNextClick,
-                    onAvoidAcquaintancesClick = onNextClick,
+                    goNextStep = onNextClick,
+                    onAvoidAcquaintancesClick = onAvoidAcquaintancesClick,
                 )
 
                 SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
@@ -133,4 +143,25 @@ private fun SignUpScreen(
             }
         }
     }
+}
+
+private fun readContactPhoneNumbers(context: Context): List<String> {
+    val phoneNumbers = mutableListOf<String>()
+
+    val contentResolver = context.contentResolver
+    val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+    val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+    contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+        val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        while (cursor.moveToNext()) {
+            val phoneNumber = cursor.getString(numberIndex)
+                .replace(Regex("[^0-9]"), "")
+            if (phoneNumber.isNotBlank()) {
+                phoneNumbers.add(phoneNumber)
+            }
+        }
+    }
+
+    return phoneNumbers.distinct()
 }

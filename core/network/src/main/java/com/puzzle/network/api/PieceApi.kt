@@ -6,6 +6,7 @@ import com.puzzle.network.model.auth.LoginOauthResponse
 import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
+import com.puzzle.network.model.matching.BlockContactsRequest
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.matching.ReportUserRequest
@@ -43,7 +44,7 @@ interface PieceApi {
     suspend fun loadValueTalks(): Result<ApiResponse<LoadValueTalksResponse>>
 
     @GET("/api/login/token/health-check")
-    suspend fun checkTokenHealth(): Result<ApiResponse<Unit>>
+    suspend fun checkTokenHealth(@Query("token") token: String): Result<ApiResponse<Unit>>
 
     @POST("/api/auth/refresh")
     suspend fun refreshToken(@Body refreshTokenRequest: RefreshTokenRequest): Result<ApiResponse<RefreshTokenResponse>>
@@ -65,4 +66,7 @@ interface PieceApi {
 
     @POST("/api/matches/blocks/users/{userId}")
     suspend fun blockUser(@Path("userId") userId: Int): Result<ApiResponse<Unit>>
+
+    @POST("/api/blockContacts")
+    suspend fun blockContacts(@Body blockContactsRequest: BlockContactsRequest): Result<ApiResponse<Unit>>
 }
