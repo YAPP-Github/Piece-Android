@@ -108,7 +108,7 @@ class MatchingRepositoryImplTest {
         )
 
         // When
-        matchingRepository.getOpponentProfile().getOrThrow()
+        matchingRepository.loadOpponentProfile().getOrThrow()
 
         // Then
         val storedProfile = fakeLocalMatchingDataSource.opponentProfile.first()

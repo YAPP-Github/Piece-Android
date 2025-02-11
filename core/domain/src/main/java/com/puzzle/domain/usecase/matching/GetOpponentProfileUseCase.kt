@@ -9,5 +9,8 @@ class GetOpponentProfileUseCase @Inject constructor(
 ) {
     suspend operator fun invoke(): Result<OpponentProfile> =
         matchingRepository.retrieveOpponentProfile()
-            .recoverCatching { matchingRepository.getOpponentProfile().getOrThrow() }
+            .recoverCatching {
+                matchingRepository.loadOpponentProfile().getOrThrow()
+                matchingRepository.retrieveOpponentProfile().getOrThrow()
+            }
 }

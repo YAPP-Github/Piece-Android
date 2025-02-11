@@ -9,7 +9,7 @@ interface MatchingRepository {
     suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit>
     suspend fun getMatchInfo(): Result<MatchInfo>
     suspend fun retrieveOpponentProfile(): Result<OpponentProfile>
-    suspend fun getOpponentProfile(): Result<OpponentProfile>
+    suspend fun loadOpponentProfile(): Result<Unit>
     suspend fun checkMatchingPiece(): Result<Unit>
     suspend fun acceptMatching(): Result<Unit>
 }

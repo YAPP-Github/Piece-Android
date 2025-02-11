@@ -37,7 +37,7 @@ class MatchingRepositoryImpl @Inject constructor(
         localMatchingDataSource.opponentProfile.first()
     }
 
-    override suspend fun getOpponentProfile(): Result<OpponentProfile> = suspendRunCatching {
+    override suspend fun loadOpponentProfile(): Result<Unit> = suspendRunCatching {
         coroutineScope {
             val valueTalksDeferred = async { getOpponentValueTalks() }
             val valuePicksDeferred = async { getOpponentValuePicks() }
@@ -64,7 +64,6 @@ class MatchingRepositoryImpl @Inject constructor(
                 imageUrl = imageUrl,
             )
             localMatchingDataSource.setOpponentProfile(result)
-            result
         }
     }
 
