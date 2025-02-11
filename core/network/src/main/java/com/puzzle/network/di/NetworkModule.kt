@@ -26,8 +26,8 @@ abstract class NetworkModule {
 
     @Binds
     @Singleton
-    abstract fun bindsMatchingDataSource(
-        matchingDataSourceImpl: ProfileDataSourceImpl,
+    abstract fun bindsProfileDataSource(
+        profileDataSourceImpl: ProfileDataSourceImpl,
     ): ProfileDataSource
 
     @Binds

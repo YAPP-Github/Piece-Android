@@ -49,7 +49,7 @@ class MatchingRepositoryImpl @Inject constructor(
             val profileBasic = profileBasicDeferred.await().getOrThrow()
             val imageUrl = profileImageDeferred.await().getOrThrow()
 
-            OpponentProfile(
+            val result = OpponentProfile(
                 description = profileBasic.description,
                 nickname = profileBasic.nickname,
                 age = profileBasic.age,
@@ -63,6 +63,8 @@ class MatchingRepositoryImpl @Inject constructor(
                 valueTalks = valueTalks,
                 imageUrl = imageUrl,
             )
+            localMatchingDataSource.setOpponentProfile(result)
+            result
         }
     }
 
