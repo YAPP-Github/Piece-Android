@@ -56,6 +56,8 @@ kotlin = "2.1.0"
 kotlinxSerializationJson = "1.7.0"
 # https://github.com/Kotlin/kotlinx.coroutines
 kotlinxCoroutine = "1.9.0-RC"
+# https://github.com/google/gson
+gson = "2.12.1"
 
 ## Test
 # https://github.com/junit-team/junit4
@@ -150,6 +152,7 @@ okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor",
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junitJupiter" }

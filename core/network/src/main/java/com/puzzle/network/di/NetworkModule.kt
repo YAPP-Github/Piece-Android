@@ -2,6 +2,8 @@ package com.puzzle.network.di
 
 import com.puzzle.network.source.auth.AuthDataSource
 import com.puzzle.network.source.auth.AuthDataSourceImpl
+import com.puzzle.network.source.matching.MatchingDataSource
+import com.puzzle.network.source.matching.MatchingDataSourceImpl
 import com.puzzle.network.source.profile.ProfileDataSource
 import com.puzzle.network.source.profile.ProfileDataSourceImpl
 import com.puzzle.network.source.term.TermDataSource
@@ -24,8 +26,8 @@ abstract class NetworkModule {
 
     @Binds
     @Singleton
-    abstract fun bindsMatchingDataSource(
-        matchingDataSourceImpl: ProfileDataSourceImpl,
+    abstract fun bindsProfileDataSource(
+        profileDataSourceImpl: ProfileDataSourceImpl,
     ): ProfileDataSource
 
     @Binds
@@ -33,4 +35,10 @@ abstract class NetworkModule {
     abstract fun bindsTermDataSource(
         termDataSourceImpl: TermDataSourceImpl,
     ): TermDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsMatchingDataSource(
+        matchingDataSourceImpl: MatchingDataSourceImpl,
+    ): MatchingDataSource
 }

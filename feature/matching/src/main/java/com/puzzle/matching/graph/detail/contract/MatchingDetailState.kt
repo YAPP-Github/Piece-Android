@@ -1,23 +1,12 @@
 package com.puzzle.matching.graph.detail.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.profile.OpponentValuePick
-import com.puzzle.domain.model.profile.OpponentValueTalk
+import com.puzzle.domain.model.profile.OpponentProfile
 
 data class MatchingDetailState(
     val isLoading: Boolean = false,
     val currentPage: MatchingDetailPage = MatchingDetailPage.BasicInfoPage,
-    val selfDescription: String = "음악과 요리를 좋아하는",
-    val nickName: String = "수줍은 수달",
-    val age: String = "25",
-    val birthYear: String = "00",
-    val height: String = "254",
-    val occupation: String = "개발자",
-    val activityRegion: String = "서울특별시",
-    val smokeStatue: String = "비흡연",
-    val talkCards: List<OpponentValueTalk> = emptyList(),
-    val pickCards: List<OpponentValuePick> = emptyList(),
-    val imageUri: String = "",
+    val profile: OpponentProfile? = null,
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {

@@ -9,6 +9,7 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.domain.usecase.matching.GetOpponentProfileUseCase
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 
 class MatchingDetailViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingDetailState,
+    private val getOpponentProfileUseCase: GetOpponentProfileUseCase,
     private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
@@ -39,19 +41,35 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private val matchUserId = 0 // Todo 임시
 
     init {
+        initMatchDetailInfo()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initMatchDetailInfo() = viewModelScope.launch {
+        setState { copy(isLoading = true) }
+
+        getOpponentProfileUseCase().onSuccess { response ->
+            setState { copy(profile = response) }
+        }.onFailure {
+            errorHelper.sendError(it)
+        }.also {
+            setState { copy(isLoading = false) }
+        }
     }
 
     internal fun onIntent(intent: MatchingDetailIntent) = viewModelScope.launch {
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: MatchingDetailIntent) {
+    private fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
             is MatchingDetailIntent.OnMoreClick -> showBottomSheet(intent.content)
-            MatchingDetailIntent.OnMatchingDetailCloseClick -> navigateTo(NavigationEvent.NavigateUp)
+            MatchingDetailIntent.OnMatchingDetailCloseClick ->
+                navigationHelper.navigate(NavigationEvent.NavigateUp)
+
             MatchingDetailIntent.OnPreviousPageClick -> setPreviousPage()
             MatchingDetailIntent.OnNextPageClick -> setNextPage()
             MatchingDetailIntent.OnBlockClick -> onBlockClick()
@@ -74,11 +92,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
     private fun onBlockClick() {
         withState {
-            navigateTo(
+            navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.BlockRoute(
                         userId = matchUserId,
-                        userName = it.nickName,
+                        userName = it.profile!!.nickname,
                     )
                 )
             )
@@ -89,11 +107,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
     private fun onReportClick() {
         withState {
-            navigateTo(
+            navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.ReportRoute(
                         userId = matchUserId,
-                        userName = it.nickName,
+                        userName = it.profile!!.nickname,
                     )
                 )
             )
@@ -113,10 +131,6 @@ class MatchingDetailViewModel @AssistedInject constructor(
                 )
             }
             .onFailure { errorHelper.sendError(it) }
-    }
-
-    private fun navigateTo(navigationEvent: NavigationEvent) {
-        _sideEffects.trySend(MatchingDetailSideEffect.Navigate(navigationEvent))
     }
 
     private fun showBottomSheet(content: @Composable () -> Unit) {

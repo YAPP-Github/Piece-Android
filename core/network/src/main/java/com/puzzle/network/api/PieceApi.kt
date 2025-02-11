@@ -8,6 +8,10 @@ import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.BlockContactsRequest
 import com.puzzle.network.model.matching.GetMatchInfoResponse
+import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
+import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
+import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
+import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.matching.ReportUserRequest
@@ -20,8 +24,8 @@ import com.puzzle.network.model.token.RefreshTokenResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.PATCH
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
@@ -76,6 +80,18 @@ interface PieceApi {
 
     @GET("/api/matches/infos")
     suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>
+
+    @GET("/api/matches/values/talks")
+    suspend fun getOpponentValueTalks(): Result<ApiResponse<GetOpponentValueTalksResponse>>
+
+    @GET("/api/matches/values/picks")
+    suspend fun getOpponentValuePicks(): Result<ApiResponse<GetOpponentValuePicksResponse>>
+
+    @GET("/api/matches/profiles/basic")
+    suspend fun getOpponentProfileBasic(): Result<ApiResponse<GetOpponentProfileBasicResponse>>
+
+    @GET("/api/matches/images")
+    suspend fun getOpponentProfileImage(): Result<ApiResponse<GetOpponentProfileImageResponse>>
 
     @PATCH("/api/matches/pieces/check")
     suspend fun checkMatchingPiece(): Result<ApiResponse<Unit>>
