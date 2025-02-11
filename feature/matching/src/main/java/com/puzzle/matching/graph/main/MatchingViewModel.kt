@@ -66,7 +66,13 @@ class MatchingViewModel @AssistedInject constructor(
     }
 
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
-        .onSuccess { setState { copy(matchInfo = it) } }
+        .onSuccess {
+            setState { copy(matchInfo = it) }
+
+            // MatchingHome화면에서 사전에 MatchingDetail에서 필요한 데이터를 케싱해놓습니다.
+            matchingRepository.loadOpponentProfile()
+                .onFailure { errorHelper.sendError(it) }
+        }
         .onFailure { errorHelper.sendError(it) }
 
     private fun processOnButtonClick() = withState { state ->
