@@ -89,6 +89,9 @@ interface PieceApi {
     @GET("/api/matches/profiles/basic")
     suspend fun getOpponentProfileBasic(): Result<ApiResponse<GetOpponentProfileBasicResponse>>
 
+    @GET("/api/matches/images")
+    suspend fun getOpponentProfileImage(): Result<ApiResponse<GetOpponentProfileImageResponse>>
+
     @PATCH("/api/matches/pieces/check")
     suspend fun checkMatchingPiece(): Result<ApiResponse<Unit>>
 

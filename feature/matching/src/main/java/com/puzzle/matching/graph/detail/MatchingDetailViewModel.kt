@@ -81,9 +81,16 @@ class MatchingDetailViewModel @AssistedInject constructor(
                 .onFailure { errorHelper.sendError(it) }
         }
 
+        val profileImageJob = launch {
+            matchingRepository.getOpponentProfileImage()
+                .onSuccess { profileImageUrl -> setState { copy(imageUrl = profileImageUrl) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
         valuePicksJob.join()
         valueTalksJob.join()
         profileBasicJob.join()
+        profileImageJob.join()
         setState { copy(isLoading = false) }
     }
 

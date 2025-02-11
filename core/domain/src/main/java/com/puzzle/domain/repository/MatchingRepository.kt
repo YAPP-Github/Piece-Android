@@ -13,6 +13,7 @@ interface MatchingRepository {
     suspend fun getOpponentValueTalks(): Result<List<OpponentValueTalk>>
     suspend fun getOpponentValuePicks(): Result<List<OpponentValuePick>>
     suspend fun getOpponentProfileBasic(): Result<OpponentProfileBasic>
+    suspend fun getOpponentProfileImage(): Result<String>
     suspend fun checkMatchingPiece(): Result<Unit>
     suspend fun acceptMatching(): Result<Unit>
 }

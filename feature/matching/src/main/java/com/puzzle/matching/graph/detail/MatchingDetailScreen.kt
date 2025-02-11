@@ -167,7 +167,7 @@ private fun MatchingDetailScreen(
 
             DialogType.PROFILE_IMAGE_DETAIL -> {
                 PieceImageDialog(
-                    imageUri = state.imageUri,
+                    imageUri = state.imageUrl,
                     buttonLabel = "매칭 수락하기",
                     onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },

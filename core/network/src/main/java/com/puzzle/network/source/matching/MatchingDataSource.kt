@@ -4,6 +4,7 @@ import com.puzzle.network.api.PieceApi
 import com.puzzle.network.model.matching.BlockContactsRequest
 import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
+import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
 import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 import com.puzzle.network.model.matching.ReportUserRequest
@@ -31,6 +32,9 @@ class MatchingDataSource @Inject constructor(
 
     suspend fun getOpponentProfileBasic(): Result<GetOpponentProfileBasicResponse> =
         pieceApi.getOpponentProfileBasic().unwrapData()
+
+    suspend fun getOpponentProfileImage(): Result<GetOpponentProfileImageResponse> =
+        pieceApi.getOpponentProfileImage().unwrapData()
 
     suspend fun checkMatchingPiece(): Result<Unit> = pieceApi.checkMatchingPiece().unwrapData()
     suspend fun acceptMatching(): Result<Unit> = pieceApi.acceptMatching().unwrapData()

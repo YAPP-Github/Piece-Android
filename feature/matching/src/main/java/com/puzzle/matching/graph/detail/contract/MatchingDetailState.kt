@@ -18,7 +18,7 @@ data class MatchingDetailState(
     val smokeStatue: String = "",
     val valueTalks: List<OpponentValueTalk> = emptyList(),
     val valuePicks: List<OpponentValuePick> = emptyList(),
-    val imageUri: String = "",
+    val imageUrl: String = "",
 ) : MavericksState {
 
     enum class MatchingDetailPage(val title: String) {
