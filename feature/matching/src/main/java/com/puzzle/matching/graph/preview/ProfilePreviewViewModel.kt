@@ -9,6 +9,7 @@ import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -40,10 +41,14 @@ class ProfilePreviewViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private fun processIntent(intent: ProfilePreviewIntent) {
+    private suspend fun processIntent(intent: ProfilePreviewIntent) {
         when (intent) {
-            else -> {}
+            ProfilePreviewIntent.OnCloseClick -> moveToBackScreen()
         }
+    }
+
+    private suspend fun moveToBackScreen() {
+        _sideEffects.send(ProfilePreviewSideEffect.Navigate(NavigationEvent.NavigateUp))
     }
 
     @AssistedFactory

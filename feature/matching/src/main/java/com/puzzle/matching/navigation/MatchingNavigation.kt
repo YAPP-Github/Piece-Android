@@ -41,11 +41,11 @@ fun NavGraphBuilder.matchingNavGraph() {
             )
         }
 
-        composable<MatchingGraphDest.ContactRoute> { backStackEntry ->
+        composable<MatchingGraphDest.ContactRoute> {
             ContactRoute()
         }
 
-        composable<MatchingGraphDest.ProfilePreviewRoute> { backStackEntry ->
+        composable<MatchingGraphDest.ProfilePreviewRoute> {
             ProfilePreviewRoute()
         }
     }
