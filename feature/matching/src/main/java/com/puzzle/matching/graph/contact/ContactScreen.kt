@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -238,18 +239,15 @@ private fun ContactInfo(
 
 @Composable
 private fun BackgroundImage(modifier: Modifier = Modifier) {
-    Box(
+    Image(
+        painter = painterResource(id = R.drawable.matching_contact_bg),
+        contentDescription = "basic info 배경화면",
+        contentScale = ContentScale.Crop,
         modifier = modifier
-            .fillMaxSize()
             .background(PieceTheme.colors.white)
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.matching_contact_bg),
-            contentDescription = "basic info 배경화면",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize(),
-        )
-    }
+            .fillMaxSize()
+            .scale(1.3f),
+    )
 }
 
 @Preview
