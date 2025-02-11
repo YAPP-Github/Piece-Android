@@ -39,6 +39,12 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private val matchUserId = 0 // Todo 임시
 
     init {
+        viewModelScope.launch {
+            matchingRepository.getOpponentValueTalks()
+                .onSuccess { valueTalks -> setState { copy(valueTalks = valueTalks) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)

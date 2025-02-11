@@ -15,7 +15,7 @@ data class MatchingDetailState(
     val occupation: String = "개발자",
     val activityRegion: String = "서울특별시",
     val smokeStatue: String = "비흡연",
-    val talkCards: List<OpponentValueTalk> = emptyList(),
+    val valueTalks: List<OpponentValueTalk> = emptyList(),
     val pickCards: List<OpponentValuePick> = emptyList(),
     val imageUri: String = "",
 ) : MavericksState {

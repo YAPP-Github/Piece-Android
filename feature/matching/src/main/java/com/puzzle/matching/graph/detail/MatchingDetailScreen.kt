@@ -300,7 +300,7 @@ private fun MatchingDetailContent(
                     ValueTalkPage(
                         nickName = state.nickName,
                         selfDescription = state.selfDescription,
-                        talkCards = state.talkCards,
+                        talkCards = state.valueTalks,
                         onMoreClick = onMoreClick,
                     )
 
