@@ -308,7 +308,7 @@ private fun MatchingDetailContent(
                     ValuePickPage(
                         nickName = state.nickName,
                         selfDescription = state.selfDescription,
-                        pickCards = state.pickCards,
+                        pickCards = state.valuePicks,
                         onDeclineClick = onDeclineClick,
                     )
             }

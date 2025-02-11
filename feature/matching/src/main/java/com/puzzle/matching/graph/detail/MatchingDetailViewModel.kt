@@ -40,9 +40,17 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            matchingRepository.getOpponentValueTalks()
-                .onSuccess { valueTalks -> setState { copy(valueTalks = valueTalks) } }
-                .onFailure { errorHelper.sendError(it) }
+            launch {
+                matchingRepository.getOpponentValueTalks()
+                    .onSuccess { valueTalks -> setState { copy(valueTalks = valueTalks) } }
+                    .onFailure { errorHelper.sendError(it) }
+            }
+
+            launch {
+                matchingRepository.getOpponentValuePicks()
+                    .onSuccess { valuePicks -> setState { copy(valuePicks = valuePicks) } }
+                    .onFailure { errorHelper.sendError(it) }
+            }
         }
 
         intents.receiveAsFlow()
