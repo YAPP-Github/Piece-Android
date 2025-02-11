@@ -239,7 +239,7 @@ fun PieceImageDialog(
                     .size(180.dp),
             )
 
-            PieceRoundingButton(
+            PieceRoundingSolidButton(
                 label = buttonLabel,
                 onClick = onButtonClick,
                 modifier = Modifier
