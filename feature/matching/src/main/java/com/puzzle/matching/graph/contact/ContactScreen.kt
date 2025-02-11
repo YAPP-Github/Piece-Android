@@ -2,7 +2,6 @@ package com.puzzle.matching.graph.contact
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ClipboardManager
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
@@ -72,9 +75,6 @@ internal fun ContactRoute(
         onContactClick = {
             viewModel.onIntent(ContactIntent.OnContactClick(it))
         },
-        onCopyClick = {
-            viewModel.onIntent(ContactIntent.OnCopyClick)
-        },
     )
 }
 
@@ -83,7 +83,6 @@ private fun ContactScreen(
     state: ContactState,
     onCloseClick: () -> Unit,
     onContactClick: (Contact) -> Unit,
-    onCopyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box {
@@ -110,7 +109,6 @@ private fun ContactScreen(
                     selectedContact = selectedContact,
                     contacts = state.contacts,
                     onContactClick = onContactClick,
-                    onCopyClick = onCopyClick,
                     modifier = Modifier
                         .fillMaxWidth()
                 )
@@ -154,11 +152,11 @@ private fun ContactInfo(
     selectedContact: Contact,
     contacts: List<Contact>,
     onContactClick: (Contact) -> Unit,
-    onCopyClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val contactIconId: Int? = selectedContact.snsPlatform.getContactIconId()
     val contactNameId: Int? = selectedContact.snsPlatform.getContactNameId()
+    val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -204,7 +202,7 @@ private fun ContactInfo(
                     .size(20.dp)
                     .padding(start = 8.dp)
                     .clickable {
-                        onCopyClick()
+                        clipboardManager.setText(AnnotatedString(selectedContact.content))
                     },
             )
         }

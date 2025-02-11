@@ -44,7 +44,6 @@ class ContactViewModel @AssistedInject constructor(
         when (intent) {
             ContactIntent.OnCloseClick -> moveToBackScreen()
             is ContactIntent.OnContactClick -> updateSelectedContact(intent.selectedContact)
-            ContactIntent.OnCopyClick -> copyContactContent()
         }
     }
 
@@ -52,10 +51,6 @@ class ContactViewModel @AssistedInject constructor(
         setState {
             copy(selectedContact = selectedContact)
         }
-    }
-
-    private fun copyContactContent() {
-        // TODO : preference 저장?
     }
 
     private suspend fun moveToBackScreen() {
