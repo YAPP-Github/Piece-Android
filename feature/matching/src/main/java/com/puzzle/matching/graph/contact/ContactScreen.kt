@@ -242,11 +242,9 @@ private fun BackgroundImage(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(id = R.drawable.matching_contact_bg),
         contentDescription = "basic info 배경화면",
-        contentScale = ContentScale.Crop,
+        contentScale = ContentScale.FillBounds,
         modifier = modifier
-            .background(PieceTheme.colors.white)
-            .fillMaxSize()
-            .scale(1.3f),
+            .fillMaxSize(),
     )
 }
 
