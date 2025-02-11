@@ -7,8 +7,13 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ValuePickAnswer
+import com.puzzle.domain.model.profile.ValueTalkAnswer
+import com.puzzle.domain.repository.ProfileRepository
+import com.puzzle.domain.usecase.profile.UploadProfileUseCase
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -19,6 +24,8 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect.Navigate
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
+import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -31,14 +38,19 @@ import kotlinx.coroutines.launch
 
 class RegisterProfileViewModel @AssistedInject constructor(
     @Assisted initialState: RegisterProfileState,
+    private val uploadProfileUseCase: UploadProfileUseCase,
+    private val profileRepository: ProfileRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<RegisterProfileState>(initialState) {
     private val intents = Channel<RegisterProfileIntent>(BUFFERED)
     private val _sideEffects = Channel<RegisterProfileSideEffect>(BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initProfileData()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
@@ -51,10 +63,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
             is RegisterProfileIntent.OnNickNameChange -> updateNickName(intent.nickName)
-            is RegisterProfileIntent.OnPhotoeClick -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.OnPhotoClick -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.OnEditPhotoClick -> updateProfileImage(intent.imageUri)
-            is RegisterProfileIntent.OnSelfDescribtionChange -> updateDescription(intent.description)
-            is RegisterProfileIntent.OnBirthdayChange -> updateBirthdate(intent.birthday)
+            is RegisterProfileIntent.OnSelfDescriptionChange -> updateDescription(intent.description)
+            is RegisterProfileIntent.OnBirthdateChange -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
             is RegisterProfileIntent.OnWeightChange -> updateWeight(intent.weight)
             is RegisterProfileIntent.OnJobClick -> updateJob(intent.job)
@@ -72,14 +84,62 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
     }
 
+    private fun initProfileData() = viewModelScope.launch {
+        val valuePickJob = launch { retrieveValuePick() }
+        val valueTalkJob = launch { retrieveValueTalk() }
+        valuePickJob.join()
+        valueTalkJob.join()
+    }
+
+    private suspend fun retrieveValuePick() {
+        profileRepository.retrieveValuePickQuestion()
+            .onSuccess { valuePickQuestions ->
+                setState {
+                    copy(
+                        valuePicks = valuePickQuestions.map {
+                            ValuePickRegisterRO(
+                                id = it.id,
+                                category = it.category,
+                                question = it.question,
+                                answerOptions = it.answerOptions,
+                                selectedAnswer = null,
+                            )
+                        }
+                    )
+                }
+            }.onFailure { errorHelper.sendError(it) }
+    }
+
+    private suspend fun retrieveValueTalk() {
+        profileRepository.retrieveValueTalkQuestion()
+            .onSuccess { valueTalkQuestions ->
+                val result = valueTalkQuestions.map {
+                    ValueTalkRegisterRO(
+                        id = it.id,
+                        category = it.category,
+                        title = it.title,
+                        guides = it.guides,
+                        answer = "",
+                    )
+                }
+                setState {
+                    copy(
+                        valueTalks = result
+                    )
+                }
+            }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
     private fun moveToPrevious() {
         withState { state ->
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
                 viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.NavigateUp)) }
             } else {
-                RegisterProfileState.Page.getPreviousPage(state.currentPage)?.let { previosPage ->
-                    setState { copy(currentPage = previosPage) }
-                }
+                RegisterProfileState.Page.getPreviousPage(state.currentPage)
+                    ?.let { previosPage ->
+                        setState { copy(currentPage = previosPage) }
+                    }
             }
         }
     }
@@ -118,15 +178,41 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
-            setState { copy(currentPage = nextPage) }
+        viewModelScope.launch {
+            uploadProfileUseCase(
+                birthdate = state.birthdate,
+                description = state.description,
+                height = state.height.toInt(),
+                weight = state.weight.toInt(),
+                imageUrl = state.profileImageUri.toString(),
+                job = state.job,
+                location = state.location,
+                nickname = state.nickname,
+                smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
+                snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
+                contacts = state.contacts,
+                valuePicks = state.valuePicks.map { valuePick ->
+                    ValuePickAnswer(
+                        valuePickId = valuePick.id,
+                        selectedAnswer = valuePick.selectedAnswer,
+                    )
+                },
+                valueTalks = state.valueTalks.map {
+                    ValueTalkAnswer(
+                        valueTalkId = it.id,
+                        answer = it.answer,
+                    )
+                },
+            ).onSuccess {
+                RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+                    setState { copy(currentPage = nextPage) }
+                }
+            }.onFailure { errorHelper.sendError(it) }
         }
     }
 
     private fun saveValueTalk(state: RegisterProfileState) {
-        setState {
-            copy(valueTalks = state.valueTalks)
-        }
+        setState { copy(valueTalks = state.valueTalks) }
 
         if (!state.isValueTalkComplete) {
             eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
@@ -159,6 +245,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
             return
         }
+
         // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
         RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
             setState {
@@ -170,25 +257,28 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
     }
 
-    private fun checkNickNameDuplication() {
-        setState {
-            // TODO: 실제 API 응답 처리
-            val isSuccess = true
-            copy(
-                isCheckingButtonEnabled = !isSuccess,
-                nickNameGuideMessage = if (isSuccess) {
-                    NickNameGuideMessage.AVAILABLE
-                } else {
-                    NickNameGuideMessage.ALREADY_IN_USE
-                },
-            )
+    private fun checkNickNameDuplication() = withState { state ->
+        viewModelScope.launch {
+            profileRepository.checkNickname(state.nickname)
+                .onSuccess { result ->
+                    setState {
+                        copy(
+                            isCheckingButtonEnabled = !result,
+                            nickNameGuideMessage = if (result) {
+                                NickNameGuideMessage.AVAILABLE
+                            } else {
+                                NickNameGuideMessage.ALREADY_IN_USE
+                            },
+                        )
+                    }
+                }.onFailure { errorHelper.sendError(it) }
         }
     }
 
     private fun updateNickName(nickName: String) {
         setState {
             val newState = copy(
-                nickName = nickName,
+                nickname = nickName,
                 nickNameGuideMessage = if (nickName.length > 6) {
                     NickNameGuideMessage.LENGTH_EXCEEDED_ERROR
                 } else {
@@ -307,9 +397,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private fun updateContact(idx: Int, contact: Contact) {
         setState {
-            val newContacts = contacts.toMutableList().apply {
-                set(idx, contact)
-            }
+            val newContacts = contacts.toMutableList()
+                .apply { set(idx, contact) }
 
             copy(
                 contacts = newContacts,
@@ -327,7 +416,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     @AssistedFactory
-    interface Factory : AssistedViewModelFactory<RegisterProfileViewModel, RegisterProfileState> {
+    interface Factory :
+        AssistedViewModelFactory<RegisterProfileViewModel, RegisterProfileState> {
         override fun create(state: RegisterProfileState): RegisterProfileViewModel
     }
 

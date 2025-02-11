@@ -16,3 +16,12 @@ fun String?.parseDateTime(): LocalDateTime {
         LocalDateTime.MIN
     }
 }
+
+fun String.toBirthDate(): String {
+    require(matches("^\\d{8}$".toRegex())) { "잘못된 날짜 형식입니다. YYYYMMDD 형식이어야 하는데, 입력된 값은 $this 입니다." }
+
+    return replace(
+        "^(\\d{4})(\\d{2})(\\d{2})$".toRegex(),
+        "$1-$2-$3"
+    )
+}

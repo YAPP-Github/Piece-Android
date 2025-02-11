@@ -8,10 +8,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.puzzle.designsystem.R
 
-private val PretendardBold = FontFamily(
+private val WixMadeForDisplayMedium = FontFamily(
     Font(
-        resId = R.font.pretendard_bold,
-        weight = FontWeight.Bold,
+        resId = R.font.wix_made_for_display_medium,
+        weight = FontWeight.Medium,
     ),
 )
 
@@ -98,4 +98,9 @@ data class PieceTypography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
     ),
+    val branding: TextStyle = TextStyle(
+        fontFamily = WixMadeForDisplayMedium,
+        fontSize = 18.sp,
+        lineHeight = 22.sp,
+    )
 )

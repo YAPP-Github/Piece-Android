@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.common.ui.clickable
@@ -26,6 +27,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 @Composable
 fun PieceMainTopBar(
     title: String,
+    textStyle: TextStyle = PieceTheme.typography.headingSM,
     modifier: Modifier = Modifier,
     titleColor: Color = PieceTheme.colors.black,
     rightComponent: @Composable () -> Unit = {},
@@ -38,7 +40,7 @@ fun PieceMainTopBar(
     ) {
         Text(
             text = title,
-            style = PieceTheme.typography.headingSM,
+            style = textStyle,
             color = titleColor,
         )
 

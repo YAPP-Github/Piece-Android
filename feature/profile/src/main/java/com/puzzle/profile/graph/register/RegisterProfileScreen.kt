@@ -33,14 +33,14 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.ValuePick
-import com.puzzle.domain.model.profile.ValueTalk
 import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
+import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import com.puzzle.profile.graph.register.page.BasicProfilePage
 import com.puzzle.profile.graph.register.page.FinishPage
 import com.puzzle.profile.graph.register.page.ValuePickPage
@@ -68,18 +68,18 @@ internal fun RegisterProfileRoute(
         state = state,
         onSaveClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
         onBackClick = { viewModel.onIntent(RegisterProfileIntent.OnBackClick) },
-        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.OnPhotoeClick(it)) },
+        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.OnPhotoClick(it)) },
         onEditPhotoClick = { viewModel.onIntent(RegisterProfileIntent.OnEditPhotoClick(it)) },
         onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
         onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.OnNickNameChange(it)) },
         onDescribeMySelfChanged = {
             viewModel.onIntent(
-                RegisterProfileIntent.OnSelfDescribtionChange(
+                RegisterProfileIntent.OnSelfDescriptionChange(
                     it
                 )
             )
         },
-        onBirthdayChanged = { viewModel.onIntent(RegisterProfileIntent.OnBirthdayChange(it)) },
+        onBirthdateChanged = { viewModel.onIntent(RegisterProfileIntent.OnBirthdateChange(it)) },
         onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnHeightChange(it)) },
         onWeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnWeightChange(it)) },
         onSmokeStatusChanged = { viewModel.onIntent(RegisterProfileIntent.OnIsSmokeClick(it)) },
@@ -164,7 +164,7 @@ private fun RegisterProfileScreen(
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
-    onBirthdayChanged: (String) -> Unit,
+    onBirthdateChanged: (String) -> Unit,
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
     onJobDropDownClicked: () -> Unit,
@@ -178,8 +178,8 @@ private fun RegisterProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
-    var valueTalks: List<ValueTalk> by remember { mutableStateOf(state.valueTalks) }
-    var valuePicks: List<ValuePick> by remember { mutableStateOf(state.valuePicks) }
+    var valueTalks: List<ValueTalkRegisterRO> by remember(state.valueTalks) { mutableStateOf(state.valueTalks) }
+    var valuePicks: List<ValuePickRegisterRO> by remember(state.valuePicks) { mutableStateOf(state.valuePicks) }
 
     Column(
         modifier = modifier
@@ -194,7 +194,7 @@ private fun RegisterProfileScreen(
 
         if (state.currentPage != RegisterProfileState.Page.FINISH) {
             PiecePageIndicator(
-                currentStep = state.currentPage.ordinal+1,
+                currentStep = state.currentPage.ordinal + 1,
                 totalSteps = RegisterProfileState.Page.entries.size,
             )
         }
@@ -216,7 +216,7 @@ private fun RegisterProfileScreen(
                             onProfileImageChanged = onProfileImageChanged,
                             onNickNameChanged = onNickNameChanged,
                             onDescribeMySelfChanged = onDescribeMySelfChanged,
-                            onBirthdayChanged = onBirthdayChanged,
+                            onBirthdateChanged = onBirthdateChanged,
                             onLocationDropDownClicked = onLocationDropDownClicked,
                             onHeightChanged = onHeightChanged,
                             onWeightChanged = onWeightChanged,
@@ -284,7 +284,7 @@ private fun PreviewRegisterProfileScreen() {
             onNickNameChanged = {},
             onProfileImageChanged = {},
             onDescribeMySelfChanged = {},
-            onBirthdayChanged = {},
+            onBirthdateChanged = {},
             onHeightChanged = {},
             onWeightChanged = {},
             onJobDropDownClicked = {},
