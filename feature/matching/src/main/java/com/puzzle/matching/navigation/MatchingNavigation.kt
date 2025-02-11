@@ -8,6 +8,7 @@ import com.puzzle.matching.graph.block.BlockRoute
 import com.puzzle.matching.graph.contact.ContactRoute
 import com.puzzle.matching.graph.detail.MatchingDetailRoute
 import com.puzzle.matching.graph.main.MatchingRoute
+import com.puzzle.matching.graph.preview.ProfilePreviewRoute
 import com.puzzle.matching.graph.report.ReportRoute
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
@@ -42,6 +43,10 @@ fun NavGraphBuilder.matchingNavGraph() {
 
         composable<MatchingGraphDest.ContactRoute> { backStackEntry ->
             ContactRoute()
+        }
+
+        composable<MatchingGraphDest.ProfilePreviewRoute> { backStackEntry ->
+            ProfilePreviewRoute()
         }
     }
 }
