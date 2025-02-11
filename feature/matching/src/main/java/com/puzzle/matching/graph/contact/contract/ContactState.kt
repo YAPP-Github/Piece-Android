@@ -9,7 +9,7 @@ data class ContactState(
     val isLoading: Boolean = false,
     val nickName: String = "",
     val contacts: List<Contact> = emptyList(),
-    val selectedContact: Contact? = contacts.firstOrNull()
+    val selectedContact: Contact? = null,
 ) : MavericksState
 
 internal fun SnsPlatform.getContactIconId(): Int? = when (this) {
