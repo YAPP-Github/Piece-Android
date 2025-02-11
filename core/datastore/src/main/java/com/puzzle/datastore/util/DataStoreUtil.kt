@@ -15,22 +15,16 @@ internal fun <T> DataStore<Preferences>.getValue(
     defaultValue: T
 ): Flow<T> =
     data.handleException()
-        .map { preferences ->
-            preferences[key] ?: defaultValue
-        }
+        .map { preferences -> preferences[key] ?: defaultValue }
 
 internal suspend fun <T> DataStore<Preferences>.setValue(
     key: Preferences.Key<T>,
     value: T,
-) = edit { preferences ->
-    preferences[key] = value
-}
+) = edit { preferences -> preferences[key] = value }
 
 internal suspend fun <T> DataStore<Preferences>.clear(
     key: Preferences.Key<T>
-) = edit { preferences ->
-    preferences.remove(key)
-}
+) = edit { preferences -> preferences.remove(key) }
 
 private fun Flow<Preferences>.handleException(): Flow<Preferences> =
     this.catch { exception ->
