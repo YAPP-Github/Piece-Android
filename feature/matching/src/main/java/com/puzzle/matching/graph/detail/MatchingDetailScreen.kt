@@ -285,29 +285,30 @@ private fun MatchingDetailContent(
             when (it) {
                 MatchingDetailState.MatchingDetailPage.BasicInfoPage ->
                     BasicInfoPage(
-                        nickName = state.nickName,
-                        selfDescription = state.selfDescription,
+                        nickName = state.nickname,
+                        selfDescription = state.description,
                         birthYear = state.birthYear,
                         age = state.age,
                         height = state.height,
-                        activityRegion = state.activityRegion,
-                        occupation = state.occupation,
+                        weight = state.weight,
+                        activityRegion = state.location,
+                        occupation = state.job,
                         smokeStatue = state.smokeStatue,
                         onMoreClick = onMoreClick,
                     )
 
                 MatchingDetailState.MatchingDetailPage.ValueTalkPage ->
                     ValueTalkPage(
-                        nickName = state.nickName,
-                        selfDescription = state.selfDescription,
+                        nickName = state.nickname,
+                        selfDescription = state.description,
                         talkCards = state.valueTalks,
                         onMoreClick = onMoreClick,
                     )
 
                 MatchingDetailState.MatchingDetailPage.ValuePickPage ->
                     ValuePickPage(
-                        nickName = state.nickName,
-                        selfDescription = state.selfDescription,
+                        nickName = state.nickname,
+                        selfDescription = state.description,
                         pickCards = state.valuePicks,
                         onDeclineClick = onDeclineClick,
                     )

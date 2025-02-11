@@ -8,6 +8,7 @@ import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.BlockContactsRequest
 import com.puzzle.network.model.matching.GetMatchInfoResponse
+import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
@@ -84,6 +85,9 @@ interface PieceApi {
 
     @GET("/api/matches/values/picks")
     suspend fun getOpponentValuePicks(): Result<ApiResponse<GetOpponentValuePicksResponse>>
+
+    @GET("/api/matches/profiles/basic")
+    suspend fun getOpponentProfileBasic(): Result<ApiResponse<GetOpponentProfileBasicResponse>>
 
     @PATCH("/api/matches/pieces/check")
     suspend fun checkMatchingPiece(): Result<ApiResponse<Unit>>

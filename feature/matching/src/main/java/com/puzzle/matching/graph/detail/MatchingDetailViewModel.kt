@@ -39,23 +39,52 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private val matchUserId = 0 // Todo 임시
 
     init {
-        viewModelScope.launch {
-            launch {
-                matchingRepository.getOpponentValueTalks()
-                    .onSuccess { valueTalks -> setState { copy(valueTalks = valueTalks) } }
-                    .onFailure { errorHelper.sendError(it) }
-            }
-
-            launch {
-                matchingRepository.getOpponentValuePicks()
-                    .onSuccess { valuePicks -> setState { copy(valuePicks = valuePicks) } }
-                    .onFailure { errorHelper.sendError(it) }
-            }
-        }
+        initMatchDetailInfo()
 
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initMatchDetailInfo() = viewModelScope.launch {
+        setState { copy(isLoading = true) }
+
+        val valueTalksJob = launch {
+            matchingRepository.getOpponentValueTalks()
+                .onSuccess { valueTalks -> setState { copy(valueTalks = valueTalks) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        val valuePicksJob = launch {
+            matchingRepository.getOpponentValuePicks()
+                .onSuccess { valuePicks -> setState { copy(valuePicks = valuePicks) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        val profileBasicJob = launch {
+            matchingRepository.getOpponentProfileBasic()
+                .onSuccess { profileBasic ->
+                    setState {
+                        copy(
+                            description = profileBasic.description,
+                            nickname = profileBasic.nickname,
+                            age = profileBasic.age.toString(),
+                            weight = profileBasic.weight.toString(),
+                            height = profileBasic.height.toString(),
+                            birthYear = profileBasic.birthYear,
+                            job = profileBasic.job,
+                            location = profileBasic.location,
+                            smokeStatue = profileBasic.smokingStatus,
+                        )
+                    }
+                }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        valuePicksJob.join()
+        valueTalksJob.join()
+        profileBasicJob.join()
+        setState { copy(isLoading = false) }
     }
 
     internal fun onIntent(intent: MatchingDetailIntent) = viewModelScope.launch {
@@ -65,7 +94,9 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
             is MatchingDetailIntent.OnMoreClick -> showBottomSheet(intent.content)
-            MatchingDetailIntent.OnMatchingDetailCloseClick -> navigateTo(NavigationEvent.NavigateUp)
+            MatchingDetailIntent.OnMatchingDetailCloseClick ->
+                navigationHelper.navigate(NavigationEvent.NavigateUp)
+
             MatchingDetailIntent.OnPreviousPageClick -> setPreviousPage()
             MatchingDetailIntent.OnNextPageClick -> setNextPage()
             MatchingDetailIntent.OnBlockClick -> onBlockClick()
@@ -88,11 +119,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
     private fun onBlockClick() {
         withState {
-            navigateTo(
+            navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.BlockRoute(
                         userId = matchUserId,
-                        userName = it.nickName,
+                        userName = it.nickname,
                     )
                 )
             )
@@ -103,11 +134,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
     private fun onReportClick() {
         withState {
-            navigateTo(
+            navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.ReportRoute(
                         userId = matchUserId,
-                        userName = it.nickName,
+                        userName = it.nickname,
                     )
                 )
             )
@@ -127,10 +158,6 @@ class MatchingDetailViewModel @AssistedInject constructor(
                 )
             }
             .onFailure { errorHelper.sendError(it) }
-    }
-
-    private fun navigateTo(navigationEvent: NavigationEvent) {
-        _sideEffects.trySend(MatchingDetailSideEffect.Navigate(navigationEvent))
     }
 
     private fun showBottomSheet(content: @Composable () -> Unit) {

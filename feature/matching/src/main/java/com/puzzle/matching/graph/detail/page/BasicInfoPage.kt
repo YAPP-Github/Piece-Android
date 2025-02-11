@@ -32,6 +32,7 @@ internal fun BasicInfoPage(
     birthYear: String,
     age: String,
     height: String,
+    weight: String,
     activityRegion: String,
     occupation: String,
     smokeStatue: String,
@@ -52,6 +53,7 @@ internal fun BasicInfoPage(
             age = age,
             birthYear = birthYear,
             height = height,
+            weight = weight,
             activityRegion = activityRegion,
             occupation = occupation,
             smokeStatue = smokeStatue,
@@ -85,10 +87,11 @@ private fun BasicInfoName(
 }
 
 @Composable
-private fun ColumnScope.BasicInfoCard(
+private fun BasicInfoCard(
     age: String,
     birthYear: String,
     height: String,
+    weight: String,
     activityRegion: String,
     occupation: String,
     smokeStatue: String,
@@ -165,7 +168,7 @@ private fun ColumnScope.BasicInfoCard(
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "72",
+                        text = weight,
                         style = PieceTheme.typography.headingSSB,
                         color = PieceTheme.colors.black,
                     )
@@ -258,6 +261,7 @@ private fun ProfileBasicInfoPagePreview() {
             birthYear = "1994",
             age = "31",
             height = "200",
+            weight = "72",
             activityRegion = "서울특별시",
             occupation = "개발자",
             smokeStatue = "비흡연",

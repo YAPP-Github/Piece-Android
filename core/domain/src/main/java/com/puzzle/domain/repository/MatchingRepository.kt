@@ -1,6 +1,7 @@
 package com.puzzle.domain.repository
 
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.profile.OpponentProfileBasic
 import com.puzzle.domain.model.profile.OpponentValuePick
 import com.puzzle.domain.model.profile.OpponentValueTalk
 
@@ -11,6 +12,7 @@ interface MatchingRepository {
     suspend fun getMatchInfo(): Result<MatchInfo>
     suspend fun getOpponentValueTalks(): Result<List<OpponentValueTalk>>
     suspend fun getOpponentValuePicks(): Result<List<OpponentValuePick>>
+    suspend fun getOpponentProfileBasic(): Result<OpponentProfileBasic>
     suspend fun checkMatchingPiece(): Result<Unit>
     suspend fun acceptMatching(): Result<Unit>
 }

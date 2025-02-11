@@ -1,10 +1,12 @@
 package com.puzzle.data.repository
 
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.profile.OpponentProfileBasic
 import com.puzzle.domain.model.profile.OpponentValuePick
 import com.puzzle.domain.model.profile.OpponentValueTalk
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.network.model.matching.GetMatchInfoResponse
+import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 import com.puzzle.network.source.matching.MatchingDataSource
@@ -30,6 +32,10 @@ class MatchingRepositoryImpl @Inject constructor(
     override suspend fun getOpponentValuePicks(): Result<List<OpponentValuePick>> =
         matchingDataSource.getOpponentValuePicks()
             .mapCatching(GetOpponentValuePicksResponse::toDomain)
+
+    override suspend fun getOpponentProfileBasic(): Result<OpponentProfileBasic> =
+        matchingDataSource.getOpponentProfileBasic()
+            .mapCatching(GetOpponentProfileBasicResponse::toDomain)
 
     override suspend fun checkMatchingPiece(): Result<Unit> =
         matchingDataSource.checkMatchingPiece()
