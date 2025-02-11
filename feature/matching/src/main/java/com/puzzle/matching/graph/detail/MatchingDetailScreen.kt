@@ -42,9 +42,11 @@ import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
 import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceImageDialog
+import com.puzzle.designsystem.component.PieceLoading
 import com.puzzle.designsystem.component.PieceRoundingButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.profile.OpponentProfile
 import com.puzzle.matching.graph.detail.bottomsheet.MatchingDetailMoreBottomSheet
 import com.puzzle.matching.graph.detail.common.constant.DialogType
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
@@ -167,7 +169,7 @@ private fun MatchingDetailScreen(
 
             DialogType.PROFILE_IMAGE_DETAIL -> {
                 PieceImageDialog(
-                    imageUri = state.imageUri,
+                    imageUri = state.profile?.imageUrl,
                     buttonLabel = "매칭 수락하기",
                     onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },
@@ -216,13 +218,13 @@ private fun MatchingDetailScreen(
                 .fillMaxWidth()
                 .height(topBarHeight)
                 .align(Alignment.TopCenter)
-                .let {
+                .then(
                     if (state.currentPage != MatchingDetailPage.BasicInfoPage) {
-                        it.background(PieceTheme.colors.white)
+                        Modifier.background(PieceTheme.colors.white)
                     } else {
-                        it
+                        Modifier
                     }
-                }
+                )
                 .padding(horizontal = 20.dp),
         )
 
@@ -254,10 +256,7 @@ private fun MatchingDetailScreen(
 
 @Composable
 private fun BackgroundImage(modifier: Modifier = Modifier) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
+    Box(modifier = modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.matchingdetail_bg),
             contentDescription = "basic info 배경화면",
@@ -275,44 +274,47 @@ private fun MatchingDetailContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        AnimatedContent(
-            targetState = state.currentPage,
-            transitionSpec = {
-                fadeIn(tween(700)) togetherWith fadeOut(tween(700))
-            },
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            when (it) {
-                MatchingDetailState.MatchingDetailPage.BasicInfoPage ->
-                    BasicInfoPage(
-                        nickName = state.nickName,
-                        selfDescription = state.selfDescription,
-                        birthYear = state.birthYear,
-                        age = state.age,
-                        height = state.height,
-                        activityRegion = state.activityRegion,
-                        occupation = state.occupation,
-                        smokeStatue = state.smokeStatue,
-                        onMoreClick = onMoreClick,
-                    )
+        state.profile?.let { profile ->
+            AnimatedContent(
+                targetState = state.currentPage,
+                transitionSpec = {
+                    fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+                },
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                when (it) {
+                    MatchingDetailPage.BasicInfoPage ->
+                        BasicInfoPage(
+                            nickName = profile.nickname,
+                            selfDescription = profile.description,
+                            birthYear = profile.birthYear,
+                            age = profile.age,
+                            height = profile.height,
+                            weight = profile.weight,
+                            activityRegion = profile.location,
+                            occupation = profile.job,
+                            smokingStatus = profile.smokingStatus,
+                            onMoreClick = onMoreClick,
+                        )
 
-                MatchingDetailState.MatchingDetailPage.ValueTalkPage ->
-                    ValueTalkPage(
-                        nickName = state.nickName,
-                        selfDescription = state.selfDescription,
-                        talkCards = state.talkCards,
-                        onMoreClick = onMoreClick,
-                    )
+                    MatchingDetailPage.ValueTalkPage ->
+                        ValueTalkPage(
+                            nickName = profile.nickname,
+                            selfDescription = profile.description,
+                            talkCards = profile.valueTalks,
+                            onMoreClick = onMoreClick,
+                        )
 
-                MatchingDetailState.MatchingDetailPage.ValuePickPage ->
-                    ValuePickPage(
-                        nickName = state.nickName,
-                        selfDescription = state.selfDescription,
-                        pickCards = state.pickCards,
-                        onDeclineClick = onDeclineClick,
-                    )
+                    MatchingDetailPage.ValuePickPage ->
+                        ValuePickPage(
+                            nickName = profile.nickname,
+                            selfDescription = profile.description,
+                            pickCards = profile.valuePicks,
+                            onDeclineClick = onDeclineClick,
+                        )
+                }
             }
-        }
+        } ?: PieceLoading()
     }
 }
 
@@ -386,7 +388,22 @@ private fun MatchingDetailBottomBar(
 private fun MatchingDetailScreenPreview() {
     PieceTheme {
         MatchingDetailScreen(
-            MatchingDetailState(),
+            MatchingDetailState(
+                profile = OpponentProfile(
+                    description = "음악과 요리를 좋아하는",
+                    nickname = "수줍은 수달",
+                    birthYear = "00",
+                    age = 25,
+                    height = 254,
+                    weight = 72,
+                    job = "개발자",
+                    location = "서울특별시",
+                    smokingStatus = "비흡연",
+                    valueTalks = emptyList(),
+                    valuePicks = emptyList(),
+                    imageUrl = "",
+                )
+            ),
             {},
             {},
             {},
