@@ -284,7 +284,6 @@ private fun ContactScreenPreview() {
             ),
             onCloseClick = {},
             onContactClick = {},
-            onCopyClick = {},
             modifier = Modifier.fillMaxSize(),
         )
     }
