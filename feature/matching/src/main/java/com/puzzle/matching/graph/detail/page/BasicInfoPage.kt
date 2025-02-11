@@ -30,12 +30,12 @@ internal fun BasicInfoPage(
     nickName: String,
     selfDescription: String,
     birthYear: String,
-    age: String,
-    height: String,
-    weight: String,
+    age: Int,
+    height: Int,
+    weight: Int,
     activityRegion: String,
     occupation: String,
-    smokeStatue: String,
+    smokingStatus: String,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -56,7 +56,7 @@ internal fun BasicInfoPage(
             weight = weight,
             activityRegion = activityRegion,
             occupation = occupation,
-            smokeStatue = smokeStatue,
+            smokeStatue = smokingStatus,
             modifier = Modifier.padding(horizontal = 20.dp)
         )
     }
@@ -88,10 +88,10 @@ private fun BasicInfoName(
 
 @Composable
 private fun BasicInfoCard(
-    age: String,
+    age: Int,
     birthYear: String,
-    height: String,
-    weight: String,
+    height: Int,
+    weight: Int,
     activityRegion: String,
     occupation: String,
     smokeStatue: String,
@@ -116,7 +116,7 @@ private fun BasicInfoCard(
                     Spacer(modifier = Modifier.width(4.dp))
 
                     Text(
-                        text = age,
+                        text = age.toString(),
                         style = PieceTheme.typography.headingSSB,
                         color = PieceTheme.colors.black,
                     )
@@ -148,7 +148,7 @@ private fun BasicInfoCard(
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = height,
+                        text = height.toString(),
                         style = PieceTheme.typography.headingSSB,
                         color = PieceTheme.colors.black,
                     )
@@ -168,7 +168,7 @@ private fun BasicInfoCard(
             text = {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = weight,
+                        text = weight.toString(),
                         style = PieceTheme.typography.headingSSB,
                         color = PieceTheme.colors.black,
                     )
@@ -259,12 +259,12 @@ private fun ProfileBasicInfoPagePreview() {
             nickName = "수줍은 수달",
             selfDescription = "음악과 요리를 좋아하는",
             birthYear = "1994",
-            age = "31",
-            height = "200",
-            weight = "72",
+            age = 31,
+            height = 200,
+            weight = 72,
             activityRegion = "서울특별시",
             occupation = "개발자",
-            smokeStatue = "비흡연",
+            smokingStatus = "비흡연",
             onMoreClick = { },
         )
     }

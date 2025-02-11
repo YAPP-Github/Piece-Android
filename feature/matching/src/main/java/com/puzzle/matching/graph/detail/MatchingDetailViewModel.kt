@@ -9,6 +9,7 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.domain.usecase.matching.GetOpponentProfileUseCase
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
 import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 
 class MatchingDetailViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingDetailState,
+    private val getOpponentProfileUseCase: GetOpponentProfileUseCase,
     private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
@@ -49,56 +51,20 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private fun initMatchDetailInfo() = viewModelScope.launch {
         setState { copy(isLoading = true) }
 
-        val valueTalksJob = launch {
-            matchingRepository.getOpponentValueTalks()
-                .onSuccess { valueTalks -> setState { copy(valueTalks = valueTalks) } }
-                .onFailure { errorHelper.sendError(it) }
+        getOpponentProfileUseCase().onSuccess { response ->
+            setState { copy(profile = response) }
+        }.onFailure {
+            errorHelper.sendError(it)
+        }.also {
+            setState { copy(isLoading = false) }
         }
-
-        val valuePicksJob = launch {
-            matchingRepository.getOpponentValuePicks()
-                .onSuccess { valuePicks -> setState { copy(valuePicks = valuePicks) } }
-                .onFailure { errorHelper.sendError(it) }
-        }
-
-        val profileBasicJob = launch {
-            matchingRepository.getOpponentProfileBasic()
-                .onSuccess { profileBasic ->
-                    setState {
-                        copy(
-                            description = profileBasic.description,
-                            nickname = profileBasic.nickname,
-                            age = profileBasic.age.toString(),
-                            weight = profileBasic.weight.toString(),
-                            height = profileBasic.height.toString(),
-                            birthYear = profileBasic.birthYear,
-                            job = profileBasic.job,
-                            location = profileBasic.location,
-                            smokeStatue = profileBasic.smokingStatus,
-                        )
-                    }
-                }
-                .onFailure { errorHelper.sendError(it) }
-        }
-
-        val profileImageJob = launch {
-            matchingRepository.getOpponentProfileImage()
-                .onSuccess { profileImageUrl -> setState { copy(imageUrl = profileImageUrl) } }
-                .onFailure { errorHelper.sendError(it) }
-        }
-
-        valuePicksJob.join()
-        valueTalksJob.join()
-        profileBasicJob.join()
-        profileImageJob.join()
-        setState { copy(isLoading = false) }
     }
 
     internal fun onIntent(intent: MatchingDetailIntent) = viewModelScope.launch {
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: MatchingDetailIntent) {
+    private fun processIntent(intent: MatchingDetailIntent) {
         when (intent) {
             is MatchingDetailIntent.OnMoreClick -> showBottomSheet(intent.content)
             MatchingDetailIntent.OnMatchingDetailCloseClick ->
@@ -130,7 +96,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.BlockRoute(
                         userId = matchUserId,
-                        userName = it.nickname,
+                        userName = it.profile!!.nickname,
                     )
                 )
             )
@@ -145,7 +111,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.ReportRoute(
                         userId = matchUserId,
-                        userName = it.nickname,
+                        userName = it.profile!!.nickname,
                     )
                 )
             )

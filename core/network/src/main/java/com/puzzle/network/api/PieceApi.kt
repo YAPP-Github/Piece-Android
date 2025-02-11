@@ -9,6 +9,7 @@ import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.BlockContactsRequest
 import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
+import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
 import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
