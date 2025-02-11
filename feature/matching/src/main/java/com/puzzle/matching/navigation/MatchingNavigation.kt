@@ -5,6 +5,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.puzzle.matching.graph.block.BlockRoute
+import com.puzzle.matching.graph.contact.ContactRoute
 import com.puzzle.matching.graph.detail.MatchingDetailRoute
 import com.puzzle.matching.graph.main.MatchingRoute
 import com.puzzle.matching.graph.report.ReportRoute
@@ -37,6 +38,10 @@ fun NavGraphBuilder.matchingNavGraph() {
                 userId = block.userId,
                 userName = block.userName,
             )
+        }
+
+        composable<MatchingGraphDest.ContactRoute> { backStackEntry ->
+            ContactRoute()
         }
     }
 }

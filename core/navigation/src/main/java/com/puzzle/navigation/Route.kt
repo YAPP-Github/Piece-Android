@@ -44,6 +44,9 @@ sealed class MatchingGraphDest : Route {
 
     @Serializable
     data class BlockRoute(val userId: Int, val userName: String) : MatchingGraphDest()
+
+    @Serializable
+    data object ContactRoute: MatchingGraphDest()
 }
 
 @Serializable
