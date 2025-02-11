@@ -7,6 +7,7 @@ import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.BlockContactsRequest
+import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.LoadValuePicksResponse
 import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.matching.ReportUserRequest
@@ -19,6 +20,7 @@ import com.puzzle.network.model.token.RefreshTokenResponse
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
@@ -71,4 +73,13 @@ interface PieceApi {
 
     @POST("/api/blockContacts")
     suspend fun blockContacts(@Body blockContactsRequest: BlockContactsRequest): Result<ApiResponse<Unit>>
+
+    @GET("/api/matches/infos")
+    suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>
+
+    @PATCH("/api/matches/pieces/check")
+    suspend fun checkMatchingPiece(): Result<ApiResponse<Unit>>
+
+    @POST("/api/matches/accept")
+    suspend fun acceptMatching(): Result<ApiResponse<Unit>>
 }

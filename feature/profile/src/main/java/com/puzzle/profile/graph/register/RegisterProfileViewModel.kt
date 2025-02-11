@@ -397,9 +397,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
 
     private fun updateContact(idx: Int, contact: Contact) {
         setState {
-            val newContacts = contacts.toMutableList().apply {
-                set(idx, contact)
-            }
+            val newContacts = contacts.toMutableList()
+                .apply { set(idx, contact) }
 
             copy(
                 contacts = newContacts,

@@ -138,7 +138,7 @@ class SignUpViewModel @AssistedInject constructor(
         matchingRepository.blockContacts(phoneNumbers)
             .onSuccess {
                 setState { copy(isBlockContactsDone = true) }
-                delay(3100L)
+                delay(2100L)
                 onNextClick()
             }
             .onFailure { errorHelper.sendError(it) }
