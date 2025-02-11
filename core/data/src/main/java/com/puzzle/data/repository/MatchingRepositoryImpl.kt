@@ -1,6 +1,7 @@
 package com.puzzle.data.repository
 
 import com.puzzle.common.suspendRunCatching
+import com.puzzle.datastore.datasource.matching.LocalMatchingDataSource
 import com.puzzle.domain.model.match.MatchInfo
 import com.puzzle.domain.model.profile.OpponentProfile
 import com.puzzle.domain.model.profile.OpponentProfileBasic
@@ -15,9 +16,11 @@ import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 import com.puzzle.network.source.matching.MatchingDataSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class MatchingRepositoryImpl @Inject constructor(
+    private val localMatchingDataSource: LocalMatchingDataSource,
     private val matchingDataSource: MatchingDataSource,
 ) : MatchingRepository {
     override suspend fun reportUser(userId: Int, reason: String): Result<Unit> =
@@ -29,6 +32,10 @@ class MatchingRepositoryImpl @Inject constructor(
 
     override suspend fun getMatchInfo(): Result<MatchInfo> = matchingDataSource.getMatchInfo()
         .mapCatching(GetMatchInfoResponse::toDomain)
+
+    override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> = suspendRunCatching {
+        localMatchingDataSource.opponentProfile.first()
+    }
 
     override suspend fun getOpponentProfile(): Result<OpponentProfile> = suspendRunCatching {
         coroutineScope {

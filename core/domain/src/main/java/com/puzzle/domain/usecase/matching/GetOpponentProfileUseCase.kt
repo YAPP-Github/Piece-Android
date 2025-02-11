@@ -7,5 +7,7 @@ import javax.inject.Inject
 class GetOpponentProfileUseCase @Inject constructor(
     private val matchingRepository: MatchingRepository,
 ) {
-    suspend operator fun invoke(): Result<OpponentProfile> = matchingRepository.getOpponentProfile()
+    suspend operator fun invoke(): Result<OpponentProfile> =
+        matchingRepository.retrieveOpponentProfile()
+            .recoverCatching { matchingRepository.getOpponentProfile().getOrThrow() }
 }

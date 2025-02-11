@@ -17,13 +17,8 @@ class LocalMatchingDataSourceImpl @Inject constructor(
     @Named("matching") private val dataStore: DataStore<Preferences>,
 ) : LocalMatchingDataSource {
     private val gson = Gson()
-    override val opponentProfile: Flow<OpponentProfile?> = dataStore.getValue(OPPONENT_PROFILE, "")
-        .map {
-            when {
-                it.isNotEmpty() -> gson.fromJson(it, OpponentProfile::class.java)
-                else -> null
-            }
-        }
+    override val opponentProfile: Flow<OpponentProfile> = dataStore.getValue(OPPONENT_PROFILE, "")
+        .map { gson.fromJson(it, OpponentProfile::class.java) }
 
     override suspend fun setOpponentProfile(opponentProfile: OpponentProfile) {
         val jsonString = gson.toJson(opponentProfile)
