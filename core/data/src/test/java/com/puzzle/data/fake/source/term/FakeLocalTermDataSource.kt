@@ -1,17 +1,23 @@
 package com.puzzle.data.fake.source.term
 
-import com.puzzle.database.model.terms.TermEntity
 import com.puzzle.datastore.datasource.term.LocalTermDataSource
+import com.puzzle.domain.model.terms.Term
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FakeLocalTermDataSource : LocalTermDataSource {
-    private var terms = listOf<TermEntity>()
+    private var storedTerms: List<Term>? = emptyList()
 
-    override suspend fun retrieveTerms(): List<TermEntity> {
-        return terms
+    override val terms: Flow<List<Term>> = flow {
+        storedTerms?.let { emit(it) }
+            ?: throw NoSuchElementException("No value present in DataStore")
     }
 
-    override suspend fun replaceTerms(terms: List<TermEntity>): Result<Unit> {
-        this.terms = terms
-        return Result.success(Unit)
+    override suspend fun setTerms(terms: List<Term>) {
+        storedTerms = terms
+    }
+
+    override suspend fun clearTerms() {
+        storedTerms = emptyList()
     }
 }

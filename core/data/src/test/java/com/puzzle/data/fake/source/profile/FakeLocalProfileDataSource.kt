@@ -5,32 +5,41 @@ import com.puzzle.domain.model.profile.MyProfile
 import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flow
 
 class FakeLocalProfileDataSource : LocalProfileDataSource {
-    private val _valuePickQuestions = MutableStateFlow<List<ValuePickQuestion>>(emptyList())
-    override val valuePickQuestions: Flow<List<ValuePickQuestion>> = _valuePickQuestions
+    private var _valuePickQuestions: List<ValuePickQuestion>? = null
+    override val valuePickQuestions: Flow<List<ValuePickQuestion>> = flow {
+        _valuePickQuestions?.let { emit(it) }
+            ?: throw NoSuchElementException("No value present in DataStore")
+    }
 
-    private val _valueTalkQuestions = MutableStateFlow<List<ValueTalkQuestion>>(emptyList())
-    override val valueTalkQuestions: Flow<List<ValueTalkQuestion>> = _valueTalkQuestions
+    private var _valueTalkQuestions: List<ValueTalkQuestion>? = null
+    override val valueTalkQuestions: Flow<List<ValueTalkQuestion>> =
+        flow {
+            _valueTalkQuestions?.let { emit(it) }
+                ?: throw NoSuchElementException("No value present in DataStore")
+        }
 
-    private val _myProfile = MutableStateFlow<MyProfile?>(null)
-    override val myProfile: Flow<MyProfile> = _myProfile.filterNotNull()
+    private var _myProfile: MyProfile? = null
+    override val myProfile: Flow<MyProfile> = flow {
+        _myProfile?.let { emit(it) }
+            ?: throw NoSuchElementException("No value present in DataStore")
+    }
 
     override suspend fun setValuePickQuestions(valuePicks: List<ValuePickQuestion>) {
-        _valuePickQuestions.value = valuePicks
+        _valuePickQuestions = valuePicks
     }
 
     override suspend fun setValueTalkQuestions(valueTalks: List<ValueTalkQuestion>) {
-        _valueTalkQuestions.value = valueTalks
+        _valueTalkQuestions = valueTalks
     }
 
     override suspend fun setMyProfile(profile: MyProfile) {
-        _myProfile.value = profile
+        _myProfile = profile
     }
 
     override suspend fun clearMyProfile() {
-        _myProfile.value = null
+        _myProfile = null
     }
 }
