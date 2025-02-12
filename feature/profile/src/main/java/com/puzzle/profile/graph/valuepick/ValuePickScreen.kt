@@ -3,7 +3,6 @@ package com.puzzle.profile.graph.valuepick
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,10 +25,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
-import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSubTopBar
@@ -37,7 +35,6 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.AnswerOption
 import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.profile.graph.valuepick.contract.ValuePickIntent
-import com.puzzle.profile.graph.valuepick.contract.ValuePickSideEffect
 import com.puzzle.profile.graph.valuepick.contract.ValuePickState
 import com.puzzle.profile.graph.valuepick.contract.ValuePickState.ScreenState
 
@@ -46,22 +43,11 @@ internal fun ValuePickRoute(
     viewModel: ValuePickViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is ValuePickSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     ValuePickScreen(
         state = state,
-        onSaveClick = {},
+        onSaveClick = { viewModel.onIntent(ValuePickIntent.OnUpdateClick(it)) },
+        onEditClick = { viewModel.onIntent(ValuePickIntent.OnEditClick) },
         onBackClick = { viewModel.onIntent(ValuePickIntent.OnBackClick) },
     )
 }
@@ -70,19 +56,18 @@ internal fun ValuePickRoute(
 private fun ValuePickScreen(
     state: ValuePickState,
     onSaveClick: (List<MyValuePick>) -> Unit,
+    onEditClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var screenState: ScreenState by remember { mutableStateOf(ScreenState.SAVED) }
     var valuePicks: List<MyValuePick> by remember { mutableStateOf(state.valuePicks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
-    BackHandler {
-        if (screenState == ScreenState.EDITING) {
-            // TODO : 데이터 초기화
-            screenState = ScreenState.SAVED
-        } else {
-            onBackClick()
+    BackHandler { onBackClick() }
+
+    LaunchedEffect(state.screenState) {
+        if (state.screenState == ScreenState.EDITING) {
+            valuePicks = state.valuePicks
         }
     }
 
@@ -92,21 +77,19 @@ private fun ValuePickScreen(
             .background(PieceTheme.colors.white),
     ) {
         PieceSubTopBar(
-            title = when (screenState) {
-                ScreenState.SAVED -> stringResource(R.string.value_pick_profile_topbar_title)
+            title = when (state.screenState) {
+                ScreenState.NORMAL -> stringResource(R.string.value_pick_profile_topbar_title)
                 ScreenState.EDITING -> stringResource(R.string.value_pick_edit_profile_topbar_title)
             },
             onNavigationClick = onBackClick,
             rightComponent = {
-                when (screenState) {
-                    ScreenState.SAVED ->
+                when (state.screenState) {
+                    ScreenState.NORMAL ->
                         Text(
                             text = stringResource(R.string.value_pick_profile_topbar_edit),
                             style = PieceTheme.typography.bodyMM,
                             color = PieceTheme.colors.primaryDefault,
-                            modifier = Modifier.clickable {
-                                screenState = ScreenState.EDITING
-                            },
+                            modifier = Modifier.clickable { onEditClick() },
                         )
 
                     ScreenState.EDITING ->
@@ -118,13 +101,9 @@ private fun ValuePickScreen(
                             } else {
                                 PieceTheme.colors.dark3
                             },
-                            modifier = Modifier.clickable {
-                                if (isContentEdited) {
-                                    onSaveClick(valuePicks)
-                                    isContentEdited = false
-                                }
-
-                                screenState = ScreenState.SAVED
+                            modifier = Modifier.clickable(enabled = isContentEdited) {
+                                onSaveClick(valuePicks)
+                                isContentEdited = false
                             },
                         )
                 }
@@ -139,11 +118,11 @@ private fun ValuePickScreen(
 
         ValuePickCards(
             valuePicks = valuePicks,
-            screenState = screenState,
-            onContentChange = {
+            screenState = state.screenState,
+            onContentChange = { changedValuePick ->
                 valuePicks = valuePicks.map { valuePick ->
-                    if (valuePick.id == it.id) {
-                        it
+                    if (valuePick.id == changedValuePick.id) {
+                        changedValuePick
                     } else {
                         valuePick
                     }
@@ -362,6 +341,7 @@ private fun ValuePickPreview() {
                 )
             ),
             onBackClick = {},
+            onEditClick = {},
             onSaveClick = {},
         )
     }
