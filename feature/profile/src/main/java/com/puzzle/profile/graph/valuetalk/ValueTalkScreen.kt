@@ -37,11 +37,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.component.PieceTextInputAI
@@ -49,7 +47,6 @@ import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
-import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.Companion.PAGE_TRANSITION_DURATION
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.Companion.TEXT_DISPLAY_DURATION
@@ -61,22 +58,11 @@ internal fun ValueTalkRoute(
     viewModel: ValueTalkViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is ValueTalkSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     ValueTalkScreen(
         state = state,
         onBackClick = { viewModel.onIntent(ValueTalkIntent.OnBackClick) },
+        onEditClick = {},
         onSaveClick = {},
         onAiSummarySaveClick = {},
     )
@@ -86,21 +72,20 @@ internal fun ValueTalkRoute(
 private fun ValueTalkScreen(
     state: ValueTalkState,
     onSaveClick: (List<MyValueTalk>) -> Unit,
+    onEditClick: () -> Unit,
     onBackClick: () -> Unit,
     onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var screenState: ScreenState by remember { mutableStateOf(ScreenState.SAVED) }
-    var valueTalkQuestions: List<MyValueTalk> by remember { mutableStateOf(state.valueTalks) }
+    var valueTalks: List<MyValueTalk> by remember { mutableStateOf(state.valueTalks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
-    var editedValueTalkLabels: List<String> by remember { mutableStateOf(emptyList()) }
+    var editedValueTalkIds: List<Int> by remember { mutableStateOf(emptyList()) }
 
-    BackHandler {
-        if (screenState == ScreenState.EDITING) {
-            // TODO : 데이터 초기화
-            screenState = ScreenState.SAVED
-        } else {
-            onBackClick()
+    BackHandler { onBackClick() }
+
+    LaunchedEffect(state.screenState) {
+        if (state.screenState == ScreenState.EDITING) {
+            valueTalks = state.valueTalks
         }
     }
 
@@ -110,74 +95,62 @@ private fun ValueTalkScreen(
             .background(PieceTheme.colors.white),
     ) {
         PieceSubTopBar(
-            title = when (screenState) {
-                ScreenState.SAVED -> stringResource(R.string.value_talk_profile_topbar_title)
+            title = when (state.screenState) {
+                ScreenState.NORMAL -> stringResource(R.string.value_talk_profile_topbar_title)
                 ScreenState.EDITING -> stringResource(R.string.value_talk_edit_profile_topbar_title)
             },
             onNavigationClick = onBackClick,
             rightComponent = {
-                when (screenState) {
-                    ScreenState.SAVED ->
-                        Text(
-                            text = stringResource(R.string.value_talk_profile_topbar_edit),
-                            style = PieceTheme.typography.bodyMM,
-                            color = PieceTheme.colors.primaryDefault,
-                            modifier = Modifier.clickable {
-                                screenState = ScreenState.EDITING
-                            },
-                        )
+                when (state.screenState) {
+                    ScreenState.NORMAL -> Text(
+                        text = stringResource(R.string.value_talk_profile_topbar_edit),
+                        style = PieceTheme.typography.bodyMM,
+                        color = PieceTheme.colors.primaryDefault,
+                        modifier = Modifier.clickable { onEditClick() },
+                    )
 
-                    ScreenState.EDITING ->
-                        Text(
-                            text = stringResource(R.string.value_talk_profile_topbar_save),
-                            style = PieceTheme.typography.bodyMM,
-                            color = if (isContentEdited) {
-                                PieceTheme.colors.primaryDefault
-                            } else {
-                                PieceTheme.colors.dark3
-                            },
-                            modifier = Modifier.clickable {
-                                if (isContentEdited) {
-                                    valueTalkQuestions = valueTalkQuestions.map { valueTalk ->
-                                        if (editedValueTalkLabels.contains(valueTalk.category)) {
-                                            valueTalk.copy(summary = "")
-                                        } else {
-                                            valueTalk
-                                        }
-                                    }
-                                    onSaveClick(valueTalkQuestions)
-                                    isContentEdited = false
-                                    editedValueTalkLabels = emptyList()
+                    ScreenState.EDITING -> Text(
+                        text = stringResource(R.string.value_talk_profile_topbar_save),
+                        style = PieceTheme.typography.bodyMM,
+                        color = if (isContentEdited) {
+                            PieceTheme.colors.primaryDefault
+                        } else {
+                            PieceTheme.colors.dark3
+                        },
+                        modifier = Modifier.clickable(enabled = isContentEdited) {
+                            valueTalks = valueTalks.map { valueTalk ->
+                                if (editedValueTalkIds.contains(valueTalk.id)) {
+                                    valueTalk.copy(summary = "")
+                                } else {
+                                    valueTalk
                                 }
-                                screenState = ScreenState.SAVED
-                            },
-                        )
+                            }
+
+                            onSaveClick(valueTalks)
+                            isContentEdited = false
+                            editedValueTalkIds = emptyList()
+                        },
+                    )
                 }
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 14.dp,
-                ),
+                .padding(horizontal = 20.dp, vertical = 14.dp),
         )
 
         ValueTalkCards(
-            valueTalks = valueTalkQuestions,
-            screenState = screenState,
+            valueTalks = valueTalks,
+            screenState = state.screenState,
             onContentChange = { editedValueTalk ->
-                valueTalkQuestions = valueTalkQuestions.map { valueTalk ->
-                    if (valueTalk.category == editedValueTalk.category) {
-                        if (!editedValueTalkLabels.contains(valueTalk.category)) {
-                            editedValueTalkLabels = editedValueTalkLabels + valueTalk.category
-                        }
+                valueTalks = valueTalks.map { valueTalk ->
+                    if (valueTalk.id == editedValueTalk.id) {
                         valueTalk.copy(answer = editedValueTalk.answer)
                     } else {
                         valueTalk
                     }
                 }
 
-                isContentEdited = valueTalkQuestions != state.valueTalks
+                isContentEdited = valueTalks != state.valueTalks
             },
             onAiSummarySaveClick = onAiSummarySaveClick,
         )
@@ -199,10 +172,7 @@ private fun ValueTalkCards(
                 screenState = screenState,
                 onContentChange = onContentChange,
                 onAiSummarySaveClick = onAiSummarySaveClick,
-                modifier = Modifier.padding(
-                    horizontal = 20.dp,
-                    vertical = 24.dp,
-                )
+                modifier = Modifier.padding(horizontal = 20.dp, vertical = 24.dp),
             )
 
             if (idx < valueTalks.size - 1) {
@@ -241,30 +211,26 @@ private fun ValueTalkCard(
 
         PieceTextInputLong(
             value = item.answer,
-            onValueChange = {
-                onContentChange(item.copy(answer = it))
-            },
+            onValueChange = { onContentChange(item.copy(answer = it)) },
             limit = 300,
             readOnly = when (screenState) {
-                ScreenState.SAVED -> true
+                ScreenState.NORMAL -> true
                 ScreenState.EDITING -> false
             },
         )
 
         when (screenState) {
-            ScreenState.SAVED ->
-                AiSummaryContent(
-                    item = item,
-                    onAiSummarySaveClick = onAiSummarySaveClick,
-                )
+            ScreenState.NORMAL -> AiSummaryContent(
+                item = item,
+                onAiSummarySaveClick = onAiSummarySaveClick,
+            )
 
-            ScreenState.EDITING ->
-                GuideRow(
-                    guides = item.guides,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp)
-                )
+            ScreenState.EDITING -> GuideRow(
+                guides = item.guides,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+            )
         }
     }
 }
@@ -445,6 +411,7 @@ private fun ValueTalkPreview() {
             ),
             onBackClick = {},
             onSaveClick = {},
+            onEditClick = {},
             onAiSummarySaveClick = {},
         )
     }

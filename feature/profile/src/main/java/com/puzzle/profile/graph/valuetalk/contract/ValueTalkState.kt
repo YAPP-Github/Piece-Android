@@ -4,6 +4,7 @@ import com.airbnb.mvrx.MavericksState
 import com.puzzle.domain.model.profile.MyValueTalk
 
 data class ValueTalkState(
+    var screenState: ScreenState = ScreenState.NORMAL,
     val valueTalks: List<MyValueTalk> = emptyList(),
 ) : MavericksState {
 
@@ -14,6 +15,6 @@ data class ValueTalkState(
 
     enum class ScreenState {
         EDITING,
-        SAVED
+        NORMAL
     }
 }
