@@ -153,16 +153,6 @@ class ProfileRepositoryImplTest {
     @Test
     fun `가치관Talk 업데이트 시 로컬에 저장된다`() = runTest {
         // given
-        val initialValueTalks = listOf(
-            MyValueTalk(
-                id = 1,
-                category = "음주",
-                title = "술자리에 대한 대화",
-                answer = "원하지 않습니다.",
-                summary = "술자리 거절",
-                guides = emptyList(),
-            )
-        )
         val updatedValueTalks = listOf(
             MyValueTalk(
                 id = 1,
@@ -186,15 +176,6 @@ class ProfileRepositoryImplTest {
     @Test
     fun `가치관Pick 업데이트 시 로컬에 저장된다`() = runTest {
         // given
-        val initialValuePicks = listOf(
-            MyValuePick(
-                id = 1,
-                category = "취미",
-                question = "주말에 주로 무엇을 하나요?",
-                answerOptions = listOf(),
-                selectedAnswer = 0
-            )
-        )
         val updatedValuePicks = listOf(
             MyValuePick(
                 id = 1,
