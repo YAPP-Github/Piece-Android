@@ -32,7 +32,7 @@ class AuthRepositoryImplTest {
     @Test
     fun `유저가 회원가입에 성공했을 경우 토큰과 유저 상태를 저장한다`() = runTest {
         // when
-        val result = authRepository.loginOauth(OAuthProvider.KAKAO, "OAuthClientToken")
+        authRepository.loginOauth(OAuthProvider.KAKAO, "OAuthClientToken")
 
         // then
         assertTrue(localTokenDataSource.accessToken.first().isNotEmpty())
@@ -43,7 +43,7 @@ class AuthRepositoryImplTest {
     @Test
     fun `유저가 휴대폰 인증에 성공했을 경우 토큰과 유저 상태를 저장한다`() = runTest {
         // when
-        val result = authRepository.verifyAuthCode("01012341234", "authCode")
+        authRepository.verifyAuthCode("01012341234", "authCode")
 
         // then
         assertTrue(localTokenDataSource.accessToken.first().isNotEmpty())

@@ -4,6 +4,7 @@ import com.puzzle.data.fake.source.term.FakeLocalTermDataSource
 import com.puzzle.data.fake.source.term.FakeTermDataSource
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.terms.TermResponse
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -46,9 +47,9 @@ class TermsRepositoryImplTest {
         termsRepository.loadTerms()
 
         // then
-        val storedTerms = localTermDataSource.retrieveTerms()
+        val storedTerms = localTermDataSource.terms.first()
         assertTrue(storedTerms.all { it.id != UNKNOWN_INT })
-        assertTrue(storedTerms.size == 1)  // 유효한 약관 하나만 저장되어야 함
+        assertTrue(storedTerms.size == 1)
     }
 
     @Test
@@ -76,13 +77,14 @@ class TermsRepositoryImplTest {
         termsRepository.loadTerms()
 
         // then
-        val storedTerms = localTermDataSource.retrieveTerms()
+        val storedTerms = localTermDataSource.terms.first()
         assertTrue(storedTerms.size == validTerms.size)
         assertTrue(
-            storedTerms.all { entity ->
-                validTerms.any { term ->
-                    term.termId == entity.id && term.title == entity.title
-                }
+            storedTerms.zip(validTerms).all { (stored, response) ->
+                stored.id == response.termId &&
+                        stored.title == response.title &&
+                        stored.content == response.content &&
+                        stored.required == response.required
             }
         )
     }

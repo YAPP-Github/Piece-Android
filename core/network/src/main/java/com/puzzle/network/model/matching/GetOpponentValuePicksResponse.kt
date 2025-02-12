@@ -3,6 +3,7 @@ package com.puzzle.network.model.matching
 import com.puzzle.domain.model.profile.OpponentValuePick
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
+import com.puzzle.network.model.profile.ValuePickAnswerResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

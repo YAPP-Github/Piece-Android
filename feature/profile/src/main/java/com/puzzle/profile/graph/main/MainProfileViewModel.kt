@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.usecase.profile.GetMyProfileBasicUseCase
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.ProfileGraphDest
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 
 class MainProfileViewModel @AssistedInject constructor(
     @Assisted initialState: MainProfileState,
+    private val getMyProfileBasicUseCase: GetMyProfileBasicUseCase,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<MainProfileState>(initialState) {
@@ -32,9 +34,29 @@ class MainProfileViewModel @AssistedInject constructor(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initMainProfile()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initMainProfile() = viewModelScope.launch {
+        getMyProfileBasicUseCase().onSuccess {
+            setState {
+                copy(
+                    selfDescription = it.description,
+                    nickName = it.nickname,
+                    age = it.age,
+                    birthYear = it.birthDate,
+                    height = it.height,
+                    weight = it.weight,
+                    location = it.location,
+                    job = it.job,
+                    smokingStatus = it.smokingStatus,
+                )
+            }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     internal fun onIntent(intent: MainProfileIntent) = viewModelScope.launch {

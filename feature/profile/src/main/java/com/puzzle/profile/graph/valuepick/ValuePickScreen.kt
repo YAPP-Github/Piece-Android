@@ -3,7 +3,6 @@ package com.puzzle.profile.graph.valuepick
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,18 +25,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
-import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.AnswerOption
-import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.profile.graph.valuepick.contract.ValuePickIntent
-import com.puzzle.profile.graph.valuepick.contract.ValuePickSideEffect
 import com.puzzle.profile.graph.valuepick.contract.ValuePickState
 import com.puzzle.profile.graph.valuepick.contract.ValuePickState.ScreenState
 
@@ -46,22 +43,11 @@ internal fun ValuePickRoute(
     viewModel: ValuePickViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is ValuePickSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     ValuePickScreen(
         state = state,
-        onSaveClick = {},
+        onSaveClick = { viewModel.onIntent(ValuePickIntent.OnUpdateClick(it)) },
+        onEditClick = { viewModel.onIntent(ValuePickIntent.OnEditClick) },
         onBackClick = { viewModel.onIntent(ValuePickIntent.OnBackClick) },
     )
 }
@@ -69,20 +55,19 @@ internal fun ValuePickRoute(
 @Composable
 private fun ValuePickScreen(
     state: ValuePickState,
-    onSaveClick: (List<ValuePickRegisterRO>) -> Unit,
+    onSaveClick: (List<MyValuePick>) -> Unit,
+    onEditClick: () -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var screenState: ScreenState by remember { mutableStateOf(ScreenState.SAVED) }
-    var valuePicks: List<ValuePickRegisterRO> by remember { mutableStateOf(state.valuePicks) }
+    var valuePicks: List<MyValuePick> by remember { mutableStateOf(state.valuePicks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
-    BackHandler {
-        if (screenState == ScreenState.EDITING) {
-            // TODO : 데이터 초기화
-            screenState = ScreenState.SAVED
-        } else {
-            onBackClick()
+    BackHandler { onBackClick() }
+
+    LaunchedEffect(state.screenState) {
+        if (state.screenState == ScreenState.EDITING) {
+            valuePicks = state.valuePicks
         }
     }
 
@@ -92,21 +77,19 @@ private fun ValuePickScreen(
             .background(PieceTheme.colors.white),
     ) {
         PieceSubTopBar(
-            title = when (screenState) {
-                ScreenState.SAVED -> stringResource(R.string.value_pick_profile_topbar_title)
+            title = when (state.screenState) {
+                ScreenState.NORMAL -> stringResource(R.string.value_pick_profile_topbar_title)
                 ScreenState.EDITING -> stringResource(R.string.value_pick_edit_profile_topbar_title)
             },
             onNavigationClick = onBackClick,
             rightComponent = {
-                when (screenState) {
-                    ScreenState.SAVED ->
+                when (state.screenState) {
+                    ScreenState.NORMAL ->
                         Text(
                             text = stringResource(R.string.value_pick_profile_topbar_edit),
                             style = PieceTheme.typography.bodyMM,
                             color = PieceTheme.colors.primaryDefault,
-                            modifier = Modifier.clickable {
-                                screenState = ScreenState.EDITING
-                            },
+                            modifier = Modifier.clickable { onEditClick() },
                         )
 
                     ScreenState.EDITING ->
@@ -118,13 +101,9 @@ private fun ValuePickScreen(
                             } else {
                                 PieceTheme.colors.dark3
                             },
-                            modifier = Modifier.clickable {
-                                if (isContentEdited) {
-                                    onSaveClick(valuePicks)
-                                    isContentEdited = false
-                                }
-
-                                screenState = ScreenState.SAVED
+                            modifier = Modifier.clickable(enabled = isContentEdited) {
+                                onSaveClick(valuePicks)
+                                isContentEdited = false
                             },
                         )
                 }
@@ -139,11 +118,11 @@ private fun ValuePickScreen(
 
         ValuePickCards(
             valuePicks = valuePicks,
-            screenState = screenState,
-            onContentChange = {
+            screenState = state.screenState,
+            onContentChange = { changedValuePick ->
                 valuePicks = valuePicks.map { valuePick ->
-                    if (valuePick.id == it.id) {
-                        it
+                    if (valuePick.id == changedValuePick.id) {
+                        changedValuePick
                     } else {
                         valuePick
                     }
@@ -157,9 +136,9 @@ private fun ValuePickScreen(
 
 @Composable
 private fun ValuePickCards(
-    valuePicks: List<ValuePickRegisterRO>,
+    valuePicks: List<MyValuePick>,
     screenState: ScreenState,
-    onContentChange: (ValuePickRegisterRO) -> Unit,
+    onContentChange: (MyValuePick) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -187,9 +166,9 @@ private fun ValuePickCards(
 
 @Composable
 private fun ValuePickCard(
-    item: ValuePickRegisterRO,
+    item: MyValuePick,
     screenState: ScreenState,
-    onContentChange: (ValuePickRegisterRO) -> Unit,
+    onContentChange: (MyValuePick) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -247,7 +226,7 @@ private fun ValuePickPreview() {
         ValuePickScreen(
             state = ValuePickState(
                 valuePicks = listOf(
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 0,
                         category = "음주",
                         question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
@@ -263,7 +242,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 1,
                         category = "만남 빈도",
                         question = "주말에 얼마나 자주 데이트를 하고싶나요?",
@@ -279,7 +258,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 2,
                         category = "연락 빈도",
                         question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
@@ -295,7 +274,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 3,
                         category = "연락 방식",
                         question = "연락할 때 어떤 방법을 더 좋아하나요?",
@@ -311,7 +290,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 4,
                         category = "데이트",
                         question = "공공장소에서 연인 티를 내는 것에 대해 어떻게 생각하나요?",
@@ -327,7 +306,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 5,
                         category = "장거리 연애",
                         question = "장거리 연애에 대해 어떻게 생각하나요?",
@@ -343,7 +322,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 6,
                         category = "SNS",
                         question = "연인이 활발한 SNS 활동을 하거나 게스타라면 기분이 어떨 것 같나요?",
@@ -362,6 +341,7 @@ private fun ValuePickPreview() {
                 )
             ),
             onBackClick = {},
+            onEditClick = {},
             onSaveClick = {},
         )
     }

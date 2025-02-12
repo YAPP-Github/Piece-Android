@@ -7,8 +7,10 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
+import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
@@ -30,8 +32,10 @@ import kotlinx.coroutines.launch
 
 class BasicProfileViewModel @AssistedInject constructor(
     @Assisted initialState: BasicProfileState,
+    private val profileRepository: ProfileRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
+    private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<BasicProfileState>(initialState) {
 
     private val intents = Channel<BasicProfileIntent>(BUFFERED)
@@ -40,11 +44,32 @@ class BasicProfileViewModel @AssistedInject constructor(
     private val initialState: BasicProfileState = BasicProfileState()
 
     init {
+        initMyProfile()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
 
-        // TODO : initialState 초기화
+    private fun initMyProfile() = viewModelScope.launch {
+        profileRepository.retrieveMyProfileBasic()
+            .onSuccess {
+                setState {
+                    copy(
+                        description = it.description,
+                        nickname = it.nickname,
+                        birthdate = it.birthDate,
+                        height = it.height.toString(),
+                        weight = it.weight.toString(),
+                        location = it.location,
+                        job = it.job,
+                        isSmoke = it.isSmoke(),
+                        isSnsActive = it.isSnsActive(),
+                        imageUrl = it.imageUrl,
+                        contacts = it.contacts,
+                    )
+                }
+            }.onFailure { errorHelper.sendError(it) }
     }
 
     internal fun onIntent(intent: BasicProfileIntent) = viewModelScope.launch {
@@ -65,11 +90,12 @@ class BasicProfileViewModel @AssistedInject constructor(
             is BasicProfileIntent.UpdateRegion -> updateLocation(intent.region)
             is BasicProfileIntent.UpdateSmokeStatus -> updateIsSmoke(intent.isSmoke)
             is BasicProfileIntent.UpdateSnsActivity -> updateIsSnsActive(intent.isSnsActivity)
-            is BasicProfileIntent.AddContact -> addContact(intent.snsPlatform)
+            is BasicProfileIntent.AddContact -> addContact(intent.contactType)
             is BasicProfileIntent.DeleteContact -> deleteContact(intent.idx)
             is BasicProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
             is BasicProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
             BasicProfileIntent.HideBottomSheet -> hideBottomSheet()
+            is BasicProfileIntent.UpdateProfileImage -> updateProfileImage(intent.imageUrl)
         }
     }
 
@@ -81,59 +107,77 @@ class BasicProfileViewModel @AssistedInject constructor(
 
     private fun saveBasicProfile() {
         withState { state ->
-            // 프로필이 미완성일 때
-            if (state.isProfileIncomplete) {
-                setState {
-                    copy(
-                        profileScreenState = ScreenState.SAVE_FAILED,
-                        nickNameGuideMessage = nickNameStateInSavingProfile,
-                        descriptionInputState = getInputState(state.description),
-                        birthdateInputState = getInputState(state.birthdate),
-                        locationInputState = getInputState(state.location),
-                        heightInputState = getInputState(state.height),
-                        weightInputState = getInputState(state.weight),
-                        jobInputState = getInputState(state.job)
-                    )
+            viewModelScope.launch {
+                if (state.isProfileIncomplete) {
+                    setState {
+                        copy(
+                            profileScreenState = ScreenState.SAVE_FAILED,
+                            nickNameGuideMessage = nickNameStateInSavingProfile,
+                            descriptionInputState = getInputState(state.description),
+                            imageUrlInputState = getInputState(state.imageUrl),
+                            birthdateInputState = getInputState(state.birthdate),
+                            locationInputState = getInputState(state.location),
+                            heightInputState = getInputState(state.height),
+                            weightInputState = getInputState(state.weight),
+                            jobInputState = getInputState(state.job)
+                        )
+                    }
+                    return@launch
                 }
-                return@withState
-            }
-            // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
-            // TODO: 실제 API 호출 후 결과에 따라 isSuccess 값을 갱신하세요.
-            val isSuccess = true
-            val updatedScreenState = if (isSuccess) {
-                ScreenState.SAVED
-            } else {
-                ScreenState.SAVE_FAILED
-            }
 
-            setState {
-                copy(
-                    profileScreenState = updatedScreenState,
-                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
-                )
+                profileRepository.checkNickname(state.nickname)
+                    .onSuccess { result -> if (!result) return@launch }
+                    .onFailure {
+                        errorHelper.sendError(it)
+                        return@launch
+                    }
+
+                profileRepository.updateMyProfileBasic(
+                    description = state.description,
+                    nickname = state.nickname,
+                    birthDate = state.birthdate,
+                    height = state.height.toInt(),
+                    weight = state.weight.toInt(),
+                    location = state.location,
+                    job = state.job,
+                    smokingStatus = if (state.isSmoke) "흡연" else "비흡연",
+                    snsActivityLevel = if (state.isSnsActive) "활동" else "은둔",
+                    imageUrl = state.imageUrl,
+                    contacts = state.contacts,
+                ).onSuccess {
+                    setState {
+                        copy(profileScreenState = ScreenState.SAVED)
+                    }
+                }.onFailure {
+                    setState { copy(profileScreenState = ScreenState.SAVE_FAILED) }
+                    errorHelper.sendError(it)
+                }
             }
         }
     }
 
-    private fun checkNickNameDuplication() {
-        setState {
-            // TODO: 실제 API 응답 처리
-            val isSuccess = true
-            copy(
-                isCheckingButtonEnabled = !isSuccess,
-                nickNameGuideMessage = if (isSuccess) {
-                    NickNameGuideMessage.AVAILABLE
-                } else {
-                    NickNameGuideMessage.ALREADY_IN_USE
-                }
-            )
+    private fun checkNickNameDuplication() = withState { state ->
+        viewModelScope.launch {
+            profileRepository.checkNickname(state.nickname)
+                .onSuccess { result ->
+                    setState {
+                        copy(
+                            isCheckingButtonEnabled = !result,
+                            nickNameGuideMessage = if (result) {
+                                NickNameGuideMessage.AVAILABLE
+                            } else {
+                                NickNameGuideMessage.ALREADY_IN_USE
+                            }
+                        )
+                    }
+                }.onFailure { errorHelper.sendError(it) }
         }
     }
 
     private fun updateNickName(nickName: String) {
         setState {
             val newState = copy(
-                nickName = nickName,
+                nickname = nickName,
                 nickNameGuideMessage = if (nickName.length > 6) {
                     NickNameGuideMessage.LENGTH_EXCEEDED_ERROR
                 } else {
@@ -307,10 +351,10 @@ class BasicProfileViewModel @AssistedInject constructor(
         }
     }
 
-    private fun addContact(snsPlatform: SnsPlatform) {
+    private fun addContact(contactType: ContactType) {
         setState {
             val newContacts = contacts.toMutableList().apply {
-                add(Contact(snsPlatform = snsPlatform, content = ""))
+                add(Contact(type = contactType, content = ""))
             }
             val newState = copy(
                 contacts = newContacts,
@@ -374,6 +418,15 @@ class BasicProfileViewModel @AssistedInject constructor(
                 } else {
                     profileScreenState
                 },
+            )
+        }
+    }
+
+    private fun updateProfileImage(url: String) {
+        setState {
+            copy(
+                imageUrl = url,
+                imageUrlInputState = InputState.DEFAULT,
             )
         }
     }

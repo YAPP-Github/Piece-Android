@@ -5,10 +5,12 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.profile.MyValueTalk
+import com.puzzle.domain.repository.ProfileRepository
+import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
-import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -22,18 +24,26 @@ import kotlinx.coroutines.launch
 
 class ValueTalkViewModel @AssistedInject constructor(
     @Assisted initialState: ValueTalkState,
+    private val getMyValueTalksUseCase: GetMyValueTalksUseCase,
+    private val profileRepository: ProfileRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ValueTalkState>(initialState) {
 
     private val intents = Channel<ValueTalkIntent>(BUFFERED)
-    private val _sideEffects = Channel<ValueTalkSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initValueTalk()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initValueTalk() = viewModelScope.launch {
+        getMyValueTalksUseCase().onSuccess {
+            setState { copy(valueTalks = it) }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     internal fun onIntent(intent: ValueTalkIntent) = viewModelScope.launch {
@@ -42,10 +52,33 @@ class ValueTalkViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: ValueTalkIntent) {
         when (intent) {
-            ValueTalkIntent.OnBackClick -> _sideEffects.send(
-                ValueTalkSideEffect.Navigate(NavigationEvent.NavigateUp)
-            )
+            ValueTalkIntent.OnBackClick -> processBackClick()
+            ValueTalkIntent.OnEditClick -> setEditMode()
+            is ValueTalkIntent.OnUpdateClick -> updateValueTalk(intent.newValueTalks)
         }
+    }
+
+    private fun processBackClick() = withState { state ->
+        when (state.screenState) {
+            ValueTalkState.ScreenState.NORMAL -> navigationHelper.navigate(NavigationEvent.NavigateUp)
+            ValueTalkState.ScreenState.EDITING ->
+                setState { copy(screenState = ValueTalkState.ScreenState.NORMAL) }
+        }
+    }
+
+    private fun setEditMode() = setState { copy(screenState = ValueTalkState.ScreenState.EDITING) }
+
+    private fun updateValueTalk(valueTalks: List<MyValueTalk>) = viewModelScope.launch {
+        profileRepository.updateMyValueTalks(valueTalks)
+            .onSuccess {
+                setState {
+                    copy(
+                        screenState = ValueTalkState.ScreenState.NORMAL,
+                        valueTalks = valueTalks
+                    )
+                }
+            }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory

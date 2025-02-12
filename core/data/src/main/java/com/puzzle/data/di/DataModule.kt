@@ -1,6 +1,6 @@
 package com.puzzle.data.di
 
-import com.puzzle.data.TokenManagerImpl
+import com.puzzle.data.repository.TokenManagerImpl
 import com.puzzle.data.image.ImageResizer
 import com.puzzle.data.image.ImageResizerImpl
 import com.puzzle.data.repository.AuthRepositoryImpl
