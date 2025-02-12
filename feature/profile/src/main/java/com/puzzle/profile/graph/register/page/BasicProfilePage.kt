@@ -58,7 +58,6 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileState
 @Composable
 internal fun BasicProfilePage(
     state: RegisterProfileState,
-    onEditPhotoClick: (String) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onNickNameChanged: (String) -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
@@ -100,9 +99,8 @@ internal fun BasicProfilePage(
         )
 
         PhotoContent(
-            profileImageUri = state.profileImageUri,
-            profileImageUriInputState = state.profileImageUriInputState,
-            onEditPhotoClick = onEditPhotoClick,
+            profileImageUri = state.imageUrl,
+            profileImageUriInputState = state.imageUrlInputState,
             onProfileImageChanged = onProfileImageChanged,
             modifier = Modifier.padding(top = 40.dp),
         )
@@ -785,7 +783,6 @@ private fun NickNameContent(
 
 @Composable
 private fun PhotoContent(
-    onEditPhotoClick: (String) -> Unit,
     profileImageUriInputState: InputState,
     onProfileImageChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -797,12 +794,7 @@ private fun PhotoContent(
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            if (uri != null) {
-                onProfileImageChanged(uri.toString())
-                onEditPhotoClick(uri.toString())
-            }
-        }
+        onResult = { uri -> if (uri != null) { onProfileImageChanged(uri.toString()) } }
     )
 
     Column(
@@ -875,7 +867,6 @@ private fun BasicProfilePagePreview() {
             state = RegisterProfileState(),
             onNickNameChanged = {},
             onProfileImageChanged = {},
-            onEditPhotoClick = {},
             onDescribeMySelfChanged = {},
             onBirthdateChanged = {},
             onLocationDropDownClicked = {},

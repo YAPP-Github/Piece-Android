@@ -6,8 +6,7 @@ import com.puzzle.domain.model.profile.ContactType
 
 sealed class RegisterProfileIntent {
     data class OnNickNameChange(val nickName: String) : RegisterProfileIntent()
-    data class OnEditPhotoClick(val imageUri: String) : RegisterProfileIntent()
-    data class OnPhotoClick(val imageUri: String) : RegisterProfileIntent()
+    data class OnProfileImageChanged(val imageUri: String) : RegisterProfileIntent()
     data object OnBackClick : RegisterProfileIntent()
     data class OnSaveClick(val registerProfileState: RegisterProfileState) : RegisterProfileIntent()
     data object OnDuplicationCheckClick : RegisterProfileIntent()

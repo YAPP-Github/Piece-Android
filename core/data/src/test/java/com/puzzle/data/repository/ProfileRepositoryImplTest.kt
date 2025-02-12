@@ -159,7 +159,8 @@ class ProfileRepositoryImplTest {
                 category = "음주",
                 title = "술자리에 대한 대화",
                 answer = "원하지 않습니다.",
-                summary = "술자리 거절"
+                summary = "술자리 거절",
+                guides = emptyList(),
             )
         )
         val updatedValueTalks = listOf(
@@ -168,7 +169,8 @@ class ProfileRepositoryImplTest {
                 category = "음주",
                 title = "술자리에 대한 대화",
                 answer = "가끔 즐깁니다.",
-                summary = "술자리 즐기기"
+                summary = "술자리 즐기기",
+                guides = emptyList(),
             )
         )
 

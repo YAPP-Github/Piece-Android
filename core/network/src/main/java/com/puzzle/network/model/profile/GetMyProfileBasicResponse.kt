@@ -32,6 +32,7 @@ data class GetMyProfileBasicResponse(
         location = location ?: UNKNOWN_STRING,
         job = job ?: UNKNOWN_STRING,
         smokingStatus = smokingStatus ?: UNKNOWN_STRING,
+        snsActivityLevel = snsActivityLevel ?: UNKNOWN_STRING,
         imageUrl = imageUrl ?: UNKNOWN_STRING,
         contacts = contacts?.map(ContactResponse::toDomain) ?: emptyList()
     )

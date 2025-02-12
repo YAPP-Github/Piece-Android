@@ -21,14 +21,14 @@ import com.puzzle.network.source.profile.ProfileDataSource
 import java.io.InputStream
 
 class FakeProfileDataSource : ProfileDataSource {
-    private var valuePickQuestions = listOf<ValuePickResponse>()
-    private var valueTalkQuestions = listOf<ValueTalkResponse>()
+    private var valuePicks = listOf<ValuePickResponse>()
+    private var valueTalks = listOf<ValueTalkResponse>()
 
     override suspend fun loadValuePickQuestions(): Result<LoadValuePickQuestionsResponse> =
-        Result.success(LoadValuePickQuestionsResponse(responses = valuePickQuestions))
+        Result.success(LoadValuePickQuestionsResponse(responses = valuePicks))
 
     override suspend fun loadValueTalkQuestions(): Result<LoadValueTalkQuestionsResponse> =
-        Result.success(LoadValueTalkQuestionsResponse(responses = valueTalkQuestions))
+        Result.success(LoadValueTalkQuestionsResponse(responses = valueTalks))
 
     override suspend fun getMyProfileBasic(): Result<GetMyProfileBasicResponse> {
         TODO("Not yet implemented")
@@ -49,7 +49,8 @@ class FakeProfileDataSource : ProfileDataSource {
                 title = valueTalk.title,
                 category = valueTalk.category,
                 answer = valueTalk.answer,
-                summary = valueTalk.summary
+                summary = valueTalk.summary,
+                guides = valueTalk.guides,
             )
         }
 
@@ -141,10 +142,10 @@ class FakeProfileDataSource : ProfileDataSource {
     )
 
     fun setValuePicks(picks: List<ValuePickResponse>) {
-        valuePickQuestions = picks
+        valuePicks = picks
     }
 
     fun setValueTalks(talks: List<ValueTalkResponse>) {
-        valueTalkQuestions = talks
+        valueTalks = talks
     }
 }

@@ -10,9 +10,13 @@ data class MyProfileBasic(
     val location: String,
     val job: String,
     val smokingStatus: String,
+    val snsActivityLevel: String,
     val imageUrl: String,
     val contacts: List<Contact>,
-)
+) {
+    fun isSmoke(): Boolean = if (smokingStatus == "흡연") true else false
+    fun isSnsActive(): Boolean = if (snsActivityLevel == "활동") true else false
+}
 
 data class MyValuePick(
     val id: Int,

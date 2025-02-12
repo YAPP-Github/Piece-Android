@@ -9,6 +9,7 @@ sealed class BasicProfileIntent {
     data object SaveBasicProfile : BasicProfileIntent()
     data class UpdateNickName(val nickName: String) : BasicProfileIntent()
     data object CheckNickNameDuplication : BasicProfileIntent()
+    data class UpdateProfileImage(val imageUrl: String) : BasicProfileIntent()
     data class UpdateDescribeMySelf(val description: String) : BasicProfileIntent()
     data class UpdateBirthday(val birthday: String) : BasicProfileIntent()
     data class UpdateHeight(val height: String) : BasicProfileIntent()

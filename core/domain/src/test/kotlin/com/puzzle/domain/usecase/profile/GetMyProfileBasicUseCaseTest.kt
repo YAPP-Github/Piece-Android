@@ -62,6 +62,7 @@ class GetMyProfileBasicUseCaseTest {
             Contact(ContactType.KAKAO_TALK_ID, "dev_coder"),
             Contact(ContactType.INSTAGRAM_ID, "seoul_dev_life"),
             Contact(ContactType.PHONE_NUMBER, "010-1234-5678")
-        )
+        ),
+        snsActivityLevel = "은둔",
     )
 }

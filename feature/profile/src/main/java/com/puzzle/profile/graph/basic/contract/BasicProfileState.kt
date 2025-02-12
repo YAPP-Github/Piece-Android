@@ -3,45 +3,29 @@ package com.puzzle.profile.graph.basic.contract
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.ContactType
 
 data class BasicProfileState(
     val profileScreenState: ScreenState = ScreenState.SAVED,
-    val nickName: String = "수줍은 수달",
+    val nickname: String = "",
     val isCheckingButtonEnabled: Boolean = false,
     val nickNameGuideMessage: NickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
-    val description: String = "요리와 음악을 좋아하는",
+    val description: String = "",
     val descriptionInputState: InputState = InputState.DEFAULT,
-    val birthdate: String = "19990909",
+    val birthdate: String = "",
     val birthdateInputState: InputState = InputState.DEFAULT,
-    val location: String = "서울특별시",
+    val imageUrl: String = "",
+    val imageUrlInputState: InputState = InputState.DEFAULT,
+    val location: String = "",
     val locationInputState: InputState = InputState.DEFAULT,
-    val height: String = "180",
+    val height: String = "",
     val heightInputState: InputState = InputState.DEFAULT,
-    val weight: String = "72",
+    val weight: String = "",
     val weightInputState: InputState = InputState.DEFAULT,
-    val job: String = "프리랜서",
+    val job: String = "",
     val jobInputState: InputState = InputState.DEFAULT,
     val isSmoke: Boolean = false,
     val isSnsActive: Boolean = false,
-    val contacts: List<Contact> = listOf(
-        Contact(
-            type = ContactType.KAKAO_TALK_ID,
-            content = "puzzle1234",
-        ),
-        Contact(
-            type = ContactType.INSTAGRAM_ID,
-            content = "puzzle1234",
-        ),
-        Contact(
-            type = ContactType.PHONE_NUMBER,
-            content = "010-0000-0000",
-        ),
-        Contact(
-            type = ContactType.OPEN_CHAT_URL,
-            content = "https://open.kakao.com/o/s5aqIX1g",
-        ),
-    ),
+    val contacts: List<Contact> = emptyList(),
 ) : MavericksState {
     val usingSnsPlatforms = contacts.map { it.type }
         .toSet()
@@ -53,16 +37,17 @@ data class BasicProfileState(
             height.isBlank() ||
             weight.isBlank() ||
             job.isBlank() ||
-            nickName.isBlank() ||
+            nickname.isBlank() ||
+            imageUrl.isBlank() ||
             nickNameGuideMessage != NickNameGuideMessage.AVAILABLE
 
     val nickNameStateInSavingProfile: NickNameGuideMessage =
         when {
-            nickName.isBlank() -> {
+            nickname.isBlank() -> {
                 NickNameGuideMessage.REQUIRED_FIELD
             }
 
-            nickName.length in 1..6 &&
+            nickname.length in 1..6 &&
                     nickNameGuideMessage != NickNameGuideMessage.AVAILABLE -> {
                 NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
             }

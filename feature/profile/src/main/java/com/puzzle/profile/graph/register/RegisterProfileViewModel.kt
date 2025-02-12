@@ -63,8 +63,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private fun processIntent(intent: RegisterProfileIntent) {
         when (intent) {
             is RegisterProfileIntent.OnNickNameChange -> updateNickName(intent.nickName)
-            is RegisterProfileIntent.OnPhotoClick -> updateProfileImage(intent.imageUri)
-            is RegisterProfileIntent.OnEditPhotoClick -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.OnProfileImageChanged -> updateProfileImage(intent.imageUri)
             is RegisterProfileIntent.OnSelfDescriptionChange -> updateDescription(intent.description)
             is RegisterProfileIntent.OnBirthdateChange -> updateBirthdate(intent.birthday)
             is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
@@ -147,8 +146,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private fun updateProfileImage(imageUri: String) {
         setState {
             copy(
-                profileImageUri = imageUri,
-                profileImageUriInputState = InputState.DEFAULT,
+                imageUrl = imageUri,
+                imageUrlInputState = InputState.DEFAULT,
             )
         }
     }
@@ -184,7 +183,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                 description = state.description,
                 height = state.height.toInt(),
                 weight = state.weight.toInt(),
-                imageUrl = state.profileImageUri.toString(),
+                imageUrl = state.imageUrl.toString(),
                 job = state.job,
                 location = state.location,
                 nickname = state.nickname,
@@ -229,7 +228,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         if (!state.isBasicProfileComplete) {
             setState {
                 copy(
-                    profileImageUriInputState = getInputState(state.profileImageUri),
+                    imageUrlInputState = getInputState(state.imageUrl),
                     nickNameGuideMessage = updatedNickNameGuideMessage,
                     descriptionInputState = getInputState(state.description),
                     birthdateInputState = getInputState(state.birthdate),
