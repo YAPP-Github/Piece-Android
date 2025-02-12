@@ -5,8 +5,11 @@ import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.network.api.PieceApi
-import com.puzzle.network.model.matching.LoadValuePicksResponse
-import com.puzzle.network.model.matching.LoadValueTalksResponse
+import com.puzzle.network.model.profile.GetMyProfileBasicResponse
+import com.puzzle.network.model.profile.GetMyValuePicksResponse
+import com.puzzle.network.model.profile.GetMyValueTalksResponse
+import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
+import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.profile.ValuePickAnswerRequest
@@ -24,11 +27,20 @@ import javax.inject.Singleton
 class ProfileDataSourceImpl @Inject constructor(
     private val pieceApi: PieceApi,
 ) : ProfileDataSource {
-    override suspend fun loadValuePickQuestions(): Result<LoadValuePicksResponse> =
+    override suspend fun loadValuePickQuestions(): Result<LoadValuePickQuestionsResponse> =
         pieceApi.loadValuePickQuestions().unwrapData()
 
-    override suspend fun loadValueTalkQuestions(): Result<LoadValueTalksResponse> =
+    override suspend fun loadValueTalkQuestions(): Result<LoadValueTalkQuestionsResponse> =
         pieceApi.loadValueTalkQuestions().unwrapData()
+
+    override suspend fun getMyProfileBasic(): Result<GetMyProfileBasicResponse> =
+        pieceApi.getMyProfileBasic().unwrapData()
+
+    override suspend fun getMyValueTalks(): Result<GetMyValueTalksResponse> =
+        pieceApi.getMyValueTalks().unwrapData()
+
+    override suspend fun getMyValuePicks(): Result<GetMyValuePicksResponse> =
+        pieceApi.getMyValuePicks().unwrapData()
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         pieceApi.checkNickname(nickname).unwrapData()

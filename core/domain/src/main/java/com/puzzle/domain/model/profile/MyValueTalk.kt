@@ -5,6 +5,5 @@ data class MyValueTalk(
     val category: String,
     val title: String,
     val answer: String,
-    val guides: List<String>,
     val summary: String,
 )

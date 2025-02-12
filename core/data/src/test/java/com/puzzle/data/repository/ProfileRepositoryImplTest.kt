@@ -5,7 +5,7 @@ import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
 import com.puzzle.data.fake.source.user.FakeLocalUserDataSource
 import com.puzzle.data.spy.image.SpyImageResizer
-import com.puzzle.network.model.matching.ValueTalkResponse
+import com.puzzle.network.model.profile.ValueTalkResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals

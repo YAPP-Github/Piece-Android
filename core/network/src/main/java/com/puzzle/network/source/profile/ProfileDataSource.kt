@@ -3,14 +3,20 @@ package com.puzzle.network.source.profile
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
-import com.puzzle.network.model.matching.LoadValuePicksResponse
-import com.puzzle.network.model.matching.LoadValueTalksResponse
+import com.puzzle.network.model.profile.GetMyProfileBasicResponse
+import com.puzzle.network.model.profile.GetMyValuePicksResponse
+import com.puzzle.network.model.profile.GetMyValueTalksResponse
+import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
+import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
 import com.puzzle.network.model.profile.UploadProfileResponse
 import java.io.InputStream
 
 interface ProfileDataSource {
-    suspend fun loadValuePickQuestions(): Result<LoadValuePicksResponse>
-    suspend fun loadValueTalkQuestions(): Result<LoadValueTalksResponse>
+    suspend fun loadValuePickQuestions(): Result<LoadValuePickQuestionsResponse>
+    suspend fun loadValueTalkQuestions(): Result<LoadValueTalkQuestionsResponse>
+    suspend fun getMyProfileBasic(): Result<GetMyProfileBasicResponse>
+    suspend fun getMyValueTalks(): Result<GetMyValueTalksResponse>
+    suspend fun getMyValuePicks(): Result<GetMyValuePicksResponse>
     suspend fun checkNickname(nickname: String): Result<Boolean>
     suspend fun uploadProfileImage(imageInputStream: InputStream): Result<String>
     suspend fun uploadProfile(

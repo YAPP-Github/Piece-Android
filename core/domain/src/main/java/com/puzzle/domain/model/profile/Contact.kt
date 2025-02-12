@@ -13,7 +13,7 @@ enum class ContactType(val displayName: String) {
     UNKNOWN("");
 
     companion object {
-        fun create(value: String): ContactType {
+        fun create(value: String?): ContactType {
             return ContactType.entries.firstOrNull { it.name == value } ?: UNKNOWN
         }
     }

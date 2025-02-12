@@ -1,4 +1,4 @@
-package com.puzzle.network.model.matching
+package com.puzzle.network.model.profile
 
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.network.model.UNKNOWN_INT
@@ -6,7 +6,7 @@ import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoadValueTalksResponse(
+data class LoadValueTalkQuestionsResponse(
     val responses: List<ValueTalkResponse>?,
 ) {
     fun toDomain() = responses?.map(ValueTalkResponse::toDomain) ?: emptyList()

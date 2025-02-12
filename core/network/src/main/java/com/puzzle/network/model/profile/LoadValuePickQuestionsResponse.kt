@@ -1,4 +1,4 @@
-package com.puzzle.network.model.matching
+package com.puzzle.network.model.profile
 
 import com.puzzle.domain.model.profile.AnswerOption
 import com.puzzle.domain.model.profile.ValuePickQuestion
@@ -7,7 +7,7 @@ import com.puzzle.network.model.UNKNOWN_STRING
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class LoadValuePicksResponse(
+data class LoadValuePickQuestionsResponse(
     val responses: List<ValuePickResponse>?,
 ) {
     fun toDomain() = responses?.map(ValuePickResponse::toDomain) ?: emptyList()
