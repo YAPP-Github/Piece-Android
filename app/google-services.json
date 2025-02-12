@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "226421567171",
+    "project_id": "piece-android",
+    "storage_bucket": "piece-android.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:226421567171:android:b32a573b96c7625af3bc76",
+        "android_client_info": {
+          "package_name": "com.puzzle.piece"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoANdCZFkJ_WgeFDGXG_s_7iHnZuKNeno"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

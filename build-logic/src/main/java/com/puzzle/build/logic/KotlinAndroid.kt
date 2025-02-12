@@ -2,13 +2,17 @@ package com.puzzle.build.logic
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 internal fun Project.configureKotlinAndroid() {
-    pluginManager.apply("org.jetbrains.kotlin.android")
+    with(plugins) {
+        apply("org.jetbrains.kotlin.android")
+        apply("com.google.gms.google-services")
+    }
 
     androidExtension.apply {
         compileSdk = 35
@@ -38,6 +42,14 @@ internal fun Project.configureKotlinAndroid() {
                 excludes += "META-INF/LICENSE-notice.md"
             }
         }
+    }
+
+    val libs = extensions.libs
+    dependencies {
+        val bom = libs.findLibrary("firebase-bom").get()
+        add("implementation", platform(bom))
+        add("implementation", libs.findLibrary("firebase-analytics").get())
+        add("implementation", libs.findLibrary("firebase-crashlytics").get())
     }
 
     configureKotlin()
