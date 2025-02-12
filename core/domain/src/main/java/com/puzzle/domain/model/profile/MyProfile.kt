@@ -28,4 +28,5 @@ data class MyValueTalk(
     val title: String,
     val answer: String,
     val summary: String,
+    val guides: List<String>,
 )

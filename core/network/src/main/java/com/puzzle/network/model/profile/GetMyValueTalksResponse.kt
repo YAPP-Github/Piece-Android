@@ -20,6 +20,7 @@ data class MyValueTalkResponse(
     val category: String?,
     val answer: String?,
     val summary: String?,
+    val guides: List<String>?,
 ) {
     fun toDomain() = MyValueTalk(
         id = id ?: UNKNOWN_INT,
@@ -27,5 +28,6 @@ data class MyValueTalkResponse(
         category = category ?: UNKNOWN_STRING,
         answer = answer ?: UNKNOWN_STRING,
         summary = summary ?: UNKNOWN_STRING,
+        guides = guides ?: emptyList(),
     )
 }

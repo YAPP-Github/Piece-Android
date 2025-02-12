@@ -47,15 +47,13 @@ import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.component.PieceTextInputAI
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.profile.ValueTalkQuestion
-import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
+import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkSideEffect
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.Companion.PAGE_TRANSITION_DURATION
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.Companion.TEXT_DISPLAY_DURATION
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkState.ScreenState
-import com.puzzle.profile.graph.valuetalk.model.MyValueTalkRO
 import kotlinx.coroutines.delay
 
 @Composable
@@ -87,13 +85,13 @@ internal fun ValueTalkRoute(
 @Composable
 private fun ValueTalkScreen(
     state: ValueTalkState,
-    onSaveClick: (List<MyValueTalkRO>) -> Unit,
+    onSaveClick: (List<MyValueTalk>) -> Unit,
     onBackClick: () -> Unit,
-    onAiSummarySaveClick: (MyValueTalkRO) -> Unit,
+    onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var screenState: ScreenState by remember { mutableStateOf(ScreenState.SAVED) }
-    var valueTalkQuestions: List<MyValueTalkRO> by remember { mutableStateOf(state.valueTalkQuestions) }
+    var valueTalkQuestions: List<MyValueTalk> by remember { mutableStateOf(state.valueTalks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
     var editedValueTalkLabels: List<String> by remember { mutableStateOf(emptyList()) }
 
@@ -179,7 +177,7 @@ private fun ValueTalkScreen(
                     }
                 }
 
-                isContentEdited = valueTalkQuestions != state.valueTalkQuestions
+                isContentEdited = valueTalkQuestions != state.valueTalks
             },
             onAiSummarySaveClick = onAiSummarySaveClick,
         )
@@ -188,10 +186,10 @@ private fun ValueTalkScreen(
 
 @Composable
 private fun ValueTalkCards(
-    valueTalks: List<MyValueTalkRO>,
+    valueTalks: List<MyValueTalk>,
     screenState: ScreenState,
-    onContentChange: (MyValueTalkRO) -> Unit,
-    onAiSummarySaveClick: (MyValueTalkRO) -> Unit,
+    onContentChange: (MyValueTalk) -> Unit,
+    onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -220,10 +218,10 @@ private fun ValueTalkCards(
 
 @Composable
 private fun ValueTalkCard(
-    item: MyValueTalkRO,
+    item: MyValueTalk,
     screenState: ScreenState,
-    onContentChange: (MyValueTalkRO) -> Unit,
-    onAiSummarySaveClick: (MyValueTalkRO) -> Unit,
+    onContentChange: (MyValueTalk) -> Unit,
+    onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -273,8 +271,8 @@ private fun ValueTalkCard(
 
 @Composable
 private fun AiSummaryContent(
-    item: MyValueTalkRO,
-    onAiSummarySaveClick: (MyValueTalkRO) -> Unit
+    item: MyValueTalk,
+    onAiSummarySaveClick: (MyValueTalk) -> Unit
 ) {
     var editableAiSummary: String by remember { mutableStateOf(item.summary) }
 
@@ -400,8 +398,8 @@ private fun ValueTalkPreview() {
     PieceTheme {
         ValueTalkScreen(
             state = ValueTalkState(
-                valueTalkQuestions = listOf(
-                    MyValueTalkRO(
+                valueTalks = listOf(
+                    MyValueTalk(
                         id = 1,
                         category = "연애관",
                         title = "어떠한 사람과 어떠한 연애를 하고 싶은지 들려주세요",
@@ -415,7 +413,7 @@ private fun ValueTalkPreview() {
                             "연인 관계를 통해 어떤 가치를 얻고 싶나요?",
                         ),
                     ),
-                    MyValueTalkRO(
+                    MyValueTalk(
                         id = 2,
                         category = "관심사와 취향",
                         title = "무엇을 할 때 가장 행복한가요?\n요즘 어떠한 것에 관심을 두고 있나요?",
@@ -429,7 +427,7 @@ private fun ValueTalkPreview() {
                             "요즘 마음을 사로잡은 콘텐츠를 공유해 보세요",
                         ),
                     ),
-                    MyValueTalkRO(
+                    MyValueTalk(
                         id = 3,
                         category = "꿈과 목표",
                         title = "어떤 일을 하며 무엇을 목표로 살아가나요?\n인생에서 이루고 싶은 꿈은 무엇인가요?",

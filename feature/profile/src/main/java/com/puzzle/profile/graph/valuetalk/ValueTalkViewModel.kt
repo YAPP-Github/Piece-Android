@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.valuetalk.contract.ValueTalkIntent
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 
 class ValueTalkViewModel @AssistedInject constructor(
     @Assisted initialState: ValueTalkState,
+    private val getMyValueTalksUseCase: GetMyValueTalksUseCase,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ValueTalkState>(initialState) {
@@ -31,9 +33,17 @@ class ValueTalkViewModel @AssistedInject constructor(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initValueTalk()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initValueTalk() = viewModelScope.launch {
+        getMyValueTalksUseCase().onSuccess {
+            setState { copy(valueTalks = it) }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     internal fun onIntent(intent: ValueTalkIntent) = viewModelScope.launch {
