@@ -6,7 +6,6 @@ import com.puzzle.datastore.datasource.profile.LocalProfileDataSource
 import com.puzzle.datastore.datasource.token.LocalTokenDataSource
 import com.puzzle.datastore.datasource.user.LocalUserDataSource
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.MyProfile
 import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.domain.model.profile.MyValueTalk
@@ -16,11 +15,7 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.network.model.UNKNOWN_INT
-import com.puzzle.network.model.profile.GetMyProfileBasicResponse
-import com.puzzle.network.model.profile.GetMyValuePicksResponse
-import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.source.profile.ProfileDataSource
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -57,50 +52,92 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun retrieveValueTalkQuestion(): Result<List<ValueTalkQuestion>> =
         suspendRunCatching { localProfileDataSource.valueTalkQuestions.first() }
 
-    override suspend fun retrieveMyProfile(): Result<MyProfile> =
-        suspendRunCatching { localProfileDataSource.myProfile.first() }
+    override suspend fun retrieveMyProfileBasic(): Result<MyProfileBasic> =
+        suspendRunCatching { localProfileDataSource.myProfileBasic.first() }
 
-    override suspend fun loadMyProfile(): Result<Unit> = suspendRunCatching {
-        coroutineScope {
-            val valueTalksDeferred = async { getMyValueTalks() }
-            val valuePicksDeferred = async { getMyValuePicks() }
-            val profileBasicDeferred = async { getMyProfileBasic() }
+    override suspend fun loadMyValueTalks(): Result<Unit> = suspendRunCatching {
+        val valueTalks = profileDataSource.getMyValueTalks()
+            .getOrThrow()
+            .toDomain()
 
-            val valuePicks = valuePicksDeferred.await().getOrThrow()
-            val valueTalks = valueTalksDeferred.await().getOrThrow()
-            val profileBasic = profileBasicDeferred.await().getOrThrow()
-
-            val result = MyProfile(
-                description = profileBasic.description,
-                nickname = profileBasic.nickname,
-                age = profileBasic.age,
-                birthDate = profileBasic.birthDate,
-                height = profileBasic.height,
-                weight = profileBasic.weight,
-                location = profileBasic.location,
-                job = profileBasic.job,
-                smokingStatus = profileBasic.smokingStatus,
-                contacts = profileBasic.contacts,
-                imageUrl = profileBasic.imageUrl,
-                valuePicks = valuePicks,
-                valueTalks = valueTalks,
-            )
-
-            localProfileDataSource.setMyProfile(result)
-        }
+        localProfileDataSource.setMyValueTalks(valueTalks)
     }
 
-    private suspend fun getMyValueTalks(): Result<List<MyValueTalk>> =
-        profileDataSource.getMyValueTalks()
-            .mapCatching(GetMyValueTalksResponse::toDomain)
+    override suspend fun retrieveMyValueTalks(): Result<List<MyValueTalk>> =
+        suspendRunCatching { localProfileDataSource.myValueTalks.first() }
 
-    private suspend fun getMyValuePicks(): Result<List<MyValuePick>> =
-        profileDataSource.getMyValuePicks()
-            .mapCatching(GetMyValuePicksResponse::toDomain)
+    override suspend fun loadMyValuePicks(): Result<Unit> = suspendRunCatching {
+        val valuePicks = profileDataSource.getMyValuePicks()
+            .getOrThrow()
+            .toDomain()
 
-    private suspend fun getMyProfileBasic(): Result<MyProfileBasic> =
-        profileDataSource.getMyProfileBasic()
-            .mapCatching(GetMyProfileBasicResponse::toDomain)
+        localProfileDataSource.setMyValuePicks(valuePicks)
+    }
+
+    override suspend fun retrieveMyValuePicks(): Result<List<MyValuePick>> =
+        suspendRunCatching { localProfileDataSource.myValuePicks.first() }
+
+    override suspend fun loadMyProfileBasic(): Result<Unit> = suspendRunCatching {
+        val profileBasic = profileDataSource.getMyProfileBasic()
+            .getOrThrow()
+            .toDomain()
+
+        localProfileDataSource.setMyProfileBasic(profileBasic)
+    }
+
+    override suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<List<MyValueTalk>> =
+        suspendRunCatching {
+            val updatedValueTalks =
+                profileDataSource.updateMyValueTalks(valueTalks)
+                    .getOrThrow()
+                    .toDomain()
+
+            localProfileDataSource.setMyValueTalks(updatedValueTalks)
+            updatedValueTalks
+        }
+
+    override suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<List<MyValuePick>> =
+        suspendRunCatching {
+            val updatedValuePicks =
+                profileDataSource.updateMyValuePicks(valuePicks)
+                    .getOrThrow()
+                    .toDomain()
+
+            localProfileDataSource.setMyValuePicks(updatedValuePicks)
+            updatedValuePicks
+        }
+
+    override suspend fun updateMyProfileBasic(
+        description: String,
+        nickname: String,
+        birthDate: String,
+        height: Int,
+        weight: Int,
+        location: String,
+        job: String,
+        smokingStatus: String,
+        snsActivityLevel: String,
+        imageUrl: String,
+        contacts: List<Contact>
+    ): Result<MyProfileBasic> = suspendRunCatching {
+        val updatedProfileBasic = profileDataSource.updateMyProfileBasic(
+            description = description,
+            nickname = nickname,
+            birthDate = birthDate,
+            height = height,
+            weight = weight,
+            location = location,
+            job = job,
+            smokingStatus = smokingStatus,
+            snsActivityLevel = snsActivityLevel,
+            imageUrl = imageUrl,
+            contacts = contacts
+        ).getOrThrow()
+            .toDomain()
+
+        localProfileDataSource.setMyProfileBasic(updatedProfileBasic)
+        updatedProfileBasic
+    }
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         profileDataSource.checkNickname(nickname)

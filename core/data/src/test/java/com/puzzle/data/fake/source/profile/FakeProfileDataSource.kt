@@ -1,6 +1,8 @@
 package com.puzzle.data.fake.source.profile
 
 import com.puzzle.domain.model.profile.Contact
+import com.puzzle.domain.model.profile.MyValuePick
+import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.network.model.profile.GetMyProfileBasicResponse
@@ -33,6 +35,30 @@ class FakeProfileDataSource : ProfileDataSource {
     }
 
     override suspend fun getMyValuePicks(): Result<GetMyValuePicksResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<GetMyValueTalksResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<GetMyValuePicksResponse> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateMyProfileBasic(
+        description: String,
+        nickname: String,
+        birthDate: String,
+        height: Int,
+        weight: Int,
+        location: String,
+        job: String,
+        smokingStatus: String,
+        snsActivityLevel: String,
+        imageUrl: String,
+        contacts: List<Contact>
+    ): Result<GetMyProfileBasicResponse> {
         TODO("Not yet implemented")
     }
 

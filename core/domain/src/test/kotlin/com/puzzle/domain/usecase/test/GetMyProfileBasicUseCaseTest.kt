@@ -5,20 +5,20 @@ import com.puzzle.domain.model.profile.MyProfile
 import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.domain.spy.repository.SpyProfileRepository
-import com.puzzle.domain.usecase.profile.GetMyProfileUseCase
+import com.puzzle.domain.usecase.profile.GetMyProfileBasicUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-class GetMyProfileUseCaseTest {
+class GetMyProfileBasicUseCaseTest {
     private lateinit var spyProfileRepository: SpyProfileRepository
-    private lateinit var getMyProfileUseCase: GetMyProfileUseCase
+    private lateinit var getMyProfileBasicUseCase: GetMyProfileBasicUseCase
 
     @BeforeEach
     fun setup() {
         spyProfileRepository = SpyProfileRepository()
-        getMyProfileUseCase = GetMyProfileUseCase(spyProfileRepository)
+        getMyProfileBasicUseCase = GetMyProfileBasicUseCase(spyProfileRepository)
     }
 
     @Test
@@ -31,7 +31,7 @@ class GetMyProfileUseCaseTest {
         spyProfileRepository.setRemoteOpponentProfile(remoteProfile)
 
         // When
-        val result = getMyProfileUseCase()
+        val result = getMyProfileBasicUseCase()
 
         // Then
         assertEquals(remoteProfile, result.getOrNull())
@@ -45,7 +45,7 @@ class GetMyProfileUseCaseTest {
         spyProfileRepository.setLocalMyProfile(localProfile)
 
         // When
-        val result = getMyProfileUseCase()
+        val result = getMyProfileBasicUseCase()
 
         // Then
         assertEquals(localProfile, result.getOrNull())

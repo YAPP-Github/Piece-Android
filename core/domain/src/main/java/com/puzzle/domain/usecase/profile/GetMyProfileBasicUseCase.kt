@@ -1,16 +1,16 @@
 package com.puzzle.domain.usecase.profile
 
-import com.puzzle.domain.model.profile.MyProfile
+import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.domain.repository.ProfileRepository
 import javax.inject.Inject
 
-class GetMyProfileUseCase @Inject constructor(
+class GetMyProfileBasicUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke(): Result<MyProfile> =
-        profileRepository.retrieveMyProfile()
+    suspend operator fun invoke(): Result<MyProfileBasic> =
+        profileRepository.retrieveMyProfileBasic()
             .recoverCatching {
                 profileRepository.loadMyProfile().getOrThrow()
-                profileRepository.retrieveMyProfile().getOrThrow()
+                profileRepository.retrieveMyProfileBasic().getOrThrow()
             }
 }

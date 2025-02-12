@@ -8,7 +8,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.puzzle.datastore.util.getValue
 import com.puzzle.datastore.util.setValue
-import com.puzzle.domain.model.profile.MyProfile
+import com.puzzle.domain.model.profile.MyProfileBasic
+import com.puzzle.domain.model.profile.MyValuePick
+import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import kotlinx.coroutines.flow.Flow
@@ -42,21 +44,44 @@ class LocalProfileDataSourceImpl @Inject constructor(
         dataStore.setValue(VALUE_TALK_QUESTIONS, jsonString)
     }
 
-    override val myProfile: Flow<MyProfile> = dataStore.getValue(MY_PROFILE, "")
-        .map { gson.fromJson(it, MyProfile::class.java) }
+    override val myProfileBasic: Flow<MyProfileBasic> = dataStore.getValue(MY_PROFILE_BASIC, "")
+        .map { gson.fromJson(it, MyProfileBasic::class.java) }
 
-    override suspend fun setMyProfile(profile: MyProfile) {
-        val jsonString = gson.toJson(profile)
-        dataStore.setValue(MY_PROFILE, jsonString)
+    override suspend fun setMyProfileBasic(profileBasic: MyProfileBasic) {
+        val jsonString = gson.toJson(profileBasic)
+        dataStore.setValue(MY_PROFILE_BASIC, jsonString)
+    }
+
+    override val myValuePicks: Flow<List<MyValuePick>> = dataStore.getValue(MY_VALUE_PICKS, "")
+        .map { gson.fromJson(it, object : TypeToken<List<MyValuePick>>() {}.type) }
+
+
+    override suspend fun setMyValuePicks(valuePicks: List<MyValuePick>) {
+        val jsonString = gson.toJson(valuePicks)
+        dataStore.setValue(MY_VALUE_PICKS, jsonString)
+    }
+
+    override val myValueTalks: Flow<List<MyValueTalk>> = dataStore.getValue(MY_VALUE_TALKS, "")
+        .map { gson.fromJson(it, object : TypeToken<List<MyValueTalk>>() {}.type) }
+
+    override suspend fun setMyValueTalks(valueTalks: List<MyValueTalk>) {
+        val jsonString = gson.toJson(valueTalks)
+        dataStore.setValue(MY_VALUE_TALKS, jsonString)
     }
 
     override suspend fun clearMyProfile() {
-        dataStore.edit { preferences -> preferences.remove(MY_PROFILE) }
+        dataStore.edit { preferences ->
+            preferences.remove(MY_PROFILE_BASIC)
+            preferences.remove(MY_VALUE_TALKS)
+            preferences.remove(MY_VALUE_PICKS)
+        }
     }
 
     companion object {
         private val VALUE_PICK_QUESTIONS = stringPreferencesKey("VALUE_PICK_QUESTIONS")
         private val VALUE_TALK_QUESTIONS = stringPreferencesKey("VALUE_TALK_QUESTIONS")
-        private val MY_PROFILE = stringPreferencesKey("MY_PROFILE")
+        private val MY_PROFILE_BASIC = stringPreferencesKey("MY_PROFILE_BASIC")
+        private val MY_VALUE_PICKS = stringPreferencesKey("MY_VALUE_PICKS")
+        private val MY_VALUE_TALKS = stringPreferencesKey("MY_VALUE_TALKS")
     }
 }

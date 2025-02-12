@@ -5,6 +5,10 @@ import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
 import com.puzzle.data.fake.source.user.FakeLocalUserDataSource
 import com.puzzle.data.spy.image.SpyImageResizer
+import com.puzzle.domain.model.profile.Contact
+import com.puzzle.domain.model.profile.ContactType
+import com.puzzle.domain.model.profile.MyValuePick
+import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.network.model.profile.ValueTalkResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -67,7 +71,7 @@ class ProfileRepositoryImplTest {
     }
 
     @Test
-    fun `갱신한 가치관Talk 데이터는 로컬 데이터베이스에 저장한다`() = runTest {
+    fun `갱신한 가치관Talk 데이터는 로컬에 저장한다`() = runTest {
         // given
         val validValueTalks = listOf(
             ValueTalkResponse(
@@ -144,5 +148,112 @@ class ProfileRepositoryImplTest {
 
         // then
         assertEquals(1, imageResizer.resizeImageCallCount)
+    }
+
+    @Test
+    fun `가치관Talk 업데이트 시 로컬에 저장된다`() = runTest {
+        // given
+        val initialValueTalks = listOf(
+            MyValueTalk(
+                id = 1,
+                category = "음주",
+                title = "술자리에 대한 대화",
+                answer = "원하지 않습니다.",
+                summary = "술자리 거절"
+            )
+        )
+        val updatedValueTalks = listOf(
+            MyValueTalk(
+                id = 1,
+                category = "음주",
+                title = "술자리에 대한 대화",
+                answer = "가끔 즐깁니다.",
+                summary = "술자리 즐기기"
+            )
+        )
+
+        // when
+        profileDataSource.updateMyValueTalks(initialValueTalks)
+        val result = profileRepository.updateMyValueTalks(updatedValueTalks)
+
+        // then
+        val storedValueTalks = localProfileDataSource.myValueTalks.first()
+        assertEquals(updatedValueTalks, storedValueTalks)
+        assertEquals(updatedValueTalks, result.getOrNull())
+    }
+
+    @Test
+    fun `가치관Pick 업데이트 시 로컬에 저장된다`() = runTest {
+        // given
+        val initialValuePicks = listOf(
+            MyValuePick(
+                id = 1,
+                category = "취미",
+                question = "주말에 주로 무엇을 하나요?",
+                answerOptions = listOf(),
+                selectedAnswer = 0
+            )
+        )
+        val updatedValuePicks = listOf(
+            MyValuePick(
+                id = 1,
+                category = "취미",
+                question = "주말에 주로 무엇을 하나요?",
+                answerOptions = listOf(),
+                selectedAnswer = 1
+            )
+        )
+
+        // when
+        profileDataSource.updateMyValuePicks(initialValuePicks)
+        val result = profileRepository.updateMyValuePicks(updatedValuePicks)
+
+        // then
+        val storedValuePicks = localProfileDataSource.myValuePicks.first()
+        assertEquals(updatedValuePicks, storedValuePicks)
+        assertEquals(updatedValuePicks, result.getOrNull())
+    }
+
+    @Test
+    fun `프로필 기본 정보 업데이트 시 로컬에 저장된다`() = runTest {
+        // given
+        val contacts = listOf(
+            Contact(ContactType.KAKAO_TALK_ID, "user123"),
+            Contact(ContactType.PHONE_NUMBER, "010-1234-5678")
+        )
+
+        // when
+        val result = profileRepository.updateMyProfileBasic(
+            description = "새로운 자기소개",
+            nickname = "업데이트된닉네임",
+            birthDate = "1995-01-01",
+            height = 180,
+            weight = 75,
+            location = "서울 강남구",
+            job = "소프트웨어 엔지니어",
+            smokingStatus = "비흡연",
+            snsActivityLevel = "보통",
+            imageUrl = "updated_profile_image.jpg",
+            contacts = contacts
+        )
+
+        // then
+        val storedProfileBasic = localProfileDataSource.myProfileBasic.first()
+
+        // 반환된 결과와 로컬에 저장된 프로필이 일치하는지 확인
+        val updatedProfileBasic = result.getOrNull()
+        assertEquals(updatedProfileBasic, storedProfileBasic)
+
+        // 업데이트된 값들 검증
+        assertEquals("새로운 자기소개", storedProfileBasic.description)
+        assertEquals("업데이트된닉네임", storedProfileBasic.nickname)
+        assertEquals("1995-01-01", storedProfileBasic.birthDate)
+        assertEquals(180, storedProfileBasic.height)
+        assertEquals(75, storedProfileBasic.weight)
+        assertEquals("서울 강남구", storedProfileBasic.location)
+        assertEquals("소프트웨어 엔지니어", storedProfileBasic.job)
+        assertEquals("비흡연", storedProfileBasic.smokingStatus)
+        assertEquals("updated_profile_image.jpg", storedProfileBasic.imageUrl)
+        assertEquals(contacts, storedProfileBasic.contacts)
     }
 }
