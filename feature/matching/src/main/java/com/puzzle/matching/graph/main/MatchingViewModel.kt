@@ -9,6 +9,7 @@ import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
@@ -26,11 +27,12 @@ import kotlinx.coroutines.launch
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
-    private val navigationHelper: NavigationHelper,
     private val matchingRepository: MatchingRepository,
+    private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
+    private val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
     private val intents = Channel<MatchingIntent>(BUFFERED)
     private val _sideEffects = Channel<MatchingSideEffect>(BUFFERED)
@@ -61,6 +63,10 @@ class MatchingViewModel @AssistedInject constructor(
                 }
 
                 setState { copy(userRole = userRole) }
+
+                // MatchingHome 화면에서 사전에 내 프로필 데이터를 케싱해놓습니다.
+                profileRepository.loadMyProfile()
+                    .onFailure { errorHelper.sendError((it)) }
             }
             .onFailure { errorHelper.sendError(it) }
     }
@@ -69,7 +75,7 @@ class MatchingViewModel @AssistedInject constructor(
         .onSuccess {
             setState { copy(matchInfo = it) }
 
-            // MatchingHome화면에서 사전에 MatchingDetail에서 필요한 데이터를 케싱해놓습니다.
+            // MatchingHome 화면에서 사전에 MatchingDetail에서 필요한 데이터를 케싱해놓습니다.
             matchingRepository.loadOpponentProfile()
                 .onFailure { errorHelper.sendError(it) }
         }
