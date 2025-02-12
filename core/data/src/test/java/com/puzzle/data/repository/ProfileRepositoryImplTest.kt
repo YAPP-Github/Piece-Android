@@ -61,7 +61,7 @@ class ProfileRepositoryImplTest {
         profileRepository.loadValueTalkQuestions()
 
         // then
-        val storedTalks = localProfileDataSource.retrieveValueTalkQuestions()
+        val storedTalks = localProfileDataSource.valueTalkQuestions.first()
         assertTrue(storedTalks.all { it.id != null })
         assertTrue(storedTalks.size == 1)
     }
@@ -89,14 +89,13 @@ class ProfileRepositoryImplTest {
         profileRepository.loadValueTalkQuestions()
 
         // then
-        val storedTalks = localProfileDataSource.retrieveValueTalkQuestions()
-        println(storedTalks.toString())
+        val storedTalks = localProfileDataSource.valueTalkQuestions.first()
         assertTrue(storedTalks.size == validValueTalks.size)
-        assertTrue(
-            storedTalks.all { entity ->
-                validValueTalks.any { talk -> talk.id == entity.id && talk.title == entity.title }
-            }
-        )
+        assertTrue(storedTalks.zip(validValueTalks).all { (stored, response) ->
+            stored.id == response.id &&
+                    stored.title == response.title &&
+                    stored.category == response.category
+        })
     }
 
     @Test

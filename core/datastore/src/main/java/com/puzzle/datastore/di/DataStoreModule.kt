@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.google.gson.Gson
 import com.puzzle.datastore.datasource.matching.LocalMatchingDataSource
 import com.puzzle.datastore.datasource.matching.LocalMatchingDataSourceImpl
 import com.puzzle.datastore.datasource.token.LocalTokenDataSource
@@ -31,6 +32,13 @@ object DataStoreProvidesModule {
     private const val MATCHING_DATASTORE_NAME = "MATCHING_PREFERENCES"
     private val Context.matchingDataStore by preferencesDataStore(name = MATCHING_DATASTORE_NAME)
 
+    private const val PROFILE_DATASTORE_NAME = "PROFILE_PREFERENCES"
+    private val Context.profileDataStore by preferencesDataStore(name = PROFILE_DATASTORE_NAME)
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson = Gson()
+
     @Provides
     @Singleton
     @Named("token")
@@ -51,6 +59,13 @@ object DataStoreProvidesModule {
     fun provideMatchingDataStore(
         @ApplicationContext context: Context
     ): DataStore<Preferences> = context.matchingDataStore
+
+    @Provides
+    @Singleton
+    @Named("profile")
+    fun provideProfileDataStore(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> = context.profileDataStore
 }
 
 @Module
@@ -74,4 +89,10 @@ abstract class DatastoreBindsModule {
     abstract fun bindsLocalMatchingDataSource(
         localMatchingDataSourceImpl: LocalMatchingDataSourceImpl,
     ): LocalMatchingDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsLocalProfileDataSource(
+        localProfileDataSourceImpl: com.puzzle.datastore.datasource.profile.LocalProfileDataSourceImpl
+    ): com.puzzle.datastore.datasource.profile.LocalProfileDataSource
 }

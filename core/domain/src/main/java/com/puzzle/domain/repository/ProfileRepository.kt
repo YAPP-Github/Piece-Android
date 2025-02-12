@@ -1,6 +1,7 @@
 package com.puzzle.domain.repository
 
 import com.puzzle.domain.model.profile.Contact
+import com.puzzle.domain.model.profile.MyProfile
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkAnswer
@@ -12,6 +13,9 @@ interface ProfileRepository {
 
     suspend fun loadValueTalkQuestions(): Result<Unit>
     suspend fun retrieveValueTalkQuestion(): Result<List<ValueTalkQuestion>>
+
+    suspend fun retrieveMyProfile(): Result<MyProfile>
+    suspend fun loadMyProfile(): Result<Unit>
 
     suspend fun checkNickname(nickname: String): Result<Boolean>
     suspend fun uploadProfile(

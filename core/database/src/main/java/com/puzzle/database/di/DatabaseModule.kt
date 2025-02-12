@@ -3,8 +3,6 @@ package com.puzzle.database.di
 import android.content.Context
 import androidx.room.Room
 import com.puzzle.database.PieceDatabase
-import com.puzzle.database.source.profile.LocalProfileDataSource
-import com.puzzle.database.source.profile.LocalProfileDataSourceImpl
 import com.puzzle.database.source.term.LocalTermDataSource
 import com.puzzle.database.source.term.LocalTermDataSourceImpl
 import dagger.Binds
@@ -32,12 +30,6 @@ internal object DatabaseProvidesModule {
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DatabaseBindsModule {
-
-    @Binds
-    @Singleton
-    abstract fun bindsLocalProfileDataSource(
-        localProfileDataSourceImpl: LocalProfileDataSourceImpl
-    ): LocalProfileDataSource
 
     @Binds
     @Singleton
