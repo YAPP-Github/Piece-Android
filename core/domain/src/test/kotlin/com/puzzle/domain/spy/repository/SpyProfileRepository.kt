@@ -11,10 +11,13 @@ import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.domain.repository.ProfileRepository
 
 class SpyProfileRepository : ProfileRepository {
-    private var shouldFailLocalRetrieval = false
     private var localMyProfileBasic: MyProfileBasic? = null
     private var localMyValueTalks: List<MyValueTalk>? = null
     private var localMyValuePicks: List<MyValuePick>? = null
+
+    private var remoteMyProfileBasic: MyProfileBasic? = null
+    private var remoteMyValueTalks: List<MyValueTalk>? = null
+    private var remoteMyValuePicks: List<MyValuePick>? = null
 
     var loadMyProfileBasicCallCount = 0
         private set
@@ -24,10 +27,6 @@ class SpyProfileRepository : ProfileRepository {
 
     var loadMyValuePicksCallCount = 0
         private set
-
-    fun setShouldFailLocalRetrieval(shouldFail: Boolean) {
-        shouldFailLocalRetrieval = shouldFail
-    }
 
     fun setLocalMyProfileBasic(profileBasic: MyProfileBasic) {
         localMyProfileBasic = profileBasic
@@ -39,6 +38,18 @@ class SpyProfileRepository : ProfileRepository {
 
     fun setLocalMyValuePicks(valuePicks: List<MyValuePick>) {
         localMyValuePicks = valuePicks
+    }
+
+    fun setRemoteMyProfileBasic(profileBasic: MyProfileBasic) {
+        remoteMyProfileBasic = profileBasic
+    }
+
+    fun setRemoteMyValueTalks(valueTalks: List<MyValueTalk>) {
+        remoteMyValueTalks = valueTalks
+    }
+
+    fun setRemoteMyValuePicks(valuePicks: List<MyValuePick>) {
+        remoteMyValuePicks = valuePicks
     }
 
     override suspend fun loadValuePickQuestions(): Result<Unit> {
@@ -59,42 +70,36 @@ class SpyProfileRepository : ProfileRepository {
 
     override suspend fun loadMyProfileBasic(): Result<Unit> {
         loadMyProfileBasicCallCount++
+        localMyProfileBasic = remoteMyProfileBasic
         return Result.success(Unit)
     }
 
     override suspend fun retrieveMyProfileBasic(): Result<MyProfileBasic> =
-        if (shouldFailLocalRetrieval) {
-            Result.failure(NoSuchElementException("No value present in DataStore"))
-        } else {
-            localMyProfileBasic?.let { Result.success(it) }
-                ?: Result.failure(NoSuchElementException("No value present in DataStore"))
-        }
+        localMyProfileBasic?.let { Result.success(it) }
+            ?: Result.failure(NoSuchElementException("No value present in DataStore"))
+
 
     override suspend fun loadMyValueTalks(): Result<Unit> {
         loadMyValueTalksCallCount++
+        localMyValueTalks = remoteMyValueTalks
         return Result.success(Unit)
     }
 
     override suspend fun retrieveMyValueTalks(): Result<List<MyValueTalk>> =
-        if (shouldFailLocalRetrieval) {
-            Result.failure(NoSuchElementException("No value present in DataStore"))
-        } else {
-            localMyValueTalks?.let { Result.success(it) }
-                ?: Result.failure(NoSuchElementException("No value present in DataStore"))
-        }
+        localMyValueTalks?.let { Result.success(it) }
+            ?: Result.failure(NoSuchElementException("No value present in DataStore"))
+
 
     override suspend fun loadMyValuePicks(): Result<Unit> {
         loadMyValuePicksCallCount++
+        localMyValuePicks = remoteMyValuePicks
         return Result.success(Unit)
     }
 
     override suspend fun retrieveMyValuePicks(): Result<List<MyValuePick>> =
-        if (shouldFailLocalRetrieval) {
-            Result.failure(NoSuchElementException("No value present in DataStore"))
-        } else {
-            localMyValuePicks?.let { Result.success(it) }
-                ?: Result.failure(NoSuchElementException("No value present in DataStore"))
-        }
+        localMyValuePicks?.let { Result.success(it) }
+            ?: Result.failure(NoSuchElementException("No value present in DataStore"))
+
 
     override suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<List<MyValueTalk>> {
         TODO("Not yet implemented")

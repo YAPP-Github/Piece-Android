@@ -10,7 +10,7 @@ class GetMyProfileBasicUseCase @Inject constructor(
     suspend operator fun invoke(): Result<MyProfileBasic> =
         profileRepository.retrieveMyProfileBasic()
             .recoverCatching {
-                profileRepository.loadMyProfile().getOrThrow()
+                profileRepository.loadMyProfileBasic().getOrThrow()
                 profileRepository.retrieveMyProfileBasic().getOrThrow()
             }
 }
