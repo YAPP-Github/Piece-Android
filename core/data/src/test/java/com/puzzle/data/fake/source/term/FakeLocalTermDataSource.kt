@@ -1,7 +1,7 @@
 package com.puzzle.data.fake.source.term
 
 import com.puzzle.database.model.terms.TermEntity
-import com.puzzle.database.source.term.LocalTermDataSource
+import com.puzzle.datastore.datasource.term.LocalTermDataSource
 
 class FakeLocalTermDataSource : LocalTermDataSource {
     private var terms = listOf<TermEntity>()
