@@ -8,7 +8,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
@@ -65,7 +65,7 @@ class BasicProfileViewModel @AssistedInject constructor(
             is BasicProfileIntent.UpdateRegion -> updateLocation(intent.region)
             is BasicProfileIntent.UpdateSmokeStatus -> updateIsSmoke(intent.isSmoke)
             is BasicProfileIntent.UpdateSnsActivity -> updateIsSnsActive(intent.isSnsActivity)
-            is BasicProfileIntent.AddContact -> addContact(intent.snsPlatform)
+            is BasicProfileIntent.AddContact -> addContact(intent.contactType)
             is BasicProfileIntent.DeleteContact -> deleteContact(intent.idx)
             is BasicProfileIntent.UpdateContact -> updateContact(intent.idx, intent.contact)
             is BasicProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
@@ -307,10 +307,10 @@ class BasicProfileViewModel @AssistedInject constructor(
         }
     }
 
-    private fun addContact(snsPlatform: SnsPlatform) {
+    private fun addContact(contactType: ContactType) {
         setState {
             val newContacts = contacts.toMutableList().apply {
-                add(Contact(snsPlatform = snsPlatform, content = ""))
+                add(Contact(type = contactType, content = ""))
             }
             val newState = copy(
                 contacts = newContacts,

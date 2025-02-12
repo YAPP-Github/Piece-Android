@@ -90,7 +90,7 @@ class ProfileDataSourceImpl @Inject constructor(
                     answer = it.answer,
                 )
             },
-            contacts = contacts.associate { it.snsPlatform.name to it.content }
+            contacts = contacts.associate { it.type.name to it.content }
         )
     ).unwrapData()
 

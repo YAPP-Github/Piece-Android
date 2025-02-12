@@ -49,7 +49,7 @@ import com.puzzle.designsystem.component.PieceTextInputDropDown
 import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
@@ -94,7 +94,7 @@ internal fun BasicProfileRoute(
             viewModel.onIntent(
                 BasicProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
+                        usingContactType = state.usingSnsPlatforms,
                         isEdit = false,
                         onButtonClicked = {
                             viewModel.onIntent(BasicProfileIntent.AddContact(it))
@@ -107,13 +107,13 @@ internal fun BasicProfileRoute(
             viewModel.onIntent(
                 BasicProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
-                        nowSnsPlatform = state.contacts[idx].snsPlatform,
+                        usingContactType = state.usingSnsPlatforms,
+                        nowContactType = state.contacts[idx].type,
                         isEdit = true,
                         onButtonClicked = {
                             viewModel.onIntent(
                                 BasicProfileIntent.UpdateContact(
-                                    idx, state.contacts[idx].copy(snsPlatform = it)
+                                    idx, state.contacts[idx].copy(type = it)
                                 )
                             )
 
@@ -332,11 +332,11 @@ private fun ColumnScope.SnsPlatformContent(
     SectionTitle(title = "연락처")
 
     contacts.forEachIndexed { idx, contact ->
-        val image = when (contact.snsPlatform) {
-            SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
-            SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
-            SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
-            SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
+        val image = when (contact.type) {
+            ContactType.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+            ContactType.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+            ContactType.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+            ContactType.PHONE_NUMBER -> R.drawable.ic_sns_call
             else -> R.drawable.ic_delete_circle // 임시
         }
 

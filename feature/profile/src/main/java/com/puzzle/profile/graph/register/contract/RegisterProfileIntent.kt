@@ -2,7 +2,7 @@ package com.puzzle.profile.graph.register.contract
 
 import androidx.compose.runtime.Composable
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 
 sealed class RegisterProfileIntent {
     data class OnNickNameChange(val nickName: String) : RegisterProfileIntent()
@@ -21,7 +21,7 @@ sealed class RegisterProfileIntent {
     data class OnSnsActivityClick(val isSnsActivity: Boolean) : RegisterProfileIntent()
     data class OnContactSelect(val idx: Int, val contact: Contact) : RegisterProfileIntent()
     data class OnDeleteContactClick(val idx: Int) : RegisterProfileIntent()
-    data class OnAddContactClick(val snsPlatform: SnsPlatform) : RegisterProfileIntent()
+    data class OnAddContactClick(val contactType: ContactType) : RegisterProfileIntent()
     data class ShowBottomSheet(val content: @Composable () -> Unit) : RegisterProfileIntent()
     data object HideBottomSheet : RegisterProfileIntent()
 }

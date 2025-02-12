@@ -42,7 +42,7 @@ data class RegisterProfileState(
     val isValueTalkComplete: Boolean =
         valueTalks.find { it.answer.isBlank() } == null
 
-    val usingSnsPlatforms = contacts.map { it.snsPlatform }
+    val usingSnsPlatforms = contacts.map { it.type }
         .toSet()
 
     val isBasicProfileComplete: Boolean = !profileImageUri.isNullOrBlank() &&

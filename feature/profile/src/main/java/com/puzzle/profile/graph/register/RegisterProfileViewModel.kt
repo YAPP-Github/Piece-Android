@@ -9,7 +9,7 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.repository.ProfileRepository
@@ -73,7 +73,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             is RegisterProfileIntent.OnRegionClick -> updateLocation(intent.region)
             is RegisterProfileIntent.OnIsSmokeClick -> updateIsSmoke(intent.isSmoke)
             is RegisterProfileIntent.OnSnsActivityClick -> updateIsSnsActive(intent.isSnsActivity)
-            is RegisterProfileIntent.OnAddContactClick -> addContact(intent.snsPlatform)
+            is RegisterProfileIntent.OnAddContactClick -> addContact(intent.contactType)
             is RegisterProfileIntent.OnDeleteContactClick -> deleteContact(intent.idx)
             is RegisterProfileIntent.OnContactSelect -> updateContact(intent.idx, intent.contact)
             is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
@@ -366,10 +366,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
     }
 
-    private fun addContact(snsPlatform: SnsPlatform) {
+    private fun addContact(contactType: ContactType) {
         setState {
             val newContacts = contacts.toMutableList().apply {
-                add(Contact(snsPlatform = snsPlatform, content = ""))
+                add(Contact(type = contactType, content = ""))
             }
 
             copy(

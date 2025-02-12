@@ -3,7 +3,7 @@ package com.puzzle.profile.graph.basic.contract
 import com.airbnb.mvrx.MavericksState
 import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 
 data class BasicProfileState(
     val profileScreenState: ScreenState = ScreenState.SAVED,
@@ -26,24 +26,24 @@ data class BasicProfileState(
     val isSnsActive: Boolean = false,
     val contacts: List<Contact> = listOf(
         Contact(
-            snsPlatform = SnsPlatform.KAKAO_TALK_ID,
+            type = ContactType.KAKAO_TALK_ID,
             content = "puzzle1234",
         ),
         Contact(
-            snsPlatform = SnsPlatform.INSTAGRAM_ID,
+            type = ContactType.INSTAGRAM_ID,
             content = "puzzle1234",
         ),
         Contact(
-            snsPlatform = SnsPlatform.PHONE_NUMBER,
+            type = ContactType.PHONE_NUMBER,
             content = "010-0000-0000",
         ),
         Contact(
-            snsPlatform = SnsPlatform.OPEN_CHAT_URL,
+            type = ContactType.OPEN_CHAT_URL,
             content = "https://open.kakao.com/o/s5aqIX1g",
         ),
     ),
 ) : MavericksState {
-    val usingSnsPlatforms = contacts.map { it.snsPlatform }
+    val usingSnsPlatforms = contacts.map { it.type }
         .toSet()
 
     val isProfileIncomplete: Boolean = contacts.isEmpty() ||

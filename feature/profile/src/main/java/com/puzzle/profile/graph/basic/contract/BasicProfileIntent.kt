@@ -2,7 +2,7 @@ package com.puzzle.profile.graph.basic.contract
 
 import androidx.compose.runtime.Composable
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 
 sealed class BasicProfileIntent {
     data object OnBackClick : BasicProfileIntent()
@@ -19,7 +19,7 @@ sealed class BasicProfileIntent {
     data class UpdateSnsActivity(val isSnsActivity: Boolean) : BasicProfileIntent()
     data class UpdateContact(val idx: Int, val contact: Contact) : BasicProfileIntent()
     data class DeleteContact(val idx: Int) : BasicProfileIntent()
-    data class AddContact(val snsPlatform: SnsPlatform) : BasicProfileIntent()
+    data class AddContact(val contactType: ContactType) : BasicProfileIntent()
     data class ShowBottomSheet(val content: @Composable () -> Unit) : BasicProfileIntent()
     data object HideBottomSheet : BasicProfileIntent()
 }

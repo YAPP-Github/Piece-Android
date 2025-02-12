@@ -78,6 +78,15 @@ interface PieceApi {
     @POST("/api/blockContacts")
     suspend fun blockContacts(@Body blockContactsRequest: BlockContactsRequest): Result<ApiResponse<Unit>>
 
+    @GET("/api/profiles/valueTalks")
+    suspend fun getMyValueTalks(): Result<ApiResponse<GetMyValueTalksResponse>>
+
+    @GET("/api/profiles/valuePicks")
+    suspend fun getMyValuePicks(): Result<ApiResponse<GetMyValuePicksResponse>>
+
+    @GET("/api/profiles/basic")
+    suspend fun getMyProfileBasic(): Result<ApiResponse<GetMyProfileBasicResponse>>
+
     @GET("/api/matches/infos")
     suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>
 
