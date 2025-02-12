@@ -65,10 +65,28 @@ class MatchingViewModel @AssistedInject constructor(
                 setState { copy(userRole = userRole) }
 
                 // MatchingHome 화면에서 사전에 내 프로필 데이터를 케싱해놓습니다.
-                profileRepository.loadMyProfile()
-                    .onFailure { errorHelper.sendError((it)) }
+                loadMyProfile()
             }
             .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun loadMyProfile() = viewModelScope.launch {
+        val profileBasicJob = launch {
+            profileRepository.loadMyProfileBasic()
+                .onFailure { errorHelper.sendError(it) }
+        }
+        val valueTalksJob = launch {
+            profileRepository.loadMyValuePicks()
+                .onFailure { errorHelper.sendError(it) }
+        }
+        val valuePicksJob = launch {
+            profileRepository.loadMyValueTalks()
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        profileBasicJob.join()
+        valueTalksJob.join()
+        valuePicksJob.join()
     }
 
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()

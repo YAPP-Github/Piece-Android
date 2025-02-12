@@ -19,10 +19,7 @@ class GetOpponentProfileUseCaseTest {
     @Test
     fun `로컬에서 데이터를 불러오다가 실패했을 경우 서버 데이터를 불러온다`() = runTest {
         // Given
-        val localProfile = dummyOpponentProfile
-        val remoteProfile = localProfile.copy(description = "Remote Profile")
-
-        spyMatchingRepository.setShouldFailLocalRetrieval(true)
+        val remoteProfile = dummyOpponentProfile.copy(description = "Remote Profile")
         spyMatchingRepository.setRemoteOpponentProfile(remoteProfile)
 
         // When

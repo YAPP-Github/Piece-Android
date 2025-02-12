@@ -7,7 +7,6 @@ import com.puzzle.domain.repository.MatchingRepository
 class SpyMatchingRepository : MatchingRepository {
     private var localOpponentProfile: OpponentProfile? = null
     private var remoteOpponentProfile: OpponentProfile? = null
-    private var shouldFailLocalRetrieval = false
     var loadOpponentProfileCallCount = 0
         private set
 
@@ -19,21 +18,13 @@ class SpyMatchingRepository : MatchingRepository {
         remoteOpponentProfile = profile
     }
 
-    fun setShouldFailLocalRetrieval(shouldFail: Boolean) {
-        shouldFailLocalRetrieval = shouldFail
-    }
-
     override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> =
-        if (shouldFailLocalRetrieval) {
-            Result.failure(NoSuchElementException("No value present in DataStore"))
-        } else {
-            localOpponentProfile?.let { Result.success(it) }
-                ?: Result.failure(NoSuchElementException("No value present in DataStore"))
-        }
+        localOpponentProfile?.let { Result.success(it) }
+            ?: Result.failure(NoSuchElementException("No value present in DataStore"))
+
 
     override suspend fun loadOpponentProfile(): Result<Unit> {
         loadOpponentProfileCallCount++
-        shouldFailLocalRetrieval = false
         localOpponentProfile = remoteOpponentProfile
         return Result.success(Unit)
     }

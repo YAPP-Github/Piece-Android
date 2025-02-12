@@ -5,12 +5,16 @@ import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.domain.model.profile.MyValueTalk
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
+import com.puzzle.network.model.profile.ContactResponse
 import com.puzzle.network.model.profile.GetMyProfileBasicResponse
 import com.puzzle.network.model.profile.GetMyValuePicksResponse
 import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
+import com.puzzle.network.model.profile.MyValuePickResponse
+import com.puzzle.network.model.profile.MyValueTalkResponse
 import com.puzzle.network.model.profile.UploadProfileResponse
+import com.puzzle.network.model.profile.ValuePickAnswerResponse
 import com.puzzle.network.model.profile.ValuePickResponse
 import com.puzzle.network.model.profile.ValueTalkResponse
 import com.puzzle.network.source.profile.ProfileDataSource
@@ -39,12 +43,38 @@ class FakeProfileDataSource : ProfileDataSource {
     }
 
     override suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<GetMyValueTalksResponse> {
-        TODO("Not yet implemented")
+        val responses = valueTalks.map { valueTalk ->
+            MyValueTalkResponse(
+                id = valueTalk.id,
+                title = valueTalk.title,
+                category = valueTalk.category,
+                answer = valueTalk.answer,
+                summary = valueTalk.summary
+            )
+        }
+
+        return Result.success(GetMyValueTalksResponse(response = responses))
     }
 
     override suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<GetMyValuePicksResponse> {
-        TODO("Not yet implemented")
+        val responses = valuePicks.map { valuePick ->
+            MyValuePickResponse(
+                id = valuePick.id,
+                category = valuePick.category,
+                question = valuePick.question,
+                answerOptions = valuePick.answerOptions.map {
+                    ValuePickAnswerResponse(
+                        number = it.number,
+                        content = it.content,
+                    )
+                },
+                selectedAnswer = valuePick.selectedAnswer
+            )
+        }
+
+        return Result.success(GetMyValuePicksResponse(response = responses))
     }
+
 
     override suspend fun updateMyProfileBasic(
         description: String,
@@ -59,7 +89,27 @@ class FakeProfileDataSource : ProfileDataSource {
         imageUrl: String,
         contacts: List<Contact>
     ): Result<GetMyProfileBasicResponse> {
-        TODO("Not yet implemented")
+        val response = GetMyProfileBasicResponse(
+            description = description,
+            nickname = nickname,
+            age = null,
+            birthDate = birthDate,
+            height = height,
+            weight = weight,
+            location = location,
+            job = job,
+            smokingStatus = smokingStatus,
+            snsActivityLevel = snsActivityLevel,
+            imageUrl = imageUrl,
+            contacts = contacts.map { contact ->
+                ContactResponse(
+                    type = contact.type.name,
+                    value = contact.content
+                )
+            }
+        )
+
+        return Result.success(response)
     }
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =

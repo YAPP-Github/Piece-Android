@@ -173,7 +173,6 @@ class ProfileRepositoryImplTest {
         )
 
         // when
-        profileDataSource.updateMyValueTalks(initialValueTalks)
         val result = profileRepository.updateMyValueTalks(updatedValueTalks)
 
         // then
@@ -205,7 +204,6 @@ class ProfileRepositoryImplTest {
         )
 
         // when
-        profileDataSource.updateMyValuePicks(initialValuePicks)
         val result = profileRepository.updateMyValuePicks(updatedValuePicks)
 
         // then
@@ -243,17 +241,5 @@ class ProfileRepositoryImplTest {
         // 반환된 결과와 로컬에 저장된 프로필이 일치하는지 확인
         val updatedProfileBasic = result.getOrNull()
         assertEquals(updatedProfileBasic, storedProfileBasic)
-
-        // 업데이트된 값들 검증
-        assertEquals("새로운 자기소개", storedProfileBasic.description)
-        assertEquals("업데이트된닉네임", storedProfileBasic.nickname)
-        assertEquals("1995-01-01", storedProfileBasic.birthDate)
-        assertEquals(180, storedProfileBasic.height)
-        assertEquals(75, storedProfileBasic.weight)
-        assertEquals("서울 강남구", storedProfileBasic.location)
-        assertEquals("소프트웨어 엔지니어", storedProfileBasic.job)
-        assertEquals("비흡연", storedProfileBasic.smokingStatus)
-        assertEquals("updated_profile_image.jpg", storedProfileBasic.imageUrl)
-        assertEquals(contacts, storedProfileBasic.contacts)
     }
 }

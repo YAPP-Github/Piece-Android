@@ -10,33 +10,32 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.update
 
 class FakeLocalProfileDataSource : LocalProfileDataSource {
     private var _valuePickQuestions: List<ValuePickQuestion>? = null
-    override val valuePickQuestions: Flow<List<ValuePickQuestion>> = flow {
-        _valuePickQuestions?.let { emit(it) }
-            ?: throw NoSuchElementException("No value present in DataStore")
-    }
+    override val valuePickQuestions: Flow<List<ValuePickQuestion>>
+        get() = flow {
+            _valuePickQuestions?.let { emit(it) }
+                ?: throw NoSuchElementException("No value present in DataStore")
+        }
 
     private var _valueTalkQuestions: List<ValueTalkQuestion>? = null
-    override val valueTalkQuestions: Flow<List<ValueTalkQuestion>> =
-        flow {
+    override val valueTalkQuestions: Flow<List<ValueTalkQuestion>>
+        get() = flow {
             _valueTalkQuestions?.let { emit(it) }
                 ?: throw NoSuchElementException("No value present in DataStore")
         }
 
     private var _myProfileBasic: MyProfileBasic? = null
-    override val myProfileBasic: Flow<MyProfileBasic> = flow {
-        _myProfileBasic?.let { emit(it) }
-            ?: throw NoSuchElementException("No value present in DataStore")
-    }
+    override val myProfileBasic: Flow<MyProfileBasic>
+        get() = flow {
+            _myProfileBasic?.let { emit(it) }
+                ?: throw NoSuchElementException("No value present in DataStore")
+        }
 
-    // New implementation for MyValuePicks
     private val _myValuePicks = MutableStateFlow<List<MyValuePick>>(emptyList())
     override val myValuePicks: Flow<List<MyValuePick>> = _myValuePicks.asStateFlow()
 
-    // New implementation for MyValueTalks
     private val _myValueTalks = MutableStateFlow<List<MyValueTalk>>(emptyList())
     override val myValueTalks: Flow<List<MyValueTalk>> = _myValueTalks.asStateFlow()
 
