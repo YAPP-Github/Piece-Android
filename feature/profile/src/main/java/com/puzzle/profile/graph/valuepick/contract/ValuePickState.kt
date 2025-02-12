@@ -1,10 +1,10 @@
 package com.puzzle.profile.graph.valuepick.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.domain.model.profile.MyValuePick
 
 data class ValuePickState(
-    val valuePicks: List<ValuePickRegisterRO> = emptyList(),
+    val valuePicks: List<MyValuePick> = emptyList(),
 ) : MavericksState {
 
     enum class ScreenState {

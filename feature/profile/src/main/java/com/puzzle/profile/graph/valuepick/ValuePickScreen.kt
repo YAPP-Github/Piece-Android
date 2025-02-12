@@ -35,7 +35,7 @@ import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSubTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.AnswerOption
-import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
+import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.profile.graph.valuepick.contract.ValuePickIntent
 import com.puzzle.profile.graph.valuepick.contract.ValuePickSideEffect
 import com.puzzle.profile.graph.valuepick.contract.ValuePickState
@@ -69,12 +69,12 @@ internal fun ValuePickRoute(
 @Composable
 private fun ValuePickScreen(
     state: ValuePickState,
-    onSaveClick: (List<ValuePickRegisterRO>) -> Unit,
+    onSaveClick: (List<MyValuePick>) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var screenState: ScreenState by remember { mutableStateOf(ScreenState.SAVED) }
-    var valuePicks: List<ValuePickRegisterRO> by remember { mutableStateOf(state.valuePicks) }
+    var valuePicks: List<MyValuePick> by remember { mutableStateOf(state.valuePicks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
     BackHandler {
@@ -157,9 +157,9 @@ private fun ValuePickScreen(
 
 @Composable
 private fun ValuePickCards(
-    valuePicks: List<ValuePickRegisterRO>,
+    valuePicks: List<MyValuePick>,
     screenState: ScreenState,
-    onContentChange: (ValuePickRegisterRO) -> Unit,
+    onContentChange: (MyValuePick) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -187,9 +187,9 @@ private fun ValuePickCards(
 
 @Composable
 private fun ValuePickCard(
-    item: ValuePickRegisterRO,
+    item: MyValuePick,
     screenState: ScreenState,
-    onContentChange: (ValuePickRegisterRO) -> Unit,
+    onContentChange: (MyValuePick) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -247,7 +247,7 @@ private fun ValuePickPreview() {
         ValuePickScreen(
             state = ValuePickState(
                 valuePicks = listOf(
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 0,
                         category = "음주",
                         question = "사귀는 사람과 함께 술을 마시는 것을 좋아하나요?",
@@ -263,7 +263,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 1,
                         category = "만남 빈도",
                         question = "주말에 얼마나 자주 데이트를 하고싶나요?",
@@ -279,7 +279,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 2,
                         category = "연락 빈도",
                         question = "연인 사이에 얼마나 자주 연락하는게 좋은가요?",
@@ -295,7 +295,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 3,
                         category = "연락 방식",
                         question = "연락할 때 어떤 방법을 더 좋아하나요?",
@@ -311,7 +311,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 4,
                         category = "데이트",
                         question = "공공장소에서 연인 티를 내는 것에 대해 어떻게 생각하나요?",
@@ -327,7 +327,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 5,
                         category = "장거리 연애",
                         question = "장거리 연애에 대해 어떻게 생각하나요?",
@@ -343,7 +343,7 @@ private fun ValuePickPreview() {
                             )
                         ),
                     ),
-                    ValuePickRegisterRO(
+                    MyValuePick(
                         id = 6,
                         category = "SNS",
                         question = "연인이 활발한 SNS 활동을 하거나 게스타라면 기분이 어떨 것 같나요?",
