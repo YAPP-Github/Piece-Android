@@ -86,8 +86,8 @@ private fun ProfilePreviewScreen(
         PieceImageDialog(
             imageUri = state.profile?.imageUrl,
             buttonLabel = "매칭 수락하기",
-            onButtonClick = {},
             onDismissRequest = { showDialog = false },
+            isApproveButtonEnabled = false,
         )
     }
 
