@@ -4,11 +4,13 @@ import com.puzzle.data.TokenManagerImpl
 import com.puzzle.data.image.ImageResizer
 import com.puzzle.data.image.ImageResizerImpl
 import com.puzzle.data.repository.AuthRepositoryImpl
+import com.puzzle.data.repository.ErrorRepositoryImpl
 import com.puzzle.data.repository.MatchingRepositoryImpl
 import com.puzzle.data.repository.ProfileRepositoryImpl
 import com.puzzle.data.repository.TermsRepositoryImpl
 import com.puzzle.data.repository.UserRepositoryImpl
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.ErrorRepository
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.TermsRepository
@@ -53,6 +55,12 @@ abstract class DataModule {
     abstract fun bindsMatchingRepository(
         matchingRepositoryImpl: MatchingRepositoryImpl,
     ): MatchingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsErrorRepository(
+        errorRepositoryImpl: ErrorRepositoryImpl,
+    ): ErrorRepository
 
     @Binds
     @Singleton

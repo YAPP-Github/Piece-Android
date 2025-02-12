@@ -74,9 +74,8 @@ androidxEspresso = "3.6.1"
 
 ## firebase
 googleServices = "4.4.2"
-firebaseBom = "33.7.0"
-crashlytics = "3.0.2"
-messaging = "24.1.0"
+firebaseBom = "33.9.0"
+crashlytics = "3.0.3"
 
 ## OAuth
 # https://developer.android.com/jetpack/androidx/releases/credentials
@@ -185,7 +184,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config-ktx" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "messaging" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 
 [bundles]
 
