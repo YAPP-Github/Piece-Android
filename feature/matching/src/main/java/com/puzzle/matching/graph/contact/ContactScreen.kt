@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ClipboardManager
 import androidx.compose.ui.platform.LocalClipboardManager
@@ -41,7 +40,7 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.matching.graph.contact.contract.ContactIntent
 import com.puzzle.matching.graph.contact.contract.ContactSideEffect
 import com.puzzle.matching.graph.contact.contract.ContactState
@@ -155,8 +154,8 @@ private fun ContactInfo(
     onContactClick: (Contact) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val contactIconId: Int? = selectedContact.snsPlatform.getContactIconId()
-    val contactNameId: Int? = selectedContact.snsPlatform.getContactNameId()
+    val contactIconId: Int? = selectedContact.type.getContactIconId()
+    val contactNameId: Int? = selectedContact.type.getContactNameId()
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
     Column(
@@ -217,9 +216,9 @@ private fun ContactInfo(
         contacts.forEach {
             val contactOnOffIconId =
                 if (selectedContact == it) {
-                    it.snsPlatform.getSelectedContactIconId()
+                    it.type.getSelectedContactIconId()
                 } else {
-                    it.snsPlatform.getUnSelectedContactIconId()
+                    it.type.getUnSelectedContactIconId()
                 }
 
             if (contactOnOffIconId != null) {
@@ -257,24 +256,24 @@ private fun ContactScreenPreview() {
                 nickName = "수줍은 수달",
                 contacts = listOf(
                     Contact(
-                        snsPlatform = SnsPlatform.KAKAO_TALK_ID,
+                        type = ContactType.KAKAO_TALK_ID,
                         content = "Puzzle1234"
                     ),
                     Contact(
-                        snsPlatform = SnsPlatform.OPEN_CHAT_URL,
+                        type = ContactType.OPEN_CHAT_URL,
                         content = "Puzzle1234"
                     ),
                     Contact(
-                        snsPlatform = SnsPlatform.INSTAGRAM_ID,
+                        type = ContactType.INSTAGRAM_ID,
                         content = "Puzzle1234"
                     ),
                     Contact(
-                        snsPlatform = SnsPlatform.PHONE_NUMBER,
+                        type = ContactType.PHONE_NUMBER,
                         content = "Puzzle1234"
                     )
                 ),
                 selectedContact = Contact(
-                    snsPlatform = SnsPlatform.OPEN_CHAT_URL,
+                    type = ContactType.OPEN_CHAT_URL,
                     content = "Puzzle1234"
                 ),
             ),

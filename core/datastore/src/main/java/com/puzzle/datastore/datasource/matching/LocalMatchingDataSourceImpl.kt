@@ -15,8 +15,8 @@ import javax.inject.Named
 
 class LocalMatchingDataSourceImpl @Inject constructor(
     @Named("matching") private val dataStore: DataStore<Preferences>,
+    private val gson: Gson,
 ) : LocalMatchingDataSource {
-    private val gson = Gson()
     override val opponentProfile: Flow<OpponentProfile> = dataStore.getValue(OPPONENT_PROFILE, "")
         .map { gson.fromJson(it, OpponentProfile::class.java) }
 

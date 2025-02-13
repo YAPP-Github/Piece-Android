@@ -18,17 +18,17 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceBottomSheetHeader
 import com.puzzle.designsystem.component.PieceBottomSheetListItemDefault
 import com.puzzle.designsystem.component.PieceSolidButton
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 
 @Composable
 internal fun ContactBottomSheet(
-    usingSnsPlatform: Set<SnsPlatform>,
+    usingContactType: Set<ContactType>,
     isEdit: Boolean,
-    onButtonClicked: (SnsPlatform) -> Unit,
-    nowSnsPlatform: SnsPlatform? = null,
+    onButtonClicked: (ContactType) -> Unit,
+    nowContactType: ContactType? = null,
 ) {
     val scrollState = rememberScrollState()
-    var tempSnsPlatform by remember { mutableStateOf<SnsPlatform?>(nowSnsPlatform) }
+    var tempContactType by remember { mutableStateOf<ContactType?>(nowContactType) }
 
     Column(
         modifier = Modifier
@@ -45,32 +45,32 @@ internal fun ContactBottomSheet(
                 .padding(top = 12.dp)
                 .verticalScroll(scrollState),
         ) {
-            SnsPlatform.entries.forEach { sns ->
-                if (sns == SnsPlatform.UNKNOWN) return@forEach
+            ContactType.entries.forEach { sns ->
+                if (sns == ContactType.UNKNOWN) return@forEach
 
                 val image = when (sns) {
-                    SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
-                    SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
-                    SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
-                    SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
+                    ContactType.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+                    ContactType.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+                    ContactType.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+                    ContactType.PHONE_NUMBER -> R.drawable.ic_sns_call
                     else -> R.drawable.ic_delete_circle
                 }
 
                 PieceBottomSheetListItemDefault(
                     label = sns.displayName,
                     image = image,
-                    checked = if (isEdit) sns == tempSnsPlatform
-                    else sns in usingSnsPlatform || sns == tempSnsPlatform,
-                    enabled = sns !in usingSnsPlatform,
-                    onChecked = { tempSnsPlatform = sns },
+                    checked = if (isEdit) sns == tempContactType
+                    else sns in usingContactType || sns == tempContactType,
+                    enabled = sns !in usingContactType,
+                    onChecked = { tempContactType = sns },
                 )
             }
         }
 
         PieceSolidButton(
             label = "적용하기",
-            onClick = { onButtonClicked(tempSnsPlatform!!) },
-            enabled = tempSnsPlatform != null,
+            onClick = { onButtonClicked(tempContactType!!) },
+            enabled = tempContactType != null,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 12.dp, bottom = 10.dp),

@@ -35,54 +35,66 @@ class MatchingRepositoryImplTest {
 
     @Test
     fun `매칭된 상대방 정보는 로컬에 저장한다`() = runTest {
-        // Given
-        val expectedOpponentProfile = OpponentProfile(
-            description = "안녕하세요",
-            nickname = "테스트",
-            age = 25,
-            birthYear = "1998",
-            height = 170,
-            weight = 60,
-            location = "서울",
-            job = "개발자",
-            smokingStatus = "비흡연",
-            valuePicks = listOf(
-                OpponentValuePick(
-                    category = "취미",
-                    question = "당신의 취미는 무엇인가요?",
-                    isSameWithMe = true,
-                    answerOptions = emptyList(),
-                    selectedAnswer = 1
-                )
-            ),
-            valueTalks = listOf(
-                OpponentValueTalk(
-                    category = "음악",
-                    summary = "좋아하는 음악 장르",
-                    answer = "저는 클래식 음악을 좋아합니다."
-                )
-            ),
-            imageUrl = "https://example.com/image.jpg"
-        )
+        // given
+        val expectedOpponentProfile = dummyOpponentProfile
+        setOpponentProfile(expectedOpponentProfile)
 
+        // When
+        matchingRepository.loadOpponentProfile().getOrThrow()
+
+        // Then
+        val storedProfile = fakeLocalMatchingDataSource.opponentProfile.first()
+        assertEquals(expectedOpponentProfile, storedProfile)
+    }
+
+    private val dummyOpponentProfile = OpponentProfile(
+        description = "안녕하세요",
+        nickname = "테스트",
+        age = 25,
+        birthYear = "1998",
+        height = 170,
+        weight = 60,
+        location = "서울",
+        job = "개발자",
+        smokingStatus = "비흡연",
+        valuePicks = listOf(
+            OpponentValuePick(
+                category = "취미",
+                question = "당신의 취미는 무엇인가요?",
+                isSameWithMe = true,
+                answerOptions = emptyList(),
+                selectedAnswer = 1
+            )
+        ),
+        valueTalks = listOf(
+            OpponentValueTalk(
+                category = "음악",
+                summary = "좋아하는 음악 장르",
+                answer = "저는 클래식 음악을 좋아합니다."
+            )
+        ),
+        imageUrl = "https://example.com/image.jpg"
+    )
+
+    private fun setOpponentProfile(opponentProfile: OpponentProfile) {
         fakeMatchingDataSource.setOpponentProfileData(
             GetOpponentProfileBasicResponse(
                 matchId = 1,
-                description = expectedOpponentProfile.description,
-                nickname = expectedOpponentProfile.nickname,
-                age = expectedOpponentProfile.age,
-                birthYear = expectedOpponentProfile.birthYear,
-                height = expectedOpponentProfile.height,
-                weight = expectedOpponentProfile.weight,
-                location = expectedOpponentProfile.location,
-                job = expectedOpponentProfile.job,
-                smokingStatus = expectedOpponentProfile.smokingStatus
+                description = opponentProfile.description,
+                nickname = opponentProfile.nickname,
+                age = opponentProfile.age,
+                birthYear = opponentProfile.birthYear,
+                height = opponentProfile.height,
+                weight = opponentProfile.weight,
+                location = opponentProfile.location,
+                job = opponentProfile.job,
+                smokingStatus = opponentProfile.smokingStatus
             ),
             GetOpponentValuePicksResponse(
                 matchId = 1,
                 description = null,
                 nickname = null,
-                valuePicks = expectedOpponentProfile.valuePicks.map {
+                valuePicks = opponentProfile.valuePicks.map {
                     OpponentValuePickResponse(
                         category = it.category,
                         question = it.question,
@@ -96,7 +108,7 @@ class MatchingRepositoryImplTest {
                 matchId = 1,
                 description = null,
                 nickname = null,
-                valueTalks = expectedOpponentProfile.valueTalks.map {
+                valueTalks = opponentProfile.valueTalks.map {
                     OpponentValueTalkResponse(
                         category = it.category,
                         summary = it.summary,
@@ -104,14 +116,7 @@ class MatchingRepositoryImplTest {
                     )
                 }
             ),
-            GetOpponentProfileImageResponse(imageUrl = expectedOpponentProfile.imageUrl)
+            GetOpponentProfileImageResponse(imageUrl = opponentProfile.imageUrl)
         )
-
-        // When
-        matchingRepository.loadOpponentProfile().getOrThrow()
-
-        // Then
-        val storedProfile = fakeLocalMatchingDataSource.opponentProfile.first()
-        assertEquals(expectedOpponentProfile, storedProfile)
     }
 }

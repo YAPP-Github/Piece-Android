@@ -68,8 +68,7 @@ internal fun RegisterProfileRoute(
         state = state,
         onSaveClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
         onBackClick = { viewModel.onIntent(RegisterProfileIntent.OnBackClick) },
-        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.OnPhotoClick(it)) },
-        onEditPhotoClick = { viewModel.onIntent(RegisterProfileIntent.OnEditPhotoClick(it)) },
+        onProfileImageChanged = {  viewModel.onIntent(RegisterProfileIntent.OnProfileImageChanged(it))},
         onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
         onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.OnNickNameChange(it)) },
         onDescribeMySelfChanged = {
@@ -88,7 +87,7 @@ internal fun RegisterProfileRoute(
             viewModel.onIntent(
                 RegisterProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
+                        usingContactType = state.usingSnsPlatforms,
                         isEdit = false,
                         onButtonClicked = {
                             viewModel.onIntent(RegisterProfileIntent.OnAddContactClick(it))
@@ -101,13 +100,13 @@ internal fun RegisterProfileRoute(
             viewModel.onIntent(
                 RegisterProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
-                        nowSnsPlatform = state.contacts[idx].snsPlatform,
+                        usingContactType = state.usingSnsPlatforms,
+                        nowContactType = state.contacts[idx].type,
                         isEdit = true,
                         onButtonClicked = {
                             viewModel.onIntent(
                                 RegisterProfileIntent.OnContactSelect(
-                                    idx, state.contacts[idx].copy(snsPlatform = it)
+                                    idx, state.contacts[idx].copy(type = it)
                                 )
                             )
 
@@ -159,7 +158,6 @@ private fun RegisterProfileScreen(
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
     onSaveClick: (RegisterProfileState) -> Unit,
-    onEditPhotoClick: (String) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
@@ -212,7 +210,6 @@ private fun RegisterProfileScreen(
                     RegisterProfileState.Page.BASIC_PROFILE ->
                         BasicProfilePage(
                             state = state,
-                            onEditPhotoClick = onEditPhotoClick,
                             onProfileImageChanged = onProfileImageChanged,
                             onNickNameChanged = onNickNameChanged,
                             onDescribeMySelfChanged = onDescribeMySelfChanged,
@@ -293,7 +290,6 @@ private fun PreviewRegisterProfileScreen() {
             onSnsActivityChanged = {},
             onSaveClick = { },
             onBackClick = { },
-            onEditPhotoClick = {},
             onDuplicationCheckClick = { },
             onSnsPlatformChange = {},
             onAddContactClick = {},
