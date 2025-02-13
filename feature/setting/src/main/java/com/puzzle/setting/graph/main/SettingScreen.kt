@@ -1,5 +1,7 @@
 package com.puzzle.setting.graph.main
 
+import android.content.Context
+import android.content.pm.PackageManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -43,14 +46,22 @@ import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingState
 
+
 @Composable
 internal fun SettingRoute(
     viewModel: SettingViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel) {
+        val version = getVersionInfo(
+            context = context,
+            onError = { viewModel.errorHelper.sendError(it) },
+        )
+        viewModel.setAppVersion(version?.let { "v$it" } ?: "")
+
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
             }
@@ -131,7 +142,7 @@ private fun SettingScreen(
                 isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
                 isPushNotificationEnabled = state.isPushNotificationEnabled,
                 onMatchingNotificationCheckedChange = {},
-                onPushNotificationCheckedChagne = {},
+                onPushNotificationCheckedChange = {},
             )
 
             SystemSettingBody(
@@ -220,7 +231,7 @@ private fun NotificationBody(
     isMatchingNotificationEnabled: Boolean,
     isPushNotificationEnabled: Boolean,
     onMatchingNotificationCheckedChange: () -> Unit,
-    onPushNotificationCheckedChagne: () -> Unit,
+    onPushNotificationCheckedChange: () -> Unit,
 ) {
     Text(
         text = stringResource(R.string.setting_notification),
@@ -263,7 +274,7 @@ private fun NotificationBody(
 
         PieceToggle(
             checked = isPushNotificationEnabled,
-            onCheckedChange = onPushNotificationCheckedChagne,
+            onCheckedChange = onPushNotificationCheckedChange,
         )
     }
 
@@ -576,4 +587,18 @@ private fun PreviewLogoutDialog() {
             },
         )
     }
+}
+
+private fun getVersionInfo(
+    context: Context,
+    onError: (Exception) -> Unit,
+): String? {
+    var version: String? = null
+    try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        version = packageInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        onError(e)
+    }
+    return version
 }

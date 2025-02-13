@@ -31,7 +31,7 @@ class SettingViewModel @AssistedInject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     internal val navigationHelper: NavigationHelper,
-    private val errorHelper: ErrorHelper,
+    internal val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
     private val _intents = Channel<SettingIntent>(BUFFERED)
 
@@ -58,6 +58,10 @@ class SettingViewModel @AssistedInject constructor(
                 }
             }
             .onFailure { errorHelper.sendError(it) }
+    }
+
+    internal fun setAppVersion(version: String) = setState {
+        copy(version = version)
     }
 
     internal fun onIntent(intent: SettingIntent) = viewModelScope.launch {

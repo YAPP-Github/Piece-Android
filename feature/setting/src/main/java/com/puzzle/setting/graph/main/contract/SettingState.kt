@@ -11,5 +11,5 @@ data class SettingState(
     val isPushNotificationEnabled: Boolean = false,
     val isContactBlocked: Boolean = false,
     val lastRefreshTime: String = "MM월 DD일 오전 00:00",
-    val version: String = "v1.0",
+    val version: String = "",
 ) : MavericksState
