@@ -6,6 +6,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.NavigateTo
@@ -28,6 +29,7 @@ import kotlinx.coroutines.launch
 class SettingViewModel @AssistedInject constructor(
     @Assisted initialState: SettingState,
     private val authRepository: AuthRepository,
+    private val userRepository: UserRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
@@ -37,9 +39,25 @@ class SettingViewModel @AssistedInject constructor(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initSetting()
+
         _intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initSetting() = viewModelScope.launch {
+        userRepository.getUserSettingInfo()
+            .onSuccess {
+                setState {
+                    copy(
+                        isContactBlocked = it.isAcquaintanceBlockEnabled,
+                        isPushNotificationEnabled = it.isNotificationEnabled,
+                        isMatchingNotificationEnabled = it.isMatchNotificationEnabled,
+                    )
+                }
+            }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     internal fun onIntent(intent: SettingIntent) = viewModelScope.launch {
