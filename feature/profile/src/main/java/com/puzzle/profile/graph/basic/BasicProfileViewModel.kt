@@ -88,7 +88,7 @@ class BasicProfileViewModel @AssistedInject constructor(
             is BasicProfileIntent.UpdateWeight -> updateWeight(intent.weight)
             is BasicProfileIntent.UpdateJob -> updateJob(intent.job)
             is BasicProfileIntent.UpdateRegion -> updateLocation(intent.region)
-            is BasicProfileIntent.UpdateSmokeStatus -> updateIsSmoke(intent.isSmoke)
+            is BasicProfileIntent.UpdateSmokingStatus -> updateIsSmoke(intent.isSmoke)
             is BasicProfileIntent.UpdateSnsActivity -> updateIsSnsActive(intent.isSnsActivity)
             is BasicProfileIntent.AddContact -> addContact(intent.contactType)
             is BasicProfileIntent.DeleteContact -> deleteContact(intent.idx)

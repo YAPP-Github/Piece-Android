@@ -87,7 +87,7 @@ private fun ProfilePreviewScreen(
             imageUri = state.profile?.imageUrl,
             buttonLabel = "매칭 수락하기",
             onDismissRequest = { showDialog = false },
-            isApproveButtonEnabled = false,
+            isApproveButtonShow = false,
         )
     }
 
@@ -183,8 +183,8 @@ private fun ProfilePreviewContent(
                             age = profile.age,
                             height = profile.height,
                             weight = profile.weight,
-                            activityRegion = profile.location,
-                            occupation = profile.job,
+                            location = profile.location,
+                            job = profile.job,
                             smokingStatus = profile.smokingStatus,
                         )
 
