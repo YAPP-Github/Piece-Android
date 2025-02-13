@@ -9,7 +9,7 @@ data class MainProfileState(
     val birthYear: String = "00",
     val height: String = "180",
     val weight: String = "72",
-    val activityRegion: String = "서울특별시",
-    val occupation: String = "프리랜서",
-    val smokeStatue: String = "비흡연",
+    val location: String = "서울특별시",
+    val job: String = "프리랜서",
+    val smokingStatus: String = "비흡연",
 ) : MavericksState

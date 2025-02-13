@@ -82,9 +82,9 @@
     <string name="basicinfocard_age_suffix">년생</string>
     <string name="basicinfocard_height">키</string>
     <string name="basicinfocard_height_unit">cm</string>
-    <string name="basicinfocard_activityRegion">활동 지역</string>
-    <string name="basicinfocard_occupation">직업</string>
-    <string name="basicinfocard_smokeStatue">흡연</string>
+    <string name="basicinfocard_location">활동 지역</string>
+    <string name="basicinfocard_job">직업</string>
+    <string name="basicinfocard_smokingStatus">흡연</string>
     <string name="basicinfocard_weight">몸무게</string>
     <string name="basicinfocard_weight_unit">kg</string>
     <string name="valuepick_all">전체</string>

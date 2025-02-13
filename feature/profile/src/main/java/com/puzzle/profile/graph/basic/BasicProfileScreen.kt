@@ -88,7 +88,7 @@ internal fun BasicProfileRoute(
         onBirthdayChanged = { viewModel.onIntent(BasicProfileIntent.UpdateBirthday(it)) },
         onHeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateHeight(it)) },
         onWeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateWeight(it)) },
-        onSmokeStatusChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSmokeStatus(it)) },
+        onSmokingStatusChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSmokingStatus(it)) },
         onSnsActivityChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSnsActivity(it)) },
         onAddContactClick = {
             viewModel.onIntent(
@@ -169,7 +169,7 @@ private fun BasicProfileScreen(
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
     onJobDropDownClicked: () -> Unit,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
     onContactChange: (Int, Contact) -> Unit,
     onSnsPlatformChange: (Int) -> Unit,
@@ -288,7 +288,7 @@ private fun BasicProfileScreen(
 
         SmokeContent(
             isSmoke = state.isSmoke,
-            onSmokeStatusChanged = onSmokeStatusChanged,
+            onSmokingStatusChanged = onSmokingStatusChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -421,7 +421,7 @@ private fun SnsActivityContent(
 @Composable
 private fun SmokeContent(
     isSmoke: Boolean,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SectionTitle(title = "흡연")
@@ -433,14 +433,14 @@ private fun SmokeContent(
         PieceChip(
             label = "흡연",
             selected = isSmoke,
-            onChipClicked = { onSmokeStatusChanged(true) },
+            onChipClicked = { onSmokingStatusChanged(true) },
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
             label = "비흡연",
             selected = !isSmoke,
-            onChipClicked = { onSmokeStatusChanged(false) },
+            onChipClicked = { onSmokingStatusChanged(false) },
             modifier = Modifier.weight(1f),
         )
     }
@@ -898,7 +898,7 @@ private fun BasicProfilePreview() {
             onHeightChanged = {},
             onWeightChanged = {},
             onJobDropDownClicked = {},
-            onSmokeStatusChanged = {},
+            onSmokingStatusChanged = {},
             onSnsPlatformChange = {},
             onContactChange = { _, _ -> },
             onSnsActivityChanged = {},

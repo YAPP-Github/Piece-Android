@@ -289,8 +289,8 @@ private fun MatchingDetailContent(
                             age = profile.age,
                             height = profile.height,
                             weight = profile.weight,
-                            activityRegion = profile.location,
-                            occupation = profile.job,
+                            location = profile.location,
+                            job = profile.job,
                             smokingStatus = profile.smokingStatus,
                             onMoreClick = onMoreClick,
                         )

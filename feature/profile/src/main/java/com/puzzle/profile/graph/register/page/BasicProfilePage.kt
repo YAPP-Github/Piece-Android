@@ -67,7 +67,7 @@ internal fun BasicProfilePage(
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
     onJobDropDownClicked: () -> Unit,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
     onDuplicationCheckClick: () -> Unit,
     onContactChange: (Int, Contact) -> Unit,
@@ -181,7 +181,7 @@ internal fun BasicProfilePage(
         SmokeContent(
             isSmoke = state.isSmoke,
             isSmokeInputState = state.isSmokeInputState,
-            onSmokeStatusChanged = onSmokeStatusChanged,
+            onSmokingStatusChanged = onSmokingStatusChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -343,7 +343,7 @@ private fun SnsActivityContent(
 private fun SmokeContent(
     isSmoke: Boolean?,
     isSmokeInputState: InputState,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
@@ -358,14 +358,14 @@ private fun SmokeContent(
         PieceChip(
             label = stringResource(R.string.basic_profile_issmoking_smoking),
             selected = isSmoke ?: false,
-            onChipClicked = { onSmokeStatusChanged(true) },
+            onChipClicked = { onSmokingStatusChanged(true) },
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
             label = stringResource(R.string.basic_profile_issmoking_not_smoking),
             selected = isSmoke?.not() ?: false,
-            onChipClicked = { onSmokeStatusChanged(false) },
+            onChipClicked = { onSmokingStatusChanged(false) },
             modifier = Modifier.weight(1f),
         )
     }
@@ -882,7 +882,7 @@ private fun BasicProfilePagePreview() {
             onHeightChanged = {},
             onWeightChanged = {},
             onJobDropDownClicked = {},
-            onSmokeStatusChanged = {},
+            onSmokingStatusChanged = {},
             onSnsActivityChanged = {},
             onDeleteClick = {},
             onContactChange = { _, _ -> },

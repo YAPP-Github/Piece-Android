@@ -212,7 +212,7 @@ fun PieceImageDialog(
     buttonLabel: String,
     onDismissRequest: () -> Unit,
     onApproveClick: () -> Unit = {},
-    isApproveButtonEnabled: Boolean = true,
+    isApproveButtonShow: Boolean = true,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -240,7 +240,7 @@ fun PieceImageDialog(
                     .size(180.dp),
             )
 
-            if (isApproveButtonEnabled) {
+            if (isApproveButtonShow) {
                 PieceRoundingSolidButton(
                     label = buttonLabel,
                     onClick = onApproveClick,

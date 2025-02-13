@@ -98,9 +98,9 @@ private fun MainProfileScreen(
             age = state.age,
             birthYear = state.birthYear,
             height = state.height,
-            activityRegion = state.activityRegion,
-            occupation = state.occupation,
-            smokeStatue = state.smokeStatue,
+            location = state.location,
+            job = state.job,
+            smokingStatus = state.smokingStatus,
             weight = state.weight,
             onBasicProfileClick = onBasicProfileClick,
             modifier = Modifier.padding(horizontal = 20.dp)
@@ -126,9 +126,9 @@ private fun BasicProfile(
     age: String,
     birthYear: String,
     height: String,
-    activityRegion: String,
-    occupation: String,
-    smokeStatue: String,
+    location: String,
+    job: String,
+    smokingStatus: String,
     weight: String,
     onBasicProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -178,9 +178,9 @@ private fun BasicProfile(
         age = age,
         birthYear = birthYear,
         height = height,
-        activityRegion = activityRegion,
-        occupation = occupation,
-        smokeStatue = smokeStatue,
+        location = location,
+        job = job,
+        smokingStatus = smokingStatus,
         weight = weight,
         modifier = modifier,
     )
@@ -279,9 +279,9 @@ private fun BasicInfoCard(
     birthYear: String,
     height: String,
     weight: String,
-    activityRegion: String,
-    occupation: String,
-    smokeStatue: String,
+    location: String,
+    job: String,
+    smokingStatus: String,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -381,8 +381,8 @@ private fun BasicInfoCard(
             .padding(bottom = 32.dp),
     ) {
         InfoItem(
-            title = stringResource(R.string.basicinfocard_activityRegion),
-            content = activityRegion,
+            title = stringResource(R.string.basicinfocard_location),
+            content = location,
             backgroundColor = PieceTheme.colors.light3,
             modifier = Modifier.size(
                 width = 144.dp,
@@ -391,15 +391,15 @@ private fun BasicInfoCard(
         )
 
         InfoItem(
-            title = stringResource(R.string.basicinfocard_occupation),
-            content = occupation,
+            title = stringResource(R.string.basicinfocard_job),
+            content = job,
             backgroundColor = PieceTheme.colors.light3,
             modifier = Modifier.weight(1f),
         )
 
         InfoItem(
-            title = stringResource(R.string.basicinfocard_smokeStatue),
-            content = smokeStatue,
+            title = stringResource(R.string.basicinfocard_smokingStatus),
+            content = smokingStatus,
             backgroundColor = PieceTheme.colors.light3,
             modifier = Modifier.weight(1f),
         )
@@ -455,9 +455,9 @@ private fun ProfileScreenPreview() {
                 age = "14",
                 birthYear = "00",
                 height = "100",
-                activityRegion = "서울 특별시",
-                occupation = "개발자",
-                smokeStatue = "흡연",
+                location = "서울 특별시",
+                job = "개발자",
+                smokingStatus = "흡연",
             ),
             onBasicProfileClick = {},
             onValueTalkClick = {},
