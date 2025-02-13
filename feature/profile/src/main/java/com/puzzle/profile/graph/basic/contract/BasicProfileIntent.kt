@@ -16,7 +16,7 @@ sealed class BasicProfileIntent {
     data class UpdateWeight(val weight: String) : BasicProfileIntent()
     data class UpdateJob(val job: String) : BasicProfileIntent()
     data class UpdateRegion(val region: String) : BasicProfileIntent()
-    data class UpdateSmokeStatus(val isSmoke: Boolean) : BasicProfileIntent()
+    data class UpdateSmokingStatus(val isSmoke: Boolean) : BasicProfileIntent()
     data class UpdateSnsActivity(val isSnsActivity: Boolean) : BasicProfileIntent()
     data class UpdateContact(val idx: Int, val contact: Contact) : BasicProfileIntent()
     data class DeleteContact(val idx: Int) : BasicProfileIntent()

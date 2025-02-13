@@ -381,7 +381,7 @@ private fun BasicInfoCard(
             .padding(bottom = 32.dp),
     ) {
         InfoItem(
-            title = stringResource(R.string.basicinfocard_activityRegion),
+            title = stringResource(R.string.basicinfocard_location),
             content = location,
             backgroundColor = PieceTheme.colors.light3,
             modifier = Modifier.size(
@@ -391,14 +391,14 @@ private fun BasicInfoCard(
         )
 
         InfoItem(
-            title = stringResource(R.string.basicinfocard_occupation),
+            title = stringResource(R.string.basicinfocard_job),
             content = job,
             backgroundColor = PieceTheme.colors.light3,
             modifier = Modifier.weight(1f),
         )
 
         InfoItem(
-            title = stringResource(R.string.basicinfocard_smokeStatue),
+            title = stringResource(R.string.basicinfocard_smokingStatus),
             content = smokingStatus,
             backgroundColor = PieceTheme.colors.light3,
             modifier = Modifier.weight(1f),

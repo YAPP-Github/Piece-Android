@@ -1,4 +1,4 @@
-package com.puzzle.matching.graph.detail.page
+package com.puzzle.matching.graph.preview.page
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,14 +36,12 @@ internal fun BasicInfoPage(
     location: String,
     job: String,
     smokingStatus: String,
-    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
         BasicInfoName(
             nickName = nickName,
             selfDescription = selfDescription,
-            onMoreClick = onMoreClick,
             modifier = Modifier
                 .padding(vertical = 20.dp)
                 .weight(1f),
@@ -66,7 +64,6 @@ internal fun BasicInfoPage(
 private fun BasicInfoName(
     nickName: String,
     selfDescription: String,
-    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier.padding(horizontal = 20.dp)) {
@@ -81,7 +78,8 @@ private fun BasicInfoName(
         BasicInfoHeader(
             nickName = nickName,
             selfDescription = selfDescription,
-            onMoreClick = onMoreClick,
+            hasMoreButton = false,
+            onMoreClick = {},
         )
     }
 }
@@ -265,7 +263,7 @@ private fun ProfileBasicInfoPagePreview() {
             location = "서울특별시",
             job = "개발자",
             smokingStatus = "비흡연",
-            onMoreClick = { },
+            modifier = Modifier.background(PieceTheme.colors.dark1)
         )
     }
 }
