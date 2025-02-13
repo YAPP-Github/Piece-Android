@@ -2,6 +2,7 @@ package com.puzzle.designsystem.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -113,20 +114,21 @@ fun PieceDialogDefaultTop(
 
 @Composable
 fun PieceDialogIconTop(
-    @DrawableRes id: Int,
-    title: AnnotatedString,
-    subText: String,
+    @DrawableRes iconId: Int,
+    title: String,
+    subText: @Composable () -> Unit,
     contentDescription: String? = null,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
+        modifier = Modifier.padding(top = 40.dp, bottom = 8.dp),
     ) {
         Image(
-            painter = painterResource(id),
+            painter = painterResource(iconId),
             contentDescription = contentDescription,
-            modifier = Modifier.size(40.dp),
+            modifier = Modifier
+                .padding(bottom = 8.dp)
+                .size(40.dp),
         )
 
         Text(
@@ -134,14 +136,19 @@ fun PieceDialogIconTop(
             color = PieceTheme.colors.black,
             style = PieceTheme.typography.headingMSB,
             textAlign = TextAlign.Center,
+            modifier = Modifier.padding(bottom = 12.dp),
         )
 
-        Text(
-            text = subText,
-            color = PieceTheme.colors.dark2,
-            style = PieceTheme.typography.bodySM,
-            textAlign = TextAlign.Center,
-        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(PieceTheme.colors.light3)
+                .padding(vertical = 12.dp),
+        ) {
+            subText()
+        }
     }
 }
 
@@ -284,9 +291,19 @@ fun PreviewPieceDialogIcon() {
         PieceDialog(
             dialogTop = {
                 PieceDialogIconTop(
-                    id = R.drawable.ic_close,
-                    title = AnnotatedString("Icon Title"),
-                    subText = "This is an icon subtitle",
+                    iconId = R.drawable.ic_close,
+                    title = "Icon Title",
+                    subText = {
+                        Text(
+                            text = AnnotatedString("This is an icon subtitle"),
+                            color = PieceTheme.colors.dark3,
+                            style = PieceTheme.typography.bodySM,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(PieceTheme.colors.light3)
+                        )
+                    },
                     contentDescription = "Icon Description"
                 )
             },

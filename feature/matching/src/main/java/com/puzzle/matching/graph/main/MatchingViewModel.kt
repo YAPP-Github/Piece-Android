@@ -14,7 +14,9 @@ import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.ProfileGraphDest
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -52,6 +54,7 @@ class MatchingViewModel @AssistedInject constructor(
         when (intent) {
             MatchingIntent.OnButtonClick -> processOnButtonClick()
             is MatchingIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
+            MatchingIntent.OnEditProfileClick -> moveToProfileRegisterScreen()
         }
     }
 
@@ -68,6 +71,10 @@ class MatchingViewModel @AssistedInject constructor(
                 loadMyProfile()
             }
             .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun moveToProfileRegisterScreen() {
+        navigationHelper.navigate(NavigationEvent.NavigateTo(ProfileGraphDest.RegisterProfileRoute))
     }
 
     private fun loadMyProfile() = viewModelScope.launch {

@@ -48,6 +48,9 @@ internal fun MatchingRoute(
                 )
             )
         },
+        onEditProfileClick = {
+            viewModel.onIntent(MatchingIntent.OnEditProfileClick)
+        }
     )
 }
 
@@ -56,14 +59,17 @@ internal fun MatchingScreen(
     state: MatchingState,
     onButtonClick: () -> Unit,
     onMatchingDetailClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
 ) {
     when (state.userRole) {
         UserRole.PENDING -> MatchingPendingScreen(
+            reasons = state.rejectReasons,
             onCheckMyProfileClick = {},
+            onEditProfileClick = onEditProfileClick,
         )
 
         UserRole.USER -> {
-            if (state.matchInfo?.matchStatus == MatchStatus.WAITING) {
+            if (state.matchInfo?.matchStatus == WAITING) {
                 MatchingWaitingScreen(
                     onCheckMyProfileClick = {},
                 )
@@ -87,7 +93,9 @@ internal fun MatchingScreen(
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
+            reasons = emptyList(),
             onCheckMyProfileClick = {},
+            onEditProfileClick = {},
         )
     }
 }
