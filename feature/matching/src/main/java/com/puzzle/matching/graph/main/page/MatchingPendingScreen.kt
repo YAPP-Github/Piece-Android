@@ -44,8 +44,9 @@ internal fun MatchingPendingScreen(
                     iconId = R.drawable.ic_notice,
                     title = stringResource(R.string.please_edit_profile),
                     subText = {
-                        RejectByPhoto()
-                        RejectByValueTalk()
+                        // TODO : reasons에 따라 처리
+                        RejectByPhotoText()
+                        RejectByValueTalkText()
                     },
                 )
             },
@@ -151,7 +152,7 @@ internal fun MatchingPendingScreen(
 }
 
 @Composable
-private fun RejectByPhoto() {
+private fun RejectByPhotoText() {
     Text(
         text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
@@ -170,7 +171,7 @@ private fun RejectByPhoto() {
 }
 
 @Composable
-private fun RejectByValueTalk() {
+private fun RejectByValueTalkText() {
     Text(
         text = buildAnnotatedString {
             append("가치관 talk을 좀 더 ")
