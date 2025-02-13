@@ -83,14 +83,14 @@ private fun SettingScreen(
             onDismissRequest = { isLogoutDialogShow = false },
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "로그아웃",
-                    subText = "로그아웃하시겠습니까?",
+                    title = stringResource(R.string.setting_logout),
+                    subText = stringResource(R.string.setting_logout_description),
                 )
             },
             dialogBottom = {
                 PieceDialogBottom(
-                    leftButtonText = "취소",
-                    rightButtonText = "확인",
+                    leftButtonText = stringResource(R.string.cancel),
+                    rightButtonText = stringResource(R.string.confirm),
                     onLeftButtonClick = { isLogoutDialogShow = false },
                     onRightButtonClick = { onLogoutClick() },
                 )

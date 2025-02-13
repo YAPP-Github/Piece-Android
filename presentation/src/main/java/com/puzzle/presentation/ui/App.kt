@@ -178,6 +178,7 @@ private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     ProfileGraphDest.ValuePickProfileRoute::class,
     ProfileGraphDest.BasicProfileRoute::class,
     SettingGraphDest.WithdrawRoute::class,
+    SettingGraphDest.WebViewRoute::class,
 )
 
 private fun NavDestination?.shouldHideBottomNavigation(): Boolean =

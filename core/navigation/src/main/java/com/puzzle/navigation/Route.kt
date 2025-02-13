@@ -27,6 +27,9 @@ sealed class SettingGraphDest : Route {
 
     @Serializable
     data object WithdrawRoute : SettingGraphDest()
+
+    @Serializable
+    data class WebViewRoute(val title: String, val url: String) : SettingGraphDest()
 }
 
 @Serializable
@@ -46,7 +49,7 @@ sealed class MatchingGraphDest : Route {
     data class BlockRoute(val userId: Int, val userName: String) : MatchingGraphDest()
 
     @Serializable
-    data object ContactRoute: MatchingGraphDest()
+    data object ContactRoute : MatchingGraphDest()
 }
 
 @Serializable
