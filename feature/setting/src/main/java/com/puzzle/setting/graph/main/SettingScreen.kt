@@ -41,7 +41,6 @@ import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.setting.graph.main.contract.SettingIntent
-import com.puzzle.setting.graph.main.contract.SettingSideEffect
 import com.puzzle.setting.graph.main.contract.SettingState
 
 @Composable
@@ -54,10 +53,6 @@ internal fun SettingRoute(
     LaunchedEffect(viewModel) {
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is SettingSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-                }
             }
         }
     }
@@ -66,6 +61,10 @@ internal fun SettingRoute(
         state = state,
         onWithdrawClick = { viewModel.onIntent(SettingIntent.OnWithdrawClick) },
         onLogoutClick = { viewModel.onIntent(SettingIntent.OnLogoutClick) },
+        onNoticeClick = { viewModel.onIntent(SettingIntent.OnNoticeClick) },
+        onPrivacyAndPolicyClick = { viewModel.onIntent(SettingIntent.OnPrivacyAndPolicyClick) },
+        onTermsOfUseClick = { viewModel.onIntent(SettingIntent.OnTermsOfUseClick) },
+        onInquiryClick = { viewModel.onIntent(SettingIntent.OnInquiryClick) },
     )
 }
 
@@ -74,7 +73,10 @@ private fun SettingScreen(
     state: SettingState,
     onWithdrawClick: () -> Unit,
     onLogoutClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    onNoticeClick: () -> Unit,
+    onPrivacyAndPolicyClick: () -> Unit,
+    onTermsOfUseClick: () -> Unit,
+    onInquiryClick: () -> Unit,
 ) {
     var isLogoutDialogShow by remember { mutableStateOf(false) }
 
@@ -99,7 +101,7 @@ private fun SettingScreen(
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(PieceTheme.colors.white)
     ) {
@@ -140,14 +142,14 @@ private fun SettingScreen(
             )
 
             InquiryBody(
-                onContactUsClick = {},
+                onContactUsClick = onInquiryClick,
             )
 
             AnnouncementBody(
                 version = state.version,
-                onAnnouncementClick = {},
-                onPrivacyPolicy = {},
-                onTermsClick = {},
+                onNoticeClick = onNoticeClick,
+                onPrivacyPolicy = onPrivacyAndPolicyClick,
+                onTermsClick = onTermsOfUseClick,
             )
 
             OthersBody(onLogoutClick = { isLogoutDialogShow = true })
@@ -161,9 +163,7 @@ private fun SettingScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable {
-                        onWithdrawClick()
-                    },
+                    .clickable { onWithdrawClick() },
             )
         }
     }
@@ -198,8 +198,7 @@ private fun LoginAccountBody(
             Image(
                 painter = painterResource(it),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(24.dp),
+                modifier = Modifier.size(24.dp),
             )
         }
 
@@ -392,7 +391,8 @@ private fun InquiryBody(onContactUsClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onContactUsClick() },
     ) {
         Text(
             text = stringResource(R.string.setting_contact_us),
@@ -404,9 +404,7 @@ private fun InquiryBody(onContactUsClick: () -> Unit) {
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onContactUsClick() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -421,7 +419,7 @@ private fun InquiryBody(onContactUsClick: () -> Unit) {
 @Composable
 private fun AnnouncementBody(
     version: String,
-    onAnnouncementClick: () -> Unit,
+    onNoticeClick: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     onTermsClick: () -> Unit,
 ) {
@@ -436,7 +434,8 @@ private fun AnnouncementBody(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onNoticeClick() },
     ) {
         Text(
             text = stringResource(R.string.setting_announcement),
@@ -448,9 +447,7 @@ private fun AnnouncementBody(
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onAnnouncementClick() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -458,7 +455,8 @@ private fun AnnouncementBody(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onPrivacyPolicy() },
     ) {
         Text(
             text = stringResource(R.string.setting_privacy_policy),
@@ -470,9 +468,7 @@ private fun AnnouncementBody(
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onPrivacyPolicy() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -480,7 +476,8 @@ private fun AnnouncementBody(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onTermsClick() },
     ) {
         Text(
             text = stringResource(R.string.setting_term),
@@ -492,9 +489,7 @@ private fun AnnouncementBody(
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onTermsClick() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -551,6 +546,10 @@ private fun PreviewSettingScreen() {
             ),
             onWithdrawClick = {},
             onLogoutClick = {},
+            onNoticeClick = {},
+            onPrivacyAndPolicyClick = { },
+            onTermsOfUseClick = {},
+            onInquiryClick = {},
         )
     }
 }

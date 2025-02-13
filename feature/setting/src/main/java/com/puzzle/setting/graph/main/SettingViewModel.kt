@@ -11,6 +11,7 @@ import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.NavigateTo
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.SettingGraphDest
+import com.puzzle.setting.BuildConfig
 import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingSideEffect
 import com.puzzle.setting.graph.main.contract.SettingState
@@ -49,12 +50,36 @@ class SettingViewModel @AssistedInject constructor(
         when (intent) {
             is SettingIntent.OnWithdrawClick -> moveToWithdrawScreen()
             is SettingIntent.OnLogoutClick -> logout()
+            SettingIntent.OnInquiryClick -> navigateToWebView(
+                "문의하기",
+                BuildConfig.PIECE_CHANNEL_TALK_URL
+            )
+
+            SettingIntent.OnNoticeClick -> navigateToWebView("공지사항", BuildConfig.PIECE_NOTICE_URL)
+            SettingIntent.OnPrivacyAndPolicyClick -> navigateToWebView(
+                "개인정보처리방침",
+                BuildConfig.PIECE_PRIVACY_AND_POLICY_URL
+            )
+
+            SettingIntent.OnTermsOfUseClick -> navigateToWebView(
+                "이용약관",
+                BuildConfig.PIECE_TERMS_OF_USE_URL
+            )
         }
     }
 
-    private suspend fun moveToWithdrawScreen() {
-        _sideEffects.send(SettingSideEffect.Navigate(NavigateTo(SettingGraphDest.WithdrawRoute)))
-    }
+    private fun moveToWithdrawScreen() =
+        navigationHelper.navigate(NavigateTo(SettingGraphDest.WithdrawRoute))
+
+    private fun navigateToWebView(title: String, url: String) =
+        navigationHelper.navigate(
+            NavigateTo(
+                SettingGraphDest.WebViewRoute(
+                    title = title,
+                    url = url
+                )
+            )
+        )
 
     private suspend fun logout() {
         authRepository.logout()
