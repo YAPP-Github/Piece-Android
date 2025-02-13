@@ -72,7 +72,7 @@ class LoginViewModel @AssistedInject constructor(
             .also { setState { copy(isLoading = false) } }
     }
 
-    internal fun loginFailure(throwable: Throwable) {
+    internal fun loginFailure(throwable: Throwable) = viewModelScope.launch {
         setState { copy(isLoading = false) }
         errorHelper.sendError(throwable)
     }
