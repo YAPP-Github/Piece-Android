@@ -87,6 +87,10 @@ class SettingViewModel @AssistedInject constructor(
                 "이용약관",
                 BuildConfig.PIECE_TERMS_OF_USE_URL
             )
+
+            is SettingIntent.UpdateBlockAcquaintances -> updateBlockAcquaintances(intent.toggle)
+            is SettingIntent.UpdateMatchNotification -> updateMatchNotification(intent.toggle)
+            is SettingIntent.UpdatePushNotification -> updatePushNotification(intent.toggle)
         }
     }
 
@@ -106,6 +110,24 @@ class SettingViewModel @AssistedInject constructor(
     private suspend fun logout() {
         authRepository.logout()
             .onSuccess { navigationHelper.navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)) }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun updateBlockAcquaintances(toggle: Boolean) = viewModelScope.launch {
+        userRepository.updateBlockAcquaintances(toggle)
+            .onSuccess { setState { copy(isContactBlocked = toggle) } }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun updateMatchNotification(toggle: Boolean) = viewModelScope.launch {
+        userRepository.updateMatchNotification(toggle)
+            .onSuccess { setState { copy(isMatchingNotificationEnabled = toggle) } }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun updatePushNotification(toggle: Boolean) = viewModelScope.launch {
+        userRepository.updatePushNotification(toggle)
+            .onSuccess { setState { copy(isPushNotificationEnabled = toggle) } }
             .onFailure { errorHelper.sendError(it) }
     }
 

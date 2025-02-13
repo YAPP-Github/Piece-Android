@@ -21,4 +21,13 @@ class UserRepositoryImpl @Inject constructor(
 
     override suspend fun getUserSettingInfo(): Result<UserSetting> =
         userDataSource.getSettingsInfo().mapCatching(GetSettingInfoResponse::toDomain)
+
+    override suspend fun updatePushNotification(toggle: Boolean): Result<Unit> =
+        userDataSource.updatePushNotification(toggle)
+
+    override suspend fun updateMatchNotification(toggle: Boolean): Result<Unit> =
+        userDataSource.updateMatchNotification(toggle)
+
+    override suspend fun updateBlockAcquaintances(toggle: Boolean): Result<Unit> =
+        userDataSource.updateBlockAcquaintances(toggle)
 }

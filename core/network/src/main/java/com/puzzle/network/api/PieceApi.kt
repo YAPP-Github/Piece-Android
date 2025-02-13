@@ -22,12 +22,14 @@ import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
+import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -102,4 +104,13 @@ interface PieceApi {
 
     @GET("/api/settings/infos")
     suspend fun getSettingInfos(): Result<ApiResponse<GetSettingInfoResponse>>
+
+    @PUT("/api/settings/notification")
+    suspend fun updatePushNotification(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @PUT("/api/settings/notification/match")
+    suspend fun updateMatchNotification(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @PUT("/api/settings/block/acquaintance")
+    suspend fun updateBlockAcquaintances(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
 }
