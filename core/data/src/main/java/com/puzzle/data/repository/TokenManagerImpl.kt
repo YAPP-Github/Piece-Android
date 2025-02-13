@@ -1,4 +1,4 @@
-package com.puzzle.data
+package com.puzzle.data.repository
 
 import com.puzzle.datastore.datasource.token.LocalTokenDataSource
 import com.puzzle.network.interceptor.TokenManager
