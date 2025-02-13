@@ -1,6 +1,7 @@
 package com.puzzle.profile.graph.register.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
@@ -117,23 +118,29 @@ data class RegisterProfileState(
         FINISH(title = "")
         ;
 
-        companion object {
-            fun getNextPage(currentPage: Page): Page? =
-                when (currentPage) {
-                    BASIC_PROFILE -> VALUE_TALK
-                    VALUE_TALK -> VALUE_PICK
-                    VALUE_PICK -> FINISH
-                    else -> null
-                }
+        fun getNextPage(): Page? =
+            when (this) {
+                BASIC_PROFILE -> VALUE_TALK
+                VALUE_TALK -> VALUE_PICK
+                VALUE_PICK -> FINISH
+                else -> null
+            }
 
-            fun getPreviousPage(currentPage: Page): Page? =
-                when (currentPage) {
-                    FINISH -> VALUE_PICK
-                    VALUE_PICK -> VALUE_TALK
-                    VALUE_TALK -> BASIC_PROFILE
-                    else -> null
-                }
-        }
+        fun getPreviousPage(): Page? =
+            when (this) {
+                FINISH -> VALUE_PICK
+                VALUE_PICK -> VALUE_TALK
+                VALUE_TALK -> BASIC_PROFILE
+                else -> null
+            }
+
+        fun getBottomButtonTextId(): Int =
+            when (this) {
+                BASIC_PROFILE -> R.string.next
+                VALUE_TALK -> R.string.next
+                VALUE_PICK -> R.string.generate_profile
+                FINISH -> R.string.check_my_profile
+            }
     }
 
     companion object {

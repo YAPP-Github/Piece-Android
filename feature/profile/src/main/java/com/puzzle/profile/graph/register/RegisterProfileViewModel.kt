@@ -15,6 +15,7 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.usecase.profile.UploadProfileUseCase
 import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.InputState
@@ -80,6 +81,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
             RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
             RegisterProfileIntent.OnBackClick -> moveToPrevious()
             RegisterProfileIntent.OnDuplicationCheckClick -> checkNickNameDuplication()
+            RegisterProfileIntent.OnHomeClick -> moveToMatchingMainScreen()
+            RegisterProfileIntent.OnCheckMyProfileClick -> moveToProfilePreviewScreen()
         }
     }
 
@@ -88,6 +91,14 @@ class RegisterProfileViewModel @AssistedInject constructor(
         val valueTalkJob = launch { retrieveValueTalk() }
         valuePickJob.join()
         valueTalkJob.join()
+    }
+
+    private fun moveToProfilePreviewScreen() {
+        navigationHelper.navigate(NavigationEvent.NavigateTo(MatchingGraphDest.ProfilePreviewRoute))
+    }
+
+    private fun moveToMatchingMainScreen() {
+        navigationHelper.navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingRoute))
     }
 
     private suspend fun retrieveValuePick() {
@@ -135,7 +146,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
                 viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.NavigateUp)) }
             } else {
-                RegisterProfileState.Page.getPreviousPage(state.currentPage)
+                state.currentPage.getPreviousPage()
                     ?.let { previosPage ->
                         setState { copy(currentPage = previosPage) }
                     }
@@ -203,7 +214,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     )
                 },
             ).onSuccess {
-                RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+                state.currentPage.getNextPage()?.let { nextPage ->
                     setState { copy(currentPage = nextPage) }
                 }
             }.onFailure { errorHelper.sendError(it) }
@@ -218,7 +229,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+        state.currentPage.getNextPage()?.let { nextPage ->
             setState { copy(currentPage = nextPage) }
         }
     }
@@ -246,7 +257,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
 
         // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
-        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+        state.currentPage.getNextPage()?.let { nextPage ->
             setState {
                 copy(
                     currentPage = nextPage,

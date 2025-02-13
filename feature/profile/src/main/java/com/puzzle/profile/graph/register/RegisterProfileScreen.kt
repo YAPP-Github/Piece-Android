@@ -27,7 +27,6 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
-import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PiecePageIndicator
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
@@ -66,9 +65,9 @@ internal fun RegisterProfileRoute(
 
     RegisterProfileScreen(
         state = state,
-        onSaveClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
+        onGenerateProfileClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
         onBackClick = { viewModel.onIntent(RegisterProfileIntent.OnBackClick) },
-        onProfileImageChanged = {  viewModel.onIntent(RegisterProfileIntent.OnProfileImageChanged(it))},
+        onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.OnProfileImageChanged(it)) },
         onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
         onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.OnNickNameChange(it)) },
         onDescribeMySelfChanged = {
@@ -147,8 +146,11 @@ internal fun RegisterProfileRoute(
             viewModel.onIntent(RegisterProfileIntent.OnContactSelect(idx, contact))
         },
         onHomeClick = {
-
+            viewModel.onIntent(RegisterProfileIntent.OnHomeClick)
         },
+        onCheckMyProfileClick = {
+            viewModel.onIntent(RegisterProfileIntent.OnCheckMyProfileClick)
+        }
     )
 }
 
@@ -157,7 +159,7 @@ private fun RegisterProfileScreen(
     state: RegisterProfileState,
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onSaveClick: (RegisterProfileState) -> Unit,
+    onGenerateProfileClick: (RegisterProfileState) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
@@ -173,6 +175,7 @@ private fun RegisterProfileScreen(
     onAddContactClick: () -> Unit,
     onDeleteContactClick: (Int) -> Unit,
     onContactChange: (Int, Contact) -> Unit,
+    onCheckMyProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -256,14 +259,18 @@ private fun RegisterProfileScreen(
         }
 
         PieceSolidButton(
-            label = stringResource(R.string.next),
+            label = stringResource(state.currentPage.getBottomButtonTextId()),
             onClick = {
-                onSaveClick(
-                    state.copy(
-                        valueTalks = valueTalks,
-                        valuePicks = valuePicks,
+                if (state.currentPage == RegisterProfileState.Page.FINISH) {
+                    onCheckMyProfileClick()
+                } else {
+                    onGenerateProfileClick(
+                        state.copy(
+                            valueTalks = valueTalks,
+                            valuePicks = valuePicks,
+                        )
                     )
-                )
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -288,7 +295,7 @@ private fun PreviewRegisterProfileScreen() {
             onLocationDropDownClicked = {},
             onSmokingStatusChanged = {},
             onSnsActivityChanged = {},
-            onSaveClick = { },
+            onGenerateProfileClick = { },
             onBackClick = { },
             onDuplicationCheckClick = { },
             onSnsPlatformChange = {},
@@ -296,7 +303,8 @@ private fun PreviewRegisterProfileScreen() {
             onDeleteContactClick = {},
             onContactChange = { _, _ -> },
             modifier = Modifier.background(PieceTheme.colors.white),
-            onHomeClick = {}
+            onHomeClick = {},
+            onCheckMyProfileClick = {},
         )
     }
 }
