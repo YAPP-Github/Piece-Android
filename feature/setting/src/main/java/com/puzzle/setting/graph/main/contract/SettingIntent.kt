@@ -7,7 +7,7 @@ sealed class SettingIntent {
     data object OnPrivacyAndPolicyClick : SettingIntent()
     data object OnTermsOfUseClick : SettingIntent()
     data object OnInquiryClick : SettingIntent()
-    data class UpdatePushNotification(val toggle: Boolean) : SettingIntent()
-    data class UpdateMatchNotification(val toggle: Boolean) : SettingIntent()
-    data class UpdateBlockAcquaintances(val toggle: Boolean) : SettingIntent()
+    data object UpdatePushNotification : SettingIntent()
+    data object UpdateMatchNotification : SettingIntent()
+    data object UpdateBlockAcquaintances : SettingIntent()
 }

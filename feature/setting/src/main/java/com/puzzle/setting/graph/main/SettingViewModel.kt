@@ -88,9 +88,9 @@ class SettingViewModel @AssistedInject constructor(
                 BuildConfig.PIECE_TERMS_OF_USE_URL
             )
 
-            is SettingIntent.UpdateBlockAcquaintances -> updateBlockAcquaintances(intent.toggle)
-            is SettingIntent.UpdateMatchNotification -> updateMatchNotification(intent.toggle)
-            is SettingIntent.UpdatePushNotification -> updatePushNotification(intent.toggle)
+            SettingIntent.UpdateBlockAcquaintances -> updateBlockAcquaintances()
+            SettingIntent.UpdateMatchNotification -> updateMatchNotification()
+            SettingIntent.UpdatePushNotification -> updatePushNotification()
         }
     }
 
@@ -113,22 +113,28 @@ class SettingViewModel @AssistedInject constructor(
             .onFailure { errorHelper.sendError(it) }
     }
 
-    private fun updateBlockAcquaintances(toggle: Boolean) = viewModelScope.launch {
-        userRepository.updateBlockAcquaintances(toggle)
-            .onSuccess { setState { copy(isContactBlocked = toggle) } }
-            .onFailure { errorHelper.sendError(it) }
+    private fun updateBlockAcquaintances() = withState { state ->
+        viewModelScope.launch {
+            userRepository.updateBlockAcquaintances(!state.isContactBlocked)
+                .onSuccess { setState { copy(isContactBlocked = !state.isContactBlocked) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
     }
 
-    private fun updateMatchNotification(toggle: Boolean) = viewModelScope.launch {
-        userRepository.updateMatchNotification(toggle)
-            .onSuccess { setState { copy(isMatchingNotificationEnabled = toggle) } }
-            .onFailure { errorHelper.sendError(it) }
+    private fun updateMatchNotification() = withState { state ->
+        viewModelScope.launch {
+            userRepository.updateMatchNotification(!state.isMatchingNotificationEnabled)
+                .onSuccess { setState { copy(isMatchingNotificationEnabled = !state.isMatchingNotificationEnabled) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
     }
 
-    private fun updatePushNotification(toggle: Boolean) = viewModelScope.launch {
-        userRepository.updatePushNotification(toggle)
-            .onSuccess { setState { copy(isPushNotificationEnabled = toggle) } }
-            .onFailure { errorHelper.sendError(it) }
+    private fun updatePushNotification() = withState { state ->
+        viewModelScope.launch {
+            userRepository.updatePushNotification(!state.isPushNotificationEnabled)
+                .onSuccess { setState { copy(isPushNotificationEnabled = !state.isPushNotificationEnabled) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
     }
 
     @AssistedFactory

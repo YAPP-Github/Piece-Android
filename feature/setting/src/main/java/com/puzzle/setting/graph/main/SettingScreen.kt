@@ -2,6 +2,11 @@ package com.puzzle.setting.graph.main
 
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,11 +35,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -53,7 +56,6 @@ internal fun SettingRoute(
 ) {
     val state by viewModel.collectAsState()
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
 
     LaunchedEffect(viewModel) {
         val version = getVersionInfo(
@@ -61,11 +63,6 @@ internal fun SettingRoute(
             onError = { viewModel.errorHelper.sendError(it) },
         )
         viewModel.setAppVersion(version?.let { "v$it" } ?: "")
-
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-            }
-        }
     }
 
     SettingScreen(
@@ -76,6 +73,9 @@ internal fun SettingRoute(
         onPrivacyAndPolicyClick = { viewModel.onIntent(SettingIntent.OnPrivacyAndPolicyClick) },
         onTermsOfUseClick = { viewModel.onIntent(SettingIntent.OnTermsOfUseClick) },
         onInquiryClick = { viewModel.onIntent(SettingIntent.OnInquiryClick) },
+        onUpdatePushNotification = { viewModel.onIntent(SettingIntent.UpdatePushNotification) },
+        onUpdateMatchNotification = { viewModel.onIntent(SettingIntent.UpdateMatchNotification) },
+        onUpdateBlockAcquaintances = { viewModel.onIntent(SettingIntent.UpdateBlockAcquaintances) },
     )
 }
 
@@ -88,6 +88,9 @@ private fun SettingScreen(
     onPrivacyAndPolicyClick: () -> Unit,
     onTermsOfUseClick: () -> Unit,
     onInquiryClick: () -> Unit,
+    onUpdatePushNotification: () -> Unit,
+    onUpdateMatchNotification: () -> Unit,
+    onUpdateBlockAcquaintances: () -> Unit,
 ) {
     var isLogoutDialogShow by remember { mutableStateOf(false) }
 
@@ -141,14 +144,14 @@ private fun SettingScreen(
             NotificationBody(
                 isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
                 isPushNotificationEnabled = state.isPushNotificationEnabled,
-                onMatchingNotificationCheckedChange = {},
-                onPushNotificationCheckedChange = {},
+                onMatchingNotificationCheckedChange = onUpdateMatchNotification,
+                onPushNotificationCheckedChange = onUpdatePushNotification,
             )
 
             SystemSettingBody(
                 isContactBlocked = state.isContactBlocked,
                 lastRefreshTime = state.lastRefreshTime,
-                onContactBlockedCheckedChange = {},
+                onContactBlockedCheckedChange = onUpdateBlockAcquaintances,
                 onRefreshClick = {},
             )
 
@@ -318,16 +321,17 @@ private fun SystemSettingBody(
         )
     }
 
-    if (isContactBlocked) {
+    AnimatedVisibility(
+        visible = isContactBlocked,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+            modifier = Modifier.padding(vertical = 16.dp),
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(R.string.setting_sync_contacts),
                     style = PieceTheme.typography.headingSSB,
@@ -546,21 +550,23 @@ private fun PreviewSettingScreen() {
     PieceTheme {
         SettingScreen(
             state = SettingState(
-                isLoading = false,
                 oAuthProvider = OAuthProvider.KAKAO,
                 email = "example@kakao.com",
                 isMatchingNotificationEnabled = true,
                 isPushNotificationEnabled = false,
                 isContactBlocked = true,
                 lastRefreshTime = "MM월 DD일 오전 00:00",
-                version = "v1.0",
+                version = "v1.0.0",
             ),
             onWithdrawClick = {},
             onLogoutClick = {},
             onNoticeClick = {},
-            onPrivacyAndPolicyClick = { },
+            onPrivacyAndPolicyClick = {},
             onTermsOfUseClick = {},
             onInquiryClick = {},
+            onUpdatePushNotification = {},
+            onUpdateMatchNotification = {},
+            onUpdateBlockAcquaintances = {},
         )
     }
 }
