@@ -33,20 +33,20 @@ import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
 internal fun MatchingPendingScreen(
-    reasons: List<String>,
+    isImageRejected: Boolean,
+    isDescriptionRejected: Boolean,
     onCheckMyProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
 ) {
-    if (reasons.isNotEmpty()) {
+    if (isImageRejected || isDescriptionRejected) {
         PieceDialog(
             dialogTop = {
                 PieceDialogIconTop(
                     iconId = R.drawable.ic_notice,
                     title = stringResource(R.string.please_edit_profile),
                     subText = {
-                        // TODO : reasons에 따라 처리
-                        RejectByPhotoText()
-                        RejectByValueTalkText()
+                        if (isImageRejected) EditPhotoGuideText()
+                        if (isDescriptionRejected) EditValueTalkGuideText()
                     },
                 )
             },
@@ -152,7 +152,7 @@ internal fun MatchingPendingScreen(
 }
 
 @Composable
-private fun RejectByPhotoText() {
+private fun EditPhotoGuideText() {
     Text(
         text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
@@ -171,7 +171,7 @@ private fun RejectByPhotoText() {
 }
 
 @Composable
-private fun RejectByValueTalkText() {
+private fun EditValueTalkGuideText() {
     Text(
         text = buildAnnotatedString {
             append("가치관 talk을 좀 더 ")
@@ -196,7 +196,8 @@ private fun RejectByValueTalkText() {
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
-            reasons = emptyList(),
+            isImageRejected = false,
+            isDescriptionRejected = false,
             onCheckMyProfileClick = {},
             onEditProfileClick = {},
         )
