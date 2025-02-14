@@ -147,7 +147,6 @@ data class RegisterProfileState(
 
         companion object {
             const val TEXT_DISPLAY_DURATION = 3000L
-
             const val PAGE_TRANSITION_DURATION = 1000
         }
     }
