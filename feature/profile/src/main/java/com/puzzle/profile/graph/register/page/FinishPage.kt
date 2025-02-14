@@ -48,7 +48,7 @@ internal fun FinishPage(
         )
 
         Image(
-            painter = painterResource(R.drawable.ic_question),
+            painter = painterResource(R.drawable.ic_profile_generate),
             contentDescription = "질문",
             colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
             modifier = Modifier

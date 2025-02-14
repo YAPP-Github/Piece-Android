@@ -217,6 +217,7 @@
 
     <!--Summation-->
     <string name="summation_description">당신의 생각을 한층 더 매력적으로!\nAI가 정리해 드릴게요</string>
+    <string name="wait_please">"잠시만 기다려주세요"</string>
 
     <!--Finish-->
     <string name="finish_register_profile_header">프로필 생성을 마쳤습니다!</string>

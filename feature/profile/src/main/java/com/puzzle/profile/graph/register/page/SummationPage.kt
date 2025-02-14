@@ -71,7 +71,7 @@ internal fun SummationPage() {
             )
 
             Text(
-                text = "잠시만 기다려주세요",
+                text = stringResource(R.string.wait_please),
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.dark3,
                 modifier = Modifier
