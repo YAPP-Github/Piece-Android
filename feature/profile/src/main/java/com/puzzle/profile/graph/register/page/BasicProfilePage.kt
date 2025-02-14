@@ -73,12 +73,12 @@ internal fun BasicProfilePage(
     onSnsPlatformChange: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     onAddContactClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
 
-    Column(modifier = modifier
+    Column(modifier = Modifier
+        .padding(horizontal = 20.dp)
         .verticalScroll(scrollState)
         .clickable {
             focusManager.clearFocus()
@@ -794,7 +794,11 @@ private fun PhotoContent(
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri -> if (uri != null) { onProfileImageChanged(uri.toString()) } }
+        onResult = { uri ->
+            if (uri != null) {
+                onProfileImageChanged(uri.toString())
+            }
+        }
     )
 
     Column(

@@ -35,12 +35,11 @@ import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 internal fun ValuePickPage(
     valuePicks: List<ValuePickRegisterRO>,
     onValuePickContentChange: (List<ValuePickRegisterRO>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(PieceTheme.colors.white),
     ) {
@@ -172,7 +171,6 @@ private fun ValueTalkPagePreview() {
         ValuePickPage(
             valuePicks = RegisterProfileState().valuePicks,
             onValuePickContentChange = {},
-            modifier = Modifier.background(PieceTheme.colors.white)
         )
     }
 }

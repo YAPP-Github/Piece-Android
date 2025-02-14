@@ -1,7 +1,6 @@
 package com.puzzle.profile.graph.register.page
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -24,9 +23,8 @@ import com.puzzle.designsystem.foundation.PieceTheme
 @Composable
 internal fun FinishPage(
     onHomeClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Text(
             text = stringResource(R.string.finish_register_profile_header),
             style = PieceTheme.typography.headingLSB,
@@ -84,9 +82,6 @@ private fun FinishPagePreview() {
     PieceTheme {
         FinishPage(
             onHomeClick = {},
-            modifier = Modifier
-                .background(PieceTheme.colors.white)
-                .fillMaxSize()
         )
     }
 }

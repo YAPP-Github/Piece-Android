@@ -215,8 +215,11 @@
     <string name="value_pick_profile_page_header">가치관 Pick,\n당신의 연애 취향을 알려주세요</string>
     <string name="value_pick_profile_page_sub_header">선택한 답변으로 연애 스타일을 쉽게 확인할 수 있어요.\n서로의 우선순위와 취향을 이해하는 데 큰 도움이 될 거예요.</string>
 
-    <!--Finish    -->
-    <string name="finish_register_profile_header">프로필 작성을 마쳤습니다!</string>
+    <!--Summation-->
+    <string name="summation_description">당신의 생각을 한층 더 매력적으로!\nAI가 정리해 드릴게요</string>
+
+    <!--Finish-->
+    <string name="finish_register_profile_header">프로필 생성을 마쳤습니다!</string>
     <string name="finish_register_profile_sub_header">작성 후 24시간 이내에 심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.</string>
     <string name="finish_register_profile_tohome">홈으로</string>
 </resources>

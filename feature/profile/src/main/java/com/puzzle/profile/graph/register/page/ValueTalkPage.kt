@@ -45,7 +45,6 @@ import kotlinx.coroutines.delay
 internal fun ValueTalkPage(
     valueTalks: List<ValueTalkRegisterRO>,
     onValueTalkContentChange: (List<ValueTalkRegisterRO>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
@@ -62,7 +61,7 @@ internal fun ValueTalkPage(
             isContentEdited = updatedValueTalks != valueTalks
             onValueTalkContentChange(updatedValueTalks)
         },
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
     )
 }
 
@@ -277,7 +276,6 @@ private fun ValueTalkPagePreview() {
                 )
             ),
             onValueTalkContentChange = {},
-            modifier = Modifier.background(PieceTheme.colors.white)
         )
     }
 }
