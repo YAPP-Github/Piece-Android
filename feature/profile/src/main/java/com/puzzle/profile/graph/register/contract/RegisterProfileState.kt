@@ -115,14 +115,25 @@ data class RegisterProfileState(
         BASIC_PROFILE(title = ""),
         VALUE_TALK(title = "가치관 Talk"),
         VALUE_PICK(title = "가치관 Pick"),
+        SUMMATION(title = ""),
         FINISH(title = "")
         ;
+
+        fun getBottomButtonTextId(): Int? =
+            when (this) {
+                BASIC_PROFILE -> R.string.next
+                VALUE_TALK -> R.string.next
+                VALUE_PICK -> R.string.generate_profile
+                FINISH -> R.string.check_my_profile
+                SUMMATION -> null
+            }
 
         fun getNextPage(): Page? =
             when (this) {
                 BASIC_PROFILE -> VALUE_TALK
                 VALUE_TALK -> VALUE_PICK
-                VALUE_PICK -> FINISH
+                VALUE_PICK -> SUMMATION
+                SUMMATION -> FINISH
                 else -> null
             }
 
@@ -134,17 +145,10 @@ data class RegisterProfileState(
                 else -> null
             }
 
-        fun getBottomButtonTextId(): Int =
-            when (this) {
-                BASIC_PROFILE -> R.string.next
-                VALUE_TALK -> R.string.next
-                VALUE_PICK -> R.string.generate_profile
-                FINISH -> R.string.check_my_profile
-            }
-    }
+        companion object {
+            const val TEXT_DISPLAY_DURATION = 3000L
 
-    companion object {
-        const val TEXT_DISPLAY_DURATION = 3000L
-        const val PAGE_TRANSITION_DURATION = 1000
+            const val PAGE_TRANSITION_DURATION = 1000
+        }
     }
 }

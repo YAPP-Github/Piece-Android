@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.PAGE_TRANSITION_DURATION
-import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.TEXT_DISPLAY_DURATION
+import com.puzzle.profile.graph.register.contract.RegisterProfileState.Page.Companion.PAGE_TRANSITION_DURATION
+import com.puzzle.profile.graph.register.contract.RegisterProfileState.Page.Companion.TEXT_DISPLAY_DURATION
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import kotlinx.coroutines.delay
 
@@ -45,7 +45,6 @@ import kotlinx.coroutines.delay
 internal fun ValueTalkPage(
     valueTalks: List<ValueTalkRegisterRO>,
     onValueTalkContentChange: (List<ValueTalkRegisterRO>) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
@@ -62,7 +61,7 @@ internal fun ValueTalkPage(
             isContentEdited = updatedValueTalks != valueTalks
             onValueTalkContentChange(updatedValueTalks)
         },
-        modifier = modifier,
+        modifier = Modifier.fillMaxSize(),
     )
 }
 
@@ -277,7 +276,6 @@ private fun ValueTalkPagePreview() {
                 )
             ),
             onValueTalkContentChange = {},
-            modifier = Modifier.background(PieceTheme.colors.white)
         )
     }
 }

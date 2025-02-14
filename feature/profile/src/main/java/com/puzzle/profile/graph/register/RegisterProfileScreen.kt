@@ -27,6 +27,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PiecePageIndicator
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
@@ -42,6 +43,7 @@ import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import com.puzzle.profile.graph.register.page.BasicProfilePage
 import com.puzzle.profile.graph.register.page.FinishPage
+import com.puzzle.profile.graph.register.page.SummationPage
 import com.puzzle.profile.graph.register.page.ValuePickPage
 import com.puzzle.profile.graph.register.page.ValueTalkPage
 
@@ -65,7 +67,7 @@ internal fun RegisterProfileRoute(
 
     RegisterProfileScreen(
         state = state,
-        onGenerateProfileClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
+        onSaveClick = { viewModel.onIntent(RegisterProfileIntent.OnSaveClick(it)) },
         onBackClick = { viewModel.onIntent(RegisterProfileIntent.OnBackClick) },
         onProfileImageChanged = { viewModel.onIntent(RegisterProfileIntent.OnProfileImageChanged(it)) },
         onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
@@ -145,12 +147,10 @@ internal fun RegisterProfileRoute(
         onContactChange = { idx, contact ->
             viewModel.onIntent(RegisterProfileIntent.OnContactSelect(idx, contact))
         },
-        onHomeClick = {
-            viewModel.onIntent(RegisterProfileIntent.OnHomeClick)
-        },
+        onHomeClick = { viewModel.onIntent(RegisterProfileIntent.OnHomeClick) },
         onCheckMyProfileClick = {
             viewModel.onIntent(RegisterProfileIntent.OnCheckMyProfileClick)
-        }
+        },
     )
 }
 
@@ -159,7 +159,7 @@ private fun RegisterProfileScreen(
     state: RegisterProfileState,
     onBackClick: () -> Unit,
     onHomeClick: () -> Unit,
-    onGenerateProfileClick: (RegisterProfileState) -> Unit,
+    onSaveClick: (RegisterProfileState) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onDuplicationCheckClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
@@ -190,10 +190,14 @@ private fun RegisterProfileScreen(
         PieceSubBackTopBar(
             title = "",
             onBackClick = onBackClick,
+            isShowBackButton = (state.currentPage != RegisterProfileState.Page.FINISH &&
+                    state.currentPage != RegisterProfileState.Page.SUMMATION),
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
         )
 
-        if (state.currentPage != RegisterProfileState.Page.FINISH) {
+        if (state.currentPage != RegisterProfileState.Page.FINISH &&
+            state.currentPage != RegisterProfileState.Page.SUMMATION
+        ) {
             PiecePageIndicator(
                 currentStep = state.currentPage.ordinal + 1,
                 totalSteps = RegisterProfileState.Page.entries.size,
@@ -210,72 +214,65 @@ private fun RegisterProfileScreen(
                 label = "",
             ) {
                 when (it) {
-                    RegisterProfileState.Page.BASIC_PROFILE ->
-                        BasicProfilePage(
-                            state = state,
-                            onProfileImageChanged = onProfileImageChanged,
-                            onNickNameChanged = onNickNameChanged,
-                            onDescribeMySelfChanged = onDescribeMySelfChanged,
-                            onBirthdateChanged = onBirthdateChanged,
-                            onLocationDropDownClicked = onLocationDropDownClicked,
-                            onHeightChanged = onHeightChanged,
-                            onWeightChanged = onWeightChanged,
-                            onJobDropDownClicked = onJobDropDownClicked,
-                            onSmokingStatusChanged = onSmokingStatusChanged,
-                            onSnsActivityChanged = onSnsActivityChanged,
-                            onDuplicationCheckClick = onDuplicationCheckClick,
-                            onContactChange = onContactChange,
-                            onSnsPlatformChange = onSnsPlatformChange,
-                            onAddContactClick = onAddContactClick,
-                            onDeleteClick = onDeleteContactClick,
-                            modifier = Modifier.padding(horizontal = 20.dp),
-                        )
+                    RegisterProfileState.Page.BASIC_PROFILE -> BasicProfilePage(
+                        state = state,
+                        onProfileImageChanged = onProfileImageChanged,
+                        onNickNameChanged = onNickNameChanged,
+                        onDescribeMySelfChanged = onDescribeMySelfChanged,
+                        onBirthdateChanged = onBirthdateChanged,
+                        onLocationDropDownClicked = onLocationDropDownClicked,
+                        onHeightChanged = onHeightChanged,
+                        onWeightChanged = onWeightChanged,
+                        onJobDropDownClicked = onJobDropDownClicked,
+                        onSmokingStatusChanged = onSmokingStatusChanged,
+                        onSnsActivityChanged = onSnsActivityChanged,
+                        onDuplicationCheckClick = onDuplicationCheckClick,
+                        onContactChange = onContactChange,
+                        onSnsPlatformChange = onSnsPlatformChange,
+                        onAddContactClick = onAddContactClick,
+                        onDeleteClick = onDeleteContactClick,
+                    )
 
-                    RegisterProfileState.Page.VALUE_TALK ->
-                        ValueTalkPage(
-                            valueTalks = valueTalks,
-                            onValueTalkContentChange = { updatedValueTalks ->
-                                valueTalks = updatedValueTalks
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                    RegisterProfileState.Page.VALUE_TALK -> ValueTalkPage(
+                        valueTalks = valueTalks,
+                        onValueTalkContentChange = { updatedValueTalks ->
+                            valueTalks = updatedValueTalks
+                        },
+                    )
 
-                    RegisterProfileState.Page.VALUE_PICK ->
-                        ValuePickPage(
-                            valuePicks = valuePicks,
-                            onValuePickContentChange = { updatedValuePicks ->
-                                valuePicks = updatedValuePicks
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                    RegisterProfileState.Page.VALUE_PICK -> ValuePickPage(
+                        valuePicks = valuePicks,
+                        onValuePickContentChange = { updatedValuePicks ->
+                            valuePicks = updatedValuePicks
+                        },
+                    )
 
-                    RegisterProfileState.Page.FINISH ->
-                        FinishPage(
-                            onHomeClick = onHomeClick,
-                            modifier = Modifier.fillMaxSize(),
-                        )
+                    RegisterProfileState.Page.SUMMATION -> SummationPage()
+                    RegisterProfileState.Page.FINISH -> FinishPage(onHomeClick = onHomeClick)
                 }
             }
         }
 
-        PieceSolidButton(
-            label = stringResource(state.currentPage.getBottomButtonTextId()),
-            onClick = {
-                if (state.currentPage == RegisterProfileState.Page.FINISH) {
-                    onCheckMyProfileClick()
-                } else {
-                    onGenerateProfileClick(
+        if (state.currentPage != RegisterProfileState.Page.SUMMATION) {
+            PieceSolidButton(
+                label = when (state.currentPage) {
+                    RegisterProfileState.Page.FINISH -> stringResource(R.string.check_my_profile)
+                    RegisterProfileState.Page.VALUE_PICK -> stringResource(R.string.generate_profile)
+                    else -> stringResource(R.string.next)
+                },
+                onClick = {
+                    onSaveClick(
                         state.copy(
                             valueTalks = valueTalks,
                             valuePicks = valuePicks,
                         )
                     )
-                }
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
-        )
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 10.dp),
+            )
+        }
     }
 }
 
@@ -295,7 +292,7 @@ private fun PreviewRegisterProfileScreen() {
             onLocationDropDownClicked = {},
             onSmokingStatusChanged = {},
             onSnsActivityChanged = {},
-            onGenerateProfileClick = { },
+            onSaveClick = { },
             onBackClick = { },
             onDuplicationCheckClick = { },
             onSnsPlatformChange = {},

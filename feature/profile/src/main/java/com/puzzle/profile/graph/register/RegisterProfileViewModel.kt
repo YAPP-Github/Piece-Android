@@ -14,7 +14,6 @@ import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.usecase.profile.UploadProfileUseCase
-import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -32,6 +31,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -57,48 +57,11 @@ class RegisterProfileViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
     }
 
-    internal fun onIntent(intent: RegisterProfileIntent) = viewModelScope.launch {
-        intents.send(intent)
-    }
-
-    private fun processIntent(intent: RegisterProfileIntent) {
-        when (intent) {
-            is RegisterProfileIntent.OnNickNameChange -> updateNickName(intent.nickName)
-            is RegisterProfileIntent.OnProfileImageChanged -> updateProfileImage(intent.imageUri)
-            is RegisterProfileIntent.OnSelfDescriptionChange -> updateDescription(intent.description)
-            is RegisterProfileIntent.OnBirthdateChange -> updateBirthdate(intent.birthday)
-            is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
-            is RegisterProfileIntent.OnWeightChange -> updateWeight(intent.weight)
-            is RegisterProfileIntent.OnJobClick -> updateJob(intent.job)
-            is RegisterProfileIntent.OnRegionClick -> updateLocation(intent.region)
-            is RegisterProfileIntent.OnIsSmokeClick -> updateIsSmoke(intent.isSmoke)
-            is RegisterProfileIntent.OnSnsActivityClick -> updateIsSnsActive(intent.isSnsActivity)
-            is RegisterProfileIntent.OnAddContactClick -> addContact(intent.contactType)
-            is RegisterProfileIntent.OnDeleteContactClick -> deleteContact(intent.idx)
-            is RegisterProfileIntent.OnContactSelect -> updateContact(intent.idx, intent.contact)
-            is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
-            is RegisterProfileIntent.OnSaveClick -> saveProfile(intent.registerProfileState)
-            RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
-            RegisterProfileIntent.OnBackClick -> moveToPrevious()
-            RegisterProfileIntent.OnDuplicationCheckClick -> checkNickNameDuplication()
-            RegisterProfileIntent.OnHomeClick -> moveToMatchingMainScreen()
-            RegisterProfileIntent.OnCheckMyProfileClick -> moveToProfilePreviewScreen()
-        }
-    }
-
     private fun initProfileData() = viewModelScope.launch {
         val valuePickJob = launch { retrieveValuePick() }
         val valueTalkJob = launch { retrieveValueTalk() }
         valuePickJob.join()
         valueTalkJob.join()
-    }
-
-    private fun moveToProfilePreviewScreen() {
-        navigationHelper.navigate(NavigationEvent.NavigateTo(MatchingGraphDest.ProfilePreviewRoute))
-    }
-
-    private fun moveToMatchingMainScreen() {
-        navigationHelper.navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingRoute))
     }
 
     private suspend fun retrieveValuePick() {
@@ -141,6 +104,35 @@ class RegisterProfileViewModel @AssistedInject constructor(
             .onFailure { errorHelper.sendError(it) }
     }
 
+    internal fun onIntent(intent: RegisterProfileIntent) = viewModelScope.launch {
+        intents.send(intent)
+    }
+
+    private fun processIntent(intent: RegisterProfileIntent) {
+        when (intent) {
+            is RegisterProfileIntent.OnNickNameChange -> updateNickName(intent.nickName)
+            is RegisterProfileIntent.OnProfileImageChanged -> updateProfileImage(intent.imageUri)
+            is RegisterProfileIntent.OnSelfDescriptionChange -> updateDescription(intent.description)
+            is RegisterProfileIntent.OnBirthdateChange -> updateBirthdate(intent.birthday)
+            is RegisterProfileIntent.OnHeightChange -> updateHeight(intent.height)
+            is RegisterProfileIntent.OnWeightChange -> updateWeight(intent.weight)
+            is RegisterProfileIntent.OnJobClick -> updateJob(intent.job)
+            is RegisterProfileIntent.OnRegionClick -> updateLocation(intent.region)
+            is RegisterProfileIntent.OnIsSmokeClick -> updateIsSmoke(intent.isSmoke)
+            is RegisterProfileIntent.OnSnsActivityClick -> updateIsSnsActive(intent.isSnsActivity)
+            is RegisterProfileIntent.OnAddContactClick -> addContact(intent.contactType)
+            is RegisterProfileIntent.OnDeleteContactClick -> deleteContact(intent.idx)
+            is RegisterProfileIntent.OnContactSelect -> updateContact(intent.idx, intent.contact)
+            is RegisterProfileIntent.ShowBottomSheet -> showBottomSheet(intent.content)
+            is RegisterProfileIntent.OnSaveClick -> saveProfile(intent.registerProfileState)
+            RegisterProfileIntent.OnHomeClick -> navigateToHome()
+            RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
+            RegisterProfileIntent.OnBackClick -> moveToPrevious()
+            RegisterProfileIntent.OnDuplicationCheckClick -> checkNickNameDuplication()
+            RegisterProfileIntent.OnCheckMyProfileClick -> navigateToProfilePreview()
+        }
+    }
+
     private fun moveToPrevious() {
         withState { state ->
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
@@ -168,14 +160,13 @@ class RegisterProfileViewModel @AssistedInject constructor(
             RegisterProfileState.Page.BASIC_PROFILE -> saveBasicProfile(state)
             RegisterProfileState.Page.VALUE_TALK -> saveValueTalk(state)
             RegisterProfileState.Page.VALUE_PICK -> saveValuePick(state)
-            RegisterProfileState.Page.FINISH -> completeProfileRegister()
+            RegisterProfileState.Page.SUMMATION -> Unit
+            RegisterProfileState.Page.FINISH -> navigateToProfilePreview()
         }
     }
 
-    private fun completeProfileRegister() {
-        viewModelScope.launch {
-            _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraph)))
-        }
+    private fun navigateToProfilePreview() = viewModelScope.launch {
+        _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraphDest.ProfilePreviewRoute)))
     }
 
     private fun saveValuePick(state: RegisterProfileState) {
@@ -415,6 +406,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
                 contactsInputState = InputState.DEFAULT,
             )
         }
+    }
+
+    private fun navigateToHome() {
+        navigationHelper.navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraphDest.MatchingRoute))
     }
 
     private fun showBottomSheet(content: @Composable () -> Unit) {

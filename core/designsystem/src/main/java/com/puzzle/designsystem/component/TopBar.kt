@@ -85,20 +85,23 @@ fun PieceSubBackTopBar(
     title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isShowBackButton: Boolean = true,
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(60.dp),
     ) {
-        Image(
-            painter = painterResource(R.drawable.ic_arrow_left),
-            contentDescription = "뒤로 가기 버튼",
-            modifier = Modifier
-                .size(32.dp)
-                .clickable { onBackClick() }
-                .align(Alignment.CenterStart),
-        )
+        if (isShowBackButton) {
+            Image(
+                painter = painterResource(R.drawable.ic_arrow_left),
+                contentDescription = "뒤로 가기 버튼",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable { onBackClick() }
+                    .align(Alignment.CenterStart),
+            )
+        }
 
         Text(
             text = title,
