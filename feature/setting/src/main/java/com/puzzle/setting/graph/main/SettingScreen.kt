@@ -1,5 +1,12 @@
 package com.puzzle.setting.graph.main
 
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,16 +29,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -41,31 +47,35 @@ import com.puzzle.designsystem.component.PieceToggle
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.setting.graph.main.contract.SettingIntent
-import com.puzzle.setting.graph.main.contract.SettingSideEffect
 import com.puzzle.setting.graph.main.contract.SettingState
+
 
 @Composable
 internal fun SettingRoute(
     viewModel: SettingViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
 
     LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is SettingSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
+        val version = getVersionInfo(
+            context = context,
+            onError = { viewModel.errorHelper.sendError(it) },
+        )
+        viewModel.setAppVersion(version?.let { "v$it" } ?: "")
     }
 
     SettingScreen(
         state = state,
         onWithdrawClick = { viewModel.onIntent(SettingIntent.OnWithdrawClick) },
         onLogoutClick = { viewModel.onIntent(SettingIntent.OnLogoutClick) },
+        onNoticeClick = { viewModel.onIntent(SettingIntent.OnNoticeClick) },
+        onPrivacyAndPolicyClick = { viewModel.onIntent(SettingIntent.OnPrivacyAndPolicyClick) },
+        onTermsOfUseClick = { viewModel.onIntent(SettingIntent.OnTermsOfUseClick) },
+        onInquiryClick = { viewModel.onIntent(SettingIntent.OnInquiryClick) },
+        onUpdatePushNotification = { viewModel.onIntent(SettingIntent.UpdatePushNotification) },
+        onUpdateMatchNotification = { viewModel.onIntent(SettingIntent.UpdateMatchNotification) },
+        onUpdateBlockAcquaintances = { viewModel.onIntent(SettingIntent.UpdateBlockAcquaintances) },
     )
 }
 
@@ -74,7 +84,13 @@ private fun SettingScreen(
     state: SettingState,
     onWithdrawClick: () -> Unit,
     onLogoutClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    onNoticeClick: () -> Unit,
+    onPrivacyAndPolicyClick: () -> Unit,
+    onTermsOfUseClick: () -> Unit,
+    onInquiryClick: () -> Unit,
+    onUpdatePushNotification: () -> Unit,
+    onUpdateMatchNotification: () -> Unit,
+    onUpdateBlockAcquaintances: () -> Unit,
 ) {
     var isLogoutDialogShow by remember { mutableStateOf(false) }
 
@@ -83,14 +99,14 @@ private fun SettingScreen(
             onDismissRequest = { isLogoutDialogShow = false },
             dialogTop = {
                 PieceDialogDefaultTop(
-                    title = "로그아웃",
-                    subText = "로그아웃하시겠습니까?",
+                    title = stringResource(R.string.setting_logout),
+                    subText = stringResource(R.string.setting_logout_description),
                 )
             },
             dialogBottom = {
                 PieceDialogBottom(
-                    leftButtonText = "취소",
-                    rightButtonText = "확인",
+                    leftButtonText = stringResource(R.string.cancel),
+                    rightButtonText = stringResource(R.string.confirm),
                     onLeftButtonClick = { isLogoutDialogShow = false },
                     onRightButtonClick = { onLogoutClick() },
                 )
@@ -99,7 +115,7 @@ private fun SettingScreen(
     }
 
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .background(PieceTheme.colors.white)
     ) {
@@ -128,26 +144,26 @@ private fun SettingScreen(
             NotificationBody(
                 isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
                 isPushNotificationEnabled = state.isPushNotificationEnabled,
-                onMatchingNotificationCheckedChange = {},
-                onPushNotificationCheckedChagne = {},
+                onMatchingNotificationCheckedChange = onUpdateMatchNotification,
+                onPushNotificationCheckedChange = onUpdatePushNotification,
             )
 
             SystemSettingBody(
                 isContactBlocked = state.isContactBlocked,
                 lastRefreshTime = state.lastRefreshTime,
-                onContactBlockedCheckedChange = {},
+                onContactBlockedCheckedChange = onUpdateBlockAcquaintances,
                 onRefreshClick = {},
             )
 
             InquiryBody(
-                onContactUsClick = {},
+                onContactUsClick = onInquiryClick,
             )
 
             AnnouncementBody(
                 version = state.version,
-                onAnnouncementClick = {},
-                onPrivacyPolicy = {},
-                onTermsClick = {},
+                onNoticeClick = onNoticeClick,
+                onPrivacyPolicy = onPrivacyAndPolicyClick,
+                onTermsClick = onTermsOfUseClick,
             )
 
             OthersBody(onLogoutClick = { isLogoutDialogShow = true })
@@ -161,9 +177,7 @@ private fun SettingScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable {
-                        onWithdrawClick()
-                    },
+                    .clickable { onWithdrawClick() },
             )
         }
     }
@@ -198,8 +212,7 @@ private fun LoginAccountBody(
             Image(
                 painter = painterResource(it),
                 contentDescription = null,
-                modifier = Modifier
-                    .size(24.dp),
+                modifier = Modifier.size(24.dp),
             )
         }
 
@@ -221,7 +234,7 @@ private fun NotificationBody(
     isMatchingNotificationEnabled: Boolean,
     isPushNotificationEnabled: Boolean,
     onMatchingNotificationCheckedChange: () -> Unit,
-    onPushNotificationCheckedChagne: () -> Unit,
+    onPushNotificationCheckedChange: () -> Unit,
 ) {
     Text(
         text = stringResource(R.string.setting_notification),
@@ -264,7 +277,7 @@ private fun NotificationBody(
 
         PieceToggle(
             checked = isPushNotificationEnabled,
-            onCheckedChange = onPushNotificationCheckedChagne,
+            onCheckedChange = onPushNotificationCheckedChange,
         )
     }
 
@@ -308,16 +321,17 @@ private fun SystemSettingBody(
         )
     }
 
-    if (isContactBlocked) {
+    AnimatedVisibility(
+        visible = isContactBlocked,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
+            modifier = Modifier.padding(vertical = 16.dp),
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = stringResource(R.string.setting_sync_contacts),
                     style = PieceTheme.typography.headingSSB,
@@ -392,7 +406,8 @@ private fun InquiryBody(onContactUsClick: () -> Unit) {
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onContactUsClick() },
     ) {
         Text(
             text = stringResource(R.string.setting_contact_us),
@@ -404,9 +419,7 @@ private fun InquiryBody(onContactUsClick: () -> Unit) {
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onContactUsClick() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -421,7 +434,7 @@ private fun InquiryBody(onContactUsClick: () -> Unit) {
 @Composable
 private fun AnnouncementBody(
     version: String,
-    onAnnouncementClick: () -> Unit,
+    onNoticeClick: () -> Unit,
     onPrivacyPolicy: () -> Unit,
     onTermsClick: () -> Unit,
 ) {
@@ -436,7 +449,8 @@ private fun AnnouncementBody(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onNoticeClick() },
     ) {
         Text(
             text = stringResource(R.string.setting_announcement),
@@ -448,9 +462,7 @@ private fun AnnouncementBody(
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onAnnouncementClick() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -458,7 +470,8 @@ private fun AnnouncementBody(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onPrivacyPolicy() },
     ) {
         Text(
             text = stringResource(R.string.setting_privacy_policy),
@@ -470,9 +483,7 @@ private fun AnnouncementBody(
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onPrivacyPolicy() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -480,7 +491,8 @@ private fun AnnouncementBody(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 17.dp),
+            .padding(vertical = 17.dp)
+            .clickable { onTermsClick() },
     ) {
         Text(
             text = stringResource(R.string.setting_term),
@@ -492,9 +504,7 @@ private fun AnnouncementBody(
         Image(
             painter = painterResource(R.drawable.ic_arrow_right),
             contentDescription = "상세 내용",
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .clickable { onTermsClick() },
+            modifier = Modifier.padding(start = 4.dp),
         )
     }
 
@@ -540,17 +550,23 @@ private fun PreviewSettingScreen() {
     PieceTheme {
         SettingScreen(
             state = SettingState(
-                isLoading = false,
                 oAuthProvider = OAuthProvider.KAKAO,
                 email = "example@kakao.com",
                 isMatchingNotificationEnabled = true,
                 isPushNotificationEnabled = false,
                 isContactBlocked = true,
                 lastRefreshTime = "MM월 DD일 오전 00:00",
-                version = "v1.0",
+                version = "v1.0.0",
             ),
             onWithdrawClick = {},
             onLogoutClick = {},
+            onNoticeClick = {},
+            onPrivacyAndPolicyClick = {},
+            onTermsOfUseClick = {},
+            onInquiryClick = {},
+            onUpdatePushNotification = {},
+            onUpdateMatchNotification = {},
+            onUpdateBlockAcquaintances = {},
         )
     }
 }
@@ -577,4 +593,18 @@ private fun PreviewLogoutDialog() {
             },
         )
     }
+}
+
+private fun getVersionInfo(
+    context: Context,
+    onError: (Exception) -> Unit,
+): String? {
+    var version: String? = null
+    try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        version = packageInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        onError(e)
+    }
+    return version
 }

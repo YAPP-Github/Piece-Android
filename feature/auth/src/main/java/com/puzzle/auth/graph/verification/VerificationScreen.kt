@@ -169,7 +169,7 @@ private fun VerificationScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         PieceSolidButton(
-            label = stringResource(R.string.verification_submit),
+            label = stringResource(R.string.confirm),
             onClick = { navigate(NavigationEvent.NavigateTo(AuthGraphDest.SignUpRoute)) },
             enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier
@@ -282,7 +282,7 @@ private fun AuthCodeBody(
             )
 
             PieceSolidButton(
-                label = stringResource(R.string.verification_submit),
+                label = stringResource(R.string.confirm),
                 onClick = onVerifyClick,
                 enabled = isVerifyButtonEnabled,
                 modifier = Modifier.padding(start = 8.dp)
