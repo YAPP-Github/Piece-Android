@@ -24,4 +24,5 @@ sealed class RegisterProfileIntent {
     data object OnHomeClick : RegisterProfileIntent()
     data class ShowBottomSheet(val content: @Composable () -> Unit) : RegisterProfileIntent()
     data object HideBottomSheet : RegisterProfileIntent()
+    data object OnCheckMyProfileClick : RegisterProfileIntent()
 }

@@ -36,8 +36,8 @@ import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.PAGE_TRANSITION_DURATION
-import com.puzzle.profile.graph.register.contract.RegisterProfileState.Companion.TEXT_DISPLAY_DURATION
+import com.puzzle.profile.graph.register.contract.RegisterProfileState.Page.Companion.PAGE_TRANSITION_DURATION
+import com.puzzle.profile.graph.register.contract.RegisterProfileState.Page.Companion.TEXT_DISPLAY_DURATION
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 import kotlinx.coroutines.delay
 

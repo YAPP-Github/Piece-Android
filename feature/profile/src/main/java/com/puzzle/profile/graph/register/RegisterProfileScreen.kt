@@ -148,6 +148,9 @@ internal fun RegisterProfileRoute(
             viewModel.onIntent(RegisterProfileIntent.OnContactSelect(idx, contact))
         },
         onHomeClick = { viewModel.onIntent(RegisterProfileIntent.OnHomeClick) },
+        onCheckMyProfileClick = {
+            viewModel.onIntent(RegisterProfileIntent.OnCheckMyProfileClick)
+        },
     )
 }
 
@@ -172,6 +175,7 @@ private fun RegisterProfileScreen(
     onAddContactClick: () -> Unit,
     onDeleteContactClick: (Int) -> Unit,
     onContactChange: (Int, Contact) -> Unit,
+    onCheckMyProfileClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -296,7 +300,8 @@ private fun PreviewRegisterProfileScreen() {
             onDeleteContactClick = {},
             onContactChange = { _, _ -> },
             modifier = Modifier.background(PieceTheme.colors.white),
-            onHomeClick = {}
+            onHomeClick = {},
+            onCheckMyProfileClick = {},
         )
     }
 }

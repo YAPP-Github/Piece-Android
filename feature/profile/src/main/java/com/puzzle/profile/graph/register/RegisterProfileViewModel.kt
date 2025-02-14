@@ -129,6 +129,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             RegisterProfileIntent.HideBottomSheet -> hideBottomSheet()
             RegisterProfileIntent.OnBackClick -> moveToPrevious()
             RegisterProfileIntent.OnDuplicationCheckClick -> checkNickNameDuplication()
+            RegisterProfileIntent.OnCheckMyProfileClick -> navigateToProfilePreview()
         }
     }
 
@@ -137,7 +138,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
                 viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.NavigateUp)) }
             } else {
-                RegisterProfileState.Page.getPreviousPage(state.currentPage)
+                state.currentPage.getPreviousPage()
                     ?.let { previosPage ->
                         setState { copy(currentPage = previosPage) }
                     }
@@ -204,7 +205,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     )
                 },
             ).onSuccess {
-                RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+                state.currentPage.getNextPage()?.let { nextPage ->
                     setState { copy(currentPage = nextPage) }
                 }
             }.onFailure { errorHelper.sendError(it) }
@@ -219,7 +220,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
-        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+        state.currentPage.getNextPage()?.let { nextPage ->
             setState { copy(currentPage = nextPage) }
         }
     }
@@ -247,7 +248,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
 
         // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
-        RegisterProfileState.Page.getNextPage(state.currentPage)?.let { nextPage ->
+        state.currentPage.getNextPage()?.let { nextPage ->
             setState {
                 copy(
                     currentPage = nextPage,

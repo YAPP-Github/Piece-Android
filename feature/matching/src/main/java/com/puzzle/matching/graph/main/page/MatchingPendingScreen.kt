@@ -25,14 +25,44 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceDialog
+import com.puzzle.designsystem.component.PieceDialogIconTop
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
 internal fun MatchingPendingScreen(
+    isImageRejected: Boolean,
+    isDescriptionRejected: Boolean,
     onCheckMyProfileClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
 ) {
+    if (isImageRejected || isDescriptionRejected) {
+        PieceDialog(
+            dialogTop = {
+                PieceDialogIconTop(
+                    iconId = R.drawable.ic_notice,
+                    title = stringResource(R.string.please_edit_profile),
+                    descriptionComposable = {
+                        if (isImageRejected) EditPhotoGuideText()
+                        if (isDescriptionRejected) EditValueTalkGuideText()
+                    },
+                )
+            },
+            dialogBottom = {
+                PieceSolidButton(
+                    label = stringResource(R.string.edit_profile),
+                    onClick = onEditProfileClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp, bottom = 20.dp),
+                )
+            },
+            onDismissRequest = {}
+        )
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -121,13 +151,55 @@ internal fun MatchingPendingScreen(
     }
 }
 
+@Composable
+private fun EditPhotoGuideText() {
+    Text(
+        text = buildAnnotatedString {
+            withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
+                append("얼굴이 잘나온 사진")
+            }
+
+            append("으로 변경해주세요")
+        },
+        color = PieceTheme.colors.dark3,
+        style = PieceTheme.typography.bodySM,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(PieceTheme.colors.light3)
+    )
+}
+
+@Composable
+private fun EditValueTalkGuideText() {
+    Text(
+        text = buildAnnotatedString {
+            append("가치관 talk을 좀 더 ")
+
+            withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
+                append("정성스럽게")
+            }
+
+            append(" 써주세요")
+        },
+        color = PieceTheme.colors.dark3,
+        style = PieceTheme.typography.bodySM,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(PieceTheme.colors.light3)
+    )
+}
 
 @Preview
 @Composable
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
+            isImageRejected = false,
+            isDescriptionRejected = false,
             onCheckMyProfileClick = {},
+            onEditProfileClick = {},
         )
     }
 }
