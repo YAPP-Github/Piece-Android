@@ -114,6 +114,7 @@ data class RegisterProfileState(
         BASIC_PROFILE(title = ""),
         VALUE_TALK(title = "가치관 Talk"),
         VALUE_PICK(title = "가치관 Pick"),
+        SUMMATION(title = ""),
         FINISH(title = "")
         ;
 
@@ -122,7 +123,8 @@ data class RegisterProfileState(
                 when (currentPage) {
                     BASIC_PROFILE -> VALUE_TALK
                     VALUE_TALK -> VALUE_PICK
-                    VALUE_PICK -> FINISH
+                    VALUE_PICK -> SUMMATION
+                    SUMMATION -> FINISH
                     else -> null
                 }
 
