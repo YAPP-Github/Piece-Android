@@ -27,6 +27,8 @@ import com.puzzle.network.model.terms.AgreeTermsRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
+import com.puzzle.network.model.user.GetSettingInfoResponse
+import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -123,4 +125,16 @@ interface PieceApi {
 
     @POST("/api/matches/accept")
     suspend fun acceptMatching(): Result<ApiResponse<Unit>>
+
+    @GET("/api/settings/infos")
+    suspend fun getSettingInfos(): Result<ApiResponse<GetSettingInfoResponse>>
+
+    @PUT("/api/settings/notification")
+    suspend fun updatePushNotification(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @PUT("/api/settings/notification/match")
+    suspend fun updateMatchNotification(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @PUT("/api/settings/block/acquaintance")
+    suspend fun updateBlockAcquaintances(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
 }

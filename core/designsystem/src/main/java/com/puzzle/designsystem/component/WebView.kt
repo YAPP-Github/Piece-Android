@@ -1,6 +1,6 @@
 package com.puzzle.designsystem.component
 
-import android.webkit.WebChromeClient
+import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.runtime.Composable
@@ -23,9 +23,13 @@ fun PieceWebView(
     AndroidView(
         factory = {
             webView = WebView(context).apply {
-                settings.javaScriptEnabled = true
+                layoutParams = ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                )
                 webViewClient = object : WebViewClient() {}
-                webChromeClient = object : WebChromeClient() {}
+                settings.javaScriptEnabled = true
+                settings.domStorageEnabled = true
             }
             webView!!
         },

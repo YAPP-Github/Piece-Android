@@ -53,7 +53,9 @@ class ImageResizerImpl @Inject constructor(
     }
 
     private fun calculateInSampleSize(
-        options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int
+        options: BitmapFactory.Options,
+        reqWidth: Int,
+        reqHeight: Int,
     ): Int {
         val (height: Int, width: Int) = options.run { outHeight to outWidth }
         var inSampleSize = 1

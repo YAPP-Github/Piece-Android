@@ -27,6 +27,9 @@ sealed class SettingGraphDest : Route {
 
     @Serializable
     data object WithdrawRoute : SettingGraphDest()
+
+    @Serializable
+    data class WebViewRoute(val title: String, val url: String) : SettingGraphDest()
 }
 
 @Serializable
