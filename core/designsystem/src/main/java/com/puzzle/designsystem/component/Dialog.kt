@@ -116,7 +116,7 @@ fun PieceDialogDefaultTop(
 fun PieceDialogIconTop(
     @DrawableRes iconId: Int,
     title: String,
-    subText: @Composable () -> Unit,
+    descriptionComposable: @Composable () -> Unit,
     contentDescription: String? = null,
 ) {
     Column(
@@ -147,7 +147,7 @@ fun PieceDialogIconTop(
                 .background(PieceTheme.colors.light3)
                 .padding(vertical = 12.dp),
         ) {
-            subText()
+            descriptionComposable()
         }
     }
 }
@@ -293,7 +293,7 @@ fun PreviewPieceDialogIcon() {
                 PieceDialogIconTop(
                     iconId = R.drawable.ic_close,
                     title = "Icon Title",
-                    subText = {
+                    descriptionComposable = {
                         Text(
                             text = AnnotatedString("This is an icon subtitle"),
                             color = PieceTheme.colors.dark3,

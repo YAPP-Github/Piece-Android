@@ -44,7 +44,7 @@ internal fun MatchingPendingScreen(
                 PieceDialogIconTop(
                     iconId = R.drawable.ic_notice,
                     title = stringResource(R.string.please_edit_profile),
-                    subText = {
+                    descriptionComposable = {
                         if (isImageRejected) EditPhotoGuideText()
                         if (isDescriptionRejected) EditValueTalkGuideText()
                     },
