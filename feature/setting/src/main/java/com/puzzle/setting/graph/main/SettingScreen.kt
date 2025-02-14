@@ -26,6 +26,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.setting.graph.main.contract.SettingIntent
 import com.puzzle.setting.graph.main.contract.SettingState
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -56,11 +58,12 @@ internal fun SettingRoute(
 ) {
     val state by viewModel.collectAsState()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(viewModel) {
         val version = getVersionInfo(
             context = context,
-            onError = { viewModel.errorHelper.sendError(it) },
+            onError = { scope.launch { viewModel.errorHelper.sendError(error = it) } },
         )
         viewModel.setAppVersion(version?.let { "v$it" } ?: "")
     }
