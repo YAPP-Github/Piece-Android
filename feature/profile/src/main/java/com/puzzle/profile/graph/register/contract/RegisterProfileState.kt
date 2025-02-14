@@ -1,6 +1,7 @@
 package com.puzzle.profile.graph.register.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
@@ -114,30 +115,39 @@ data class RegisterProfileState(
         BASIC_PROFILE(title = ""),
         VALUE_TALK(title = "가치관 Talk"),
         VALUE_PICK(title = "가치관 Pick"),
+        SUMMATION(title = ""),
         FINISH(title = "")
         ;
 
+        fun getBottomButtonTextId(): Int? =
+            when (this) {
+                BASIC_PROFILE -> R.string.next
+                VALUE_TALK -> R.string.next
+                VALUE_PICK -> R.string.generate_profile
+                FINISH -> R.string.check_my_profile
+                SUMMATION -> null
+            }
+
+        fun getNextPage(): Page? =
+            when (this) {
+                BASIC_PROFILE -> VALUE_TALK
+                VALUE_TALK -> VALUE_PICK
+                VALUE_PICK -> SUMMATION
+                SUMMATION -> FINISH
+                else -> null
+            }
+
+        fun getPreviousPage(): Page? =
+            when (this) {
+                FINISH -> VALUE_PICK
+                VALUE_PICK -> VALUE_TALK
+                VALUE_TALK -> BASIC_PROFILE
+                else -> null
+            }
+
         companion object {
-            fun getNextPage(currentPage: Page): Page? =
-                when (currentPage) {
-                    BASIC_PROFILE -> VALUE_TALK
-                    VALUE_TALK -> VALUE_PICK
-                    VALUE_PICK -> FINISH
-                    else -> null
-                }
-
-            fun getPreviousPage(currentPage: Page): Page? =
-                when (currentPage) {
-                    FINISH -> VALUE_PICK
-                    VALUE_PICK -> VALUE_TALK
-                    VALUE_TALK -> BASIC_PROFILE
-                    else -> null
-                }
+            const val TEXT_DISPLAY_DURATION = 3000L
+            const val PAGE_TRANSITION_DURATION = 1000
         }
-    }
-
-    companion object {
-        const val TEXT_DISPLAY_DURATION = 3000L
-        const val PAGE_TRANSITION_DURATION = 1000
     }
 }

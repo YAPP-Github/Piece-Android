@@ -10,7 +10,6 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.match.MatchInfo
-import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.match.MatchStatus.WAITING
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.matching.graph.main.contract.MatchingIntent
@@ -48,6 +47,9 @@ internal fun MatchingRoute(
                 )
             )
         },
+        onEditProfileClick = {
+            viewModel.onIntent(MatchingIntent.OnEditProfileClick)
+        }
     )
 }
 
@@ -56,14 +58,18 @@ internal fun MatchingScreen(
     state: MatchingState,
     onButtonClick: () -> Unit,
     onMatchingDetailClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
 ) {
     when (state.userRole) {
         UserRole.PENDING -> MatchingPendingScreen(
+            isImageRejected = state.isImageRejected,
+            isDescriptionRejected = state.isDescriptionRejected,
             onCheckMyProfileClick = {},
+            onEditProfileClick = onEditProfileClick,
         )
 
         UserRole.USER -> {
-            if (state.matchInfo?.matchStatus == MatchStatus.WAITING) {
+            if (state.matchInfo?.matchStatus == WAITING) {
                 MatchingWaitingScreen(
                     onCheckMyProfileClick = {},
                 )
@@ -87,7 +93,10 @@ internal fun MatchingScreen(
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
+            isImageRejected = false,
+            isDescriptionRejected = false,
             onCheckMyProfileClick = {},
+            onEditProfileClick = {},
         )
     }
 }

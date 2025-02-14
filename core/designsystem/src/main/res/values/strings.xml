@@ -15,6 +15,7 @@
     <string name="try_next">다음에 할래요</string>
     <string name="avoid_acquaintances">아는 사람 차단하기</string>
     <string name="generate_profile">프로필 생성하기</string>
+    <string name="check_profile">프로필 확인하기</string>
     <string name="avoid_acquaintances_description">연락처에 등록된 번호로 가입한 사용자는\n매칭 대상에서 제외되어, 개인정보가 보호됩니다.</string>
     <string name="avoid_acquaintances_complete">지인 차단 완료</string>
     <string name="permission_gallery">사진 [필수]</string>
@@ -49,6 +50,8 @@
     <string name="connected_with_other">상대방과 연결되었어요!</string>
     <string name="check_contact">연락처 확인하기</string>
     <string name="check_photo">사진 보기</string>
+    <string name="please_edit_profile">프로필을 수정해주세요</string>
+    <string name="edit_profile">프로필 수정하기</string>
 
     <!--login-->
     <string name="login_description">서로의 빈 곳을 채우며 맞물리는 퍼즐처럼.\n서로의 가치관과 마음이 연결되는 순간을 만들어갑니다.</string>
@@ -57,7 +60,7 @@
 
     <!--Verification-->
     <string name="verification_subtitle">신뢰도 높은 매칭과 안전한 커뮤니티를 위해\n휴대폰 번호로 인증해 주세요.</string>
-    <string name="verification_submit">확인</string>
+    <string name="confirm">확인</string>
     <string name="verification_next">다음</string>
     <string name="verification_do_not_share">어떤 경우에도 타인에게 공유하지 마세요</string>
     <string name="verification_verified">전화번호 인증을 완료했어요</string>
@@ -137,6 +140,7 @@
     <string name="setting_screen">Setting</string>
     <string name="setting_other">기타</string>
     <string name="setting_logout">로그아웃</string>
+    <string name="setting_logout_description">로그아웃하시겠습니까?</string>
     <string name="setting_guidance">안내</string>
     <string name="setting_announcement">공지사항</string>
     <string name="setting_privacy_policy">개인정보처리방침</string>
@@ -214,8 +218,12 @@
     <string name="value_pick_profile_page_header">가치관 Pick,\n당신의 연애 취향을 알려주세요</string>
     <string name="value_pick_profile_page_sub_header">선택한 답변으로 연애 스타일을 쉽게 확인할 수 있어요.\n서로의 우선순위와 취향을 이해하는 데 큰 도움이 될 거예요.</string>
 
-    <!--Finish    -->
-    <string name="finish_register_profile_header">프로필 작성을 마쳤습니다!</string>
+    <!--Summation-->
+    <string name="summation_description">당신의 생각을 한층 더 매력적으로!\nAI가 정리해 드릴게요</string>
+    <string name="wait_please">"잠시만 기다려주세요"</string>
+
+    <!--Finish-->
+    <string name="finish_register_profile_header">프로필 생성을 마쳤습니다!</string>
     <string name="finish_register_profile_sub_header">작성 후 24시간 이내에 심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.</string>
     <string name="finish_register_profile_tohome">홈으로</string>
 </resources>

@@ -21,6 +21,8 @@ sealed class RegisterProfileIntent {
     data class OnContactSelect(val idx: Int, val contact: Contact) : RegisterProfileIntent()
     data class OnDeleteContactClick(val idx: Int) : RegisterProfileIntent()
     data class OnAddContactClick(val contactType: ContactType) : RegisterProfileIntent()
+    data object OnHomeClick : RegisterProfileIntent()
     data class ShowBottomSheet(val content: @Composable () -> Unit) : RegisterProfileIntent()
     data object HideBottomSheet : RegisterProfileIntent()
+    data object OnCheckMyProfileClick : RegisterProfileIntent()
 }

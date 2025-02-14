@@ -35,6 +35,10 @@ jobs:
           echo "KAKAO_APP_KEY=${{ secrets.KAKAO_APP_KEY }}" >> local.properties
           echo "PIECE_DEV_BASE_URL=${{ secrets.PIECE_DEV_BASE_URL }}" >> local.properties
           echo "PIECE_PROD_BASE_URL=${{ secrets.PIECE_PROD_BASE_URL }}" >> local.properties
+          echo "PIECE_NOTICE_URL=${{ secrets.PIECE_NOTICE_URL }}" >> local.properties
+          echo "PIECE_PRIVACY_AND_POLICY_URL=${{ secrets.PIECE_PRIVACY_AND_POLICY_URL }}" >> local.properties
+          echo "PIECE_TERMS_OF_USE_URL=${{ secrets.PIECE_TERMS_OF_USE_URL }}" >> local.properties
+          echo "PIECE_CHANNEL_TALK_URL=${{ secrets.PIECE_CHANNEL_TALK_URL }}" >> local.properties
           echo "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}" >> local.properties
 
       - name: Create google-services.json
