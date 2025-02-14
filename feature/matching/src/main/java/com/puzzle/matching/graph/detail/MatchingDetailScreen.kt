@@ -43,7 +43,7 @@ import com.puzzle.designsystem.component.PieceDialogBottom
 import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceLoading
-import com.puzzle.designsystem.component.PieceRoundingButton
+import com.puzzle.designsystem.component.PieceRoundingSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.OpponentProfile
@@ -171,7 +171,7 @@ private fun MatchingDetailScreen(
                 PieceImageDialog(
                     imageUri = state.profile?.imageUrl,
                     buttonLabel = "매칭 수락하기",
-                    onButtonClick = { dialogType = DialogType.ACCEPT_MATCHING },
+                    onApproveClick = { dialogType = DialogType.ACCEPT_MATCHING },
                     onDismissRequest = { showDialog = false },
                 )
             }
@@ -256,14 +256,12 @@ private fun MatchingDetailScreen(
 
 @Composable
 private fun BackgroundImage(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize()) {
-        Image(
-            painter = painterResource(id = R.drawable.matchingdetail_bg),
-            contentDescription = "basic info 배경화면",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize(),
-        )
-    }
+    Image(
+        painter = painterResource(id = R.drawable.matchingdetail_bg),
+        contentDescription = "basic info 배경화면",
+        contentScale = ContentScale.Crop,
+        modifier = Modifier.fillMaxSize(),
+    )
 }
 
 @Composable
@@ -291,8 +289,8 @@ private fun MatchingDetailContent(
                             age = profile.age,
                             height = profile.height,
                             weight = profile.weight,
-                            activityRegion = profile.location,
-                            occupation = profile.job,
+                            location = profile.location,
+                            job = profile.job,
                             smokingStatus = profile.smokingStatus,
                             onMoreClick = onMoreClick,
                         )
@@ -367,7 +365,7 @@ private fun MatchingDetailBottomBar(
         Spacer(modifier = Modifier.width(8.dp))
 
         if (currentPage == MatchingDetailPage.ValuePickPage) {
-            PieceRoundingButton(
+            PieceRoundingSolidButton(
                 label = stringResource(R.string.accept_matching),
                 onClick = onAcceptClick,
             )

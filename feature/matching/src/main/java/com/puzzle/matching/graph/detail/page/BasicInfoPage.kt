@@ -33,8 +33,8 @@ internal fun BasicInfoPage(
     age: Int,
     height: Int,
     weight: Int,
-    activityRegion: String,
-    occupation: String,
+    location: String,
+    job: String,
     smokingStatus: String,
     onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -54,9 +54,9 @@ internal fun BasicInfoPage(
             birthYear = birthYear,
             height = height,
             weight = weight,
-            activityRegion = activityRegion,
-            occupation = occupation,
-            smokeStatue = smokingStatus,
+            location = location,
+            job = job,
+            smokingStatus = smokingStatus,
             modifier = Modifier.padding(horizontal = 20.dp)
         )
     }
@@ -92,9 +92,9 @@ private fun BasicInfoCard(
     birthYear: String,
     height: Int,
     weight: Int,
-    activityRegion: String,
-    occupation: String,
-    smokeStatue: String,
+    location: String,
+    job: String,
+    smokingStatus: String,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -191,8 +191,8 @@ private fun BasicInfoCard(
             .padding(bottom = 12.dp)
     ) {
         InfoItem(
-            title = stringResource(R.string.basicinfocard_activityRegion),
-            content = activityRegion,
+            title = stringResource(R.string.basicinfocard_location),
+            content = location,
             modifier = Modifier.size(
                 width = 144.dp,
                 height = 80.dp,
@@ -200,14 +200,14 @@ private fun BasicInfoCard(
         )
 
         InfoItem(
-            title = stringResource(R.string.basicinfocard_occupation),
-            content = occupation,
+            title = stringResource(R.string.basicinfocard_job),
+            content = job,
             modifier = Modifier.weight(1f),
         )
 
         InfoItem(
-            title = stringResource(R.string.basicinfocard_smokeStatue),
-            content = smokeStatue,
+            title = stringResource(R.string.basicinfocard_smokingStatus),
+            content = smokingStatus,
             modifier = Modifier.weight(1f),
         )
     }
@@ -262,8 +262,8 @@ private fun ProfileBasicInfoPagePreview() {
             age = 31,
             height = 200,
             weight = 72,
-            activityRegion = "서울특별시",
-            occupation = "개발자",
+            location = "서울특별시",
+            job = "개발자",
             smokingStatus = "비흡연",
             onMoreClick = { },
         )

@@ -21,8 +21,6 @@ androidxFragment = "1.8.4"
 androidxConstraintlayout = "2.1.4"
 # https://developer.android.com/jetpack/androidx/releases/core
 androidxSplashscreen = "1.0.1"
-# https://developer.android.com/training/data-storage/room
-androidxRoom = "2.6.1"
 # https://developer.android.com/develop/ui/compose/bom/bom-mapping
 androidxComposeBom = "2024.12.01"
 # https://developer.android.com/jetpack/androidx/releases/navigation
@@ -74,9 +72,8 @@ androidxEspresso = "3.6.1"
 
 ## firebase
 googleServices = "4.4.2"
-firebaseBom = "33.7.0"
-crashlytics = "3.0.2"
-messaging = "24.1.0"
+firebaseBom = "33.9.0"
+crashlytics = "3.0.3"
 
 ## OAuth
 # https://developer.android.com/jetpack/androidx/releases/credentials
@@ -132,9 +129,6 @@ androidx-compose-foundation = { group = "androidx.compose.foundation", name = "f
 androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxComposeNavigation" }
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidxRoom" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidxRoom" }
-
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutine" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutine" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutine" }
@@ -185,7 +179,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 firebase-config = { group = "com.google.firebase", name = "firebase-config-ktx" }
-firebase-messaging = { module = "com.google.firebase:firebase-messaging", version.ref = "messaging" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 
 [bundles]
 

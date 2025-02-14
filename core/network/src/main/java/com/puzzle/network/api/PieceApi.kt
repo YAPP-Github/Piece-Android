@@ -12,9 +12,15 @@ import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
 import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
-import com.puzzle.network.model.matching.LoadValuePicksResponse
-import com.puzzle.network.model.matching.LoadValueTalksResponse
 import com.puzzle.network.model.matching.ReportUserRequest
+import com.puzzle.network.model.profile.GetMyProfileBasicResponse
+import com.puzzle.network.model.profile.GetMyValuePicksResponse
+import com.puzzle.network.model.profile.GetMyValueTalksResponse
+import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
+import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
+import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
+import com.puzzle.network.model.profile.UpdateMyValuePickRequests
+import com.puzzle.network.model.profile.UpdateMyValueTalkRequests
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.terms.AgreeTermsRequest
@@ -48,10 +54,10 @@ interface PieceApi {
     suspend fun loadTerms(): Result<ApiResponse<LoadTermsResponse>>
 
     @GET("/api/valuePicks")
-    suspend fun loadValuePickQuestions(): Result<ApiResponse<LoadValuePicksResponse>>
+    suspend fun loadValuePickQuestions(): Result<ApiResponse<LoadValuePickQuestionsResponse>>
 
     @GET("/api/valueTalks")
-    suspend fun loadValueTalkQuestions(): Result<ApiResponse<LoadValueTalksResponse>>
+    suspend fun loadValueTalkQuestions(): Result<ApiResponse<LoadValueTalkQuestionsResponse>>
 
     @GET("/api/login/token/health-check")
     suspend fun checkTokenHealth(@Query("token") token: String): Result<ApiResponse<Unit>>
@@ -80,6 +86,24 @@ interface PieceApi {
 
     @POST("/api/blockContacts")
     suspend fun blockContacts(@Body blockContactsRequest: BlockContactsRequest): Result<ApiResponse<Unit>>
+
+    @GET("/api/profiles/valueTalks")
+    suspend fun getMyValueTalks(): Result<ApiResponse<GetMyValueTalksResponse>>
+
+    @GET("/api/profiles/valuePicks")
+    suspend fun getMyValuePicks(): Result<ApiResponse<GetMyValuePicksResponse>>
+
+    @GET("/api/profiles/basic")
+    suspend fun getMyProfileBasic(): Result<ApiResponse<GetMyProfileBasicResponse>>
+
+    @PUT("/api/profiles/valueTalks")
+    suspend fun updateMyValueTalks(@Body updateMyValueTalkRequests: UpdateMyValueTalkRequests): Result<ApiResponse<GetMyValueTalksResponse>>
+
+    @PUT("/api/profiles/valuePicks")
+    suspend fun updateMyValuePicks(@Body updateMyValuePickRequests: UpdateMyValuePickRequests): Result<ApiResponse<GetMyValuePicksResponse>>
+
+    @PUT("/api/profiles/basic")
+    suspend fun updateMyProfileBasic(@Body updateMyProfileBasicRequest: UpdateMyProfileBasicRequest): Result<ApiResponse<GetMyProfileBasicResponse>>
 
     @GET("/api/matches/infos")
     suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>

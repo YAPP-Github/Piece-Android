@@ -1,5 +1,9 @@
 package com.puzzle.profile.graph.basic
 
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +29,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,9 +44,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import coil3.compose.AsyncImage
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.component.PieceSolidButton
@@ -49,7 +58,7 @@ import com.puzzle.designsystem.component.PieceTextInputDropDown
 import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
@@ -83,18 +92,19 @@ internal fun BasicProfileRoute(
         onSaveClick = { viewModel.onIntent(BasicProfileIntent.SaveBasicProfile) },
         onBackClick = { viewModel.onIntent(BasicProfileIntent.OnBackClick) },
         onNickNameChanged = { viewModel.onIntent(BasicProfileIntent.UpdateNickName(it)) },
+        onProfileImageChanged = { viewModel.onIntent(BasicProfileIntent.UpdateProfileImage(it)) },
         onDuplicationCheckClick = { viewModel.onIntent(BasicProfileIntent.CheckNickNameDuplication) },
         onDescribeMySelfChanged = { viewModel.onIntent(BasicProfileIntent.UpdateDescribeMySelf(it)) },
         onBirthdayChanged = { viewModel.onIntent(BasicProfileIntent.UpdateBirthday(it)) },
         onHeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateHeight(it)) },
         onWeightChanged = { viewModel.onIntent(BasicProfileIntent.UpdateWeight(it)) },
-        onSmokeStatusChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSmokeStatus(it)) },
+        onSmokingStatusChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSmokingStatus(it)) },
         onSnsActivityChanged = { viewModel.onIntent(BasicProfileIntent.UpdateSnsActivity(it)) },
         onAddContactClick = {
             viewModel.onIntent(
                 BasicProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
+                        usingContactType = state.usingSnsPlatforms,
                         isEdit = false,
                         onButtonClicked = {
                             viewModel.onIntent(BasicProfileIntent.AddContact(it))
@@ -107,13 +117,13 @@ internal fun BasicProfileRoute(
             viewModel.onIntent(
                 BasicProfileIntent.ShowBottomSheet {
                     ContactBottomSheet(
-                        usingSnsPlatform = state.usingSnsPlatforms,
-                        nowSnsPlatform = state.contacts[idx].snsPlatform,
+                        usingContactType = state.usingSnsPlatforms,
+                        nowContactType = state.contacts[idx].type,
                         isEdit = true,
                         onButtonClicked = {
                             viewModel.onIntent(
                                 BasicProfileIntent.UpdateContact(
-                                    idx, state.contacts[idx].copy(snsPlatform = it)
+                                    idx, state.contacts[idx].copy(type = it)
                                 )
                             )
 
@@ -162,6 +172,7 @@ private fun BasicProfileScreen(
     onSaveClick: () -> Unit,
     onBackClick: () -> Unit,
     onNickNameChanged: (String) -> Unit,
+    onProfileImageChanged: (String) -> Unit,
     onDuplicationCheckClick: () -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
     onBirthdayChanged: (String) -> Unit,
@@ -169,7 +180,7 @@ private fun BasicProfileScreen(
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
     onJobDropDownClicked: () -> Unit,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
     onContactChange: (Int, Contact) -> Unit,
     onSnsPlatformChange: (Int) -> Unit,
@@ -213,8 +224,9 @@ private fun BasicProfileScreen(
         )
 
         PhotoContent(
-            onEditPhotoClick = {},
-            screenState = state.profileScreenState,
+            imageUrl = state.imageUrl,
+            imageUrlInputState = state.imageUrlInputState,
+            onProfileImageChanged = onProfileImageChanged,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 40.dp)
@@ -222,7 +234,7 @@ private fun BasicProfileScreen(
         )
 
         NickNameContent(
-            nickName = state.nickName,
+            nickName = state.nickname,
             nickNameGuideMessage = state.nickNameGuideMessage,
             isCheckingButtonAvailable = state.isCheckingButtonEnabled,
             onNickNameChanged = onNickNameChanged,
@@ -288,7 +300,7 @@ private fun BasicProfileScreen(
 
         SmokeContent(
             isSmoke = state.isSmoke,
-            onSmokeStatusChanged = onSmokeStatusChanged,
+            onSmokingStatusChanged = onSmokingStatusChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -332,11 +344,11 @@ private fun ColumnScope.SnsPlatformContent(
     SectionTitle(title = "연락처")
 
     contacts.forEachIndexed { idx, contact ->
-        val image = when (contact.snsPlatform) {
-            SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
-            SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
-            SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
-            SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
+        val image = when (contact.type) {
+            ContactType.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+            ContactType.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+            ContactType.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+            ContactType.PHONE_NUMBER -> R.drawable.ic_sns_call
             else -> R.drawable.ic_delete_circle // 임시
         }
 
@@ -421,7 +433,7 @@ private fun SnsActivityContent(
 @Composable
 private fun SmokeContent(
     isSmoke: Boolean,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     SectionTitle(title = "흡연")
@@ -433,14 +445,14 @@ private fun SmokeContent(
         PieceChip(
             label = "흡연",
             selected = isSmoke,
-            onChipClicked = { onSmokeStatusChanged(true) },
+            onChipClicked = { onSmokingStatusChanged(true) },
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
             label = "비흡연",
             selected = !isSmoke,
-            onChipClicked = { onSmokeStatusChanged(false) },
+            onChipClicked = { onSmokingStatusChanged(false) },
             modifier = Modifier.weight(1f),
         )
     }
@@ -679,8 +691,7 @@ private fun SelfDescriptionContent(
     onDescribeMySelfChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isSaveFailed: Boolean =
-        descriptionInputState == InputState.WARNIING
+    val isSaveFailed: Boolean = descriptionInputState == InputState.WARNIING
     var isInputFocused by remember { mutableStateOf(false) }
     val isGuidanceVisibe: Boolean = isInputFocused || description.isNotBlank() || isSaveFailed
 
@@ -843,32 +854,71 @@ private fun NickNameContent(
 
 @Composable
 private fun PhotoContent(
-    onEditPhotoClick: () -> Unit,
-    screenState: ScreenState,
+    imageUrl: String,
+    imageUrlInputState: InputState,
+    onProfileImageChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // TODO : 이미지 조건 추가, screenState == BasicProfileState.ScreenState.SAVE_FAILED && 이미지가 없을 경우
-    val isSaveFailed: Boolean = screenState == ScreenState.SAVE_FAILED
+    val isSaveFailed: Boolean = imageUrlInputState == InputState.WARNIING && imageUrl.isEmpty()
 
-    Box(modifier = modifier) {
-        Image(
-            painter = painterResource(R.drawable.ic_profile_default),
-            contentDescription = null,
-        )
+    val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                onProfileImageChanged(uri.toString())
+            }
+        }
+    )
 
-        Image(
-            painter = if (isSaveFailed) {
-                painterResource(R.drawable.ic_photo_error)
-            } else {
-                painterResource(R.drawable.ic_edit)
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.fillMaxWidth()
+    ) {
+        Box(
+            modifier = Modifier.throttledClickable(throttleTime = 2000L) {
+                singlePhotoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
             },
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .clickable {
-                    onEditPhotoClick()
-                }
-        )
+        ) {
+            AsyncImage(
+                model = imageUrl.ifEmpty { R.drawable.ic_profile_default },
+                placeholder = painterResource(R.drawable.ic_profile_default),
+                contentScale = ContentScale.FillBounds,
+                onError = { error ->
+                    Log.e(
+                        "RegisterProfileScreen", error.result.throwable.stackTraceToString()
+                    )
+                },
+                contentDescription = null,
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape),
+            )
+
+            Image(
+                painter = if (isSaveFailed) {
+                    painterResource(R.drawable.ic_photo_error)
+                } else {
+                    painterResource(R.drawable.ic_edit)
+                },
+                contentDescription = null,
+                modifier = Modifier.align(Alignment.BottomEnd)
+            )
+        }
+
+        AnimatedVisibility(
+            visible = isSaveFailed
+        ) {
+            Text(
+                text = stringResource(R.string.basic_profile_required_field),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = PieceTheme.typography.bodySM,
+                color = PieceTheme.colors.error,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+        }
     }
 }
 
@@ -898,12 +948,13 @@ private fun BasicProfilePreview() {
             onHeightChanged = {},
             onWeightChanged = {},
             onJobDropDownClicked = {},
-            onSmokeStatusChanged = {},
+            onSmokingStatusChanged = {},
             onSnsPlatformChange = {},
             onContactChange = { _, _ -> },
             onSnsActivityChanged = {},
             onDeleteClick = {},
             onAddContactClick = {},
+            onProfileImageChanged = {},
         )
     }
 }

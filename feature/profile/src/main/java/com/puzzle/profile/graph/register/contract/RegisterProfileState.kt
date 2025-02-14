@@ -9,8 +9,8 @@ import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 
 data class RegisterProfileState(
     val currentPage: Page = Page.BASIC_PROFILE,
-    val profileImageUri: String? = null,
-    val profileImageUriInputState: InputState = InputState.DEFAULT,
+    val imageUrl: String? = null,
+    val imageUrlInputState: InputState = InputState.DEFAULT,
     val nickname: String = "",
     val isCheckingButtonEnabled: Boolean = false,
     val nickNameGuideMessage: NickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
@@ -42,10 +42,10 @@ data class RegisterProfileState(
     val isValueTalkComplete: Boolean =
         valueTalks.find { it.answer.isBlank() } == null
 
-    val usingSnsPlatforms = contacts.map { it.snsPlatform }
+    val usingSnsPlatforms = contacts.map { it.type }
         .toSet()
 
-    val isBasicProfileComplete: Boolean = !profileImageUri.isNullOrBlank() &&
+    val isBasicProfileComplete: Boolean = !imageUrl.isNullOrBlank() &&
             description.isNotBlank() &&
             birthdate.isNotBlank() &&
             location.isNotBlank() &&

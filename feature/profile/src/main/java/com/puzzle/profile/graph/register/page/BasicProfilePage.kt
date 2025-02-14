@@ -50,7 +50,7 @@ import com.puzzle.designsystem.component.PieceTextInputDropDown
 import com.puzzle.designsystem.component.PieceTextInputSnsDropDown
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
-import com.puzzle.domain.model.profile.SnsPlatform
+import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
@@ -58,7 +58,6 @@ import com.puzzle.profile.graph.register.contract.RegisterProfileState
 @Composable
 internal fun BasicProfilePage(
     state: RegisterProfileState,
-    onEditPhotoClick: (String) -> Unit,
     onProfileImageChanged: (String) -> Unit,
     onNickNameChanged: (String) -> Unit,
     onDescribeMySelfChanged: (String) -> Unit,
@@ -67,7 +66,7 @@ internal fun BasicProfilePage(
     onHeightChanged: (String) -> Unit,
     onWeightChanged: (String) -> Unit,
     onJobDropDownClicked: () -> Unit,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     onSnsActivityChanged: (Boolean) -> Unit,
     onDuplicationCheckClick: () -> Unit,
     onContactChange: (Int, Contact) -> Unit,
@@ -100,9 +99,8 @@ internal fun BasicProfilePage(
         )
 
         PhotoContent(
-            profileImageUri = state.profileImageUri,
-            profileImageUriInputState = state.profileImageUriInputState,
-            onEditPhotoClick = onEditPhotoClick,
+            profileImageUri = state.imageUrl,
+            profileImageUriInputState = state.imageUrlInputState,
             onProfileImageChanged = onProfileImageChanged,
             modifier = Modifier.padding(top = 40.dp),
         )
@@ -181,7 +179,7 @@ internal fun BasicProfilePage(
         SmokeContent(
             isSmoke = state.isSmoke,
             isSmokeInputState = state.isSmokeInputState,
-            onSmokeStatusChanged = onSmokeStatusChanged,
+            onSmokingStatusChanged = onSmokingStatusChanged,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp),
@@ -234,11 +232,11 @@ private fun ColumnScope.SnsPlatformContent(
     SectionTitle(title = stringResource(R.string.basic_profile_contact_header))
 
     contacts.forEachIndexed { idx, contact ->
-        val image = when (contact.snsPlatform) {
-            SnsPlatform.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
-            SnsPlatform.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
-            SnsPlatform.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
-            SnsPlatform.PHONE_NUMBER -> R.drawable.ic_sns_call
+        val image = when (contact.type) {
+            ContactType.KAKAO_TALK_ID -> R.drawable.ic_sns_kakao
+            ContactType.OPEN_CHAT_URL -> R.drawable.ic_sns_openchatting
+            ContactType.INSTAGRAM_ID -> R.drawable.ic_sns_instagram
+            ContactType.PHONE_NUMBER -> R.drawable.ic_sns_call
             else -> R.drawable.ic_delete_circle // 임시
         }
 
@@ -343,7 +341,7 @@ private fun SnsActivityContent(
 private fun SmokeContent(
     isSmoke: Boolean?,
     isSmokeInputState: InputState,
-    onSmokeStatusChanged: (Boolean) -> Unit,
+    onSmokingStatusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
@@ -358,14 +356,14 @@ private fun SmokeContent(
         PieceChip(
             label = stringResource(R.string.basic_profile_issmoking_smoking),
             selected = isSmoke ?: false,
-            onChipClicked = { onSmokeStatusChanged(true) },
+            onChipClicked = { onSmokingStatusChanged(true) },
             modifier = Modifier.weight(1f),
         )
 
         PieceChip(
             label = stringResource(R.string.basic_profile_issmoking_not_smoking),
             selected = isSmoke?.not() ?: false,
-            onChipClicked = { onSmokeStatusChanged(false) },
+            onChipClicked = { onSmokingStatusChanged(false) },
             modifier = Modifier.weight(1f),
         )
     }
@@ -785,7 +783,6 @@ private fun NickNameContent(
 
 @Composable
 private fun PhotoContent(
-    onEditPhotoClick: (String) -> Unit,
     profileImageUriInputState: InputState,
     onProfileImageChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -797,12 +794,7 @@ private fun PhotoContent(
 
     val singlePhotoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia(),
-        onResult = { uri ->
-            if (uri != null) {
-                onProfileImageChanged(uri.toString())
-                onEditPhotoClick(uri.toString())
-            }
-        }
+        onResult = { uri -> if (uri != null) { onProfileImageChanged(uri.toString()) } }
     )
 
     Column(
@@ -875,14 +867,13 @@ private fun BasicProfilePagePreview() {
             state = RegisterProfileState(),
             onNickNameChanged = {},
             onProfileImageChanged = {},
-            onEditPhotoClick = {},
             onDescribeMySelfChanged = {},
             onBirthdateChanged = {},
             onLocationDropDownClicked = {},
             onHeightChanged = {},
             onWeightChanged = {},
             onJobDropDownClicked = {},
-            onSmokeStatusChanged = {},
+            onSmokingStatusChanged = {},
             onSnsActivityChanged = {},
             onDeleteClick = {},
             onContactChange = { _, _ -> },

@@ -102,7 +102,7 @@ internal fun MatchingWaitingScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Image(
-                painter = painterResource(R.drawable.ic_user_pending_home),
+                painter = painterResource(R.drawable.ic_onboarding_matching),
                 contentDescription = null,
                 modifier = Modifier
                     .size(260.dp)

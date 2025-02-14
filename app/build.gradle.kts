@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     id("piece.android.application")
     id("piece.android.compose")
+    id("com.google.firebase.crashlytics")
 }
 
 android {

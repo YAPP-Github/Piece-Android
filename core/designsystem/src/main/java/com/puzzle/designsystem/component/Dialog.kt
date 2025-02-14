@@ -211,7 +211,8 @@ fun PieceImageDialog(
     imageUri: Any?,
     buttonLabel: String,
     onDismissRequest: () -> Unit,
-    onButtonClick: () -> Unit,
+    onApproveClick: () -> Unit = {},
+    isApproveButtonShow: Boolean = true,
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
@@ -239,13 +240,15 @@ fun PieceImageDialog(
                     .size(180.dp),
             )
 
-            PieceRoundingButton(
-                label = buttonLabel,
-                onClick = onButtonClick,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(bottom = 10.dp),
-            )
+            if (isApproveButtonShow) {
+                PieceRoundingSolidButton(
+                    label = buttonLabel,
+                    onClick = onApproveClick,
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 10.dp),
+                )
+            }
         }
     }
 }
@@ -308,7 +311,7 @@ fun PreviewPieceImageDialog() {
             imageUri = R.drawable.ic_image_default,
             buttonLabel = "매칭 수락하기",
             onDismissRequest = {},
-            onButtonClick = {},
+            onApproveClick = {},
         )
     }
 }

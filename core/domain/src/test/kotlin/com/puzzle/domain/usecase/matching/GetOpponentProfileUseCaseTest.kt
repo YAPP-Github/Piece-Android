@@ -19,23 +19,7 @@ class GetOpponentProfileUseCaseTest {
     @Test
     fun `로컬에서 데이터를 불러오다가 실패했을 경우 서버 데이터를 불러온다`() = runTest {
         // Given
-        val localProfile = OpponentProfile(
-            description = "Local Profile",
-            nickname = "LocalUser",
-            age = 25,
-            birthYear = "1998",
-            height = 170,
-            weight = 65,
-            location = "Seoul",
-            job = "Developer",
-            smokingStatus = "Non-smoker",
-            valuePicks = emptyList(),
-            valueTalks = emptyList(),
-            imageUrl = "local_image_url"
-        )
-        val remoteProfile = localProfile.copy(description = "Remote Profile")
-
-        spyMatchingRepository.setShouldFailLocalRetrieval(true)
+        val remoteProfile = dummyOpponentProfile.copy(description = "Remote Profile")
         spyMatchingRepository.setRemoteOpponentProfile(remoteProfile)
 
         // When
@@ -49,21 +33,7 @@ class GetOpponentProfileUseCaseTest {
     @Test
     fun `로컬에서 데이터를 성공적으로 불러올 경우 서버 요청을 하지 않는다`() = runTest {
         // Given
-        val localProfile = OpponentProfile(
-            description = "Local Profile",
-            nickname = "LocalUser",
-            age = 25,
-            birthYear = "1998",
-            height = 170,
-            weight = 65,
-            location = "Seoul",
-            job = "Developer",
-            smokingStatus = "Non-smoker",
-            valuePicks = emptyList(),
-            valueTalks = emptyList(),
-            imageUrl = "local_image_url"
-        )
-
+        val localProfile = dummyOpponentProfile
         spyMatchingRepository.setLocalOpponentProfile(localProfile)
 
         // When
@@ -73,4 +43,19 @@ class GetOpponentProfileUseCaseTest {
         assertEquals(localProfile, result.getOrNull())
         assertEquals(0, spyMatchingRepository.loadOpponentProfileCallCount)
     }
+
+    private val dummyOpponentProfile = OpponentProfile(
+        description = "Local Profile",
+        nickname = "LocalUser",
+        age = 25,
+        birthYear = "1998",
+        height = 170,
+        weight = 65,
+        location = "Seoul",
+        job = "Developer",
+        smokingStatus = "Non-smoker",
+        valuePicks = emptyList(),
+        valueTalks = emptyList(),
+        imageUrl = "local_image_url"
+    )
 }

@@ -50,6 +50,9 @@ sealed class MatchingGraphDest : Route {
 
     @Serializable
     data object ContactRoute : MatchingGraphDest()
+
+    @Serializable
+    data object ProfilePreviewRoute : MatchingGraphDest()
 }
 
 @Serializable

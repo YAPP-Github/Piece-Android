@@ -209,7 +209,7 @@ fun PieceLoginButton(
 }
 
 @Composable
-fun PieceRoundingButton(
+fun PieceRoundingSolidButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -230,6 +230,35 @@ fun PieceRoundingButton(
             horizontal = 29.5.dp,
             vertical = 14.dp,
         )
+    ) {
+        Text(
+            text = label,
+            style = PieceTheme.typography.bodyMSB,
+        )
+    }
+}
+
+@Composable
+fun PieceRoundingOutlinedButton(
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    Button(
+        onClick = onClick,
+        enabled = enabled,
+        shape = RoundedCornerShape(46.dp),
+        border = BorderStroke(width = 1.dp, color = PieceTheme.colors.primaryDefault),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = PieceTheme.colors.white,
+            contentColor = PieceTheme.colors.primaryDefault,
+            disabledContainerColor = PieceTheme.colors.light1,
+            disabledContentColor = PieceTheme.colors.primaryDefault,
+        ),
+        modifier = modifier
+            .height(52.dp)
+            .widthIn(min = 100.dp),
     ) {
         Text(
             text = label,
@@ -312,9 +341,23 @@ fun PreviewPieceIconButton() {
 
 @Preview
 @Composable
-fun PreviewPieceRoundingButton() {
+fun PreviewPieceRoundingSolidButton() {
     PieceTheme {
-        PieceRoundingButton(
+        PieceRoundingSolidButton(
+            label = "Label",
+            onClick = {},
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPieceRoundingOutlinedButton() {
+    PieceTheme {
+        PieceRoundingOutlinedButton(
             label = "Label",
             onClick = {},
             modifier = Modifier

@@ -40,7 +40,6 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
-import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.onboarding.contract.OnboardingIntent
 import com.puzzle.onboarding.contract.OnboardingSideEffect
 import kotlinx.coroutines.launch
@@ -103,7 +102,7 @@ internal fun OnboardingScreen(onStartButtonClick: () -> Unit) {
             Column(modifier = Modifier.fillMaxSize()) {
                 when (page) {
                     0 -> OnboardingPageContent(
-                        imageRes = R.drawable.ic_onboarding_camera,
+                        imageRes = R.drawable.ic_onboarding_matching,
                         title = stringResource(R.string.one_day_one_matching_title),
                         description = stringResource(R.string.one_day_one_matching_description),
                     )
