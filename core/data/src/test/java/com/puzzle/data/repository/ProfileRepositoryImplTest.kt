@@ -1,5 +1,6 @@
 package com.puzzle.data.repository
 
+import com.puzzle.data.fake.FakeSseClient
 import com.puzzle.data.fake.source.profile.FakeLocalProfileDataSource
 import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
@@ -9,6 +10,7 @@ import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.domain.model.profile.MyValueTalk
+import com.puzzle.network.api.sse.SseClient
 import com.puzzle.network.model.profile.ValueTalkResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -24,6 +26,7 @@ class ProfileRepositoryImplTest {
     private lateinit var localUserDataSource: FakeLocalUserDataSource
     private lateinit var profileRepository: ProfileRepositoryImpl
     private lateinit var imageResizer: SpyImageResizer
+    private lateinit var sseClient: SseClient
 
     @BeforeEach
     fun setUp() {
@@ -32,12 +35,14 @@ class ProfileRepositoryImplTest {
         localTokenDataSource = FakeLocalTokenDataSource()
         localUserDataSource = FakeLocalUserDataSource()
         imageResizer = SpyImageResizer()
+        sseClient = FakeSseClient()
         profileRepository = ProfileRepositoryImpl(
             profileDataSource = profileDataSource,
             localProfileDataSource = localProfileDataSource,
             localUserDataSource = localUserDataSource,
             localTokenDataSource = localTokenDataSource,
             imageResizer = imageResizer,
+            sseClient = sseClient,
         )
     }
 
@@ -224,5 +229,29 @@ class ProfileRepositoryImplTest {
         // 반환된 결과와 로컬에 저장된 프로필이 일치하는지 확인
         val updatedProfileBasic = result.getOrNull()
         assertEquals(updatedProfileBasic, storedProfileBasic)
+    }
+
+    @Test
+    fun `가치관Talk 요약 업데이트 시 로컬에 저장된다`() = runTest {
+        // given
+        val originValueTalks = listOf(
+            MyValueTalk(
+                id = 1,
+                category = "음주",
+                title = "술자리에 대한 대화",
+                answer = "가끔 즐깁니다.",
+                summary = "술자리 즐기기",
+                guides = emptyList(),
+            )
+        )
+        profileRepository.updateMyValueTalks(originValueTalks)
+
+        // when
+        profileRepository.updateAiSummary(profileTalkId = 1, summary = "변경된 요약")
+
+        // then
+        val storedValueTalks = localProfileDataSource.myValueTalks.first()
+        assertEquals(originValueTalks.map { it.id }, storedValueTalks.map { it.id })
+        assertEquals(storedValueTalks.first { it.id == 1 }.summary, "변경된 요약")
     }
 }

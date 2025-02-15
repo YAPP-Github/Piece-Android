@@ -5,8 +5,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import coil3.compose.AsyncImage
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceChip
@@ -77,12 +81,11 @@ internal fun BasicProfilePage(
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
 
-    Column(modifier = Modifier
-        .padding(horizontal = 20.dp)
-        .verticalScroll(scrollState)
-        .clickable {
-            focusManager.clearFocus()
-        }
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .verticalScroll(scrollState)
+            .clickable { focusManager.clearFocus() },
     ) {
         Text(
             text = stringResource(R.string.basic_profile_page_header),
@@ -210,7 +213,6 @@ internal fun BasicProfilePage(
                 focusManager.clearFocus()
                 onAddContactClick()
             },
-            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -224,7 +226,6 @@ private fun ColumnScope.SnsPlatformContent(
     onSnsPlatformChange: (Int) -> Unit,
     onDeleteClick: (Int) -> Unit,
     onAddContactClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val isSaveFailed: Boolean =
         contactsInputState == InputState.WARNIING
@@ -253,6 +254,8 @@ private fun ColumnScope.SnsPlatformContent(
 
     AnimatedVisibility(
         visible = contacts.size < 4,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column {
@@ -324,7 +327,9 @@ private fun SnsActivityContent(
     }
 
     AnimatedVisibility(
-        visible = isSaveFailed
+        visible = isSaveFailed,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
     ) {
         Text(
             text = stringResource(R.string.basic_profile_required_field),
@@ -369,7 +374,9 @@ private fun SmokeContent(
     }
 
     AnimatedVisibility(
-        visible = isSaveFailed
+        visible = isSaveFailed,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
     ) {
         Text(
             text = stringResource(R.string.basic_profile_required_field),
@@ -401,7 +408,9 @@ private fun JobContent(
     )
 
     AnimatedVisibility(
-        visible = isSaveFailed
+        visible = isSaveFailed,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
     ) {
         Text(
             text = stringResource(R.string.basic_profile_required_field),
@@ -451,7 +460,9 @@ private fun WeightContent(
     }
 
     AnimatedVisibility(
-        visible = !errorMessage.isNullOrBlank()
+        visible = !errorMessage.isNullOrBlank(),
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
     ) {
         errorMessage?.let { message ->
             Text(
@@ -504,7 +515,9 @@ private fun HeightContent(
     }
 
     AnimatedVisibility(
-        visible = !errorMessage.isNullOrBlank()
+        visible = !errorMessage.isNullOrBlank(),
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
     ) {
         errorMessage?.let { message ->
             Text(
@@ -539,7 +552,9 @@ private fun LocationContent(
     )
 
     AnimatedVisibility(
-        visible = isSaveFailed
+        visible = isSaveFailed,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
     ) {
         Text(
             text = stringResource(R.string.basic_profile_required_field),
@@ -586,7 +601,11 @@ private fun BirthdateContent(
         modifier = modifier.onFocusChanged { isInputFocused = it.isFocused },
     )
 
-    AnimatedVisibility(visible = isGuideMessageVisible) {
+    AnimatedVisibility(
+        visible = isGuideMessageVisible,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
+    ) {
         Text(
             text = if (isSaveFailed) {
                 stringResource(R.string.basic_profile_required_field)
@@ -642,7 +661,11 @@ private fun SelfDescriptionContent(
         modifier = modifier.onFocusChanged { isInputFocused = it.isFocused },
     )
 
-    AnimatedVisibility(visible = isGuidanceVisible) {
+    AnimatedVisibility(
+        visible = isGuidanceVisible,
+        enter = fadeIn() + slideInVertically(),
+        exit = shrinkOut() + slideOutVertically(),
+    ) {
         Row(
             modifier = Modifier
                 .padding(top = 8.dp)
@@ -749,7 +772,11 @@ private fun NickNameContent(
             )
         }
 
-        AnimatedVisibility(visible = isGuideMessageVisible) {
+        AnimatedVisibility(
+            visible = isGuideMessageVisible,
+            enter = fadeIn() + slideInVertically(),
+            exit = shrinkOut() + slideOutVertically(),
+        ) {
             Row(
                 modifier = Modifier
                     .padding(top = 8.dp)
@@ -839,7 +866,9 @@ private fun PhotoContent(
         }
 
         AnimatedVisibility(
-            visible = isSaveFailed
+            visible = isSaveFailed,
+            enter = fadeIn() + slideInVertically(),
+            exit = shrinkOut() + slideOutVertically(),
         ) {
             Text(
                 text = stringResource(R.string.basic_profile_required_field),

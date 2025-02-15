@@ -95,9 +95,7 @@ private fun ContactScreen(
             PieceSubCloseTopBar(
                 title = "",
                 onCloseClick = onCloseClick,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 14.dp),
+                modifier = Modifier.fillMaxWidth(),
             )
 
             ContactBody(nickName = state.nickName)

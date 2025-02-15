@@ -23,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,12 +34,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubTopBar
@@ -58,13 +65,27 @@ internal fun ValueTalkRoute(
     viewModel: ValueTalkViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_START) {
+                viewModel.connectSse()
+            } else if (event == Lifecycle.Event.ON_STOP) {
+                viewModel.disconnectSse()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     ValueTalkScreen(
         state = state,
         onBackClick = { viewModel.onIntent(ValueTalkIntent.OnBackClick) },
-        onEditClick = {},
-        onSaveClick = {},
-        onAiSummarySaveClick = {},
+        onEditClick = { viewModel.onIntent(ValueTalkIntent.OnEditClick) },
+        onSaveClick = { viewModel.onIntent(ValueTalkIntent.OnUpdateClick(it)) },
+        onAiSummarySaveClick = { viewModel.onIntent(ValueTalkIntent.OnAiSummarySaveClick(it)) },
     )
 }
 
@@ -77,7 +98,8 @@ private fun ValueTalkScreen(
     onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var valueTalks: List<MyValueTalk> by remember { mutableStateOf(state.valueTalks) }
+    val focusManager = LocalFocusManager.current
+    var valueTalks: List<MyValueTalk> by remember(state.valueTalks) { mutableStateOf(state.valueTalks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
     var editedValueTalkIds: List<Int> by remember { mutableStateOf(emptyList()) }
 
@@ -92,7 +114,8 @@ private fun ValueTalkScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(PieceTheme.colors.white),
+            .background(PieceTheme.colors.white)
+            .addFocusCleaner(focusManager),
     ) {
         PieceSubTopBar(
             title = when (state.screenState) {
@@ -135,7 +158,7 @@ private fun ValueTalkScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 14.dp),
+                .padding(horizontal = 20.dp),
         )
 
         ValueTalkCards(
@@ -166,7 +189,10 @@ private fun ValueTalkCards(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        itemsIndexed(valueTalks) { idx, item ->
+        itemsIndexed(
+            items = valueTalks,
+            key = { _, item -> item.id to item.summary },
+        ) { idx, item ->
             ValueTalkCard(
                 item = item,
                 screenState = screenState,
@@ -217,6 +243,7 @@ private fun ValueTalkCard(
                 ScreenState.NORMAL -> true
                 ScreenState.EDITING -> false
             },
+            modifier = Modifier.fillMaxWidth(),
         )
 
         when (screenState) {
@@ -245,8 +272,8 @@ private fun AiSummaryContent(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp),
+            .padding(top = 20.dp)
+            .fillMaxWidth(),
     ) {
         Text(
             text = stringResource(R.string.value_talk_profile_aisummary_title),
@@ -259,24 +286,18 @@ private fun AiSummaryContent(
             contentDescription = "정보",
             colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
             modifier = Modifier
-                .size(20.dp)
-                .padding(start = 4.dp),
+                .padding(start = 4.dp)
+                .size(20.dp),
         )
     }
 
     PieceTextInputAI(
         value = editableAiSummary,
-        onValueChange = {
-            editableAiSummary = it
-        },
-        onSaveClick = {
-            onAiSummarySaveClick(
-                item.copy(summary = it)
-            )
-        },
+        onValueChange = { editableAiSummary = it },
+        onSaveClick = { onAiSummarySaveClick(item.copy(summary = it)) },
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 12.dp),
+            .padding(top = 12.dp)
+            .fillMaxWidth(),
     )
 }
 
@@ -347,6 +368,8 @@ fun GuideRow(
                     Text(
                         text = message,
                         style = PieceTheme.typography.bodySR,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         color = PieceTheme.colors.dark2,
                         modifier = Modifier
                             .height(rowHeightDp)

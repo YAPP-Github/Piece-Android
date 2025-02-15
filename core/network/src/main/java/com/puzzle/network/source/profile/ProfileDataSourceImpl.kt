@@ -12,6 +12,7 @@ import com.puzzle.network.model.profile.GetMyValuePicksResponse
 import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
+import com.puzzle.network.model.profile.UpdateAiSummaryRequest
 import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests
@@ -72,6 +73,15 @@ class ProfileDataSourceImpl @Inject constructor(
                     )
                 }
             )
+        ).unwrapData()
+
+    override suspend fun updateAiSummary(
+        profileTalkId: Int,
+        summary: String
+    ): Result<Unit> =
+        pieceApi.updateAiSummary(
+            id = profileTalkId,
+            updateAiSummaryRequest = UpdateAiSummaryRequest(summary = summary),
         ).unwrapData()
 
     override suspend fun updateMyProfileBasic(
@@ -168,6 +178,8 @@ class ProfileDataSourceImpl @Inject constructor(
             contacts = contacts.associate { it.type.name to it.content }
         )
     ).unwrapData()
+
+    override suspend fun disconnectSSE(): Result<Unit> = pieceApi.disconnectSSE().unwrapData()
 
     companion object {
         private const val WEBP_MEDIA_TYPE = "image/webp"

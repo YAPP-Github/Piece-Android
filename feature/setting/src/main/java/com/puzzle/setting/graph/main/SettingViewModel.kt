@@ -4,8 +4,10 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
+import com.puzzle.common.toBlockSyncFormattedTime
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
@@ -30,6 +32,7 @@ class SettingViewModel @AssistedInject constructor(
     @Assisted initialState: SettingState,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     internal val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
@@ -47,16 +50,26 @@ class SettingViewModel @AssistedInject constructor(
     }
 
     private fun initSetting() = viewModelScope.launch {
-        userRepository.getUserSettingInfo()
-            .onSuccess {
-                setState {
-                    copy(
-                        isContactBlocked = it.isAcquaintanceBlockEnabled,
-                        isPushNotificationEnabled = it.isNotificationEnabled,
-                        isMatchingNotificationEnabled = it.isMatchNotificationEnabled,
-                    )
+        launch {
+            userRepository.getUserSettingInfo()
+                .onSuccess {
+                    setState {
+                        copy(
+                            isContactBlocked = it.isAcquaintanceBlockEnabled,
+                            isPushNotificationEnabled = it.isNotificationEnabled,
+                            isMatchingNotificationEnabled = it.isMatchNotificationEnabled,
+                        )
+                    }
                 }
-            }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        syncBlockTime()
+    }
+
+    private fun syncBlockTime() = viewModelScope.launch {
+        userRepository.getBlockSyncTime()
+            .onSuccess { setState { copy(lastRefreshTime = it.toBlockSyncFormattedTime()) } }
             .onFailure { errorHelper.sendError(it) }
     }
 
@@ -91,6 +104,7 @@ class SettingViewModel @AssistedInject constructor(
             SettingIntent.UpdateBlockAcquaintances -> updateBlockAcquaintances()
             SettingIntent.UpdateMatchNotification -> updateMatchNotification()
             SettingIntent.UpdatePushNotification -> updatePushNotification()
+            is SettingIntent.OnRefreshClick -> blockContacts(intent.phoneNumbers)
         }
     }
 
@@ -116,9 +130,21 @@ class SettingViewModel @AssistedInject constructor(
     private fun updateBlockAcquaintances() = withState { state ->
         viewModelScope.launch {
             userRepository.updateBlockAcquaintances(!state.isContactBlocked)
-                .onSuccess { setState { copy(isContactBlocked = !state.isContactBlocked) } }
+                .onSuccess {
+                    setState { copy(isContactBlocked = !state.isContactBlocked) }
+                    syncBlockTime()
+                }
                 .onFailure { errorHelper.sendError(it) }
         }
+    }
+
+    private fun blockContacts(phoneNumbers: List<String>) = viewModelScope.launch {
+        setState { copy(isLoadingContactsBlocked = true) }
+
+        matchingRepository.blockContacts(phoneNumbers = phoneNumbers)
+            .onSuccess { syncBlockTime() }
+            .onFailure { errorHelper.sendError(it) }
+            .also { setState { copy(isLoadingContactsBlocked = false) } }
     }
 
     private fun updateMatchNotification() = withState { state ->

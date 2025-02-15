@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetMyValuePicksResponse(
-    val response: List<MyValuePickResponse>?,
+    val responses: List<MyValuePickResponse>?,
 ) {
-    fun toDomain() = response?.map(MyValuePickResponse::toDomain) ?: emptyList()
+    fun toDomain() = responses?.map(MyValuePickResponse::toDomain) ?: emptyList()
 }
 
 @Serializable
@@ -18,7 +18,7 @@ data class MyValuePickResponse(
     @SerialName("profileValuePickId") val id: Int?,
     val category: String?,
     val question: String?,
-    @SerialName("answer") val answerOptions: List<ValuePickAnswerResponse>?,
+    @SerialName("answers") val answerOptions: List<ValuePickAnswerResponse>?,
     val selectedAnswer: Int?,
 ) {
     fun toDomain() = MyValuePick(

@@ -203,6 +203,7 @@ fun PieceTextInputAI(
     modifier: Modifier = Modifier,
     throttleTime: Long = 2000L,
     readOnly: Boolean = true,
+    limit: Int = 50,
     onDone: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -211,13 +212,10 @@ fun PieceTextInputAI(
     var isReadOnly: Boolean by remember { mutableStateOf(readOnly) }
     var isLoading: Boolean by remember { mutableStateOf(value.isBlank()) }
 
-    Column(
-        modifier = modifier
-    ) {
+    Column(modifier = modifier) {
         BasicTextField(
             value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
+            onValueChange = { if (it.length <= limit) onValueChange(it) },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -233,17 +231,18 @@ fun PieceTextInputAI(
             cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
             readOnly = isReadOnly,
             decorationBox = { innerTextField ->
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (isLoading) {
-                        Text(
-                            text = "작성해주신 내용을 AI가 요약하고 있어요",
-                            style = PieceTheme.typography.bodyMM,
-                            color = PieceTheme.colors.dark3,
-                        )
-                    } else {
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        if (isLoading) {
+                            Text(
+                                text = "작성해주신 내용을 AI가 요약하고 있어요",
+                                style = PieceTheme.typography.bodyMM,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                color = PieceTheme.colors.dark3,
+                            )
+                        }
+
                         innerTextField()
                     }
 
@@ -262,9 +261,7 @@ fun PieceTextInputAI(
                         contentDescription = null,
                         modifier = Modifier
                             .size(24.dp)
-                            .clickable {
-                                if (isLoading) return@clickable
-
+                            .clickable(enabled = !isLoading) {
                                 if (isReadOnly) {
                                     isReadOnly = false
                                 } else {
@@ -277,30 +274,29 @@ fun PieceTextInputAI(
             },
             modifier = Modifier
                 .onFocusChanged { focusState -> isFocused = focusState.isFocused }
-                .height(52.dp)
-                .fillMaxWidth()
+                .heightIn(min = 52.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(PieceTheme.colors.primaryLight)
                 .padding(horizontal = 16.dp, vertical = 14.dp),
         )
+    }
 
-        if (!isReadOnly) {
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
+    if (!isReadOnly) {
+        Row {
+            Spacer(modifier = Modifier.weight(1f))
 
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                            append(value.length.toString())
-                        }
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                        append(value.length.toString())
+                    }
 
-                        append("/20")
-                    },
-                    style = PieceTheme.typography.bodySR,
-                    color = PieceTheme.colors.dark3,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+                    append("/${limit}")
+                },
+                style = PieceTheme.typography.bodySR,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }

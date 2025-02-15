@@ -17,12 +17,12 @@ class AuthDataSourceImpl @Inject constructor(
 ) : AuthDataSource {
     override suspend fun loginOauth(
         provider: OAuthProvider,
-        token: String
+        oauthCredential: String
     ): Result<LoginOauthResponse> =
         pieceApi.loginOauth(
             LoginOauthRequest(
                 providerName = provider.apiValue,
-                token = token,
+                oauthCredential = oauthCredential,
             )
         ).unwrapData()
 

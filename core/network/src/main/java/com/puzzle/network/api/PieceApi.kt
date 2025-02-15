@@ -18,6 +18,7 @@ import com.puzzle.network.model.profile.GetMyValuePicksResponse
 import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
+import com.puzzle.network.model.profile.UpdateAiSummaryRequest
 import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests
 import com.puzzle.network.model.profile.UpdateMyValueTalkRequests
@@ -27,10 +28,12 @@ import com.puzzle.network.model.terms.AgreeTermsRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
+import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -105,6 +108,12 @@ interface PieceApi {
     @PUT("/api/profiles/basic")
     suspend fun updateMyProfileBasic(@Body updateMyProfileBasicRequest: UpdateMyProfileBasicRequest): Result<ApiResponse<GetMyProfileBasicResponse>>
 
+    @PATCH("/api/profiles/valueTalks/{profileTalkId}/summary")
+    suspend fun updateAiSummary(
+        @Path("profileTalkId") id: Int,
+        @Body updateAiSummaryRequest: UpdateAiSummaryRequest,
+    ): Result<ApiResponse<Unit>>
+
     @GET("/api/matches/infos")
     suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>
 
@@ -137,4 +146,10 @@ interface PieceApi {
 
     @PUT("/api/settings/block/acquaintance")
     suspend fun updateBlockAcquaintances(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @GET("/api/settings/blocks/contacts/sync-time")
+    suspend fun getBlockSyncTime(): Result<ApiResponse<GetBlockSyncTimeResponse>>
+
+    @DELETE("/api/sse/personal/disconnect")
+    suspend fun disconnectSSE(): Result<ApiResponse<Unit>>
 }

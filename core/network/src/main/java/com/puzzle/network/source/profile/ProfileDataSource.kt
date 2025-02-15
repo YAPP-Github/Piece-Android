@@ -23,6 +23,11 @@ interface ProfileDataSource {
 
     suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<GetMyValueTalksResponse>
     suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<GetMyValuePicksResponse>
+    suspend fun updateAiSummary(
+        profileTalkId: Int,
+        summary: String
+    ): Result<Unit>
+
     suspend fun updateMyProfileBasic(
         description: String,
         nickname: String,
@@ -55,4 +60,6 @@ interface ProfileDataSource {
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>,
     ): Result<UploadProfileResponse>
+
+    suspend fun disconnectSSE(): Result<Unit>
 }

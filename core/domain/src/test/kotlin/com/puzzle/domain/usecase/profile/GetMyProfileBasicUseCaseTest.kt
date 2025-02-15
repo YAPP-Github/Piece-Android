@@ -51,7 +51,7 @@ class GetMyProfileBasicUseCaseTest {
         description = "새로운 인연을 만나고 싶은 26살 개발자입니다. 여행과 커피, 그리고 좋은 대화를 좋아해요.",
         nickname = "코딩하는개발자",
         age = 26,
-        birthDate = "1997-09-12",
+        birthdate = "1997-09-12",
         height = 178,
         weight = 72,
         location = "서울 강남구",

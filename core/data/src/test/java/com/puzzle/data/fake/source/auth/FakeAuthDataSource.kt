@@ -11,7 +11,7 @@ class FakeAuthDataSource : AuthDataSource {
 
     override suspend fun loginOauth(
         provider: OAuthProvider,
-        token: String
+        oauthCredential: String
     ): Result<LoginOauthResponse> {
         return Result.success(loginResponse)
     }

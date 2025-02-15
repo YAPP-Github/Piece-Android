@@ -7,6 +7,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.toCompactDateString
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
@@ -58,7 +59,7 @@ class BasicProfileViewModel @AssistedInject constructor(
                     copy(
                         description = it.description,
                         nickname = it.nickname,
-                        birthdate = it.birthDate,
+                        birthdate = it.birthdate.toCompactDateString(),
                         height = it.height.toString(),
                         weight = it.weight.toString(),
                         location = it.location,
