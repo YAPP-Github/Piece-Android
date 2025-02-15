@@ -85,13 +85,15 @@ internal fun MatchingScreen(
                 )
             } else {
                 when (state.matchInfo.matchStatus) {
-                    MatchStatus.UNKNOWN -> MatchingLoadingScreen()
+                    MatchStatus.UNKNOWN -> MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
                     MatchStatus.BLOCKED -> MatchingWaitingScreen(
+                        isNotificationEnabled = state.isNotificationEnabled,
                         onCheckMyProfileClick = {},
                         remainTime = state.formattedRemainWaitingTime
                     )
 
                     else -> MatchingUserScreen(
+                        isNotificationEnabled = state.isNotificationEnabled,
                         matchInfo = state.matchInfo,
                         remainTime = state.formattedRemainMatchingStartTime,
                         onButtonClick = onButtonClick,
