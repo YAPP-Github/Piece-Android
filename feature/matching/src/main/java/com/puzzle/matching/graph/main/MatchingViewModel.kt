@@ -5,8 +5,12 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
+import com.puzzle.domain.model.auth.Timer
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.error.HttpResponseException
+import com.puzzle.domain.model.error.HttpResponseStatus
 import com.puzzle.domain.model.match.MatchStatus
+import com.puzzle.domain.model.match.getRemainingTimeUntil10PM
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.ProfileRepository
@@ -20,6 +24,7 @@ import com.puzzle.navigation.ProfileGraphDest
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.launchIn
@@ -32,6 +37,7 @@ class MatchingViewModel @AssistedInject constructor(
     private val matchingRepository: MatchingRepository,
     private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
+    private val timer: Timer,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
     private val navigationHelper: NavigationHelper,
@@ -39,6 +45,8 @@ class MatchingViewModel @AssistedInject constructor(
     private val intents = Channel<MatchingIntent>(BUFFERED)
     private val _sideEffects = Channel<MatchingSideEffect>(BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
+
+    private var timerJob: Job? = null
 
     init {
         intents.receiveAsFlow()
@@ -104,7 +112,18 @@ class MatchingViewModel @AssistedInject constructor(
             matchingRepository.loadOpponentProfile()
                 .onFailure { errorHelper.sendError(it) }
         }
-        .onFailure { errorHelper.sendError(it) }
+        .onFailure {
+            if (it is HttpResponseException) {
+                // 1. 회원가입하고 처음 매칭을 하는데 아직 오후 10시가 안되었을 때
+                // 2. 내가 차단했을 때
+                // 3. 상대방 아이디가 없어졌을 때
+                if (it.status == HttpResponseStatus.NotFound) {
+                    startTimer()
+                }
+                return@onFailure
+            }
+            errorHelper.sendError(it)
+        }
 
     private fun processOnButtonClick() = withState { state ->
         when (state.matchInfo?.matchStatus) {
@@ -133,6 +152,28 @@ class MatchingViewModel @AssistedInject constructor(
                 setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.MATCHED)) }
             }
             .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun startTimer(startTimeInMillis: Long = System.currentTimeMillis()) {
+        timerJob?.cancel()
+
+        timerJob = viewModelScope.launch {
+            timer.startTimer(getRemainingTimeUntil10PM(startTimeInMillis).toInt())
+                .collect { remaining ->
+                    setState { copy(remainWaitingTimeInSec = remaining) }
+
+                    if (remaining == 0) {
+                        getMatchInfo()
+
+                        timerJob?.cancel()
+                    }
+                }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        timerJob?.cancel()
     }
 
     @AssistedFactory

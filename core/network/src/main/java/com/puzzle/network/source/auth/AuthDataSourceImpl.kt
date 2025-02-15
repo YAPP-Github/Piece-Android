@@ -22,7 +22,7 @@ class AuthDataSourceImpl @Inject constructor(
         pieceApi.loginOauth(
             LoginOauthRequest(
                 providerName = provider.apiValue,
-                token = token,
+                oauthCredential = token,
             )
         ).unwrapData()
 

@@ -18,7 +18,6 @@ import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
-import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -43,8 +42,7 @@ class MainViewModel @Inject constructor(
     init {
         handleError()
         initConfigure()
-//        checkRedirection()
-        _isInitialized.value = true
+        checkRedirection()
     }
 
     private fun handleError() = viewModelScope.launch {
@@ -100,7 +98,7 @@ class MainViewModel @Inject constructor(
             REGISTER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.VerificationRoute,
+                        route = AuthGraphDest.SignUpRoute,
                         popUpTo = true,
                     )
                 )
@@ -117,7 +115,7 @@ class MainViewModel @Inject constructor(
 
             NONE -> navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
-                    route = OnboardingRoute,
+                    route = AuthGraphDest.VerificationRoute,
                     popUpTo = true,
                 )
             )

@@ -50,6 +50,7 @@ import com.puzzle.domain.model.match.MatchStatus.WAITING
 @Composable
 internal fun MatchingUserScreen(
     matchInfo: MatchInfo,
+    remainTime: String,
     onButtonClick: () -> Unit,
     onMatchingDetailClick: () -> Unit,
 ) {
@@ -87,7 +88,7 @@ internal fun MatchingUserScreen(
                 text = buildAnnotatedString {
                     append(stringResource(R.string.precious_connection_start))
                     withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
-                        append("02:32:75")
+                        append(remainTime)
                     }
                     append(stringResource(R.string.time_remaining))
                 },
@@ -216,15 +217,15 @@ internal fun MatchingUserScreen(
                 }
 
                 val label = when (matchInfo.matchStatus) {
-                    MatchStatus.BEFORE_OPEN -> stringResource(R.string.check_matching_pieces)
-                    MatchStatus.WAITING, GREEN_LIGHT -> stringResource(R.string.accept_matching)
-                    MatchStatus.RESPONDED -> stringResource(R.string.responded)
+                    BEFORE_OPEN -> stringResource(R.string.check_matching_pieces)
+                    WAITING, GREEN_LIGHT -> stringResource(R.string.accept_matching)
+                    RESPONDED -> stringResource(R.string.responded)
                     MATCHED -> stringResource(R.string.check_contact)
                     else -> ""
                 }
                 PieceSolidButton(
                     label = label,
-                    enabled = matchInfo.matchStatus != MatchStatus.RESPONDED,
+                    enabled = matchInfo.matchStatus != RESPONDED,
                     onClick = onButtonClick,
                     modifier = Modifier
                         .padding(top = 16.dp)
@@ -240,31 +241,31 @@ private fun MatchStatusRow(
     matchStatus: MatchStatus,
 ) {
     val (imageRes, tag, description) = when (matchStatus) {
-        MatchStatus.BEFORE_OPEN -> Triple(
+        BEFORE_OPEN -> Triple(
             R.drawable.ic_matching_loading,
             stringResource(R.string.before_open),
             stringResource(R.string.check_the_matching_pieces)
         )
 
-        MatchStatus.WAITING -> Triple(
+        WAITING -> Triple(
             R.drawable.ic_matching_loading,
             stringResource(R.string.waiting_for_response),
             stringResource(R.string.please_respond_to_matching)
         )
 
-        MatchStatus.RESPONDED -> Triple(
+        RESPONDED -> Triple(
             R.drawable.ic_matching_check,
             stringResource(R.string.responded),
             stringResource(R.string.waiting_for_other_response)
         )
 
-        MatchStatus.GREEN_LIGHT -> Triple(
+        GREEN_LIGHT -> Triple(
             R.drawable.ic_matching_heart,
             stringResource(R.string.green_light),
             stringResource(R.string.other_accepted_matching)
         )
 
-        MatchStatus.MATCHED -> Triple(
+        MATCHED -> Triple(
             R.drawable.ic_matching_check,
             stringResource(R.string.matched),
             stringResource(R.string.connected_with_other)
@@ -340,6 +341,7 @@ private fun PreviewMatchingUserScreen() {
             ),
             onButtonClick = {},
             onMatchingDetailClick = {},
+            remainTime = " 00:00:00 "
         )
     }
 }
@@ -366,6 +368,7 @@ private fun PreviewMatchingUserScreen2() {
             ),
             onButtonClick = {},
             onMatchingDetailClick = {},
+            remainTime = " 00:00:00 "
         )
     }
 }
@@ -392,6 +395,7 @@ private fun PreviewMatchingUserScreen3() {
             ),
             onButtonClick = {},
             onMatchingDetailClick = {},
+            remainTime = " 00:00:00 "
         )
     }
 }
@@ -418,6 +422,7 @@ private fun PreviewMatchingUserScreen4() {
             ),
             onButtonClick = {},
             onMatchingDetailClick = {},
+            remainTime = " 00:00:00 ",
         )
     }
 }

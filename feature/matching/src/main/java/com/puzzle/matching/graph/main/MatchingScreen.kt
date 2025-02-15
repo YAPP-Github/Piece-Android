@@ -10,6 +10,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.match.MatchStatus.WAITING
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.matching.graph.main.contract.MatchingIntent
@@ -69,18 +70,26 @@ internal fun MatchingScreen(
         )
 
         UserRole.USER -> {
-            if (state.matchInfo?.matchStatus == WAITING) {
+            if (state.matchInfo == null) {
                 MatchingWaitingScreen(
                     onCheckMyProfileClick = {},
+                    remainTime = state.formattedRemainWaitingTime,
                 )
             } else {
-                state.matchInfo?.let {
-                    MatchingUserScreen(
+                when (state.matchInfo.matchStatus) {
+                    MatchStatus.UNKNOWN -> MatchingLoadingScreen()
+                    MatchStatus.BLOCKED -> MatchingWaitingScreen(
+                        onCheckMyProfileClick = {},
+                        remainTime = state.formattedRemainWaitingTime
+                    )
+
+                    else -> MatchingUserScreen(
                         matchInfo = state.matchInfo,
+                        remainTime = state.formattedRemainMatchingStartTime,
                         onButtonClick = onButtonClick,
                         onMatchingDetailClick = onMatchingDetailClick,
                     )
-                } ?: MatchingLoadingScreen()
+                }
             }
         }
 
@@ -107,6 +116,7 @@ private fun PreviewMatchingWaitingScreen() {
     PieceTheme {
         MatchingWaitingScreen(
             onCheckMyProfileClick = {},
+            remainTime = " 00:00:00 ",
         )
     }
 }
@@ -137,10 +147,11 @@ private fun PreviewMatchingUserScreen() {
                     "바깥 데이트 스킨십도 가능",
                     "함께 술을 즐기고 싶어요",
                     "커밍아웃은 가까운 친구에게만 했어요",
-                )
+                ),
             ),
             onButtonClick = {},
             onMatchingDetailClick = {},
+            remainTime = " 00:00:00 ",
         )
     }
 }
