@@ -211,78 +211,77 @@ fun PieceTextInputAI(
     var isReadOnly: Boolean by remember { mutableStateOf(readOnly) }
     var isLoading: Boolean by remember { mutableStateOf(value.isBlank()) }
 
-    Column(
-        modifier = modifier
-    ) {
-        BasicTextField(
-            value = value,
-            onValueChange = onValueChange,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    val currentTime = System.currentTimeMillis()
-                    if (currentTime - lastDoneTime >= throttleTime) {
-                        keyboardController?.hide()
-                        onDone()
-                        lastDoneTime = currentTime
-                    }
-                }
-            ),
-            textStyle = PieceTheme.typography.bodyMM,
-            cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
-            readOnly = isReadOnly,
-            decorationBox = { innerTextField ->
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (isLoading) {
-                        Text(
-                            text = "작성해주신 내용을 AI가 요약하고 있어요",
-                            style = PieceTheme.typography.bodyMM,
-                            color = PieceTheme.colors.dark3,
-                        )
-                    } else {
-                        innerTextField()
-                    }
-
-                    val imageRes = if (isLoading) {
-                        R.drawable.ic_textinput_3dots
-                    } else {
-                        if (isReadOnly) {
-                            R.drawable.ic_textinput_pencil
-                        } else {
-                            R.drawable.ic_textinput_check
+    Column(modifier = modifier) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        val currentTime = System.currentTimeMillis()
+                        if (currentTime - lastDoneTime >= throttleTime) {
+                            keyboardController?.hide()
+                            onDone()
+                            lastDoneTime = currentTime
                         }
                     }
+                ),
+                textStyle = PieceTheme.typography.bodyMM,
+                cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+                readOnly = isReadOnly,
+                decorationBox = { innerTextField ->
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        if (isLoading) {
+                            Text(
+                                text = "작성해주신 내용을 AI가 요약하고 있어요",
+                                style = PieceTheme.typography.bodyMM,
+                                color = PieceTheme.colors.dark3,
+                                modifier = Modifier.weight(1f),
+                            )
+                        } else {
+                            innerTextField()
+                        }
 
-                    Image(
-                        painter = painterResource(imageRes),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clickable {
-                                if (isLoading) return@clickable
+                        val imageRes = if (isLoading) {
+                            R.drawable.ic_textinput_3dots
+                        } else {
+                            if (isReadOnly) {
+                                R.drawable.ic_textinput_pencil
+                            } else {
+                                R.drawable.ic_textinput_check
+                            }
+                        }
 
-                                if (isReadOnly) {
-                                    isReadOnly = false
-                                } else {
-                                    isReadOnly = true
-                                    onSaveClick(value)
-                                }
-                            },
-                    )
-                }
-            },
-            modifier = Modifier
-                .onFocusChanged { focusState -> isFocused = focusState.isFocused }
-                .height(52.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(PieceTheme.colors.primaryLight)
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-        )
+                        Image(
+                            painter = painterResource(imageRes),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clickable(enabled = !isLoading) {
+                                    if (isReadOnly) {
+                                        isReadOnly = false
+                                    } else {
+                                        isReadOnly = true
+                                        onSaveClick(value)
+                                    }
+                                },
+                        )
+                    }
+                },
+                modifier = Modifier
+                    .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+                    .heightIn(min = 52.dp)
+                    .weight(1f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(PieceTheme.colors.primaryLight)
+                    .padding(horizontal = 16.dp, vertical = 14.dp),
+            )
+        }
 
         if (!isReadOnly) {
             Row {

@@ -41,6 +41,8 @@ interface ProfileRepository {
         contacts: List<Contact>,
     ): Result<MyProfileBasic>
 
+    suspend fun updateAiSummary(profileTalkId: Int, summary: String): Result<String>
+
     suspend fun checkNickname(nickname: String): Result<Boolean>
     suspend fun uploadProfile(
         birthdate: String,

@@ -10,6 +10,7 @@ import com.puzzle.network.model.profile.GetMyValuePicksResponse
 import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
+import com.puzzle.network.model.profile.UpdateAiSummaryResponse
 import com.puzzle.network.model.profile.UploadProfileResponse
 import java.io.InputStream
 
@@ -23,6 +24,11 @@ interface ProfileDataSource {
 
     suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<GetMyValueTalksResponse>
     suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<GetMyValuePicksResponse>
+    suspend fun updateAiSummary(
+        profileTalkId: Int,
+        summary: String
+    ): Result<UpdateAiSummaryResponse>
+
     suspend fun updateMyProfileBasic(
         description: String,
         nickname: String,

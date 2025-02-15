@@ -4,7 +4,7 @@ data class MyProfileBasic(
     val description: String,
     val nickname: String,
     val age: Int,
-    val birthDate: String,
+    val birthdate: String,
     val height: Int,
     val weight: Int,
     val location: String,

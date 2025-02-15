@@ -58,7 +58,7 @@ class BasicProfileViewModel @AssistedInject constructor(
                     copy(
                         description = it.description,
                         nickname = it.nickname,
-                        birthdate = it.birthDate,
+                        birthdate = it.birthdate,
                         height = it.height.toString(),
                         weight = it.weight.toString(),
                         location = it.location,

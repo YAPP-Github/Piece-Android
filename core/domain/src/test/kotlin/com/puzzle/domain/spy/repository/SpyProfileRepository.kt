@@ -125,6 +125,10 @@ class SpyProfileRepository : ProfileRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun updateAiSummary(profileTalkId: Int, summary: String): Result<String> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun checkNickname(nickname: String): Result<Boolean> {
         TODO("Not yet implemented")
     }
@@ -144,6 +148,14 @@ class SpyProfileRepository : ProfileRepository {
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun connectSSE(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun disconnectSSE(): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

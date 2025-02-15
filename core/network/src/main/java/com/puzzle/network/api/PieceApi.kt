@@ -18,6 +18,8 @@ import com.puzzle.network.model.profile.GetMyValuePicksResponse
 import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
+import com.puzzle.network.model.profile.UpdateAiSummaryRequest
+import com.puzzle.network.model.profile.UpdateAiSummaryResponse
 import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests
 import com.puzzle.network.model.profile.UpdateMyValueTalkRequests
@@ -105,6 +107,12 @@ interface PieceApi {
 
     @PUT("/api/profiles/basic")
     suspend fun updateMyProfileBasic(@Body updateMyProfileBasicRequest: UpdateMyProfileBasicRequest): Result<ApiResponse<GetMyProfileBasicResponse>>
+
+    @PATCH("/api/profiles/valueTalks/{profileTalkId}/summary")
+    suspend fun updateAiSummary(
+        @Query("profileTalkId") id: Int,
+        @Body updateAiSummaryRequest: UpdateAiSummaryRequest,
+    ): Result<ApiResponse<UpdateAiSummaryResponse>>
 
     @GET("/api/matches/infos")
     suspend fun getMatchInfo(): Result<ApiResponse<GetMatchInfoResponse>>

@@ -54,9 +54,9 @@ internal fun FinishPage(
             colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .size(300.dp)
                 .padding(horizontal = 37.dp)
-                .padding(top = 92.dp),
+                .padding(top = 92.dp)
+                .size(300.dp),
         )
 
         Spacer(

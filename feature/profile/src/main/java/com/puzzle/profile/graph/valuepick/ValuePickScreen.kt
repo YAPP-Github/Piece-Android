@@ -60,7 +60,7 @@ private fun ValuePickScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var valuePicks: List<MyValuePick> by remember { mutableStateOf(state.valuePicks) }
+    var valuePicks: List<MyValuePick> by remember(state.valuePicks) { mutableStateOf(state.valuePicks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
 
     BackHandler { onBackClick() }
@@ -110,10 +110,7 @@ private fun ValuePickScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 14.dp,
-                ),
+                .padding(horizontal = 20.dp),
         )
 
         ValuePickCards(

@@ -134,9 +134,7 @@ private fun VerificationScreen(
         PieceSubCloseTopBar(
             title = "",
             onCloseClick = { navigate(NavigationEvent.NavigateUp) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 14.dp),
+            modifier = Modifier.fillMaxWidth(),
         )
 
         VerificationHeader(modifier = Modifier.padding(top = 20.dp))

@@ -71,6 +71,7 @@ class ValueTalkViewModel @AssistedInject constructor(
             ValueTalkIntent.OnBackClick -> processBackClick()
             ValueTalkIntent.OnEditClick -> setEditMode()
             is ValueTalkIntent.OnUpdateClick -> updateValueTalk(intent.newValueTalks)
+            is ValueTalkIntent.OnAiSummarySaveClick -> updateAiSummaryClick(intent.newValueTalk)
         }
     }
 
@@ -89,12 +90,31 @@ class ValueTalkViewModel @AssistedInject constructor(
             .onSuccess {
                 setState {
                     copy(
-                        isAiLoading = true,
                         screenState = ValueTalkState.ScreenState.NORMAL,
-                        valueTalks = valueTalks
+                        valueTalks = valueTalks.map { it.copy(summary = "") }
                     )
                 }
             }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun updateAiSummaryClick(valueTalk: MyValueTalk) = viewModelScope.launch {
+        profileRepository.updateAiSummary(
+            profileTalkId = valueTalk.id,
+            summary = valueTalk.summary,
+        ).onSuccess {
+            setState {
+                val newValueTalks = valueTalks.map {
+                    if (it.id == valueTalk.id) valueTalk
+                    else it
+                }
+
+                copy(
+                    screenState = ValueTalkState.ScreenState.NORMAL,
+                    valueTalks = newValueTalks,
+                )
+            }
+        }
             .onFailure { errorHelper.sendError(it) }
     }
 

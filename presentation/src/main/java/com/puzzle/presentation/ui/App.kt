@@ -3,6 +3,10 @@
 package com.puzzle.presentation.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -74,7 +78,11 @@ fun App(
         },
         containerColor = PieceTheme.colors.white,
         bottomBar = {
-            AnimatedVisibility(currentDestination?.shouldHideBottomNavigation() == false) {
+            AnimatedVisibility(
+                visible = currentDestination?.shouldHideBottomNavigation() == false,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically(),
+            ) {
                 AppBottomBar(
                     currentDestination = currentDestination,
                     navigateToTopLevelDestination = navigateToTopLevelDestination,
@@ -82,7 +90,7 @@ fun App(
             }
         },
         floatingActionButton = {
-            if (currentDestination?.shouldHideBottomNavigation() == false) {
+            AnimatedVisibility(visible = currentDestination?.shouldHideBottomNavigation() == false) {
                 FloatingActionButton(
                     onClick = { navigateToTopLevelDestination(MatchingGraph) },
                     containerColor = PieceTheme.colors.white,
@@ -125,20 +133,22 @@ private fun AppBottomBar(
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             NavigationBarItem(
                 icon = {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(top = 2.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(topLevelRoute.iconDrawableId),
-                            contentDescription = topLevelRoute.contentDescription,
-                            modifier = Modifier.size(32.dp),
-                        )
+                    if (topLevelRoute != TopLevelDestination.MATCHING) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(top = 2.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(topLevelRoute.iconDrawableId),
+                                contentDescription = topLevelRoute.contentDescription,
+                                modifier = Modifier.size(32.dp),
+                            )
 
-                        Text(
-                            text = topLevelRoute.title,
-                            style = PieceTheme.typography.captionM,
-                        )
+                            Text(
+                                text = topLevelRoute.title,
+                                style = PieceTheme.typography.captionM,
+                            )
+                        }
                     }
                 },
                 alwaysShowLabel = false,
