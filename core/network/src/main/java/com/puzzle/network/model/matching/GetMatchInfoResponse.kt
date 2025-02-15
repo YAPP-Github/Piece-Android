@@ -4,7 +4,9 @@ import com.puzzle.domain.model.match.MatchInfo
 import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.model.UNKNOWN_STRING
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class GetMatchInfoResponse(
     val matchId: Int?,
     val matchStatus: String?,

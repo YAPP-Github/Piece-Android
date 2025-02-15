@@ -1,5 +1,6 @@
 package com.puzzle.data.fake.source.matching
 
+import com.puzzle.network.model.matching.GetContactsResponse
 import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
@@ -85,6 +86,10 @@ class FakeMatchingDataSource : MatchingDataSource {
             matchedValueList = listOf("음악", "여행", "독서")
         )
     )
+
+    override suspend fun getContacts(): Result<GetContactsResponse> {
+        return Result.success(GetContactsResponse())
+    }
 
     override suspend fun checkMatchingPiece(): Result<Unit> = Result.success(Unit)
 

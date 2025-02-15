@@ -31,6 +31,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
 internal fun MatchingWaitingScreen(
+    remainTime: String,
     onCheckMyProfileClick: () -> Unit,
 ) {
     Column(
@@ -62,7 +63,13 @@ internal fun MatchingWaitingScreen(
                 .background(PieceTheme.colors.white.copy(alpha = 0.1f)),
         ) {
             Text(
-                text = stringResource(R.string.matching_pending_description),
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.precious_connection_start))
+                    withStyle(style = SpanStyle(color = PieceTheme.colors.subDefault)) {
+                        append(remainTime)
+                    }
+                    append(stringResource(R.string.time_remaining))
+                },
                 style = PieceTheme.typography.bodySM,
                 color = PieceTheme.colors.light1,
                 modifier = Modifier.padding(vertical = 12.dp),
@@ -129,6 +136,7 @@ private fun PreviewMatchingWaitingScreen() {
     PieceTheme {
         MatchingWaitingScreen(
             onCheckMyProfileClick = {},
+            remainTime = " 20:20:20 "
         )
     }
 }

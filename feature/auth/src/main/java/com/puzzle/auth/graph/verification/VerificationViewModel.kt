@@ -117,7 +117,7 @@ class VerificationViewModel @AssistedInject constructor(
                 .collect { remaining ->
                     setState { copy(remainingTimeInSec = remaining) }
 
-                    if (remaining == 0) {
+                    if (remaining == 0L) {
                         setState {
                             copy(authCodeStatus = VerificationState.AuthCodeStatus.TIME_EXPIRED)
                         }

@@ -6,6 +6,8 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.profile.Contact
+import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.domain.usecase.matching.GetOpponentProfileUseCase
 import com.puzzle.matching.graph.contact.contract.ContactIntent
 import com.puzzle.matching.graph.contact.contract.ContactSideEffect
 import com.puzzle.matching.graph.contact.contract.ContactState
@@ -14,6 +16,7 @@ import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.launchIn
@@ -23,6 +26,8 @@ import kotlinx.coroutines.launch
 
 class ContactViewModel @AssistedInject constructor(
     @Assisted initialState: ContactState,
+    private val getOpponentProfileUseCase: GetOpponentProfileUseCase,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ContactState>(initialState) {
@@ -34,6 +39,37 @@ class ContactViewModel @AssistedInject constructor(
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+
+        initContactInfo()
+    }
+
+    private fun initContactInfo() = viewModelScope.launch {
+        setState { copy(isLoading = true) }
+        val opponentProfileDeferred = launch {
+            getOpponentProfileUseCase().onSuccess { response ->
+                setState { copy(nickName = response.nickname) }
+            }.onFailure {
+                errorHelper.sendError(it)
+            }
+        }
+
+        val opponentContactsDeferred = launch {
+            matchingRepository.getOpponentContacts().onSuccess { response ->
+                setState {
+                    copy(
+                        contacts = response,
+                        selectedContact = response.first()
+                    )
+                }
+            }.onFailure {
+                errorHelper.sendError(it)
+            }
+        }
+
+        opponentProfileDeferred.join()
+        opponentContactsDeferred.join()
+
+        setState { copy(isLoading = false) }
     }
 
     internal fun onIntent(intent: ContactIntent) = viewModelScope.launch {
