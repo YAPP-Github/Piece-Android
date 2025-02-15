@@ -45,28 +45,29 @@ class ContactViewModel @AssistedInject constructor(
 
     private fun initContactInfo() = viewModelScope.launch {
         setState { copy(isLoading = true) }
-
-        val opponentProfileDeferred = async { getOpponentProfileUseCase() }
-        val opponentContactsDeferred = async { matchingRepository.getOpponentContacts() }
-
-        opponentProfileDeferred.await().fold(
-            onSuccess = { response ->
+        val opponentProfileDeferred = async {
+            getOpponentProfileUseCase().onSuccess { response ->
                 setState { copy(nickName = response.nickname) }
-            },
-            onFailure = { errorHelper.sendError(it) }
-        )
+            }.onFailure {
+                errorHelper.sendError(it)
+            }
+        }
 
-        opponentContactsDeferred.await().fold(
-            onSuccess = { response ->
+        val opponentContactsDeferred = async {
+            matchingRepository.getOpponentContacts().onSuccess { response ->
                 setState {
                     copy(
                         contacts = response,
                         selectedContact = response.first()
                     )
                 }
-            },
-            onFailure = { errorHelper.sendError(it) }
-        )
+            }.onFailure {
+                errorHelper.sendError(it)
+            }
+        }
+
+        opponentProfileDeferred.await()
+        opponentContactsDeferred.await()
 
         setState { copy(isLoading = false) }
     }
