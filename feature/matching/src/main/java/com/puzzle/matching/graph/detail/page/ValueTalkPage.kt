@@ -32,7 +32,6 @@ import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.OpponentValueTalk
-import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
 
 @Composable
