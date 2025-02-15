@@ -73,11 +73,7 @@ internal fun RegisterProfileRoute(
         onDuplicationCheckClick = { viewModel.onIntent(RegisterProfileIntent.OnDuplicationCheckClick) },
         onNickNameChanged = { viewModel.onIntent(RegisterProfileIntent.OnNickNameChange(it)) },
         onDescribeMySelfChanged = {
-            viewModel.onIntent(
-                RegisterProfileIntent.OnSelfDescriptionChange(
-                    it
-                )
-            )
+            viewModel.onIntent(RegisterProfileIntent.OnSelfDescriptionChange(it))
         },
         onBirthdateChanged = { viewModel.onIntent(RegisterProfileIntent.OnBirthdateChange(it)) },
         onHeightChanged = { viewModel.onIntent(RegisterProfileIntent.OnHeightChange(it)) },
@@ -261,12 +257,15 @@ private fun RegisterProfileScreen(
                     else -> stringResource(R.string.next)
                 },
                 onClick = {
-                    onSaveClick(
-                        state.copy(
-                            valueTalks = valueTalks,
-                            valuePicks = valuePicks,
+                    when (state.currentPage) {
+                        RegisterProfileState.Page.FINISH -> onCheckMyProfileClick()
+                        else -> onSaveClick(
+                            state.copy(
+                                valueTalks = valueTalks,
+                                valuePicks = valuePicks,
+                            )
                         )
-                    )
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
