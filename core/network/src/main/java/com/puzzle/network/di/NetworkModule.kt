@@ -1,6 +1,10 @@
 package com.puzzle.network.di
 
+import com.google.firebase.Firebase
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.google.firebase.remoteconfig.remoteConfig
 import com.puzzle.network.BuildConfig.BUILD_TYPE
 import com.puzzle.network.source.auth.AuthDataSource
 import com.puzzle.network.source.auth.AuthDataSourceImpl
@@ -53,6 +57,13 @@ abstract class NetworkBindsModule {
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkProvidesModule {
+    @Singleton
+    @Provides
+    fun provideFirebaseRemoteConfig(): FirebaseRemoteConfig = Firebase.remoteConfig.apply {
+        val configSettings = remoteConfigSettings { minimumFetchIntervalInSeconds = 3600 }
+        setConfigSettingsAsync(configSettings)
+    }
+
     @Provides
     @Singleton
     fun provideFirebaseCrashlytics(): FirebaseCrashlytics =
