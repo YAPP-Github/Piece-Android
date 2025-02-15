@@ -18,9 +18,9 @@ class AuthRepositoryImpl @Inject constructor(
 ) : AuthRepository {
     override suspend fun loginOauth(
         oAuthProvider: OAuthProvider,
-        token: String
+        oauthCredential: String
     ): Result<Unit> = suspendRunCatching {
-        val response = authDataSource.loginOauth(oAuthProvider, token).getOrThrow()
+        val response = authDataSource.loginOauth(oAuthProvider, oauthCredential).getOrThrow()
 
         coroutineScope {
             val accessTokenJob = launch {

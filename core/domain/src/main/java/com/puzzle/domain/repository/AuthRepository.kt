@@ -11,7 +11,7 @@ interface AuthRepository {
 
     suspend fun loginOauth(
         oAuthProvider: OAuthProvider,
-        token: String
+        oauthCredential: String
     ): Result<Unit>
 
     suspend fun logout(): Result<Unit>
