@@ -1,6 +1,7 @@
 package com.puzzle.domain.spy.repository
 
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.OpponentProfile
 import com.puzzle.domain.repository.MatchingRepository
 
@@ -30,6 +31,10 @@ class SpyMatchingRepository : MatchingRepository {
     }
 
     override suspend fun reportUser(userId: Int, reason: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getOpponentContacts(): Result<List<Contact>> {
         TODO("Not yet implemented")
     }
 
