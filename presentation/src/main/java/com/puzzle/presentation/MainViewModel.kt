@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
+import com.puzzle.domain.model.configure.ForceUpdate
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.model.user.UserRole.NONE
@@ -11,6 +12,7 @@ import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
 import com.puzzle.domain.model.user.UserRole.USER
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
@@ -18,7 +20,6 @@ import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
-import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,12 +34,16 @@ class MainViewModel @Inject constructor(
     private val termsRepository: TermsRepository,
     private val userRepository: UserRepository,
     private val profileRepository: ProfileRepository,
+    private val configureRepository: ConfigureRepository,
     internal val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : ViewModel() {
     private val _isInitialized = MutableStateFlow(false)
     val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
+
+    private val _forceUpdate = MutableStateFlow<ForceUpdate?>(null)
+    val forceUpdate = _forceUpdate.asStateFlow()
 
     init {
         handleError()
@@ -62,13 +67,21 @@ class MainViewModel @Inject constructor(
     }
 
     private fun initConfigure() = viewModelScope.launch {
+        val forceUpdateJob = launch { checkMinVersion() }
         val loadTermsJob = launch { loadTerms() }
         val loadValuePicksJob = launch { loadValuePicks() }
         val loadValueTalksJob = launch { loadValueTalks() }
 
+        forceUpdateJob.join()
         loadTermsJob.join()
         loadValuePicksJob.join()
         loadValueTalksJob.join()
+    }
+
+    private suspend fun checkMinVersion() {
+        configureRepository.getForceUpdateMinVersion()
+            .onSuccess { _forceUpdate.value = it }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     private suspend fun loadTerms() {
