@@ -18,6 +18,6 @@ enum class ProfileStatus {
     ;
 
     companion object {
-        fun fromName(name: String): ProfileStatus = entries.find { it.name == name } ?: UNKNOWN
+        fun fromName(name: String?): ProfileStatus = entries.find { it.name == name } ?: UNKNOWN
     }
 }

@@ -16,6 +16,7 @@ import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.launchIn
@@ -45,29 +46,29 @@ class ContactViewModel @AssistedInject constructor(
     private fun initContactInfo() = viewModelScope.launch {
         setState { copy(isLoading = true) }
 
-        // TODO : 리팩토링 필요
-        getOpponentProfileUseCase().onSuccess { response ->
-            setState {
-                copy(nickName = response.nickname)
-            }
-        }.onFailure {
-            errorHelper.sendError(it)
-        }.also {
-            setState { copy(isLoading = false) }
-        }
+        val opponentProfileDeferred = async { getOpponentProfileUseCase() }
+        val opponentContactsDeferred = async { matchingRepository.getOpponentContacts() }
 
-        matchingRepository.getContacts().onSuccess { response ->
-            setState {
-                copy(
-                    contacts = response,
-                    selectedContact = response.first()
-                )
-            }
-        }.onFailure {
-            errorHelper.sendError(it)
-        }.also {
-            setState { copy(isLoading = false) }
-        }
+        opponentProfileDeferred.await().fold(
+            onSuccess = { response ->
+                setState { copy(nickName = response.nickname) }
+            },
+            onFailure = { errorHelper.sendError(it) }
+        )
+
+        opponentContactsDeferred.await().fold(
+            onSuccess = { response ->
+                setState {
+                    copy(
+                        contacts = response,
+                        selectedContact = response.first()
+                    )
+                }
+            },
+            onFailure = { errorHelper.sendError(it) }
+        )
+
+        setState { copy(isLoading = false) }
     }
 
     internal fun onIntent(intent: ContactIntent) = viewModelScope.launch {

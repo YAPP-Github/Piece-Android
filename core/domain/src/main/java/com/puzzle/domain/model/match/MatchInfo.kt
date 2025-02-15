@@ -1,5 +1,6 @@
 package com.puzzle.domain.model.match
 
+import com.puzzle.domain.model.match.MatchInfo.Companion.SECOND_IN_MILLIS
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
@@ -15,11 +16,15 @@ data class MatchInfo(
     val job: String,
     val matchedValueCount: Int,
     val matchedValueList: List<String>,
-    val remainMatchingUpdateTimeInSec: Long = System.currentTimeMillis() / 1000L,
-)
+    val remainMatchingUpdateTimeInSec: Long = System.currentTimeMillis() / SECOND_IN_MILLIS,
+) {
+    companion object {
+        const val SECOND_IN_MILLIS: Long = 1000L
+    }
+}
 
 fun getRemainingTimeInSec(startTimeInSec: Long): Long {
-    val startTimeInMillis = startTimeInSec * 1000
+    val startTimeInMillis = startTimeInSec * SECOND_IN_MILLIS
     val zoneId = ZoneId.systemDefault()
     val now = ZonedDateTime.ofInstant(Instant.ofEpochMilli(startTimeInMillis), zoneId)
     val today10PM = now.withHour(22).withMinute(0).withSecond(0).withNano(0)

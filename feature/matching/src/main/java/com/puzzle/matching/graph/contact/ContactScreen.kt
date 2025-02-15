@@ -135,14 +135,6 @@ private fun ContactBody(nickName: String) {
         color = PieceTheme.colors.dark1,
         modifier = Modifier.padding(top = 8.dp),
     )
-
-    Image(
-        painter = painterResource(R.drawable.ic_textinput_check),
-        contentDescription = null,
-        modifier = Modifier
-            .size(300.dp)
-            .padding(top = 48.dp),
-    )
 }
 
 @Composable

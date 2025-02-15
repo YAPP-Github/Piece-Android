@@ -33,8 +33,11 @@ class MatchingRepositoryImpl @Inject constructor(
     override suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit> =
         matchingDataSource.blockContacts(phoneNumbers)
 
-    override suspend fun getContacts(): Result<List<Contact>> =
-        matchingDataSource.getContacts().mapCatching { it.contacts.map(ContactResponse::toDomain) }
+    override suspend fun getOpponentContacts(): Result<List<Contact>> =
+        matchingDataSource.getContacts()
+            .mapCatching { response ->
+                response.contacts.orEmpty().map(ContactResponse::toDomain)
+            }
 
     override suspend fun getMatchInfo(): Result<MatchInfo> =
         matchingDataSource.getMatchInfo().mapCatching(GetMatchInfoResponse::toDomain)

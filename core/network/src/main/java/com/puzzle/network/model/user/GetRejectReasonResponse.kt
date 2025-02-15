@@ -6,13 +6,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetRejectReasonResponse(
-    val profileStatus: String,
-    val reasonImage: Boolean,
-    val reasonValues: Boolean,
+    val profileStatus: String?,
+    val reasonImage: Boolean?,
+    val reasonValues: Boolean?,
 ) {
     fun toDomain(): RejectReason = RejectReason(
         profileStatus = ProfileStatus.fromName(profileStatus),
-        reasonImage = reasonImage,
-        reasonValues = reasonValues,
+        reasonImage = reasonImage ?: false,
+        reasonValues = reasonValues ?: false,
     )
 }

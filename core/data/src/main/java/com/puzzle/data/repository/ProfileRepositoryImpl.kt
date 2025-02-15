@@ -39,14 +39,18 @@ class ProfileRepositoryImpl @Inject constructor(
         sseClient.aiSummaryResponse.map(SseAiSummaryResponse::toDomain)
 
     override suspend fun loadValuePickQuestions(): Result<Unit> = suspendRunCatching {
-        val valuePickQuestions = profileDataSource.loadValuePickQuestions().getOrThrow().toDomain()
+        val valuePickQuestions = profileDataSource.loadValuePickQuestions()
+            .getOrThrow()
+            .toDomain()
             .filter { it.id != UNKNOWN_INT }
 
         localProfileDataSource.setValuePickQuestions(valuePickQuestions)
     }
 
     override suspend fun loadValueTalkQuestions(): Result<Unit> = suspendRunCatching {
-        val valueTalkQuestions = profileDataSource.loadValueTalkQuestions().getOrThrow().toDomain()
+        val valueTalkQuestions = profileDataSource.loadValueTalkQuestions()
+            .getOrThrow()
+            .toDomain()
             .filter { it.id != UNKNOWN_INT }
 
         localProfileDataSource.setValueTalkQuestions(valueTalkQuestions)
@@ -59,7 +63,7 @@ class ProfileRepositoryImpl @Inject constructor(
         suspendRunCatching { localProfileDataSource.valueTalkQuestions.first() }
 
     override suspend fun retrieveMyProfileBasic(): Result<MyProfileBasic> = suspendRunCatching {
-        localProfileDataSource.myProfileBasic.firstOrNull() ?: throw Exception()
+        localProfileDataSource.myProfileBasic.first()
     }
 
     override suspend fun loadMyValueTalks(): Result<Unit> = suspendRunCatching {
@@ -69,7 +73,7 @@ class ProfileRepositoryImpl @Inject constructor(
     }
 
     override suspend fun retrieveMyValueTalks(): Result<List<MyValueTalk>> = suspendRunCatching {
-        localProfileDataSource.myValueTalks.firstOrNull() ?: throw Exception()
+        localProfileDataSource.myValueTalks.first()
     }
 
     override suspend fun loadMyValuePicks(): Result<Unit> = suspendRunCatching {
@@ -80,7 +84,7 @@ class ProfileRepositoryImpl @Inject constructor(
 
     override suspend fun retrieveMyValuePicks(): Result<List<MyValuePick>> =
         suspendRunCatching {
-            localProfileDataSource.myValuePicks.firstOrNull() ?: throw Exception()
+            localProfileDataSource.myValuePicks.first()
         }
 
     override suspend fun loadMyProfileBasic(): Result<Unit> = suspendRunCatching {

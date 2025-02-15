@@ -20,9 +20,14 @@ data class MatchingState(
     } ?: ""
 
     private fun formatSecondsToTimeString(totalSeconds: Long): String {
-        val hours = totalSeconds / 3600
-        val minutes = (totalSeconds % 3600) / 60
-        val seconds = totalSeconds % 60
+        val hours = totalSeconds / HOUR_IN_SEC
+        val minutes = (totalSeconds % HOUR_IN_SEC) / MINUTE_IN_SEC
+        val seconds = totalSeconds % MINUTE_IN_SEC
         return String.format(Locale.KOREA, " %02d:%02d:%02d ", hours, minutes, seconds)
+    }
+
+    companion object {
+        const val HOUR_IN_SEC = 3600
+        const val MINUTE_IN_SEC = 60
     }
 }

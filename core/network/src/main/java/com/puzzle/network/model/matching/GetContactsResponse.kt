@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetContactsResponse(
-    val contacts: List<ContactResponse>,
+    val contacts: List<ContactResponse>? = null,
 )
