@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.usecase.profile.GetMyProfileBasicUseCase
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 
 class MainProfileViewModel @AssistedInject constructor(
     @Assisted initialState: MainProfileState,
+    private val configureRepository: ConfigureRepository,
     private val getMyProfileBasicUseCase: GetMyProfileBasicUseCase,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
@@ -42,6 +44,12 @@ class MainProfileViewModel @AssistedInject constructor(
     }
 
     private fun initMainProfile() = viewModelScope.launch {
+        launch {
+            configureRepository.isNotificationEnabled()
+                .onSuccess { setState { copy(isNotificationEnabled = it) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
         getMyProfileBasicUseCase().onSuccess {
             setState {
                 copy(

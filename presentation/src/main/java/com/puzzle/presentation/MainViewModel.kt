@@ -72,6 +72,9 @@ class MainViewModel @Inject constructor(
         val loadValuePicksJob = launch { loadValuePicks() }
         val loadValueTalksJob = launch { loadValueTalks() }
 
+        // 케싱시키려고 호출만 해놓습니다.
+        launch { configureRepository.isNotificationEnabled() }
+
         forceUpdateJob.join()
         loadTermsJob.join()
         loadValuePicksJob.join()

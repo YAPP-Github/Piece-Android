@@ -151,12 +151,14 @@ private fun SettingScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
         ) {
-            NotificationBody(
-                isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
-                isPushNotificationEnabled = state.isPushNotificationEnabled,
-                onMatchingNotificationCheckedChange = onUpdateMatchNotification,
-                onPushNotificationCheckedChange = onUpdatePushNotification,
-            )
+            if (state.isNotificationEnabled) {
+                NotificationBody(
+                    isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
+                    isPushNotificationEnabled = state.isPushNotificationEnabled,
+                    onMatchingNotificationCheckedChange = onUpdateMatchNotification,
+                    onPushNotificationCheckedChange = onUpdatePushNotification,
+                )
+            }
 
             SystemSettingBody(
                 isContactBlocked = state.isContactBlocked,
