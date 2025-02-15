@@ -25,7 +25,7 @@ data class MatchInfo(
 
 fun getRemainingTimeInSec(startTimeInSec: Long): Long {
     val startTimeInMillis = startTimeInSec * SECOND_IN_MILLIS
-    val zoneId = ZoneId.systemDefault()
+    val zoneId = ZoneId.of("Asia/Seoul")
     val now = ZonedDateTime.ofInstant(Instant.ofEpochMilli(startTimeInMillis), zoneId)
     val today10PM = now.withHour(22).withMinute(0).withSecond(0).withNano(0)
     val targetTime = if (now.isBefore(today10PM)) today10PM else today10PM.plusDays(1)
