@@ -5,6 +5,7 @@ import com.puzzle.network.BuildConfig
 import com.puzzle.network.adapter.PieceCallAdapterFactory
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.api.sse.SseClient
+import com.puzzle.network.api.sse.SseClientImpl
 import com.puzzle.network.api.sse.SseEventHandler
 import com.puzzle.network.authenticator.PieceAuthenticator
 import com.puzzle.network.interceptor.PieceInterceptor
@@ -76,5 +77,5 @@ object RetrofitModule {
     fun providesSseClient(
         sseEventHandler: SseEventHandler,
         tokenManager: TokenManager,
-    ): SseClient = SseClient(sseEventHandler, tokenManager)
+    ): SseClient = SseClientImpl(sseEventHandler, tokenManager)
 }

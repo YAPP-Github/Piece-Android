@@ -1,5 +1,6 @@
 package com.puzzle.data.repository
 
+import com.puzzle.data.fake.FakeSseClient
 import com.puzzle.data.fake.source.profile.FakeLocalProfileDataSource
 import com.puzzle.data.fake.source.profile.FakeProfileDataSource
 import com.puzzle.data.fake.source.token.FakeLocalTokenDataSource
@@ -9,6 +10,7 @@ import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.domain.model.profile.MyValueTalk
+import com.puzzle.network.api.sse.SseClient
 import com.puzzle.network.model.profile.ValueTalkResponse
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -24,6 +26,7 @@ class ProfileRepositoryImplTest {
     private lateinit var localUserDataSource: FakeLocalUserDataSource
     private lateinit var profileRepository: ProfileRepositoryImpl
     private lateinit var imageResizer: SpyImageResizer
+    private lateinit var sseClient: SseClient
 
     @BeforeEach
     fun setUp() {
@@ -32,12 +35,14 @@ class ProfileRepositoryImplTest {
         localTokenDataSource = FakeLocalTokenDataSource()
         localUserDataSource = FakeLocalUserDataSource()
         imageResizer = SpyImageResizer()
+        sseClient = FakeSseClient()
         profileRepository = ProfileRepositoryImpl(
             profileDataSource = profileDataSource,
             localProfileDataSource = localProfileDataSource,
             localUserDataSource = localUserDataSource,
             localTokenDataSource = localTokenDataSource,
             imageResizer = imageResizer,
+            sseClient = sseClient,
         )
     }
 
