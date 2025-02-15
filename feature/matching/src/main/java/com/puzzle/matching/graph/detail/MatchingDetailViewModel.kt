@@ -41,11 +41,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private val matchUserId = 0 // Todo 임시
 
     init {
-        initMatchDetailInfo()
-
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+
+        initMatchDetailInfo()
     }
 
     private fun initMatchDetailInfo() = viewModelScope.launch {

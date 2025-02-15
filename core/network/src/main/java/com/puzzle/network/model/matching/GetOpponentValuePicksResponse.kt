@@ -21,9 +21,9 @@ data class GetOpponentValuePicksResponse(
 data class OpponentValuePickResponse(
     val category: String?,
     val question: String?,
-    @SerialName("sameWithMe") val isSameWithMe: Boolean?,
-    @SerialName("answer") val answerOptions: List<ValuePickAnswerResponse>?,
-    @SerialName("answerNumber") val selectedAnswer: Int?,
+    @SerialName("isSameWithMe") val isSameWithMe: Boolean?,
+    @SerialName("answers") val answerOptions: List<ValuePickAnswerResponse>?,
+    @SerialName("selectedAnswer") val selectedAnswer: Int?,
 ) {
     fun toDomain() = OpponentValuePick(
         category = category ?: UNKNOWN_STRING,

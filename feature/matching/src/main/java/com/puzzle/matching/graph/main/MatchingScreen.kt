@@ -10,9 +10,11 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.match.MatchStatus.WAITING
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.matching.graph.main.contract.MatchingIntent
+import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.matching.graph.main.page.MatchingLoadingScreen
 import com.puzzle.matching.graph.main.page.MatchingPendingScreen
@@ -31,6 +33,11 @@ internal fun MatchingRoute(
     LaunchedEffect(viewModel) {
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is MatchingSideEffect.Navigate -> {
+                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
+                    }
+                }
             }
         }
 
@@ -70,20 +77,27 @@ internal fun MatchingScreen(
         )
 
         UserRole.USER -> {
-            if (state.matchInfo?.matchStatus == WAITING) {
+            if (state.matchInfo == null) {
                 MatchingWaitingScreen(
                     isNotificationEnabled = state.isNotificationEnabled,
                     onCheckMyProfileClick = {},
+                    remainTime = state.formattedRemainWaitingTime,
                 )
             } else {
-                state.matchInfo?.let {
-                    MatchingUserScreen(
-                        isNotificationEnabled = state.isNotificationEnabled,
+                when (state.matchInfo.matchStatus) {
+                    MatchStatus.UNKNOWN -> MatchingLoadingScreen()
+                    MatchStatus.BLOCKED -> MatchingWaitingScreen(
+                        onCheckMyProfileClick = {},
+                        remainTime = state.formattedRemainWaitingTime
+                    )
+
+                    else -> MatchingUserScreen(
                         matchInfo = state.matchInfo,
+                        remainTime = state.formattedRemainMatchingStartTime,
                         onButtonClick = onButtonClick,
                         onMatchingDetailClick = onMatchingDetailClick,
                     )
-                } ?: MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
+                }
             }
         }
 
@@ -112,6 +126,7 @@ private fun PreviewMatchingWaitingScreen() {
         MatchingWaitingScreen(
             isNotificationEnabled = true,
             onCheckMyProfileClick = {},
+            remainTime = " 00:00:00 ",
         )
     }
 }
@@ -143,14 +158,11 @@ private fun PreviewMatchingUserScreen() {
                     "바깥 데이트 스킨십도 가능",
                     "함께 술을 즐기고 싶어요",
                     "커밍아웃은 가까운 친구에게만 했어요",
-                    "바깥 데이트 스킨십도 가능",
-                    "함께 술을 즐기고 싶어요",
-                    "커밍아웃은 가까운 친구에게만 했어요",
-                    "바깥 데이트 스킨십도 가능",
-                )
+                ),
             ),
             onButtonClick = {},
             onMatchingDetailClick = {},
+            remainTime = " 00:00:00 ",
         )
     }
 }

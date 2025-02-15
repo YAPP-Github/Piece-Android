@@ -14,8 +14,8 @@ data class MyProfileBasic(
     val imageUrl: String,
     val contacts: List<Contact>,
 ) {
-    fun isSmoke(): Boolean = if (smokingStatus == "흡연") true else false
-    fun isSnsActive(): Boolean = if (snsActivityLevel == "활동") true else false
+    fun isSmoke(): Boolean = smokingStatus == "흡연"
+    fun isSnsActive(): Boolean = snsActivityLevel == "활동"
 }
 
 data class MyValuePick(
