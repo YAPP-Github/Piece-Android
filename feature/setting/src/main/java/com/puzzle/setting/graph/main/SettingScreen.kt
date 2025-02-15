@@ -37,9 +37,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
+import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -187,7 +193,7 @@ private fun SettingScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable { onWithdrawClick() },
+                    .throttledClickable(2000L)  { onWithdrawClick() },
             )
         }
     }
@@ -396,7 +402,7 @@ private fun SystemSettingBody(
                 LottieAnimation(
                     composition = composition,
                     progress = { progress },
-                    modifier = Modifier.size(300.dp)
+                    modifier = Modifier.size(24.dp)
                 )
             } else {
                 Image(
@@ -404,7 +410,7 @@ private fun SystemSettingBody(
                     contentDescription = "초기화",
                     modifier = Modifier
                         .padding(start = 11.dp)
-                        .clickable { onRefreshClick() },
+                        .throttledClickable(2000L) { onRefreshClick() },
                 )
             }
         }

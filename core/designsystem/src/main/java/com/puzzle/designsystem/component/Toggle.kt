@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.puzzle.common.ui.clickable
+import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
@@ -51,7 +52,7 @@ fun PieceToggle(
             .size(width = 34.dp, height = 20.dp)
             .clip(RoundedCornerShape(999.dp))
             .background(if (checked) PieceTheme.colors.primaryDefault else PieceTheme.colors.light1)
-            .clickable { onCheckedChange() }
+            .throttledClickable(2000L) { onCheckedChange() }
     ) {
         Box(
             modifier = Modifier
