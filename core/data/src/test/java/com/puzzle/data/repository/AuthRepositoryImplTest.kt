@@ -57,7 +57,21 @@ class AuthRepositoryImplTest {
         authRepository.loginOauth(OAuthProvider.KAKAO, "OAuthClientToken")
 
         // when
-        val result = authRepository.logout()
+        authRepository.logout()
+
+        // then
+        assertTrue(localTokenDataSource.accessToken.first().isEmpty())
+        assertTrue(localTokenDataSource.refreshToken.first().isEmpty())
+        assertTrue(localUserDataSource.userRole.first().isEmpty())
+    }
+
+    @Test
+    fun `회원탈퇴를 할 경우 로컬에 저장된 유저 데이터를 모두 제거한다`() = runTest {
+        // given
+        authRepository.loginOauth(OAuthProvider.KAKAO, "OAuthClientToken")
+
+        // when
+        authRepository.withdraw("")
 
         // then
         assertTrue(localTokenDataSource.accessToken.first().isEmpty())

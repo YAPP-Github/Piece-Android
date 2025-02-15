@@ -57,6 +57,7 @@ internal fun WithdrawRoute(
         onReasonsClick = {
             viewModel.onIntent(WithdrawIntent.OnReasonsClick(it))
         },
+        updateReason = { viewModel.onIntent(WithdrawIntent.UpdateReason(it)) },
         onWithdrawClick = {
             viewModel.onIntent(WithdrawIntent.OnWithdrawClick)
         },
@@ -73,6 +74,7 @@ internal fun WithdrawRoute(
 private fun WithdrawScreen(
     state: WithdrawState,
     onReasonsClick: (WithdrawState.WithdrawReason) -> Unit,
+    updateReason: (String) -> Unit,
     onWithdrawClick: () -> Unit,
     onNextClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -110,7 +112,9 @@ private fun WithdrawScreen(
             when (it) {
                 WithdrawState.WithdrawPage.REASON -> ReasonPage(
                     selectedReason = state.selectedReason,
+                    reason = state.reason,
                     onReasonsClick = onReasonsClick,
+                    updateReason = updateReason,
                     onNextClick = onNextClick,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -141,6 +145,7 @@ private fun PreviewSettingScreen() {
             onWithdrawClick = {},
             onNextClick = {},
             onBackClick = {},
+            updateReason = {},
         )
     }
 }

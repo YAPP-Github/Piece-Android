@@ -30,4 +30,8 @@ class FakeAuthDataSource : AuthDataSource {
     override suspend fun checkTokenHealth(token: String): Result<Unit> {
         return Result.success(Unit)
     }
+
+    override suspend fun withdraw(reason: String): Result<Unit> {
+        return Result.success(Unit)
+    }
 }

@@ -5,6 +5,7 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 
 class WithdrawViewModel @AssistedInject constructor(
     @Assisted initialState: WithdrawState,
+    private val authRepository: AuthRepository,
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<WithdrawState>(initialState) {
@@ -44,10 +46,15 @@ class WithdrawViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: WithdrawIntent) {
         when (intent) {
             is WithdrawIntent.OnReasonsClick -> selectReason(intent.withdrawReason)
+            is WithdrawIntent.UpdateReason -> updateReason(intent.reason)
             WithdrawIntent.OnNextClick -> moveToWithdrawPage()
             WithdrawIntent.OnWithdrawClick -> withdraw()
             WithdrawIntent.onBackClick -> moveToPreviousScreen()
         }
+    }
+
+    private fun updateReason(reason: String) {
+        setState { copy(reason = reason) }
     }
 
     private suspend fun moveToPreviousScreen() {
@@ -60,8 +67,20 @@ class WithdrawViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun withdraw() {
-        _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)))
+    private fun withdraw() = withState { state ->
+        viewModelScope.launch {
+            val reason = when (state.selectedReason) {
+                WithdrawState.WithdrawReason.Other -> state.reason
+                else -> state.selectedReason?.label ?: ""
+            }
+
+            authRepository.withdraw(reason)
+                .onSuccess {
+                    _sideEffects.send(
+                        WithdrawSideEffect.Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph))
+                    )
+                }.onFailure { errorHelper.sendError(it) }
+        }
     }
 
     private fun selectReason(reason: WithdrawState.WithdrawReason) {
