@@ -195,4 +195,7 @@ class ProfileRepositoryImpl @Inject constructor(
             userRoleJob.join()
         }
     }
+
+    override suspend fun connectSSE(): Result<Unit> = profileDataSource.connectSSE()
+    override suspend fun disconnectSSE(): Result<Unit> = profileDataSource.disconnectSSE()
 }

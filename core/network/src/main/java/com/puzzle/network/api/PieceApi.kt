@@ -27,6 +27,7 @@ import com.puzzle.network.model.terms.AgreeTermsRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
+import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
@@ -137,4 +138,7 @@ interface PieceApi {
 
     @PUT("/api/settings/block/acquaintance")
     suspend fun updateBlockAcquaintances(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @GET("/api/settings/blocks/contacts/sync-time")
+    suspend fun getBlockSyncTime(): Result<ApiResponse<GetBlockSyncTimeResponse>>
 }

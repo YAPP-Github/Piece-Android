@@ -6,6 +6,7 @@ import com.puzzle.domain.model.profile.MyValueTalk
 data class ValueTalkState(
     var screenState: ScreenState = ScreenState.NORMAL,
     val valueTalks: List<MyValueTalk> = emptyList(),
+    val isAiLoading: Boolean = false,
 ) : MavericksState {
 
     companion object {

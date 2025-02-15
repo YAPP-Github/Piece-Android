@@ -4,6 +4,7 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
+import com.puzzle.common.toBlockSyncFormattedTime
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.domain.repository.UserRepository
@@ -47,17 +48,25 @@ class SettingViewModel @AssistedInject constructor(
     }
 
     private fun initSetting() = viewModelScope.launch {
-        userRepository.getUserSettingInfo()
-            .onSuccess {
-                setState {
-                    copy(
-                        isContactBlocked = it.isAcquaintanceBlockEnabled,
-                        isPushNotificationEnabled = it.isNotificationEnabled,
-                        isMatchingNotificationEnabled = it.isMatchNotificationEnabled,
-                    )
+        launch {
+            userRepository.getUserSettingInfo()
+                .onSuccess {
+                    setState {
+                        copy(
+                            isContactBlocked = it.isAcquaintanceBlockEnabled,
+                            isPushNotificationEnabled = it.isNotificationEnabled,
+                            isMatchingNotificationEnabled = it.isMatchNotificationEnabled,
+                        )
+                    }
                 }
-            }
-            .onFailure { errorHelper.sendError(it) }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        launch {
+            userRepository.getBlockSyncTime()
+                .onSuccess { setState { copy(lastRefreshTime = it.toBlockSyncFormattedTime()) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
     }
 
     internal fun setAppVersion(version: String) = setState {

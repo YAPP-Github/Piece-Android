@@ -57,4 +57,7 @@ interface ProfileRepository {
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>,
     ): Result<Unit>
+
+    suspend fun connectSSE(): Result<Unit>
+    suspend fun disconnectSSE(): Result<Unit>
 }

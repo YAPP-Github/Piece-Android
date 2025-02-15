@@ -55,4 +55,7 @@ interface ProfileDataSource {
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>,
     ): Result<UploadProfileResponse>
+
+    suspend fun connectSSE(): Result<Unit>
+    suspend fun disconnectSSE(): Result<Unit>
 }

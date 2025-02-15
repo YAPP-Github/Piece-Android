@@ -43,8 +43,7 @@ class MainViewModel @Inject constructor(
     init {
         handleError()
         initConfigure()
-//        checkRedirection()
-        _isInitialized.value = true
+        checkRedirection()
     }
 
     private fun handleError() = viewModelScope.launch {

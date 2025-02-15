@@ -141,6 +141,14 @@ class FakeProfileDataSource : ProfileDataSource {
         )
     )
 
+    override suspend fun connectSSE(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun disconnectSSE(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     fun setValuePicks(picks: List<ValuePickResponse>) {
         valuePicks = picks
     }

@@ -2,6 +2,7 @@ package com.puzzle.network.source.user
 
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.model.unwrapData
+import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import javax.inject.Inject
@@ -20,4 +21,7 @@ class UserDataSource @Inject constructor(
 
     suspend fun updateBlockAcquaintances(toggle: Boolean): Result<Unit> =
         pieceApi.updateBlockAcquaintances(UpdateSettingRequest(toggle)).unwrapData()
+
+    suspend fun getBlockSyncTime(): Result<GetBlockSyncTimeResponse> =
+        pieceApi.getBlockSyncTime().unwrapData()
 }
