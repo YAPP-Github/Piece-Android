@@ -151,5 +151,5 @@ interface PieceApi {
     suspend fun getBlockSyncTime(): Result<ApiResponse<GetBlockSyncTimeResponse>>
 
     @DELETE("/api/sse/personal/disconnect")
-    suspend fun disconnectSSE(): Result<Unit>
+    suspend fun disconnectSSE(): Result<ApiResponse<Unit>>
 }

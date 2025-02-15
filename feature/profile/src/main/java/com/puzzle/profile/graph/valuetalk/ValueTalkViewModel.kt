@@ -44,16 +44,28 @@ class ValueTalkViewModel @AssistedInject constructor(
         getMyValueTalksUseCase().onSuccess {
             setState { copy(valueTalks = it) }
         }.onFailure { errorHelper.sendError(it) }
+
+        profileRepository.aiSummary
+            .collect { response ->
+                setState {
+                    copy(
+                        valueTalks = valueTalks.map { valueTalk ->
+                            if (valueTalk.id == response.id) valueTalk.copy(summary = response.summary)
+                            else valueTalk
+                        }.toList()
+                    )
+                }
+            }
     }
 
-    internal fun connectSse(){
+    internal fun connectSse() {
         viewModelScope.launch {
             profileRepository.connectSSE()
                 .onFailure { errorHelper.sendError(it) }
         }
     }
 
-    internal fun disconnectSse(){
+    internal fun disconnectSse() {
         viewModelScope.launch {
             profileRepository.disconnectSSE()
                 .onFailure { errorHelper.sendError(it) }

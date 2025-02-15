@@ -61,6 +61,5 @@ interface ProfileDataSource {
         valueTalks: List<ValueTalkAnswer>,
     ): Result<UploadProfileResponse>
 
-    suspend fun connectSSE(): Result<Unit>
     suspend fun disconnectSSE(): Result<Unit>
 }

@@ -16,8 +16,8 @@ import com.puzzle.network.source.profile.ProfileDataSource
 import com.puzzle.network.source.profile.ProfileDataSourceImpl
 import com.puzzle.network.source.term.TermDataSource
 import com.puzzle.network.source.term.TermDataSourceImpl
-import com.puzzle.network.sse.SseClient
-import com.puzzle.network.sse.SseEventHandler
+import com.puzzle.network.api.sse.SseClient
+import com.puzzle.network.api.sse.SseEventHandler
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

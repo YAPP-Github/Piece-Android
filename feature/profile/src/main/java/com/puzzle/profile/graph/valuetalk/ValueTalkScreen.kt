@@ -189,7 +189,10 @@ private fun ValueTalkCards(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        itemsIndexed(valueTalks) { idx, item ->
+        itemsIndexed(
+            items = valueTalks,
+            key = { _, item -> item.id to item.summary },
+        ) { idx, item ->
             ValueTalkCard(
                 item = item,
                 screenState = screenState,

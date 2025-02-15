@@ -23,7 +23,6 @@ import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.profile.ValuePickAnswerRequest
 import com.puzzle.network.model.profile.ValueTalkAnswerRequest
 import com.puzzle.network.model.unwrapData
-import com.puzzle.network.sse.SseClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -35,7 +34,6 @@ import javax.inject.Singleton
 @Singleton
 class ProfileDataSourceImpl @Inject constructor(
     private val pieceApi: PieceApi,
-    private val sseClient: SseClient,
 ) : ProfileDataSource {
     override suspend fun loadValuePickQuestions(): Result<LoadValuePickQuestionsResponse> =
         pieceApi.loadValuePickQuestions().unwrapData()
@@ -181,8 +179,7 @@ class ProfileDataSourceImpl @Inject constructor(
         )
     ).unwrapData()
 
-    override suspend fun connectSSE(): Result<Unit> = sseClient.connect()
-    override suspend fun disconnectSSE(): Result<Unit> = sseClient.disconnect()
+    override suspend fun disconnectSSE(): Result<Unit> = pieceApi.disconnectSSE().unwrapData()
 
     companion object {
         private const val WEBP_MEDIA_TYPE = "image/webp"

@@ -1,18 +1,23 @@
-package com.puzzle.network.sse
+package com.puzzle.network.api.sse
 
 import android.util.Log
 import com.launchdarkly.eventsource.MessageEvent
 import com.launchdarkly.eventsource.background.BackgroundEventHandler
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.network.model.profile.SseAiSummaryResponse
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class SseEventHandler @Inject constructor(
     private val errorHelper: ErrorHelper,
+    private val json: Json,
 ) : BackgroundEventHandler {
-    private val _sseChannel = Channel<String>(BUFFERED)
+    private val _sseChannel = Channel<SseAiSummaryResponse>(BUFFERED)
     val sseChannel = _sseChannel.receiveAsFlow()
 
     override fun onOpen() {
@@ -24,9 +29,6 @@ class SseEventHandler @Inject constructor(
     }
 
     override fun onMessage(event: String, messageEvent: MessageEvent) {
-        val messageData = messageEvent.data
-        Log.e("SSE", "Received data: $messageData")
-
         val eventId = messageEvent.lastEventId
         val eventType = messageEvent.eventName
         val eventData = messageEvent.data
@@ -35,14 +37,16 @@ class SseEventHandler @Inject constructor(
         Log.d("SseEventHandler", "Event Type: $eventType")
         Log.d("SseEventHandler", "Event Data: $eventData")
 
-        val comment = if (eventData.contains(":")) {
-            messageEvent.data.split(":").map { it }.last()
-        } else {
-            eventData
-        }
-
         when (eventType) {
-            SseEventType.PROFILE_TALK_SUMMARY_MESSAGE.name -> {}
+            SseEventType.PROFILE_TALK_SUMMARY_MESSAGE.name -> {
+                try {
+                    val response = json.decodeFromString<SseAiSummaryResponse>(eventData)
+                    _sseChannel.trySend(response)
+                } catch (e: SerializationException) {
+                    runBlocking { errorHelper.sendError(e) }
+                }
+            }
+
             else -> Unit
         }
     }

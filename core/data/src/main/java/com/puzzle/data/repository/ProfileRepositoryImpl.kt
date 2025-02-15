@@ -5,6 +5,7 @@ import com.puzzle.data.image.ImageResizer
 import com.puzzle.datastore.datasource.profile.LocalProfileDataSource
 import com.puzzle.datastore.datasource.token.LocalTokenDataSource
 import com.puzzle.datastore.datasource.user.LocalUserDataSource
+import com.puzzle.domain.model.profile.AiSummary
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.domain.model.profile.MyValuePick
@@ -14,10 +15,14 @@ import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.domain.repository.ProfileRepository
+import com.puzzle.network.api.sse.SseClient
 import com.puzzle.network.model.UNKNOWN_INT
+import com.puzzle.network.model.profile.SseAiSummaryResponse
 import com.puzzle.network.source.profile.ProfileDataSource
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,7 +32,11 @@ class ProfileRepositoryImpl @Inject constructor(
     private val localProfileDataSource: LocalProfileDataSource,
     private val localTokenDataSource: LocalTokenDataSource,
     private val localUserDataSource: LocalUserDataSource,
+    private val sseClient: SseClient,
 ) : ProfileRepository {
+    override val aiSummary: Flow<AiSummary> =
+        sseClient.aiSummaryResponse.map(SseAiSummaryResponse::toDomain)
+
     override suspend fun loadValuePickQuestions(): Result<Unit> = suspendRunCatching {
         val valuePickQuestions = profileDataSource.loadValuePickQuestions()
             .getOrThrow()
@@ -212,6 +221,9 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun connectSSE(): Result<Unit> = profileDataSource.connectSSE()
-    override suspend fun disconnectSSE(): Result<Unit> = profileDataSource.disconnectSSE()
+    override suspend fun connectSSE(): Result<Unit> = suspendRunCatching { sseClient.connect() }
+    override suspend fun disconnectSSE(): Result<Unit> = suspendRunCatching {
+        profileDataSource.disconnectSSE().getOrThrow()
+        sseClient.disconnect()
+    }
 }
