@@ -83,11 +83,13 @@ private fun MainProfileScreen(
             title = stringResource(R.string.main_profile_topbar_title),
             textStyle = PieceTheme.typography.branding,
             rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_alarm_black),
-                    contentDescription = "알람",
-                    modifier = Modifier.size(32.dp),
-                )
+                if (state.isNotificationEnabled) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_alarm_black),
+                        contentDescription = "알람",
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
             },
             modifier = Modifier.padding(horizontal = 20.dp),
         )

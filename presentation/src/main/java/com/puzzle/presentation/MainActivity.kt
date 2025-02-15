@@ -11,7 +11,6 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,6 +18,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -30,7 +30,9 @@ import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.presentation.network.NetworkMonitor
+import com.puzzle.presentation.network.NetworkScreen
 import com.puzzle.presentation.ui.App
+import com.puzzle.presentation.update.ForceUpdateDialog
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -55,17 +57,16 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             viewModel.apply {
+                val networkState by networkMonitor.networkState.collectAsStateWithLifecycle()
+                val forceUpdate by viewModel.forceUpdate.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
                 val snackBarHostState = remember { SnackbarHostState() }
-
                 var bottomSheetContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
                 val scope = rememberCoroutineScope()
                 val sheetState = rememberModalBottomSheetState(
                     initialValue = ModalBottomSheetValue.Hidden,
                     skipHalfExpanded = true,
                 )
-
-                val networkState by networkMonitor.networkState.collectAsState()
 
                 LaunchedEffect(Unit) {
                     repeatOnStarted {
@@ -113,7 +114,6 @@ class MainActivity : ComponentActivity() {
                     ) {
                         App(
                             snackBarHostState = snackBarHostState,
-                            networkState = networkState,
                             navController = navController,
                             navigateToTopLevelDestination = { topLevelDestination ->
                                 navigationHelper.navigate(
@@ -121,6 +121,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         )
+
+                        NetworkScreen(networkState)
+                        ForceUpdateDialog(forceUpdate)
                     }
                 }
             }

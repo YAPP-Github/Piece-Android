@@ -226,4 +226,9 @@
     <string name="finish_register_profile_header">프로필 생성을 마쳤습니다!</string>
     <string name="finish_register_profile_sub_header">작성 후 24시간 이내에 심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.</string>
     <string name="finish_register_profile_tohome">홈으로</string>
+
+    <!--Update-->
+    <string name="update_app">앱 업데이트하기</string>
+    <string name="update_title">Piece가 새로운 버전으로\n업데이트되었어요!</string>
+    <string name="update_subtext">여러분의 의견을 반영하여 사용성을 개선했습니다.\n지금 바로 업데이트해 보세요!</string>
 </resources>

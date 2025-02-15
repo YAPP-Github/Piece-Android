@@ -49,6 +49,7 @@ import com.puzzle.domain.model.match.MatchStatus.WAITING
 
 @Composable
 internal fun MatchingUserScreen(
+    isNotificationEnabled: Boolean,
     matchInfo: MatchInfo,
     remainTime: String,
     onButtonClick: () -> Unit,
@@ -67,12 +68,14 @@ internal fun MatchingUserScreen(
             textStyle = PieceTheme.typography.branding,
             titleColor = PieceTheme.colors.white,
             rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_alarm_black),
-                    contentDescription = "알람",
-                    colorFilter = ColorFilter.tint(PieceTheme.colors.white),
-                    modifier = Modifier.size(32.dp),
-                )
+                if (isNotificationEnabled) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_alarm_black),
+                        contentDescription = "알람",
+                        colorFilter = ColorFilter.tint(PieceTheme.colors.white),
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
             },
             modifier = Modifier.padding(bottom = 20.dp),
         )
@@ -324,6 +327,7 @@ private fun ValueTag(value: String) {
 private fun PreviewMatchingUserScreen() {
     PieceTheme {
         MatchingUserScreen(
+            isNotificationEnabled = true,
             matchInfo = MatchInfo(
                 matchId = 1,
                 matchStatus = WAITING,
@@ -351,6 +355,7 @@ private fun PreviewMatchingUserScreen() {
 private fun PreviewMatchingUserScreen2() {
     PieceTheme {
         MatchingUserScreen(
+            isNotificationEnabled = true,
             matchInfo = MatchInfo(
                 matchId = 1,
                 matchStatus = RESPONDED,
@@ -378,6 +383,7 @@ private fun PreviewMatchingUserScreen2() {
 private fun PreviewMatchingUserScreen3() {
     PieceTheme {
         MatchingUserScreen(
+            isNotificationEnabled = true,
             matchInfo = MatchInfo(
                 matchId = 1,
                 matchStatus = GREEN_LIGHT,
@@ -405,6 +411,7 @@ private fun PreviewMatchingUserScreen3() {
 private fun PreviewMatchingUserScreen4() {
     PieceTheme {
         MatchingUserScreen(
+            isNotificationEnabled = true,
             matchInfo = MatchInfo(
                 matchId = 1,
                 matchStatus = BEFORE_OPEN,

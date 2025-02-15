@@ -6,6 +6,7 @@ import com.puzzle.domain.model.user.UserRole
 import java.util.Locale
 
 data class MatchingState(
+    val isNotificationEnabled: Boolean = false,
     val userRole: UserRole? = null,
     val matchInfo: MatchInfo? = null,
     val isImageRejected: Boolean = false,

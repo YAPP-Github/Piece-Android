@@ -1,9 +1,21 @@
+import java.util.Properties
+
 plugins {
     id("piece.android.feature")
 }
 
 android {
     namespace = "com.puzzle.presentation"
+
+    defaultConfig {
+        val localProperties = Properties()
+        localProperties.load(project.rootProject.file("local.properties").bufferedReader())
+        buildConfigField("String", "PIECE_MARKET_URL", "\"${localProperties["PIECE_MARKET_URL"]}\"")
+    }
+
+    buildFeatures{
+        buildConfig = true
+    }
 }
 
 dependencies {

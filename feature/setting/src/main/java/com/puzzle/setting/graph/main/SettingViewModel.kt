@@ -7,6 +7,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.toBlockSyncFormattedTime
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
@@ -33,6 +34,7 @@ class SettingViewModel @AssistedInject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val matchingRepository: MatchingRepository,
+    private val configureRepository: ConfigureRepository,
     internal val navigationHelper: NavigationHelper,
     internal val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
@@ -61,6 +63,12 @@ class SettingViewModel @AssistedInject constructor(
                         )
                     }
                 }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        launch {
+            configureRepository.isNotificationEnabled()
+                .onSuccess { setState { copy(isNotificationEnabled = it) } }
                 .onFailure { errorHelper.sendError(it) }
         }
 

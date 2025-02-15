@@ -28,7 +28,9 @@ import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
-internal fun MatchingLoadingScreen() {
+internal fun MatchingLoadingScreen(
+    isNotificationEnabled: Boolean,
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -40,12 +42,14 @@ internal fun MatchingLoadingScreen() {
             textStyle = PieceTheme.typography.branding,
             titleColor = PieceTheme.colors.white,
             rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_alarm_black),
-                    contentDescription = "알람",
-                    colorFilter = ColorFilter.tint(PieceTheme.colors.white),
-                    modifier = Modifier.size(32.dp),
-                )
+                if (isNotificationEnabled) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_alarm_black),
+                        contentDescription = "알람",
+                        colorFilter = ColorFilter.tint(PieceTheme.colors.white),
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
             },
             modifier = Modifier.padding(bottom = 20.dp),
         )
@@ -228,6 +232,6 @@ internal fun MatchingLoadingScreen() {
 @Composable
 private fun PreviewMatchingLoadingScreen() {
     PieceTheme {
-        MatchingLoadingScreen()
+        MatchingLoadingScreen(true)
     }
 }

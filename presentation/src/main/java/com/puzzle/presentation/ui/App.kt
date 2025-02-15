@@ -56,12 +56,12 @@ import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
 import com.puzzle.presentation.network.NetworkScreen
 import com.puzzle.presentation.network.NetworkState
+import com.puzzle.presentation.update.ForceUpdateDialog
 import kotlin.reflect.KClass
 
 @Composable
 fun App(
     snackBarHostState: SnackbarHostState,
-    networkState: NetworkState,
     navController: NavHostController,
     modifier: Modifier = Modifier,
     navigateToTopLevelDestination: (Route) -> Unit,
@@ -115,8 +115,6 @@ fun App(
             modifier = contentModifier,
         )
     }
-
-    NetworkScreen(networkState)
 }
 
 @Composable

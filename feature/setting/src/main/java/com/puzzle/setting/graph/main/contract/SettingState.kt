@@ -4,6 +4,7 @@ import com.airbnb.mvrx.MavericksState
 import com.puzzle.domain.model.auth.OAuthProvider
 
 data class SettingState(
+    val isNotificationEnabled: Boolean = false,
     val oAuthProvider: OAuthProvider? = OAuthProvider.KAKAO,
     val email: String = "example@kakao.com",
     val isMatchingNotificationEnabled: Boolean = false,

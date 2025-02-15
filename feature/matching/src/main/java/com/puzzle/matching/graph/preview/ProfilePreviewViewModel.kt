@@ -6,6 +6,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 
 class ProfilePreviewViewModel @AssistedInject constructor(
     @Assisted initialState: ProfilePreviewState,
+    private val profileRepository: ProfileRepository,
     private val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
@@ -32,9 +34,33 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
+        initProfilePreview()
+
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+    }
+
+    private fun initProfilePreview() = viewModelScope.launch {
+        val profileBasicJob = launch {
+            profileRepository.retrieveMyProfileBasic()
+                .onSuccess { }
+                .onFailure { errorHelper.sendError(it) }
+        }
+        val valueTalksJob = launch {
+            profileRepository.retrieveMyValuePicks()
+                .onSuccess { }
+                .onFailure { errorHelper.sendError(it) }
+        }
+        val valuePicksJob = launch {
+            profileRepository.retrieveMyValueTalks()
+                .onSuccess { }
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        profileBasicJob.join()
+        valueTalksJob.join()
+        valuePicksJob.join()
     }
 
     internal fun onIntent(intent: ProfilePreviewIntent) = viewModelScope.launch {
