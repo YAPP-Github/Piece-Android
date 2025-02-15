@@ -11,9 +11,7 @@ import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetRejectReasonResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.source.user.UserDataSource
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -26,14 +24,10 @@ class UserRepositoryImpl @Inject constructor(
         UserRole.create(userRoleString)
     }
 
-    override fun observeUserRole(): Flow<UserRole> = localUserDataSource.userRole.map {
-        UserRole.create(it)
-    }
-
     override suspend fun getRejectReason(): Result<RejectReason> {
         val result = userDataSource.getRejectReason().mapCatching(GetRejectReasonResponse::toDomain)
 
-        result.getOrNull()?.let { rejectReason ->
+        result.getOrThrow().let { rejectReason ->
             if (rejectReason.profileStatus == ProfileStatus.APPROVED) {
                 localUserDataSource.setUserRole(UserRole.USER.name)
             } else {
