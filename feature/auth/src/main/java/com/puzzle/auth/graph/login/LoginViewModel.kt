@@ -9,6 +9,7 @@ import com.puzzle.auth.graph.login.contract.LoginSideEffect
 import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.domain.model.auth.OAuthProvider
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.user.UserRole.NONE
 import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
 import com.puzzle.domain.model.user.UserRole.USER
@@ -77,7 +78,7 @@ class LoginViewModel @AssistedInject constructor(
                 REGISTER -> {
                     navigationHelper.navigate(
                         NavigationEvent.NavigateTo(
-                            route = AuthGraphDest.VerificationRoute,
+                            route = AuthGraphDest.SignUpRoute,
                             popUpTo = true,
                         )
                     )
@@ -92,7 +93,12 @@ class LoginViewModel @AssistedInject constructor(
                     )
                 }
 
-                else -> Unit
+                NONE -> navigationHelper.navigate(
+                    NavigationEvent.NavigateTo(
+                        route = AuthGraphDest.VerificationRoute,
+                        popUpTo = true,
+                    )
+                )
             }
         }.onFailure { errorHelper.sendError(it) }
             .also { setState { copy(isLoading = false) } }

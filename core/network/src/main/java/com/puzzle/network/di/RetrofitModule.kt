@@ -4,12 +4,15 @@ import com.launchdarkly.eventsource.ConnectStrategy
 import com.launchdarkly.eventsource.EventSource
 import com.launchdarkly.eventsource.background.BackgroundEventHandler
 import com.launchdarkly.eventsource.background.BackgroundEventSource
+import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.network.BuildConfig
 import com.puzzle.network.adapter.PieceCallAdapterFactory
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.authenticator.PieceAuthenticator
 import com.puzzle.network.interceptor.PieceInterceptor
 import com.puzzle.network.interceptor.TokenManager
+import com.puzzle.network.sse.SseClient
+import com.puzzle.network.sse.SseEventHandler
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -67,6 +70,19 @@ object RetrofitModule {
         .baseUrl(BuildConfig.PIECE_BASE_URL)
         .build()
         .create(PieceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesSseEventHandler(
+        errorHelper: ErrorHelper,
+    ): BackgroundEventHandler = SseEventHandler(errorHelper)
+
+    @Provides
+    @Singleton
+    fun providesSseClient(
+        sseEventSource: BackgroundEventSource,
+        sseEventHandler: BackgroundEventHandler,
+    ): SseClient = SseClient(sseEventSource, sseEventHandler)
 
     @Singleton
     @Provides

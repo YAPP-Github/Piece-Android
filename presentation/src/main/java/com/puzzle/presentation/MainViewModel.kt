@@ -99,7 +99,7 @@ class MainViewModel @Inject constructor(
             REGISTER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.VerificationRoute,
+                        route = AuthGraphDest.SignUpRoute,
                         popUpTo = true,
                     )
                 )
@@ -116,7 +116,7 @@ class MainViewModel @Inject constructor(
 
             NONE -> navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
-                    route = OnboardingRoute,
+                    route = AuthGraphDest.VerificationRoute,
                     popUpTo = true,
                 )
             )

@@ -31,7 +31,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -209,9 +208,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     )
                 },
             ).onSuccess {
-                state.currentPage.getNextPage()?.let { nextPage ->
-                    setState { copy(currentPage = nextPage) }
-                }
+                setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
             }.onFailure { errorHelper.sendError(it) }
         }
     }

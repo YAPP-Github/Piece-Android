@@ -1,6 +1,9 @@
 package com.puzzle.network.di
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.launchdarkly.eventsource.background.BackgroundEventHandler
+import com.launchdarkly.eventsource.background.BackgroundEventSource
+import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.network.BuildConfig.BUILD_TYPE
 import com.puzzle.network.source.auth.AuthDataSource
 import com.puzzle.network.source.auth.AuthDataSourceImpl
@@ -13,6 +16,8 @@ import com.puzzle.network.source.profile.ProfileDataSource
 import com.puzzle.network.source.profile.ProfileDataSourceImpl
 import com.puzzle.network.source.term.TermDataSource
 import com.puzzle.network.source.term.TermDataSourceImpl
+import com.puzzle.network.sse.SseClient
+import com.puzzle.network.sse.SseEventHandler
 import dagger.Binds
 import dagger.Module
 import dagger.Provides

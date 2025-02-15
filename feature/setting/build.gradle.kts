@@ -39,4 +39,6 @@ android {
 
 dependencies {
     implementation(projects.core.common)
+
+    implementation(libs.lottie.compose)
 }

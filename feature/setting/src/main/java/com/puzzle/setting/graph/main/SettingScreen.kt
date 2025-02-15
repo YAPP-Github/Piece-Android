@@ -388,7 +388,16 @@ private fun SystemSettingBody(
             }
 
             if (isLoadingContactBlocked) {
-                // TODO : LottieAnimation 나오면 UI 반영
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_setting_loading))
+                val progress by animateLottieCompositionAsState(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                )
+                LottieAnimation(
+                    composition = composition,
+                    progress = { progress },
+                    modifier = Modifier.size(300.dp)
+                )
             } else {
                 Image(
                     painter = painterResource(R.drawable.ic_refresh),

@@ -24,7 +24,7 @@ class SseEventHandler @Inject constructor(
     }
 
     override fun onMessage(event: String, messageEvent: MessageEvent) {
-        val messageData = messageEvent?.data ?: return
+        val messageData = messageEvent.data
         Log.e("SSE", "Received data: $messageData")
 
         val eventId = messageEvent.lastEventId
@@ -41,9 +41,9 @@ class SseEventHandler @Inject constructor(
             eventData
         }
 
-        Log.e("SSE Comment", comment.toString())
         when (eventType) {
-
+            SseEventType.PROFILE_TALK_SUMMARY_MESSAGE.name -> {}
+            else -> Unit
         }
     }
 
@@ -57,5 +57,9 @@ class SseEventHandler @Inject constructor(
         // 서버가 2XX 이외의 오류 응답시 com.launchdarkly.eventsource.StreamHttpErrorException: Server returned HTTP error 401 예외가 발생
         // 클라이언트에서 서버의 연결 유지 시간보다 짧게 설정시 error=com.launchdarkly.eventsource.StreamIOException: java.net.SocketTimeoutException: timeout 예외가 발생
         // 서버가 연결 유지 시간 초과로 종료시 error=com.launchdarkly.eventsource.StreamClosedByServerException: Stream closed by server 예외가 발생
+    }
+
+    enum class SseEventType {
+        PROFILE_TALK_SUMMARY_MESSAGE;
     }
 }
