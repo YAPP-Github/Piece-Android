@@ -175,8 +175,8 @@ private fun ValuePickCard(
                 contentDescription = "질문",
                 colorFilter = ColorFilter.tint(PieceTheme.colors.primaryDefault),
                 modifier = Modifier
+                    .padding(start = 4.dp)
                     .size(20.dp)
-                    .padding(start = 4.dp),
             )
 
             Text(

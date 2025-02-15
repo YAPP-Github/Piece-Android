@@ -203,6 +203,7 @@ fun PieceTextInputAI(
     modifier: Modifier = Modifier,
     throttleTime: Long = 2000L,
     readOnly: Boolean = true,
+    limit: Int = 50,
     onDone: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -212,94 +213,90 @@ fun PieceTextInputAI(
     var isLoading: Boolean by remember { mutableStateOf(value.isBlank()) }
 
     Column(modifier = modifier) {
-        Row(modifier = Modifier.fillMaxWidth()) {
-            BasicTextField(
-                value = value,
-                onValueChange = onValueChange,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        val currentTime = System.currentTimeMillis()
-                        if (currentTime - lastDoneTime >= throttleTime) {
-                            keyboardController?.hide()
-                            onDone()
-                            lastDoneTime = currentTime
-                        }
+        BasicTextField(
+            value = value,
+            onValueChange = { if (it.length <= limit) onValueChange(it) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    val currentTime = System.currentTimeMillis()
+                    if (currentTime - lastDoneTime >= throttleTime) {
+                        keyboardController?.hide()
+                        onDone()
+                        lastDoneTime = currentTime
                     }
-                ),
-                textStyle = PieceTheme.typography.bodyMM,
-                cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
-                readOnly = isReadOnly,
-                decorationBox = { innerTextField ->
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
+                }
+            ),
+            textStyle = PieceTheme.typography.bodyMM,
+            cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
+            readOnly = isReadOnly,
+            decorationBox = { innerTextField ->
+                Row(verticalAlignment = Alignment.Bottom) {
+                    Box(modifier = Modifier.weight(1f)) {
                         if (isLoading) {
                             Text(
                                 text = "작성해주신 내용을 AI가 요약하고 있어요",
                                 style = PieceTheme.typography.bodyMM,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                                 color = PieceTheme.colors.dark3,
-                                modifier = Modifier.weight(1f),
                             )
-                        } else {
-                            innerTextField()
                         }
 
-                        val imageRes = if (isLoading) {
-                            R.drawable.ic_textinput_3dots
-                        } else {
-                            if (isReadOnly) {
-                                R.drawable.ic_textinput_pencil
-                            } else {
-                                R.drawable.ic_textinput_check
-                            }
-                        }
-
-                        Image(
-                            painter = painterResource(imageRes),
-                            contentDescription = null,
-                            modifier = Modifier
-                                .size(24.dp)
-                                .clickable(enabled = !isLoading) {
-                                    if (isReadOnly) {
-                                        isReadOnly = false
-                                    } else {
-                                        isReadOnly = true
-                                        onSaveClick(value)
-                                    }
-                                },
-                        )
+                        innerTextField()
                     }
-                },
-                modifier = Modifier
-                    .onFocusChanged { focusState -> isFocused = focusState.isFocused }
-                    .heightIn(min = 52.dp)
-                    .weight(1f)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(PieceTheme.colors.primaryLight)
-                    .padding(horizontal = 16.dp, vertical = 14.dp),
-            )
-        }
 
-        if (!isReadOnly) {
-            Row {
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                            append(value.length.toString())
+                    val imageRes = if (isLoading) {
+                        R.drawable.ic_textinput_3dots
+                    } else {
+                        if (isReadOnly) {
+                            R.drawable.ic_textinput_pencil
+                        } else {
+                            R.drawable.ic_textinput_check
                         }
+                    }
 
-                        append("/20")
-                    },
-                    style = PieceTheme.typography.bodySR,
-                    color = PieceTheme.colors.dark3,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
+                    Image(
+                        painter = painterResource(imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(24.dp)
+                            .clickable(enabled = !isLoading) {
+                                if (isReadOnly) {
+                                    isReadOnly = false
+                                } else {
+                                    isReadOnly = true
+                                    onSaveClick(value)
+                                }
+                            },
+                    )
+                }
+            },
+            modifier = Modifier
+                .onFocusChanged { focusState -> isFocused = focusState.isFocused }
+                .heightIn(min = 52.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(PieceTheme.colors.primaryLight)
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+        )
+    }
+
+    if (!isReadOnly) {
+        Row {
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                        append(value.length.toString())
+                    }
+
+                    append("/${limit}")
+                },
+                style = PieceTheme.typography.bodySR,
+                color = PieceTheme.colors.dark3,
+                modifier = Modifier.padding(top = 4.dp)
+            )
         }
     }
 }

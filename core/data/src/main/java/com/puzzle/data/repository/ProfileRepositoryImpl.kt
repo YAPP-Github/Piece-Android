@@ -15,7 +15,6 @@ import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.network.model.UNKNOWN_INT
-import com.puzzle.network.model.profile.UpdateAiSummaryResponse
 import com.puzzle.network.source.profile.ProfileDataSource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
@@ -140,11 +139,21 @@ class ProfileRepositoryImpl @Inject constructor(
         updatedProfileBasic
     }
 
-    override suspend fun updateAiSummary(profileTalkId: Int, summary: String): Result<String> =
-        profileDataSource.updateAiSummary(
-            profileTalkId = profileTalkId,
-            summary = summary,
-        ).mapCatching(UpdateAiSummaryResponse::toDomain)
+    override suspend fun updateAiSummary(profileTalkId: Int, summary: String): Result<Unit> =
+        suspendRunCatching {
+            profileDataSource.updateAiSummary(
+                profileTalkId = profileTalkId,
+                summary = summary,
+            ).onSuccess {
+                val oldValueTalks = retrieveMyValueTalks().getOrThrow()
+                val newValueTalks = oldValueTalks.map { valueTalk ->
+                    if (valueTalk.id == profileTalkId) valueTalk.copy(summary = summary)
+                    else valueTalk
+                }
+
+                localProfileDataSource.setMyValueTalks(newValueTalks)
+            }
+        }
 
     override suspend fun checkNickname(nickname: String): Result<Boolean> =
         profileDataSource.checkNickname(nickname)

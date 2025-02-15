@@ -81,7 +81,7 @@ class ProfileDataSourceImpl @Inject constructor(
     override suspend fun updateAiSummary(
         profileTalkId: Int,
         summary: String
-    ): Result<UpdateAiSummaryResponse> =
+    ): Result<Unit> =
         pieceApi.updateAiSummary(
             id = profileTalkId,
             updateAiSummaryRequest = UpdateAiSummaryRequest(summary = summary),
