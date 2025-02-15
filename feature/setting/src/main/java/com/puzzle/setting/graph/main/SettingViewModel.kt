@@ -64,11 +64,13 @@ class SettingViewModel @AssistedInject constructor(
                 .onFailure { errorHelper.sendError(it) }
         }
 
-        launch {
-            userRepository.getBlockSyncTime()
-                .onSuccess { setState { copy(lastRefreshTime = it.toBlockSyncFormattedTime()) } }
-                .onFailure { errorHelper.sendError(it) }
-        }
+        syncBlockTime()
+    }
+
+    private fun syncBlockTime() = viewModelScope.launch {
+        userRepository.getBlockSyncTime()
+            .onSuccess { setState { copy(lastRefreshTime = it.toBlockSyncFormattedTime()) } }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     internal fun setAppVersion(version: String) = setState {
@@ -128,7 +130,10 @@ class SettingViewModel @AssistedInject constructor(
     private fun updateBlockAcquaintances() = withState { state ->
         viewModelScope.launch {
             userRepository.updateBlockAcquaintances(!state.isContactBlocked)
-                .onSuccess { setState { copy(isContactBlocked = !state.isContactBlocked) } }
+                .onSuccess {
+                    setState { copy(isContactBlocked = !state.isContactBlocked) }
+                    syncBlockTime()
+                }
                 .onFailure { errorHelper.sendError(it) }
         }
     }
@@ -137,7 +142,7 @@ class SettingViewModel @AssistedInject constructor(
         setState { copy(isLoadingContactsBlocked = true) }
 
         matchingRepository.blockContacts(phoneNumbers = phoneNumbers)
-            .onSuccess { updateBlockAcquaintances() }
+            .onSuccess { syncBlockTime() }
             .onFailure { errorHelper.sendError(it) }
             .also { setState { copy(isLoadingContactsBlocked = false) } }
     }

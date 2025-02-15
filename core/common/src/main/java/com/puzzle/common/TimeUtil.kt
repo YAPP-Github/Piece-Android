@@ -34,3 +34,10 @@ fun LocalDateTime.toBlockSyncFormattedTime(): String {
     val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm")
     return this.format(formatter)
 }
+
+/**
+ * YYYY-MM-DD형식의 문자열을 "YYYYMMDD" 형식의 문자열로 변환합니다.
+ */
+fun String.toCompactDateString(): String {
+    return this.replace("-", "")
+}

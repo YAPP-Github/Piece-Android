@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -143,6 +142,7 @@ private fun SettingScreen(
         HorizontalDivider(
             color = PieceTheme.colors.light2,
             thickness = 1.dp,
+            modifier = Modifier.padding(bottom = 16.dp),
         )
 
         Column(
@@ -151,11 +151,6 @@ private fun SettingScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
         ) {
-            LoginAccountBody(
-                oAuthProvider = state.oAuthProvider,
-                email = state.email,
-            )
-
             NotificationBody(
                 isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
                 isPushNotificationEnabled = state.isPushNotificationEnabled,
@@ -193,56 +188,10 @@ private fun SettingScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .throttledClickable(2000L)  { onWithdrawClick() },
+                    .throttledClickable(2000L) { onWithdrawClick() },
             )
         }
     }
-}
-
-@Composable
-private fun LoginAccountBody(
-    oAuthProvider: OAuthProvider?,
-    email: String,
-) {
-    Text(
-        text = stringResource(R.string.setting_logged_in_account),
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark2,
-        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
-    )
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(top = 20.dp, bottom = 8.dp),
-    ) {
-        val oAuthProviderIconId = when (oAuthProvider) {
-            OAuthProvider.GOOGLE -> R.drawable.ic_google_login
-            OAuthProvider.KAKAO -> R.drawable.ic_kakao_login
-            null -> null
-        }
-
-        oAuthProviderIconId?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-        }
-
-        Text(
-            text = email,
-            modifier = Modifier.padding(start = 8.dp),
-        )
-    }
-
-    HorizontalDivider(
-        color = PieceTheme.colors.light2,
-        thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 16.dp),
-    )
 }
 
 @Composable

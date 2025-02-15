@@ -188,7 +188,7 @@ private fun RegisterProfileScreen(
             onBackClick = onBackClick,
             isShowBackButton = (state.currentPage != RegisterProfileState.Page.FINISH &&
                     state.currentPage != RegisterProfileState.Page.SUMMATION),
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 14.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
         )
 
         if (state.currentPage != RegisterProfileState.Page.FINISH &&
