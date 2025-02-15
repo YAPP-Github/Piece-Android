@@ -45,6 +45,8 @@ hiltNavigationCompose = "1.2.0"
 # https://square.github.io/okhttp/
 okhttp = "4.12.0"
 # https://github.com/square/retrofit
+okhttpEventsource = "4.1.1"
+# https://github.com/square/retrofit
 retrofit = "2.11.0"
 
 ## Kotlin
@@ -82,7 +84,6 @@ androidxCredentials = "1.3.0"
 googleAuth = "21.3.0"
 # https://developers.kakao.com/docs/latest/ko/android/getting-started#apply-sdk
 kakao = "2.20.6"
-
 
 # https://coil-kt.github.io/coil/#jetpack-compose
 coil = "3.1.0"
@@ -143,8 +144,11 @@ hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-comp
 hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+okhttp-eventsource = { module = "com.launchdarkly:okhttp-eventsource", version.ref = "okhttpEventsource" }
+
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 retrofit-kotlin-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
+
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 

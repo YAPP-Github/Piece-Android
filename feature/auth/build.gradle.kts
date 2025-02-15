@@ -25,6 +25,7 @@ android {
 dependencies {
     implementation(projects.core.common)
 
+    implementation(libs.lottie.compose)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.google.auth)
     implementation(libs.kakao.user)

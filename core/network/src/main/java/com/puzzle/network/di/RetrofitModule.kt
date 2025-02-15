@@ -1,10 +1,15 @@
 package com.puzzle.network.di
 
+import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.network.BuildConfig
 import com.puzzle.network.adapter.PieceCallAdapterFactory
 import com.puzzle.network.api.PieceApi
+import com.puzzle.network.api.sse.SseClient
+import com.puzzle.network.api.sse.SseClientImpl
+import com.puzzle.network.api.sse.SseEventHandler
 import com.puzzle.network.authenticator.PieceAuthenticator
 import com.puzzle.network.interceptor.PieceInterceptor
+import com.puzzle.network.interceptor.TokenManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -59,4 +64,18 @@ object RetrofitModule {
         .baseUrl(BuildConfig.PIECE_BASE_URL)
         .build()
         .create(PieceApi::class.java)
+
+    @Provides
+    @Singleton
+    fun providesSseEventHandler(
+        json: Json,
+        errorHelper: ErrorHelper,
+    ): SseEventHandler = SseEventHandler(errorHelper, json)
+
+    @Provides
+    @Singleton
+    fun providesSseClient(
+        sseEventHandler: SseEventHandler,
+        tokenManager: TokenManager,
+    ): SseClient = SseClientImpl(sseEventHandler, tokenManager)
 }

@@ -2,6 +2,7 @@ package com.puzzle.setting.graph.main
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.provider.ContactsContract
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.shrinkOut
@@ -14,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -36,9 +36,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
+import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -79,6 +85,10 @@ internal fun SettingRoute(
         onUpdatePushNotification = { viewModel.onIntent(SettingIntent.UpdatePushNotification) },
         onUpdateMatchNotification = { viewModel.onIntent(SettingIntent.UpdateMatchNotification) },
         onUpdateBlockAcquaintances = { viewModel.onIntent(SettingIntent.UpdateBlockAcquaintances) },
+        onRefreshClick = {
+            val phoneNumbers = readContactPhoneNumbers(context)
+            viewModel.onIntent(SettingIntent.OnRefreshClick(phoneNumbers))
+        },
     )
 }
 
@@ -94,6 +104,7 @@ private fun SettingScreen(
     onUpdatePushNotification: () -> Unit,
     onUpdateMatchNotification: () -> Unit,
     onUpdateBlockAcquaintances: () -> Unit,
+    onRefreshClick: () -> Unit,
 ) {
     var isLogoutDialogShow by remember { mutableStateOf(false) }
 
@@ -131,6 +142,7 @@ private fun SettingScreen(
         HorizontalDivider(
             color = PieceTheme.colors.light2,
             thickness = 1.dp,
+            modifier = Modifier.padding(bottom = 16.dp),
         )
 
         Column(
@@ -139,11 +151,6 @@ private fun SettingScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 20.dp),
         ) {
-            LoginAccountBody(
-                oAuthProvider = state.oAuthProvider,
-                email = state.email,
-            )
-
             NotificationBody(
                 isMatchingNotificationEnabled = state.isMatchingNotificationEnabled,
                 isPushNotificationEnabled = state.isPushNotificationEnabled,
@@ -154,8 +161,9 @@ private fun SettingScreen(
             SystemSettingBody(
                 isContactBlocked = state.isContactBlocked,
                 lastRefreshTime = state.lastRefreshTime,
+                isLoadingContactBlocked = state.isLoadingContactsBlocked,
                 onContactBlockedCheckedChange = onUpdateBlockAcquaintances,
-                onRefreshClick = {},
+                onRefreshClick = onRefreshClick,
             )
 
             InquiryBody(
@@ -180,56 +188,10 @@ private fun SettingScreen(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 16.dp, bottom = 60.dp)
-                    .clickable { onWithdrawClick() },
+                    .throttledClickable(2000L) { onWithdrawClick() },
             )
         }
     }
-}
-
-@Composable
-private fun LoginAccountBody(
-    oAuthProvider: OAuthProvider?,
-    email: String,
-) {
-    Text(
-        text = stringResource(R.string.setting_logged_in_account),
-        style = PieceTheme.typography.bodySM,
-        color = PieceTheme.colors.dark2,
-        modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
-    )
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(top = 20.dp, bottom = 8.dp),
-    ) {
-        val oAuthProviderIconId = when (oAuthProvider) {
-            OAuthProvider.GOOGLE -> R.drawable.ic_google_login
-            OAuthProvider.KAKAO -> R.drawable.ic_kakao_login
-            null -> null
-        }
-
-        oAuthProviderIconId?.let {
-            Image(
-                painter = painterResource(it),
-                contentDescription = null,
-                modifier = Modifier.size(24.dp),
-            )
-        }
-
-        Text(
-            text = email,
-            modifier = Modifier.padding(start = 8.dp),
-        )
-    }
-
-    HorizontalDivider(
-        color = PieceTheme.colors.light2,
-        thickness = 1.dp,
-        modifier = Modifier.padding(vertical = 16.dp),
-    )
 }
 
 @Composable
@@ -295,6 +257,7 @@ private fun NotificationBody(
 private fun SystemSettingBody(
     isContactBlocked: Boolean,
     lastRefreshTime: String,
+    isLoadingContactBlocked: Boolean,
     onContactBlockedCheckedChange: () -> Unit,
     onRefreshClick: () -> Unit,
 ) {
@@ -379,13 +342,26 @@ private fun SystemSettingBody(
                 }
             }
 
-            Image(
-                painter = painterResource(R.drawable.ic_refresh),
-                contentDescription = "초기화",
-                modifier = Modifier
-                    .padding(start = 11.dp)
-                    .clickable { onRefreshClick() },
-            )
+            if (isLoadingContactBlocked) {
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_setting_loading))
+                val progress by animateLottieCompositionAsState(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                )
+                LottieAnimation(
+                    composition = composition,
+                    progress = { progress },
+                    modifier = Modifier.size(24.dp)
+                )
+            } else {
+                Image(
+                    painter = painterResource(R.drawable.ic_refresh),
+                    contentDescription = "초기화",
+                    modifier = Modifier
+                        .padding(start = 11.dp)
+                        .throttledClickable(2000L) { onRefreshClick() },
+                )
+            }
         }
     }
 
@@ -547,6 +523,40 @@ private fun OthersBody(onLogoutClick: () -> Unit) {
     )
 }
 
+private fun getVersionInfo(
+    context: Context,
+    onError: (Exception) -> Unit,
+): String? {
+    var version: String? = null
+    try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        version = packageInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        onError(e)
+    }
+    return version
+}
+
+private fun readContactPhoneNumbers(context: Context): List<String> {
+    val phoneNumbers = mutableListOf<String>()
+
+    val contentResolver = context.contentResolver
+    val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+    val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+    contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+        val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        while (cursor.moveToNext()) {
+            val phoneNumber = cursor.getString(numberIndex).replace(Regex("[^0-9]"), "")
+            if (phoneNumber.isNotBlank()) {
+                phoneNumbers.add(phoneNumber)
+            }
+        }
+    }
+
+    return phoneNumbers.distinct()
+}
+
 @Preview
 @Composable
 private fun PreviewSettingScreen() {
@@ -570,6 +580,7 @@ private fun PreviewSettingScreen() {
             onUpdatePushNotification = {},
             onUpdateMatchNotification = {},
             onUpdateBlockAcquaintances = {},
+            onRefreshClick = {},
         )
     }
 }
@@ -596,18 +607,4 @@ private fun PreviewLogoutDialog() {
             },
         )
     }
-}
-
-private fun getVersionInfo(
-    context: Context,
-    onError: (Exception) -> Unit,
-): String? {
-    var version: String? = null
-    try {
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        version = packageInfo.versionName
-    } catch (e: PackageManager.NameNotFoundException) {
-        onError(e)
-    }
-    return version
 }

@@ -22,7 +22,7 @@ enum class TopLevelDestination(
     MATCHING(
         iconDrawableId = R.drawable.ic_profile,
         contentDescription = "매칭",
-        title = "매칭",
+        title = "",
         route = MatchingGraphDest.MatchingRoute::class,
     ),
     SETTING(

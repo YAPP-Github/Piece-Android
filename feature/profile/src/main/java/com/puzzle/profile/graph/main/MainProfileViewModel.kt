@@ -48,7 +48,7 @@ class MainProfileViewModel @AssistedInject constructor(
                     selfDescription = it.description,
                     nickName = it.nickname,
                     age = it.age,
-                    birthYear = it.birthDate,
+                    birthYear = it.birthdate.substring(2, 4),
                     height = it.height,
                     weight = it.weight,
                     location = it.location,

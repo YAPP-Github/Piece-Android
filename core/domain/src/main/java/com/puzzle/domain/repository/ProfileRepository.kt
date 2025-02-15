@@ -1,5 +1,6 @@
 package com.puzzle.domain.repository
 
+import com.puzzle.domain.model.profile.AiSummary
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.domain.model.profile.MyValuePick
@@ -8,8 +9,11 @@ import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.model.profile.ValueTalkQuestion
+import kotlinx.coroutines.flow.Flow
 
 interface ProfileRepository {
+    val aiSummary: Flow<AiSummary>
+
     suspend fun loadValuePickQuestions(): Result<Unit>
     suspend fun retrieveValuePickQuestion(): Result<List<ValuePickQuestion>>
 
@@ -41,6 +45,8 @@ interface ProfileRepository {
         contacts: List<Contact>,
     ): Result<MyProfileBasic>
 
+    suspend fun updateAiSummary(profileTalkId: Int, summary: String): Result<Unit>
+
     suspend fun checkNickname(nickname: String): Result<Boolean>
     suspend fun uploadProfile(
         birthdate: String,
@@ -57,4 +63,7 @@ interface ProfileRepository {
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>,
     ): Result<Unit>
+
+    suspend fun connectSSE(): Result<Unit>
+    suspend fun disconnectSSE(): Result<Unit>
 }

@@ -1,5 +1,6 @@
 package com.puzzle.domain.spy.repository
 
+import com.puzzle.domain.model.profile.AiSummary
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.domain.model.profile.MyValuePick
@@ -9,6 +10,7 @@ import com.puzzle.domain.model.profile.ValuePickQuestion
 import com.puzzle.domain.model.profile.ValueTalkAnswer
 import com.puzzle.domain.model.profile.ValueTalkQuestion
 import com.puzzle.domain.repository.ProfileRepository
+import kotlinx.coroutines.flow.Flow
 
 class SpyProfileRepository : ProfileRepository {
     private var localMyProfileBasic: MyProfileBasic? = null
@@ -51,6 +53,9 @@ class SpyProfileRepository : ProfileRepository {
     fun setRemoteMyValuePicks(valuePicks: List<MyValuePick>) {
         remoteMyValuePicks = valuePicks
     }
+
+    override val aiSummary: Flow<AiSummary>
+        get() = TODO("Not yet implemented")
 
     override suspend fun loadValuePickQuestions(): Result<Unit> {
         return Result.success(Unit)
@@ -125,6 +130,10 @@ class SpyProfileRepository : ProfileRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun updateAiSummary(profileTalkId: Int, summary: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun checkNickname(nickname: String): Result<Boolean> {
         TODO("Not yet implemented")
     }
@@ -144,6 +153,14 @@ class SpyProfileRepository : ProfileRepository {
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun connectSSE(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun disconnectSSE(): Result<Unit> {
         TODO("Not yet implemented")
     }
 }

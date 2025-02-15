@@ -150,7 +150,8 @@ class MatchingViewModel @AssistedInject constructor(
     private fun processOnButtonClick() = withState { state ->
         when (state.matchInfo?.matchStatus) {
             MatchStatus.BEFORE_OPEN -> checkMatchingPiece()
-            MatchStatus.WAITING, MatchStatus.GREEN_LIGHT -> acceptMatching()
+            MatchStatus.WAITING -> acceptMatchingInResponsed()
+            MatchStatus.GREEN_LIGHT -> acceptMatchingInMatced()
             MatchStatus.MATCHED -> navigateToContactScreen()
             else -> Unit
         }
@@ -171,14 +172,22 @@ class MatchingViewModel @AssistedInject constructor(
     private fun checkMatchingPiece() = viewModelScope.launch {
         matchingRepository.checkMatchingPiece()
             .onSuccess {
-                setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.RESPONDED)) }
+                setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.WAITING)) }
             }
             .onFailure { errorHelper.sendError(it) }
 
         _sideEffects.send(MatchingSideEffect.Navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute)))
     }
 
-    private fun acceptMatching() = viewModelScope.launch {
+    private fun acceptMatchingInResponsed() = viewModelScope.launch {
+        matchingRepository.acceptMatching()
+            .onSuccess {
+                setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.RESPONDED)) }
+            }
+            .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun acceptMatchingInMatced() = viewModelScope.launch {
         matchingRepository.acceptMatching()
             .onSuccess {
                 setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.MATCHED)) }

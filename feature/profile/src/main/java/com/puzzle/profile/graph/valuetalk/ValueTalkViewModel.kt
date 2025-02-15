@@ -44,6 +44,32 @@ class ValueTalkViewModel @AssistedInject constructor(
         getMyValueTalksUseCase().onSuccess {
             setState { copy(valueTalks = it) }
         }.onFailure { errorHelper.sendError(it) }
+
+        profileRepository.aiSummary
+            .collect { response ->
+                setState {
+                    copy(
+                        valueTalks = valueTalks.map { valueTalk ->
+                            if (valueTalk.id == response.id) valueTalk.copy(summary = response.summary)
+                            else valueTalk
+                        }.toList()
+                    )
+                }
+            }
+    }
+
+    internal fun connectSse() {
+        viewModelScope.launch {
+            profileRepository.connectSSE()
+                .onFailure { errorHelper.sendError(it) }
+        }
+    }
+
+    internal fun disconnectSse() {
+        viewModelScope.launch {
+            profileRepository.disconnectSSE()
+                .onFailure { errorHelper.sendError(it) }
+        }
     }
 
     internal fun onIntent(intent: ValueTalkIntent) = viewModelScope.launch {
@@ -55,6 +81,7 @@ class ValueTalkViewModel @AssistedInject constructor(
             ValueTalkIntent.OnBackClick -> processBackClick()
             ValueTalkIntent.OnEditClick -> setEditMode()
             is ValueTalkIntent.OnUpdateClick -> updateValueTalk(intent.newValueTalks)
+            is ValueTalkIntent.OnAiSummarySaveClick -> updateAiSummaryClick(intent.newValueTalk)
         }
     }
 
@@ -74,11 +101,30 @@ class ValueTalkViewModel @AssistedInject constructor(
                 setState {
                     copy(
                         screenState = ValueTalkState.ScreenState.NORMAL,
-                        valueTalks = valueTalks
+                        valueTalks = valueTalks.map { it.copy(summary = "") }
                     )
                 }
             }
             .onFailure { errorHelper.sendError(it) }
+    }
+
+    private fun updateAiSummaryClick(valueTalk: MyValueTalk) = viewModelScope.launch {
+        profileRepository.updateAiSummary(
+            profileTalkId = valueTalk.id,
+            summary = valueTalk.summary,
+        ).onSuccess {
+            setState {
+                val newValueTalks = valueTalks.map {
+                    if (it.id == valueTalk.id) valueTalk
+                    else it
+                }
+
+                copy(
+                    screenState = ValueTalkState.ScreenState.NORMAL,
+                    valueTalks = newValueTalks,
+                )
+            }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory

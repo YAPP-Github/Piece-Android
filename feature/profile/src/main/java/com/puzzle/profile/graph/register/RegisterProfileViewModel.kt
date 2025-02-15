@@ -178,6 +178,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
+        state.currentPage.getNextPage()?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
+        }
+
         viewModelScope.launch {
             uploadProfileUseCase(
                 birthdate = state.birthdate,
@@ -204,9 +208,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     )
                 },
             ).onSuccess {
-                state.currentPage.getNextPage()?.let { nextPage ->
-                    setState { copy(currentPage = nextPage) }
-                }
+                setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
             }.onFailure { errorHelper.sendError(it) }
         }
     }

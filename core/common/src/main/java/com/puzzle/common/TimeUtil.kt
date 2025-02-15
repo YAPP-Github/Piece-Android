@@ -1,6 +1,7 @@
 package com.puzzle.common
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 /**
@@ -24,4 +25,19 @@ fun String.toBirthDate(): String {
         "^(\\d{4})(\\d{2})(\\d{2})$".toRegex(),
         "$1-$2-$3"
     )
+}
+
+/**
+ * LocalDateTime을 "YYYY년 MM월 DD일 HH:mm" 형식의 문자열로 변환합니다.
+ */
+fun LocalDateTime.toBlockSyncFormattedTime(): String {
+    val formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm")
+    return this.format(formatter)
+}
+
+/**
+ * YYYY-MM-DD형식의 문자열을 "YYYYMMDD" 형식의 문자열로 변환합니다.
+ */
+fun String.toCompactDateString(): String {
+    return this.replace("-", "")
 }

@@ -110,10 +110,7 @@ private fun ValuePickScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 14.dp,
-                ),
+                .padding(horizontal = 20.dp),
         )
 
         ValuePickCards(
@@ -178,8 +175,8 @@ private fun ValuePickCard(
                 contentDescription = "질문",
                 colorFilter = ColorFilter.tint(PieceTheme.colors.primaryDefault),
                 modifier = Modifier
+                    .padding(start = 4.dp)
                     .size(20.dp)
-                    .padding(start = 4.dp),
             )
 
             Text(

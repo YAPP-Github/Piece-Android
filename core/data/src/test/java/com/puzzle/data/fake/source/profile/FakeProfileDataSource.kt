@@ -54,7 +54,7 @@ class FakeProfileDataSource : ProfileDataSource {
             )
         }
 
-        return Result.success(GetMyValueTalksResponse(response = responses))
+        return Result.success(GetMyValueTalksResponse(responses = responses))
     }
 
     override suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<GetMyValuePicksResponse> {
@@ -73,9 +73,15 @@ class FakeProfileDataSource : ProfileDataSource {
             )
         }
 
-        return Result.success(GetMyValuePicksResponse(response = responses))
+        return Result.success(GetMyValuePicksResponse(responses = responses))
     }
 
+    override suspend fun updateAiSummary(
+        profileTalkId: Int,
+        summary: String
+    ): Result<Unit> {
+        return Result.success(Unit)
+    }
 
     override suspend fun updateMyProfileBasic(
         description: String,
@@ -94,7 +100,7 @@ class FakeProfileDataSource : ProfileDataSource {
             description = description,
             nickname = nickname,
             age = null,
-            birthDate = birthDate,
+            birthdate = birthDate,
             height = height,
             weight = weight,
             location = location,
@@ -140,6 +146,10 @@ class FakeProfileDataSource : ProfileDataSource {
             refreshToken = "refreshToken",
         )
     )
+
+    override suspend fun disconnectSSE(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
 
     fun setValuePicks(picks: List<ValuePickResponse>) {
         valuePicks = picks

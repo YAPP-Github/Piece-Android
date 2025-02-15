@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UpdateMyValuePickRequests(
-    val profileValueTalkUpdateRequests: List<UpdateMyValuePickRequest>,
+    val profileValuePickUpdateRequests: List<UpdateMyValuePickRequest>,
 )
 
 @Serializable
