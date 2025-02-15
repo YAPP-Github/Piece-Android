@@ -179,6 +179,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
             return
         }
 
+        state.currentPage.getNextPage()?.let { nextPage ->
+            setState { copy(currentPage = nextPage) }
+        }
+
         viewModelScope.launch {
             uploadProfileUseCase(
                 birthdate = state.birthdate,
