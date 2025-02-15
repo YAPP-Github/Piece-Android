@@ -225,4 +225,28 @@ class ProfileRepositoryImplTest {
         val updatedProfileBasic = result.getOrNull()
         assertEquals(updatedProfileBasic, storedProfileBasic)
     }
+
+    @Test
+    fun `가치관Talk 요약 업데이트 시 로컬에 저장된다`() = runTest {
+        // given
+        val originValueTalks = listOf(
+            MyValueTalk(
+                id = 1,
+                category = "음주",
+                title = "술자리에 대한 대화",
+                answer = "가끔 즐깁니다.",
+                summary = "술자리 즐기기",
+                guides = emptyList(),
+            )
+        )
+        profileRepository.updateMyValueTalks(originValueTalks)
+
+        // when
+        profileRepository.updateAiSummary(profileTalkId = 1, summary = "변경된 요약")
+
+        // then
+        val storedValueTalks = localProfileDataSource.myValueTalks.first()
+        assertEquals(originValueTalks.map { it.id }, storedValueTalks.map { it.id })
+        assertEquals(storedValueTalks.first { it.id == 1 }.summary, "변경된 요약")
+    }
 }

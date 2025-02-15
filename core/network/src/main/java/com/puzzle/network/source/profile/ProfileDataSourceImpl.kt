@@ -13,7 +13,6 @@ import com.puzzle.network.model.profile.GetMyValueTalksResponse
 import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
 import com.puzzle.network.model.profile.UpdateAiSummaryRequest
-import com.puzzle.network.model.profile.UpdateAiSummaryResponse
 import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests

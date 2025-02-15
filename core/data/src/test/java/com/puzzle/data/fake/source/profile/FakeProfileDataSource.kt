@@ -13,7 +13,6 @@ import com.puzzle.network.model.profile.LoadValuePickQuestionsResponse
 import com.puzzle.network.model.profile.LoadValueTalkQuestionsResponse
 import com.puzzle.network.model.profile.MyValuePickResponse
 import com.puzzle.network.model.profile.MyValueTalkResponse
-import com.puzzle.network.model.profile.UpdateAiSummaryResponse
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.profile.ValuePickAnswerResponse
 import com.puzzle.network.model.profile.ValuePickResponse
@@ -80,8 +79,8 @@ class FakeProfileDataSource : ProfileDataSource {
     override suspend fun updateAiSummary(
         profileTalkId: Int,
         summary: String
-    ): Result<UpdateAiSummaryResponse> {
-        TODO("Not yet implemented")
+    ): Result<Unit> {
+        return Result.success(Unit)
     }
 
     override suspend fun updateMyProfileBasic(
