@@ -33,6 +33,7 @@ import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
@@ -148,4 +149,7 @@ interface PieceApi {
 
     @GET("/api/settings/blocks/contacts/sync-time")
     suspend fun getBlockSyncTime(): Result<ApiResponse<GetBlockSyncTimeResponse>>
+
+    @DELETE("/api/sse/personal/disconnect")
+    suspend fun disconnectSSE(): Result<Unit>
 }

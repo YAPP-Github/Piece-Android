@@ -41,21 +41,19 @@ class ValueTalkViewModel @AssistedInject constructor(
     }
 
     private fun initValueTalk() = viewModelScope.launch {
-        launch {
-            getMyValueTalksUseCase().onSuccess {
-                setState { copy(valueTalks = it) }
-            }.onFailure { errorHelper.sendError(it) }
-        }
+        getMyValueTalksUseCase().onSuccess {
+            setState { copy(valueTalks = it) }
+        }.onFailure { errorHelper.sendError(it) }
+    }
 
-        launch {
+    internal fun connectSse(){
+        viewModelScope.launch {
             profileRepository.connectSSE()
                 .onFailure { errorHelper.sendError(it) }
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-
+    internal fun disconnectSse(){
         viewModelScope.launch {
             profileRepository.disconnectSSE()
                 .onFailure { errorHelper.sendError(it) }
@@ -114,8 +112,7 @@ class ValueTalkViewModel @AssistedInject constructor(
                     valueTalks = newValueTalks,
                 )
             }
-        }
-            .onFailure { errorHelper.sendError(it) }
+        }.onFailure { errorHelper.sendError(it) }
     }
 
     @AssistedFactory
