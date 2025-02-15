@@ -7,6 +7,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.toBlockSyncFormattedTime
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
@@ -31,6 +32,7 @@ class SettingViewModel @AssistedInject constructor(
     @Assisted initialState: SettingState,
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
+    private val matchingRepository: MatchingRepository,
     internal val navigationHelper: NavigationHelper,
     internal val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
@@ -100,6 +102,7 @@ class SettingViewModel @AssistedInject constructor(
             SettingIntent.UpdateBlockAcquaintances -> updateBlockAcquaintances()
             SettingIntent.UpdateMatchNotification -> updateMatchNotification()
             SettingIntent.UpdatePushNotification -> updatePushNotification()
+            is SettingIntent.OnRefreshClick -> blockContacts(intent.phoneNumbers)
         }
     }
 
@@ -128,6 +131,15 @@ class SettingViewModel @AssistedInject constructor(
                 .onSuccess { setState { copy(isContactBlocked = !state.isContactBlocked) } }
                 .onFailure { errorHelper.sendError(it) }
         }
+    }
+
+    private fun blockContacts(phoneNumbers: List<String>) = viewModelScope.launch {
+        setState { copy(isLoadingContactsBlocked = true) }
+
+        matchingRepository.blockContacts(phoneNumbers = phoneNumbers)
+            .onSuccess { updateBlockAcquaintances() }
+            .onFailure { errorHelper.sendError(it) }
+            .also { setState { copy(isLoadingContactsBlocked = false) } }
     }
 
     private fun updateMatchNotification() = withState { state ->

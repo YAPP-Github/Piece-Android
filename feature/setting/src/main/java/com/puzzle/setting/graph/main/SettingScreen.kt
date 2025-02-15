@@ -2,6 +2,7 @@ package com.puzzle.setting.graph.main
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.provider.ContactsContract
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.shrinkOut
@@ -79,6 +80,10 @@ internal fun SettingRoute(
         onUpdatePushNotification = { viewModel.onIntent(SettingIntent.UpdatePushNotification) },
         onUpdateMatchNotification = { viewModel.onIntent(SettingIntent.UpdateMatchNotification) },
         onUpdateBlockAcquaintances = { viewModel.onIntent(SettingIntent.UpdateBlockAcquaintances) },
+        onRefreshClick = {
+            val phoneNumbers = readContactPhoneNumbers(context)
+            viewModel.onIntent(SettingIntent.OnRefreshClick(phoneNumbers))
+        },
     )
 }
 
@@ -94,6 +99,7 @@ private fun SettingScreen(
     onUpdatePushNotification: () -> Unit,
     onUpdateMatchNotification: () -> Unit,
     onUpdateBlockAcquaintances: () -> Unit,
+    onRefreshClick: () -> Unit,
 ) {
     var isLogoutDialogShow by remember { mutableStateOf(false) }
 
@@ -547,6 +553,40 @@ private fun OthersBody(onLogoutClick: () -> Unit) {
     )
 }
 
+private fun getVersionInfo(
+    context: Context,
+    onError: (Exception) -> Unit,
+): String? {
+    var version: String? = null
+    try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        version = packageInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        onError(e)
+    }
+    return version
+}
+
+private fun readContactPhoneNumbers(context: Context): List<String> {
+    val phoneNumbers = mutableListOf<String>()
+
+    val contentResolver = context.contentResolver
+    val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+    val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+
+    contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
+        val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        while (cursor.moveToNext()) {
+            val phoneNumber = cursor.getString(numberIndex).replace(Regex("[^0-9]"), "")
+            if (phoneNumber.isNotBlank()) {
+                phoneNumbers.add(phoneNumber)
+            }
+        }
+    }
+
+    return phoneNumbers.distinct()
+}
+
 @Preview
 @Composable
 private fun PreviewSettingScreen() {
@@ -570,6 +610,7 @@ private fun PreviewSettingScreen() {
             onUpdatePushNotification = {},
             onUpdateMatchNotification = {},
             onUpdateBlockAcquaintances = {},
+            onRefreshClick = {},
         )
     }
 }
@@ -596,18 +637,4 @@ private fun PreviewLogoutDialog() {
             },
         )
     }
-}
-
-private fun getVersionInfo(
-    context: Context,
-    onError: (Exception) -> Unit,
-): String? {
-    var version: String? = null
-    try {
-        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        version = packageInfo.versionName
-    } catch (e: PackageManager.NameNotFoundException) {
-        onError(e)
-    }
-    return version
 }

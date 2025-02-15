@@ -10,4 +10,5 @@ sealed class SettingIntent {
     data object UpdatePushNotification : SettingIntent()
     data object UpdateMatchNotification : SettingIntent()
     data object UpdateBlockAcquaintances : SettingIntent()
+    data class OnRefreshClick(val phoneNumbers: List<String>) : SettingIntent()
 }
