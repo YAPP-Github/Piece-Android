@@ -40,7 +40,7 @@ import com.puzzle.designsystem.component.PieceLoading
 import com.puzzle.designsystem.component.PieceRoundingOutlinedButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.domain.model.profile.OpponentProfile
+import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
@@ -84,7 +84,7 @@ private fun ProfilePreviewScreen(
 
     if (showDialog) {
         PieceImageDialog(
-            imageUri = state.profile?.imageUrl,
+            imageUri = state.myProfileBasic?.imageUrl,
             buttonLabel = "매칭 수락하기",
             onDismissRequest = { showDialog = false },
             isApproveButtonShow = false,
@@ -166,7 +166,7 @@ private fun ProfilePreviewContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        state.profile?.let { profile ->
+        if (state.myProfileBasic != null && state.myValuePicks.isNotEmpty() && state.myValueTalks.isNotEmpty()) {
             AnimatedContent(
                 targetState = currentPage,
                 transitionSpec = {
@@ -177,33 +177,35 @@ private fun ProfilePreviewContent(
                 when (it) {
                     ProfilePreviewState.Page.BasicInfoPage ->
                         BasicInfoPage(
-                            nickName = profile.nickname,
-                            selfDescription = profile.description,
-                            birthYear = profile.birthYear,
-                            age = profile.age,
-                            height = profile.height,
-                            weight = profile.weight,
-                            location = profile.location,
-                            job = profile.job,
-                            smokingStatus = profile.smokingStatus,
+                            nickName = state.myProfileBasic.nickname,
+                            selfDescription = state.myProfileBasic.description,
+                            birthYear = state.myProfileBasic.birthdate,
+                            age = state.myProfileBasic.age,
+                            height = state.myProfileBasic.height,
+                            weight = state.myProfileBasic.weight,
+                            location = state.myProfileBasic.location,
+                            job = state.myProfileBasic.job,
+                            smokingStatus = state.myProfileBasic.smokingStatus,
                         )
 
                     ProfilePreviewState.Page.ValueTalkPage ->
                         ValueTalkPage(
-                            nickName = profile.nickname,
-                            selfDescription = profile.description,
-                            talkCards = profile.valueTalks,
+                            nickName = state.myProfileBasic.nickname,
+                            selfDescription = state.myProfileBasic.description,
+                            talkCards = state.myValueTalks,
                         )
 
                     ProfilePreviewState.Page.ValuePickPage ->
                         ValuePickPage(
-                            nickName = profile.nickname,
-                            selfDescription = profile.description,
-                            pickCards = profile.valuePicks,
+                            nickName = state.myProfileBasic.nickname,
+                            selfDescription = state.myProfileBasic.description,
+                            pickCards = state.myValuePicks,
                         )
                 }
             }
-        } ?: PieceLoading()
+        } else {
+            PieceLoading()
+        }
     }
 }
 
@@ -295,20 +297,22 @@ private fun ProfilePreviewScreenPreview() {
     PieceTheme {
         ProfilePreviewScreen(
             state = ProfilePreviewState(
-                profile = OpponentProfile(
+                myProfileBasic = MyProfileBasic(
                     description = "음악과 요리를 좋아하는",
                     nickname = "수줍은 수달",
-                    birthYear = "00",
                     age = 25,
                     height = 254,
                     weight = 72,
                     job = "개발자",
                     location = "서울특별시",
                     smokingStatus = "비흡연",
-                    valueTalks = emptyList(),
-                    valuePicks = emptyList(),
                     imageUrl = "",
-                )
+                    birthdate = "20000101",
+                    snsActivityLevel = "TODO()",
+                    contacts = emptyList(),
+                ),
+                myValuePicks = emptyList(),
+                myValueTalks = emptyList(),
             ),
             onCloseClick = {},
         )
