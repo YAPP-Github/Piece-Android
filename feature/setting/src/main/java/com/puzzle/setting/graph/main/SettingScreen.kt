@@ -160,8 +160,9 @@ private fun SettingScreen(
             SystemSettingBody(
                 isContactBlocked = state.isContactBlocked,
                 lastRefreshTime = state.lastRefreshTime,
+                isLoadingContactBlocked = state.isLoadingContactsBlocked,
                 onContactBlockedCheckedChange = onUpdateBlockAcquaintances,
-                onRefreshClick = {},
+                onRefreshClick = onRefreshClick,
             )
 
             InquiryBody(
@@ -301,6 +302,7 @@ private fun NotificationBody(
 private fun SystemSettingBody(
     isContactBlocked: Boolean,
     lastRefreshTime: String,
+    isLoadingContactBlocked: Boolean,
     onContactBlockedCheckedChange: () -> Unit,
     onRefreshClick: () -> Unit,
 ) {
@@ -385,13 +387,17 @@ private fun SystemSettingBody(
                 }
             }
 
-            Image(
-                painter = painterResource(R.drawable.ic_refresh),
-                contentDescription = "초기화",
-                modifier = Modifier
-                    .padding(start = 11.dp)
-                    .clickable { onRefreshClick() },
-            )
+            if (isLoadingContactBlocked) {
+                // TODO : LottieAnimation 나오면 UI 반영
+            } else {
+                Image(
+                    painter = painterResource(R.drawable.ic_refresh),
+                    contentDescription = "초기화",
+                    modifier = Modifier
+                        .padding(start = 11.dp)
+                        .clickable { onRefreshClick() },
+                )
+            }
         }
     }
 
