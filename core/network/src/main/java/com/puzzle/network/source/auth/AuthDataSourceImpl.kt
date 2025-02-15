@@ -7,6 +7,7 @@ import com.puzzle.network.model.auth.LoginOauthResponse
 import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
+import com.puzzle.network.model.auth.WithdrawRequest
 import com.puzzle.network.model.unwrapData
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -43,4 +44,7 @@ class AuthDataSourceImpl @Inject constructor(
 
     override suspend fun checkTokenHealth(token: String): Result<Unit> =
         pieceApi.checkTokenHealth(token).unwrapData()
+
+    override suspend fun withdraw(reason: String): Result<Unit> =
+        pieceApi.withdraw(WithdrawRequest(reason)).unwrapData()
 }

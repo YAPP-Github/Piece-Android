@@ -49,6 +49,18 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun withdraw(reason: String): Result<Unit> = suspendRunCatching {
+        authDataSource.withdraw(reason).onSuccess {
+            coroutineScope {
+                val clearUserRoleJob = launch { localUserDataSource.clearUserRole() }
+                val clearTokenJob = launch { localTokenDataSource.clearToken() }
+
+                clearTokenJob.join()
+                clearUserRoleJob.join()
+            }
+        }
+    }
+
     override suspend fun checkTokenHealth(): Result<Unit> = suspendRunCatching {
         val accessToken = localTokenDataSource.accessToken.first()
         authDataSource.checkTokenHealth(accessToken).getOrThrow()

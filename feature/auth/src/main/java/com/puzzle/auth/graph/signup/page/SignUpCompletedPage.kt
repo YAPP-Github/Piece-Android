@@ -1,6 +1,5 @@
 package com.puzzle.auth.graph.signup.page
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -21,7 +20,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.puzzle.designsystem.R
@@ -52,17 +50,13 @@ internal fun ColumnScope.SignUpCompletedPage(
     )
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_piece))
-    val progress by animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-    )
+    val progress by animateLottieCompositionAsState(composition = composition)
     LottieAnimation(
         composition = composition,
         progress = { progress },
         modifier = Modifier
             .align(Alignment.CenterHorizontally)
-            .size(240.dp)
-            .background(PieceTheme.colors.black),
+            .size(300.dp),
     )
 
     Spacer(

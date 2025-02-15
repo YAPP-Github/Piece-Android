@@ -9,4 +9,5 @@ interface AuthDataSource {
     suspend fun requestAuthCode(phoneNumber: String): Result<Unit>
     suspend fun verifyAuthCode(phoneNumber: String, code: String): Result<VerifyAuthCodeResponse>
     suspend fun checkTokenHealth(token: String): Result<Unit>
+    suspend fun withdraw(reason:String):Result<Unit>
 }

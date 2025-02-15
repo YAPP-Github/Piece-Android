@@ -6,6 +6,7 @@ import com.puzzle.network.model.auth.LoginOauthResponse
 import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
+import com.puzzle.network.model.auth.WithdrawRequest
 import com.puzzle.network.model.matching.BlockContactsRequest
 import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
@@ -152,4 +153,7 @@ interface PieceApi {
 
     @DELETE("/api/sse/personal/disconnect")
     suspend fun disconnectSSE(): Result<ApiResponse<Unit>>
+
+    @DELETE("/api/users")
+    suspend fun withdraw(@Body withdrawRequest: WithdrawRequest): Result<ApiResponse<Unit>>
 }

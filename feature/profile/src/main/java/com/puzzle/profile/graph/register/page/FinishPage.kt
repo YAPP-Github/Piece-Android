@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -51,7 +50,6 @@ internal fun FinishPage(
         Image(
             painter = painterResource(R.drawable.ic_profile_generate),
             contentDescription = "질문",
-            colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
                 .padding(horizontal = 37.dp)
