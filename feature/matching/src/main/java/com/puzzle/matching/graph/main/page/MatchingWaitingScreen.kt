@@ -31,6 +31,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
 internal fun MatchingWaitingScreen(
+    isNotificationEnabled: Boolean,
     onCheckMyProfileClick: () -> Unit,
 ) {
     Column(
@@ -44,12 +45,14 @@ internal fun MatchingWaitingScreen(
             textStyle = PieceTheme.typography.branding,
             titleColor = PieceTheme.colors.white,
             rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_alarm_black),
-                    contentDescription = "알람",
-                    colorFilter = ColorFilter.tint(PieceTheme.colors.white),
-                    modifier = Modifier.size(32.dp),
-                )
+                if (isNotificationEnabled) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_alarm_black),
+                        contentDescription = "알람",
+                        colorFilter = ColorFilter.tint(PieceTheme.colors.white),
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
             },
             modifier = Modifier.padding(bottom = 20.dp),
         )
@@ -128,6 +131,7 @@ internal fun MatchingWaitingScreen(
 private fun PreviewMatchingWaitingScreen() {
     PieceTheme {
         MatchingWaitingScreen(
+            isNotificationEnabled = true,
             onCheckMyProfileClick = {},
         )
     }

@@ -62,6 +62,7 @@ internal fun MatchingScreen(
 ) {
     when (state.userRole) {
         UserRole.PENDING -> MatchingPendingScreen(
+            isNotificationEnabled = state.isNotificationEnabled,
             isImageRejected = state.isImageRejected,
             isDescriptionRejected = state.isDescriptionRejected,
             onCheckMyProfileClick = {},
@@ -71,16 +72,18 @@ internal fun MatchingScreen(
         UserRole.USER -> {
             if (state.matchInfo?.matchStatus == WAITING) {
                 MatchingWaitingScreen(
+                    isNotificationEnabled = state.isNotificationEnabled,
                     onCheckMyProfileClick = {},
                 )
             } else {
                 state.matchInfo?.let {
                     MatchingUserScreen(
+                        isNotificationEnabled = state.isNotificationEnabled,
                         matchInfo = state.matchInfo,
                         onButtonClick = onButtonClick,
                         onMatchingDetailClick = onMatchingDetailClick,
                     )
-                } ?: MatchingLoadingScreen()
+                } ?: MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
             }
         }
 
@@ -93,6 +96,7 @@ internal fun MatchingScreen(
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
+            isNotificationEnabled = true,
             isImageRejected = false,
             isDescriptionRejected = false,
             onCheckMyProfileClick = {},
@@ -106,6 +110,7 @@ private fun PreviewMatchingPendingScreen() {
 private fun PreviewMatchingWaitingScreen() {
     PieceTheme {
         MatchingWaitingScreen(
+            isNotificationEnabled = true,
             onCheckMyProfileClick = {},
         )
     }
@@ -115,7 +120,7 @@ private fun PreviewMatchingWaitingScreen() {
 @Composable
 private fun PreviewMatchingLoadingScreen() {
     PieceTheme {
-        MatchingLoadingScreen()
+        MatchingLoadingScreen(isNotificationEnabled = true)
     }
 }
 
@@ -124,6 +129,7 @@ private fun PreviewMatchingLoadingScreen() {
 private fun PreviewMatchingUserScreen() {
     PieceTheme {
         MatchingUserScreen(
+            isNotificationEnabled = true,
             matchInfo = MatchInfo(
                 matchId = 1,
                 matchStatus = WAITING,

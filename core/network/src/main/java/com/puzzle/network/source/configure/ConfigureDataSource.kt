@@ -26,6 +26,9 @@ class ConfigDataSource @Inject constructor(
     suspend fun getString(key: String, defaultValue: String): String =
         getValue(key)?.asString() ?: defaultValue
 
+    suspend fun getBoolean(key: String, defaultValue: Boolean): Boolean =
+        getValue(key)?.asBoolean() ?: defaultValue
+
     suspend fun getValue(key: String): FirebaseRemoteConfigValue? =
         suspendCancellableCoroutine { continuation ->
             remoteConfig.fetchAndActivate().addOnCompleteListener { task ->
@@ -40,5 +43,6 @@ class ConfigDataSource @Inject constructor(
 
     companion object Key {
         const val FORCE_UPDATE = "forceUpdate"
+        const val IS_NOTIFICATION_ENABLED = "isNotificationEnabled"
     }
 }

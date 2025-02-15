@@ -33,6 +33,7 @@ import com.puzzle.designsystem.foundation.PieceTheme
 
 @Composable
 internal fun MatchingPendingScreen(
+    isNotificationEnabled: Boolean,
     isImageRejected: Boolean,
     isDescriptionRejected: Boolean,
     onCheckMyProfileClick: () -> Unit,
@@ -74,12 +75,14 @@ internal fun MatchingPendingScreen(
             textStyle = PieceTheme.typography.branding,
             titleColor = PieceTheme.colors.white,
             rightComponent = {
-                Image(
-                    painter = painterResource(R.drawable.ic_alarm_black),
-                    contentDescription = "알람",
-                    colorFilter = ColorFilter.tint(PieceTheme.colors.white),
-                    modifier = Modifier.size(32.dp),
-                )
+                if (isNotificationEnabled) {
+                    Image(
+                        painter = painterResource(R.drawable.ic_alarm_black),
+                        contentDescription = "알람",
+                        colorFilter = ColorFilter.tint(PieceTheme.colors.white),
+                        modifier = Modifier.size(32.dp),
+                    )
+                }
             },
             modifier = Modifier.padding(bottom = 20.dp),
         )
@@ -196,6 +199,7 @@ private fun EditValueTalkGuideText() {
 private fun PreviewMatchingPendingScreen() {
     PieceTheme {
         MatchingPendingScreen(
+            isNotificationEnabled = true,
             isImageRejected = false,
             isDescriptionRejected = false,
             onCheckMyProfileClick = {},

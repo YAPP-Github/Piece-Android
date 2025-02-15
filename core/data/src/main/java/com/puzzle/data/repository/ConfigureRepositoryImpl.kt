@@ -16,4 +16,11 @@ class ConfigureRepositoryImpl @Inject constructor(
             defaultValue = GetForceUpdateInfoResponse(),
         ).toDomain()
     }
+
+    override suspend fun isNotificationEnabled(): Result<Boolean> = suspendRunCatching {
+        configureDataSource.getBoolean(
+            key = ConfigDataSource.IS_NOTIFICATION_ENABLED,
+            defaultValue = false,
+        )
+    }
 }

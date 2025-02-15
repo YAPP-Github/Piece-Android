@@ -8,6 +8,7 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.user.UserRole
+import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.UserRepository
@@ -29,6 +30,7 @@ import kotlinx.coroutines.launch
 
 class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
+    private val configureRepository: ConfigureRepository,
     private val matchingRepository: MatchingRepository,
     private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
@@ -44,6 +46,12 @@ class MatchingViewModel @AssistedInject constructor(
         intents.receiveAsFlow()
             .onEach(::processIntent)
             .launchIn(viewModelScope)
+
+        viewModelScope.launch {
+            configureRepository.isNotificationEnabled()
+                .onSuccess { setState { copy(isNotificationEnabled = it) } }
+                .onFailure { errorHelper.sendError(it) }
+        }
     }
 
     internal fun onIntent(intent: MatchingIntent) = viewModelScope.launch {
