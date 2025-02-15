@@ -7,10 +7,13 @@ import javax.inject.Inject
 class GetMyProfileBasicUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke(): Result<MyProfileBasic> =
-        profileRepository.retrieveMyProfileBasic()
-            .recoverCatching {
-                profileRepository.loadMyProfileBasic().getOrThrow()
-                profileRepository.retrieveMyProfileBasic().getOrThrow()
-            }
+    suspend operator fun invoke(): Result<MyProfileBasic> {
+        val result = profileRepository.retrieveMyProfileBasic()
+        return if (result.isSuccess) {
+            result
+        } else {
+            profileRepository.loadMyProfileBasic().getOrThrow()
+            profileRepository.retrieveMyProfileBasic()
+        }
+    }
 }

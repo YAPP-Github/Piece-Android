@@ -12,7 +12,7 @@ data class GetMyProfileBasicResponse(
     val description: String?,
     val nickname: String?,
     val age: Int?,
-    val birthDate: String?,
+    val birthDate: String? = null,
     val height: Int?,
     val weight: Int?,
     val location: String?,

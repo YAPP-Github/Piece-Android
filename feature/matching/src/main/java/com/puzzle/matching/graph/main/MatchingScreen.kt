@@ -14,6 +14,7 @@ import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.match.MatchStatus.WAITING
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.matching.graph.main.contract.MatchingIntent
+import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.matching.graph.main.page.MatchingLoadingScreen
 import com.puzzle.matching.graph.main.page.MatchingPendingScreen
@@ -32,6 +33,11 @@ internal fun MatchingRoute(
     LaunchedEffect(viewModel) {
         lifecycleOwner.repeatOnStarted {
             viewModel.sideEffects.collect { sideEffect ->
+                when (sideEffect) {
+                    is MatchingSideEffect.Navigate -> {
+                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
+                    }
+                }
             }
         }
 

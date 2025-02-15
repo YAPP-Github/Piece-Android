@@ -15,10 +15,11 @@ data class MatchInfo(
     val job: String,
     val matchedValueCount: Int,
     val matchedValueList: List<String>,
-    val remainMatchingStartTimeInSec: Int = (System.currentTimeMillis() / 1000).toInt(),
+    val remainMatchingUpdateTimeInSec: Long = System.currentTimeMillis() / 1000L,
 )
 
-fun getRemainingTimeUntil10PM(startTimeInMillis: Long): Long {
+fun getRemainingTimeInSec(startTimeInSec: Long): Long {
+    val startTimeInMillis = startTimeInSec * 1000
     val zoneId = ZoneId.systemDefault()
     val now = ZonedDateTime.ofInstant(Instant.ofEpochMilli(startTimeInMillis), zoneId)
     val today10PM = now.withHour(22).withMinute(0).withSecond(0).withNano(0)

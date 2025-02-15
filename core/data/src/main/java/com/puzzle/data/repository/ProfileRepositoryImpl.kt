@@ -18,6 +18,7 @@ import com.puzzle.network.model.UNKNOWN_INT
 import com.puzzle.network.source.profile.ProfileDataSource
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,18 +30,14 @@ class ProfileRepositoryImpl @Inject constructor(
     private val localUserDataSource: LocalUserDataSource,
 ) : ProfileRepository {
     override suspend fun loadValuePickQuestions(): Result<Unit> = suspendRunCatching {
-        val valuePickQuestions = profileDataSource.loadValuePickQuestions()
-            .getOrThrow()
-            .toDomain()
+        val valuePickQuestions = profileDataSource.loadValuePickQuestions().getOrThrow().toDomain()
             .filter { it.id != UNKNOWN_INT }
 
         localProfileDataSource.setValuePickQuestions(valuePickQuestions)
     }
 
     override suspend fun loadValueTalkQuestions(): Result<Unit> = suspendRunCatching {
-        val valueTalkQuestions = profileDataSource.loadValueTalkQuestions()
-            .getOrThrow()
-            .toDomain()
+        val valueTalkQuestions = profileDataSource.loadValueTalkQuestions().getOrThrow().toDomain()
             .filter { it.id != UNKNOWN_INT }
 
         localProfileDataSource.setValueTalkQuestions(valueTalkQuestions)
@@ -52,35 +49,33 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun retrieveValueTalkQuestion(): Result<List<ValueTalkQuestion>> =
         suspendRunCatching { localProfileDataSource.valueTalkQuestions.first() }
 
-    override suspend fun retrieveMyProfileBasic(): Result<MyProfileBasic> =
-        suspendRunCatching { localProfileDataSource.myProfileBasic.first() }
+    override suspend fun retrieveMyProfileBasic(): Result<MyProfileBasic> = suspendRunCatching {
+        localProfileDataSource.myProfileBasic.firstOrNull() ?: throw Exception()
+    }
 
     override suspend fun loadMyValueTalks(): Result<Unit> = suspendRunCatching {
-        val valueTalks = profileDataSource.getMyValueTalks()
-            .getOrThrow()
-            .toDomain()
+        val valueTalks = profileDataSource.getMyValueTalks().getOrThrow().toDomain()
 
         localProfileDataSource.setMyValueTalks(valueTalks)
     }
 
-    override suspend fun retrieveMyValueTalks(): Result<List<MyValueTalk>> =
-        suspendRunCatching { localProfileDataSource.myValueTalks.first() }
+    override suspend fun retrieveMyValueTalks(): Result<List<MyValueTalk>> = suspendRunCatching {
+        localProfileDataSource.myValueTalks.firstOrNull() ?: throw Exception()
+    }
 
     override suspend fun loadMyValuePicks(): Result<Unit> = suspendRunCatching {
-        val valuePicks = profileDataSource.getMyValuePicks()
-            .getOrThrow()
-            .toDomain()
+        val valuePicks = profileDataSource.getMyValuePicks().getOrThrow().toDomain()
 
         localProfileDataSource.setMyValuePicks(valuePicks)
     }
 
     override suspend fun retrieveMyValuePicks(): Result<List<MyValuePick>> =
-        suspendRunCatching { localProfileDataSource.myValuePicks.first() }
+        suspendRunCatching {
+            localProfileDataSource.myValuePicks.firstOrNull() ?: throw Exception()
+        }
 
     override suspend fun loadMyProfileBasic(): Result<Unit> = suspendRunCatching {
-        val profileBasic = profileDataSource.getMyProfileBasic()
-            .getOrThrow()
-            .toDomain()
+        val profileBasic = profileDataSource.getMyProfileBasic().getOrThrow().toDomain()
 
         localProfileDataSource.setMyProfileBasic(profileBasic)
     }
@@ -88,9 +83,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun updateMyValueTalks(valueTalks: List<MyValueTalk>): Result<List<MyValueTalk>> =
         suspendRunCatching {
             val updatedValueTalks =
-                profileDataSource.updateMyValueTalks(valueTalks)
-                    .getOrThrow()
-                    .toDomain()
+                profileDataSource.updateMyValueTalks(valueTalks).getOrThrow().toDomain()
 
             localProfileDataSource.setMyValueTalks(updatedValueTalks)
             updatedValueTalks
@@ -99,9 +92,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun updateMyValuePicks(valuePicks: List<MyValuePick>): Result<List<MyValuePick>> =
         suspendRunCatching {
             val updatedValuePicks =
-                profileDataSource.updateMyValuePicks(valuePicks)
-                    .getOrThrow()
-                    .toDomain()
+                profileDataSource.updateMyValuePicks(valuePicks).getOrThrow().toDomain()
 
             localProfileDataSource.setMyValuePicks(updatedValuePicks)
             updatedValuePicks
@@ -132,8 +123,7 @@ class ProfileRepositoryImpl @Inject constructor(
             snsActivityLevel = snsActivityLevel,
             imageUrl = imageUrl,
             contacts = contacts
-        ).getOrThrow()
-            .toDomain()
+        ).getOrThrow().toDomain()
 
         localProfileDataSource.setMyProfileBasic(updatedProfileBasic)
         updatedProfileBasic
@@ -157,11 +147,9 @@ class ProfileRepositoryImpl @Inject constructor(
         valuePicks: List<ValuePickAnswer>,
         valueTalks: List<ValueTalkAnswer>
     ): Result<Unit> = suspendRunCatching {
-        val uploadedImageUrl =
-            imageResizer.resizeImage(imageUrl).use { imageInputStream ->
-                profileDataSource.uploadProfileImage(imageInputStream)
-                    .getOrThrow()
-            }
+        val uploadedImageUrl = imageResizer.resizeImage(imageUrl).use { imageInputStream ->
+            profileDataSource.uploadProfileImage(imageInputStream).getOrThrow()
+        }
 
         val response = profileDataSource.uploadProfile(
             birthdate = birthdate,

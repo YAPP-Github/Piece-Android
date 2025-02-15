@@ -3,6 +3,7 @@ package com.puzzle.data.repository
 import com.puzzle.common.suspendRunCatching
 import com.puzzle.datastore.datasource.matching.LocalMatchingDataSource
 import com.puzzle.domain.model.match.MatchInfo
+import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.OpponentProfile
 import com.puzzle.domain.model.profile.OpponentProfileBasic
 import com.puzzle.domain.model.profile.OpponentValuePick
@@ -13,6 +14,7 @@ import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
 import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
+import com.puzzle.network.model.profile.ContactResponse
 import com.puzzle.network.source.matching.MatchingDataSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -27,11 +29,15 @@ class MatchingRepositoryImpl @Inject constructor(
         matchingDataSource.reportUser(userId = userId, reason = reason)
 
     override suspend fun blockUser(userId: Int): Result<Unit> = matchingDataSource.blockUser(userId)
+
     override suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit> =
         matchingDataSource.blockContacts(phoneNumbers)
 
-    override suspend fun getMatchInfo(): Result<MatchInfo> = matchingDataSource.getMatchInfo()
-        .mapCatching(GetMatchInfoResponse::toDomain)
+    override suspend fun getContacts(): Result<List<Contact>> =
+        matchingDataSource.getContacts().mapCatching { it.contacts.map(ContactResponse::toDomain) }
+
+    override suspend fun getMatchInfo(): Result<MatchInfo> =
+        matchingDataSource.getMatchInfo().mapCatching(GetMatchInfoResponse::toDomain)
 
     override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> = suspendRunCatching {
         localMatchingDataSource.opponentProfile.first()

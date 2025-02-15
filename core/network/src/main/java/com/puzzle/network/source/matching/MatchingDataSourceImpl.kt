@@ -2,6 +2,7 @@ package com.puzzle.network.source.matching
 
 import com.puzzle.network.api.PieceApi
 import com.puzzle.network.model.matching.BlockContactsRequest
+import com.puzzle.network.model.matching.GetContactsResponse
 import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
@@ -27,6 +28,9 @@ class MatchingDataSourceImpl @Inject constructor(
 
     override suspend fun getMatchInfo(): Result<GetMatchInfoResponse> =
         pieceApi.getMatchInfo().unwrapData()
+
+    override suspend fun getContacts(): Result<GetContactsResponse> =
+        pieceApi.getMatchesContacts().unwrapData()
 
     override suspend fun getOpponentValueTalks(): Result<GetOpponentValueTalksResponse> =
         pieceApi.getOpponentValueTalks().unwrapData()

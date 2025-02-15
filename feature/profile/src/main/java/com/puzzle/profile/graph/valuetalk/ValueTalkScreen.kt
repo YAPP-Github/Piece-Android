@@ -77,7 +77,7 @@ private fun ValueTalkScreen(
     onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var valueTalks: List<MyValueTalk> by remember { mutableStateOf(state.valueTalks) }
+    var valueTalks: List<MyValueTalk> by remember(state.valueTalks) { mutableStateOf(state.valueTalks) }
     var isContentEdited: Boolean by remember { mutableStateOf(false) }
     var editedValueTalkIds: List<Int> by remember { mutableStateOf(emptyList()) }
 

@@ -7,6 +7,7 @@ import com.puzzle.network.model.auth.RequestAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeRequest
 import com.puzzle.network.model.auth.VerifyAuthCodeResponse
 import com.puzzle.network.model.matching.BlockContactsRequest
+import com.puzzle.network.model.matching.GetContactsResponse
 import com.puzzle.network.model.matching.GetMatchInfoResponse
 import com.puzzle.network.model.matching.GetOpponentProfileBasicResponse
 import com.puzzle.network.model.matching.GetOpponentProfileImageResponse
@@ -27,6 +28,7 @@ import com.puzzle.network.model.terms.AgreeTermsRequest
 import com.puzzle.network.model.terms.LoadTermsResponse
 import com.puzzle.network.model.token.RefreshTokenRequest
 import com.puzzle.network.model.token.RefreshTokenResponse
+import com.puzzle.network.model.user.GetRejectReasonResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
@@ -84,6 +86,9 @@ interface PieceApi {
     @POST("/api/matches/blocks/users/{userId}")
     suspend fun blockUser(@Path("userId") userId: Int): Result<ApiResponse<Unit>>
 
+    @GET("/api/matches/contacts")
+    suspend fun getMatchesContacts(): Result<ApiResponse<GetContactsResponse>>
+
     @POST("/api/blockContacts")
     suspend fun blockContacts(@Body blockContactsRequest: BlockContactsRequest): Result<ApiResponse<Unit>>
 
@@ -137,4 +142,7 @@ interface PieceApi {
 
     @PUT("/api/settings/block/acquaintance")
     suspend fun updateBlockAcquaintances(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
+
+    @GET("/api/users/reject")
+    suspend fun getRejectReaseon(): Result<ApiResponse<GetRejectReasonResponse>>
 }

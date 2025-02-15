@@ -8,9 +8,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetMyValueTalksResponse(
-    val response: List<MyValueTalkResponse>?,
+    val responses: List<MyValueTalkResponse>?,
 ) {
-    fun toDomain() = response?.map(MyValueTalkResponse::toDomain) ?: emptyList()
+    fun toDomain() = responses?.map(MyValueTalkResponse::toDomain) ?: emptyList()
 }
 
 @Serializable

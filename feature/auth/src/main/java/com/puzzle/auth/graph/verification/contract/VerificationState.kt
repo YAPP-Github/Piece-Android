@@ -9,12 +9,12 @@ data class VerificationState(
     val isValidPhoneNumber: Boolean = true,
     val isAuthCodeRequested: Boolean = false,
     val authCodeStatus: AuthCodeStatus = AuthCodeStatus.INIT,
-    val remainingTimeInSec: Int = Timer.DEFAULT_DURATION_IN_SEC,
+    val remainingTimeInSec: Long = Timer.DEFAULT_DURATION_IN_SEC,
 ) : MavericksState {
 
     val formattedRemainingTimeInSec: String = formatTime(remainingTimeInSec)
 
-    private fun formatTime(seconds: Int): String {
+    private fun formatTime(seconds: Long): String {
         val minutes = seconds / 60
         val secs = seconds % 60
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)

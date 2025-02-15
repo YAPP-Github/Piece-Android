@@ -10,7 +10,7 @@ import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.model.error.HttpResponseStatus
 import com.puzzle.domain.model.match.MatchStatus
-import com.puzzle.domain.model.match.getRemainingTimeUntil10PM
+import com.puzzle.domain.model.match.getRemainingTimeInSec
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.ProfileRepository
@@ -18,6 +18,7 @@ import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.ProfileGraphDest
@@ -27,6 +28,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -40,7 +42,7 @@ class MatchingViewModel @AssistedInject constructor(
     private val timer: Timer,
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
-    private val navigationHelper: NavigationHelper,
+    internal val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
     private val intents = Channel<MatchingIntent>(BUFFERED)
     private val _sideEffects = Channel<MatchingSideEffect>(BUFFERED)
@@ -67,10 +69,13 @@ class MatchingViewModel @AssistedInject constructor(
     }
 
     internal fun initMatchInfo() = viewModelScope.launch {
-        userRepository.getUserRole()
-            .onSuccess { userRole ->
-                if (userRole == UserRole.USER) {
-                    getMatchInfo()
+        userRepository.observeUserRole()
+            .catch { errorHelper.sendError(it) }
+            .collect { userRole ->
+                when (userRole) {
+                    UserRole.PENDING -> getRejectReason()
+                    UserRole.USER -> getMatchInfo()
+                    else -> Unit
                 }
 
                 setState { copy(userRole = userRole) }
@@ -78,7 +83,6 @@ class MatchingViewModel @AssistedInject constructor(
                 // MatchingHome 화면에서 사전에 내 프로필 데이터를 케싱해놓습니다.
                 loadMyProfile()
             }
-            .onFailure { errorHelper.sendError(it) }
     }
 
     private fun moveToProfileRegisterScreen() {
@@ -104,37 +108,63 @@ class MatchingViewModel @AssistedInject constructor(
         valuePicksJob.join()
     }
 
+    private suspend fun getRejectReason() = userRepository.getRejectReason()
+        .onSuccess {
+            setState {
+                copy(
+                    isImageRejected = it.reasonImage,
+                    isDescriptionRejected = it.reasonValues
+                )
+            }
+        }.onFailure {
+            errorHelper.sendError(it)
+        }
+
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
         .onSuccess {
-            setState { copy(matchInfo = it) }
+            setState {
+                copy(matchInfo = it)
+            }
+
+            if (it.matchStatus != MatchStatus.BLOCKED) {
+                startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
+            }
 
             // MatchingHome 화면에서 사전에 MatchingDetail에서 필요한 데이터를 케싱해놓습니다.
             matchingRepository.loadOpponentProfile()
                 .onFailure { errorHelper.sendError(it) }
-        }
-        .onFailure {
+        }.onFailure {
             if (it is HttpResponseException) {
                 // 1. 회원가입하고 처음 매칭을 하는데 아직 오후 10시가 안되었을 때
                 // 2. 내가 차단했을 때
                 // 3. 상대방 아이디가 없어졌을 때
                 if (it.status == HttpResponseStatus.NotFound) {
-                    startTimer()
+                    startWaitingTimer()
                 }
                 return@onFailure
             }
+
             errorHelper.sendError(it)
         }
 
     private fun processOnButtonClick() = withState { state ->
         when (state.matchInfo?.matchStatus) {
             MatchStatus.BEFORE_OPEN -> checkMatchingPiece()
-            MatchStatus.GREEN_LIGHT -> acceptMatching()
-            MatchStatus.MATCHED -> {
-                // Todo 연락처 공개 페이지로 이동
-                // navigationHelper.navigate()
-            }
-
+            MatchStatus.WAITING, MatchStatus.GREEN_LIGHT -> acceptMatching()
+            MatchStatus.MATCHED -> navigateToContactScreen()
             else -> Unit
+        }
+    }
+
+    private fun navigateToContactScreen() {
+        viewModelScope.launch {
+            _sideEffects.send(
+                MatchingSideEffect.Navigate(
+                    NavigationEvent.NavigateTo(
+                        MatchingGraphDest.ContactRoute
+                    )
+                )
+            )
         }
     }
 
@@ -144,6 +174,8 @@ class MatchingViewModel @AssistedInject constructor(
                 setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.RESPONDED)) }
             }
             .onFailure { errorHelper.sendError(it) }
+
+        _sideEffects.send(MatchingSideEffect.Navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute)))
     }
 
     private fun acceptMatching() = viewModelScope.launch {
@@ -154,15 +186,41 @@ class MatchingViewModel @AssistedInject constructor(
             .onFailure { errorHelper.sendError(it) }
     }
 
-    private fun startTimer(startTimeInMillis: Long = System.currentTimeMillis()) {
+    private fun startWaitingTimer() {
+        timerJob?.cancel()
+
+        val currentTimeInSec = (System.currentTimeMillis() / 1000L)
+        timerJob = viewModelScope.launch {
+            timer.startTimer(getRemainingTimeInSec(currentTimeInSec))
+                .collect { remainTimeInSec ->
+                    setState {
+                        copy(remainWaitingTimeInSec = remainTimeInSec)
+                    }
+
+                    if (remainTimeInSec == 0L) {
+                        getMatchInfo()
+
+                        timerJob?.cancel()
+                    }
+                }
+        }
+    }
+
+    private fun startMatchingValidTimer(startTimeInSec: Long) {
         timerJob?.cancel()
 
         timerJob = viewModelScope.launch {
-            timer.startTimer(getRemainingTimeUntil10PM(startTimeInMillis).toInt())
-                .collect { remaining ->
-                    setState { copy(remainWaitingTimeInSec = remaining) }
+            timer.startTimer(getRemainingTimeInSec(startTimeInSec))
+                .collect { remainTimeInSec ->
+                    setState {
+                        if (matchInfo != null) {
+                            copy(matchInfo = matchInfo.copy(remainMatchingUpdateTimeInSec = remainTimeInSec))
+                        } else {
+                            this
+                        }
+                    }
 
-                    if (remaining == 0) {
+                    if (remainTimeInSec == 0L) {
                         getMatchInfo()
 
                         timerJob?.cancel()

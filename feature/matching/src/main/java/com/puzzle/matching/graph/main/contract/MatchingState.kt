@@ -10,16 +10,16 @@ data class MatchingState(
     val matchInfo: MatchInfo? = null,
     val isImageRejected: Boolean = false,
     val isDescriptionRejected: Boolean = false,
-    val remainWaitingTimeInSec: Int = 0,
+    val remainWaitingTimeInSec: Long = 0L,
 ) : MavericksState {
 
     val formattedRemainWaitingTime: String = formatSecondsToTimeString(remainWaitingTimeInSec)
 
     val formattedRemainMatchingStartTime: String = matchInfo?.let {
-        formatSecondsToTimeString(it.remainMatchingStartTimeInSec)
+        formatSecondsToTimeString(it.remainMatchingUpdateTimeInSec)
     } ?: ""
 
-    private fun formatSecondsToTimeString(totalSeconds: Int): String {
+    private fun formatSecondsToTimeString(totalSeconds: Long): String {
         val hours = totalSeconds / 3600
         val minutes = (totalSeconds % 3600) / 60
         val seconds = totalSeconds % 60

@@ -7,10 +7,13 @@ import javax.inject.Inject
 class GetMyValueTalksUseCase @Inject constructor(
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke(): Result<List<MyValueTalk>> =
-        profileRepository.retrieveMyValueTalks()
-            .recoverCatching {
-                profileRepository.loadMyValueTalks().getOrThrow()
-                profileRepository.retrieveMyValueTalks().getOrThrow()
-            }
+    suspend operator fun invoke(): Result<List<MyValueTalk>> {
+        val result = profileRepository.retrieveMyValueTalks()
+        return if (result.isSuccess) {
+            result
+        } else {
+            profileRepository.loadMyValueTalks().getOrThrow()
+            profileRepository.retrieveMyValueTalks()
+        }
+    }
 }
