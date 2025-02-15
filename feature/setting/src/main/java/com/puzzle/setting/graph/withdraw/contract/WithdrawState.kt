@@ -5,7 +5,8 @@ import com.airbnb.mvrx.MavericksState
 data class WithdrawState(
     val currentPage: WithdrawPage = WithdrawPage.REASON,
     val isLoading: Boolean = false,
-    val selectedReason: WithdrawReason? = null
+    val selectedReason: WithdrawReason? = null,
+    val reason: String = "",
 ) : MavericksState {
 
     enum class WithdrawReason(val label: String) {

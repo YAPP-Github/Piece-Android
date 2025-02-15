@@ -34,12 +34,13 @@ import kotlinx.coroutines.launch
 @Composable
 internal fun ColumnScope.ReasonPage(
     selectedReason: WithdrawState.WithdrawReason?,
+    reason: String,
     onReasonsClick: (WithdrawState.WithdrawReason) -> Unit,
+    updateReason: (String) -> Unit,
     onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var textInput by remember { mutableStateOf("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     var isKeyboardVisible by remember { mutableStateOf(false) }
@@ -85,8 +86,8 @@ internal fun ColumnScope.ReasonPage(
 
     AnimatedVisibility(selectedReason == WithdrawState.WithdrawReason.Other) {
         PieceTextInputLong(
-            value = textInput,
-            onValueChange = { input -> textInput = input },
+            value = reason,
+            onValueChange = updateReason,
             hint = stringResource(R.string.withdraw_other_reaseon_textfield_hint),
             limit = 100,
             modifier = modifier
@@ -99,7 +100,7 @@ internal fun ColumnScope.ReasonPage(
     Spacer(modifier = modifier.weight(1f))
 
     val isNextButtonEnabled = selectedReason != null &&
-            (selectedReason != WithdrawState.WithdrawReason.Other || textInput.isNotEmpty())
+            (selectedReason != WithdrawState.WithdrawReason.Other || reason.isNotEmpty())
     PieceSolidButton(
         label = "다음",
         enabled = isNextButtonEnabled,
@@ -127,6 +128,8 @@ private fun PreviewConfirmPage() {
         ) {
             ReasonPage(
                 WithdrawState.WithdrawReason.Other,
+                reason = "",
+                {},
                 {},
                 {},
             )
