@@ -1,6 +1,5 @@
 package com.puzzle.setting.graph.main
 
-import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
@@ -140,12 +139,10 @@ class SettingViewModel @AssistedInject constructor(
         viewModelScope.launch {
             userRepository.updateBlockAcquaintances(!state.isContactBlocked)
                 .onSuccess {
-                    Log.d("whatisthis", "isContactBlocked ${state.isContactBlocked}")
                     setState { copy(isContactBlocked = !state.isContactBlocked) }
                     syncBlockTime()
                 }
                 .onFailure {
-                    Log.d("whatisthis", "isContactBlocked ${it}")
                     errorHelper.sendError(it)
                 }
         }
