@@ -117,7 +117,7 @@ class SpyProfileRepository : ProfileRepository {
     override suspend fun updateMyProfileBasic(
         description: String,
         nickname: String,
-        birthDate: String,
+        birthdate: String,
         height: Int,
         weight: Int,
         location: String,

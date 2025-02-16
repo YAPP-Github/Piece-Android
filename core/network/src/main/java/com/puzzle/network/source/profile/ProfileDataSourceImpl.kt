@@ -87,7 +87,7 @@ class ProfileDataSourceImpl @Inject constructor(
     override suspend fun updateMyProfileBasic(
         description: String,
         nickname: String,
-        birthDate: String,
+        birthdate: String,
         height: Int,
         weight: Int,
         location: String,
@@ -98,7 +98,7 @@ class ProfileDataSourceImpl @Inject constructor(
         contacts: List<Contact>,
     ): Result<GetMyProfileBasicResponse> = pieceApi.updateMyProfileBasic(
         UpdateMyProfileBasicRequest(
-            birthDate = birthDate,
+            birthdate = birthdate,
             description = description,
             height = height,
             weight = weight,
@@ -136,8 +136,7 @@ class ProfileDataSourceImpl @Inject constructor(
         return pieceApi.uploadProfileImage(requestImage).unwrapData()
     }
 
-    override suspend
-    fun uploadProfile(
+    override suspend fun uploadProfile(
         birthdate: String,
         description: String,
         height: Int,

@@ -170,6 +170,7 @@
     <!--Base Profile-->
     <string name="basic_profile_nickname_header">닉네임</string>
     <string name="basic_profile_nickname_duplication_check">중복검사</string>
+    <string name="empty"> </string>
     <string name="basic_profile_nickname_length_limit">6</string>
     <string name="basic_profile_nickname_length_guide">6자 이하로 작성해 주세요.</string>
     <string name="basic_profile_nickname_length_exceed_error">6자 이하로 작성해 주세요.</string>

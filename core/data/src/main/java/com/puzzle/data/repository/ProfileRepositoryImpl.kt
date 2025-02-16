@@ -113,7 +113,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override suspend fun updateMyProfileBasic(
         description: String,
         nickname: String,
-        birthDate: String,
+        birthdate: String,
         height: Int,
         weight: Int,
         location: String,
@@ -126,7 +126,7 @@ class ProfileRepositoryImpl @Inject constructor(
         val updatedProfileBasic = profileDataSource.updateMyProfileBasic(
             description = description,
             nickname = nickname,
-            birthDate = birthDate,
+            birthdate = birthdate,
             height = height,
             weight = weight,
             location = location,

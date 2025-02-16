@@ -212,7 +212,7 @@ class ProfileRepositoryImplTest {
         val result = profileRepository.updateMyProfileBasic(
             description = "새로운 자기소개",
             nickname = "업데이트된닉네임",
-            birthDate = "1995-01-01",
+            birthdate = "1995-01-01",
             height = 180,
             weight = 75,
             location = "서울 강남구",

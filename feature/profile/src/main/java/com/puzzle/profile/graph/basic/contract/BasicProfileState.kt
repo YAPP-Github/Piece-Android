@@ -8,7 +8,7 @@ data class BasicProfileState(
     val profileScreenState: ScreenState = ScreenState.SAVED,
     val nickname: String = "",
     val isCheckingButtonEnabled: Boolean = false,
-    val nickNameGuideMessage: NickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
+    val nickNameGuideMessage: NickNameGuideMessage = NickNameGuideMessage.DEFAULT,
     val description: String = "",
     val descriptionInputState: InputState = InputState.DEFAULT,
     val birthdate: String = "",
@@ -39,7 +39,8 @@ data class BasicProfileState(
             job.isBlank() ||
             nickname.isBlank() ||
             imageUrl.isBlank() ||
-            nickNameGuideMessage != NickNameGuideMessage.AVAILABLE
+            (nickNameGuideMessage != NickNameGuideMessage.AVAILABLE
+                    && nickNameGuideMessage != NickNameGuideMessage.DEFAULT)
 
     val nickNameStateInSavingProfile: NickNameGuideMessage =
         when {
@@ -72,6 +73,10 @@ enum class NickNameGuideMessage(
     val inputState: InputState,
     val guideMessageId: Int
 ) {
+    DEFAULT(
+        inputState = InputState.DEFAULT,
+        guideMessageId = R.string.empty,
+    ),
     LENGTH_GUIDE(
         inputState = InputState.DEFAULT,
         guideMessageId = R.string.basic_profile_nickname_length_guide

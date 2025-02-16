@@ -13,7 +13,7 @@ android {
         buildConfigField("String", "PIECE_MARKET_URL", "\"${localProperties["PIECE_MARKET_URL"]}\"")
     }
 
-    buildFeatures{
+    buildFeatures {
         buildConfig = true
     }
 }

@@ -1,5 +1,6 @@
 package com.puzzle.profile.graph.basic
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
@@ -7,6 +8,7 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.toBirthDate
 import com.puzzle.common.toCompactDateString
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.profile.Contact
@@ -110,6 +112,8 @@ class BasicProfileViewModel @AssistedInject constructor(
         withState { state ->
             viewModelScope.launch {
                 if (state.isProfileIncomplete) {
+                    Log.d("test", "여기로 빠짐")
+
                     setState {
                         copy(
                             profileScreenState = ScreenState.SAVE_FAILED,
@@ -126,17 +130,10 @@ class BasicProfileViewModel @AssistedInject constructor(
                     return@launch
                 }
 
-                profileRepository.checkNickname(state.nickname)
-                    .onSuccess { result -> if (!result) return@launch }
-                    .onFailure {
-                        errorHelper.sendError(it)
-                        return@launch
-                    }
-
                 profileRepository.updateMyProfileBasic(
                     description = state.description,
                     nickname = state.nickname,
-                    birthDate = state.birthdate,
+                    birthdate = state.birthdate.toBirthDate(),
                     height = state.height.toInt(),
                     weight = state.weight.toInt(),
                     location = state.location,

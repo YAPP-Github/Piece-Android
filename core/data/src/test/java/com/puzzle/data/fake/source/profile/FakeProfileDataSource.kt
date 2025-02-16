@@ -86,7 +86,7 @@ class FakeProfileDataSource : ProfileDataSource {
     override suspend fun updateMyProfileBasic(
         description: String,
         nickname: String,
-        birthDate: String,
+        birthdate: String,
         height: Int,
         weight: Int,
         location: String,
@@ -100,7 +100,7 @@ class FakeProfileDataSource : ProfileDataSource {
             description = description,
             nickname = nickname,
             age = null,
-            birthdate = birthDate,
+            birthdate = birthdate,
             height = height,
             weight = weight,
             location = location,

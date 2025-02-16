@@ -47,6 +47,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import coil3.compose.AsyncImage
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
@@ -196,8 +197,8 @@ private fun BasicProfileScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .addFocusCleaner(focusManager)
             .background(PieceTheme.colors.white)
-            .verticalScroll(scrollState)
             .padding(horizontal = 20.dp)
             .padding(top = 24.dp, bottom = 60.dp),
     ) {
@@ -213,118 +214,118 @@ private fun BasicProfileScreen(
                     } else {
                         PieceTheme.colors.dark3
                     },
-                    modifier = Modifier.clickable {
-                        if (isSaveButtonEnabled) {
-                            onSaveClick()
-                            focusManager.clearFocus()
-                        }
-                    },
+                    modifier = Modifier.throttledClickable(
+                        throttleTime = 2000L,
+                        enabled = isSaveButtonEnabled
+                    ) { onSaveClick() },
                 )
             },
         )
 
-        PhotoContent(
-            imageUrl = state.imageUrl,
-            imageUrlInputState = state.imageUrlInputState,
-            onProfileImageChanged = onProfileImageChanged,
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(top = 40.dp)
-                .size(120.dp),
-        )
+        Column(modifier = Modifier.verticalScroll(scrollState)) {
+            PhotoContent(
+                imageUrl = state.imageUrl,
+                imageUrlInputState = state.imageUrlInputState,
+                onProfileImageChanged = onProfileImageChanged,
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 40.dp)
+                    .size(120.dp),
+            )
 
-        NickNameContent(
-            nickName = state.nickname,
-            nickNameGuideMessage = state.nickNameGuideMessage,
-            isCheckingButtonAvailable = state.isCheckingButtonEnabled,
-            onNickNameChanged = onNickNameChanged,
-            onDuplicationCheckClick = onDuplicationCheckClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-        )
+            NickNameContent(
+                nickName = state.nickname,
+                nickNameGuideMessage = state.nickNameGuideMessage,
+                isCheckingButtonAvailable = state.isCheckingButtonEnabled,
+                onNickNameChanged = onNickNameChanged,
+                onDuplicationCheckClick = onDuplicationCheckClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
 
-        SelfDescriptionContent(
-            description = state.description,
-            descriptionInputState = state.descriptionInputState,
-            onDescribeMySelfChanged = onDescribeMySelfChanged,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-        )
+            SelfDescriptionContent(
+                description = state.description,
+                descriptionInputState = state.descriptionInputState,
+                onDescribeMySelfChanged = onDescribeMySelfChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
 
-        BirthdateContent(
-            birthdate = state.birthdate,
-            birthdateInputState = state.birthdateInputState,
-            onBirthdayChanged = onBirthdayChanged,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-        )
+            BirthdateContent(
+                birthdate = state.birthdate,
+                birthdateInputState = state.birthdateInputState,
+                onBirthdayChanged = onBirthdayChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
 
-        LocationContent(
-            location = state.location,
-            locationInputState = state.locationInputState,
-            onLocationDropDownClicked = onLocationDropDownClicked,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
+            LocationContent(
+                location = state.location,
+                locationInputState = state.locationInputState,
+                onLocationDropDownClicked = onLocationDropDownClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
 
-        HeightContent(
-            height = state.height,
-            heightInputState = state.heightInputState,
-            onHeightChanged = onHeightChanged,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
+            HeightContent(
+                height = state.height,
+                heightInputState = state.heightInputState,
+                onHeightChanged = onHeightChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
 
-        WeightContent(
-            weight = state.weight,
-            weightInputState = state.weightInputState,
-            onWeightChanged = onWeightChanged,
-            modifier = Modifier
-                .padding(top = 8.dp)
-                .fillMaxWidth()
-        )
+            WeightContent(
+                weight = state.weight,
+                weightInputState = state.weightInputState,
+                onWeightChanged = onWeightChanged,
+                modifier = Modifier
+                    .padding(top = 8.dp)
+                    .fillMaxWidth()
+            )
 
-        JobContent(
-            job = state.job,
-            jobInputState = state.jobInputState,
-            onJobDropDownClicked = onJobDropDownClicked,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
+            JobContent(
+                job = state.job,
+                jobInputState = state.jobInputState,
+                onJobDropDownClicked = onJobDropDownClicked,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
 
-        SmokeContent(
-            isSmoke = state.isSmoke,
-            onSmokingStatusChanged = onSmokingStatusChanged,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-        )
+            SmokeContent(
+                isSmoke = state.isSmoke,
+                onSmokingStatusChanged = onSmokingStatusChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
 
-        SnsActivityContent(
-            isSnsActive = state.isSnsActive,
-            onSnsActivityChanged = onSnsActivityChanged,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-        )
+            SnsActivityContent(
+                isSnsActive = state.isSnsActive,
+                onSnsActivityChanged = onSnsActivityChanged,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+            )
 
-        SnsPlatformContent(
-            contacts = state.contacts,
-            screenState = state.profileScreenState,
-            onContactChange = onContactChange,
-            onSnsPlatformChange = onSnsPlatformChange,
-            onDeleteClick = onDeleteClick,
-            onAddContactClick = onAddContactClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        )
+            SnsPlatformContent(
+                contacts = state.contacts,
+                screenState = state.profileScreenState,
+                onContactChange = onContactChange,
+                onSnsPlatformChange = onSnsPlatformChange,
+                onDeleteClick = onDeleteClick,
+                onAddContactClick = onAddContactClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            )
+        }
     }
 }
 
@@ -646,7 +647,7 @@ private fun BirthdateContent(
 
     PieceTextInputDefault(
         value = birthdate,
-        hint = "6자리(YYMMDD) 형식으로 입력해 주세요",
+        hint = stringResource(R.string.basic_profile_birthday_guide),
         keyboardType = KeyboardType.Number,
         onValueChange = onBirthdayChanged,
         rightComponent = {
@@ -669,7 +670,7 @@ private fun BirthdateContent(
             text = if (isSaveFailed) {
                 "필수 항목을 입력해 주세요."
             } else {
-                "6자리(YYMMDD) 형식으로 입력해 주세요."
+                stringResource(R.string.basic_profile_birthday_guide)
             },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
