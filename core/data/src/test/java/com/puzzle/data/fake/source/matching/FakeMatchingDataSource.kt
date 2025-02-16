@@ -65,6 +65,10 @@ class FakeMatchingDataSource : MatchingDataSource {
     override suspend fun getOpponentProfileImage(): Result<GetOpponentProfileImageResponse> =
         Result.success(opponentProfileImageData ?: GetOpponentProfileImageResponse(null))
 
+    override suspend fun refuseMatch(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun reportUser(userId: Int, reason: String): Result<Unit> =
         Result.success(Unit)
 
