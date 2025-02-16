@@ -22,9 +22,23 @@ android {
         buildConfigField("String", "KAKAO_APP_KEY", "\"${localProperties["KAKAO_APP_KEY"]}\"")
     }
 
+    signingConfigs {
+        create("release") {
+            val keystoreProperties = Properties()
+            keystoreProperties.load(
+                project.rootProject.file("keystore.properties").bufferedReader()
+            )
+
+            storeFile = file(keystoreProperties["STORE_FILE_PATH"] as String)
+            storePassword = keystoreProperties["STORE_PASSWORD"] as String
+            keyAlias = keystoreProperties["KEY_ALIAS"] as String
+            keyPassword = keystoreProperties["KEY_PASSWORD"] as String
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
