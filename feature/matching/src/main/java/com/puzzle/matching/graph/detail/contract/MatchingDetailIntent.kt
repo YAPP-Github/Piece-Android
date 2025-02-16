@@ -9,5 +9,6 @@ sealed class MatchingDetailIntent {
     data object OnReportClick : MatchingDetailIntent()
     data object OnBlockClick : MatchingDetailIntent()
     data object OnAcceptClick : MatchingDetailIntent()
+    data object OnDeclineClick : MatchingDetailIntent()
     data class OnMoreClick(val content: @Composable () -> Unit) : MatchingDetailIntent()
 }

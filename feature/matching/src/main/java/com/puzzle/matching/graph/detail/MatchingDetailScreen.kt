@@ -93,9 +93,12 @@ internal fun MatchingDetailRoute(
                 )
             )
         },
-        onDeclineClick = { },
-        onAcceptClick = { },
-        onShowPicturesClick = { },
+        onDeclineClick = {
+            viewModel.onIntent(MatchingDetailIntent.OnDeclineClick)
+        },
+        onAcceptClick = {
+            viewModel.onIntent(MatchingDetailIntent.OnAcceptClick)
+        },
     )
 }
 
@@ -107,7 +110,6 @@ private fun MatchingDetailScreen(
     onNextPageClick: () -> Unit,
     onMoreClick: () -> Unit,
     onDeclineClick: () -> Unit,
-    onShowPicturesClick: () -> Unit,
     onAcceptClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -134,7 +136,10 @@ private fun MatchingDetailScreen(
                             leftButtonText = "뒤로",
                             rightButtonText = "매칭 수락하기",
                             onLeftButtonClick = { showDialog = false },
-                            onRightButtonClick = {},
+                            onRightButtonClick = {
+                                showDialog = false
+                                onAcceptClick()
+                            },
                         )
                     },
                     onDismissRequest = { showDialog = false },
@@ -160,7 +165,10 @@ private fun MatchingDetailScreen(
                             leftButtonText = "뒤로",
                             rightButtonText = "매칭 거절하기",
                             onLeftButtonClick = { showDialog = false },
-                            onRightButtonClick = {},
+                            onRightButtonClick = {
+                                showDialog = false
+                                onDeclineClick()
+                            },
                         )
                     },
                     onDismissRequest = { showDialog = false },
@@ -204,7 +212,10 @@ private fun MatchingDetailScreen(
         MatchingDetailContent(
             state = state,
             onMoreClick = onMoreClick,
-            onDeclineClick = onDeclineClick,
+            onDeclineClick = {
+                dialogType = DialogType.DECLINE_MATCHING
+                showDialog = true
+            },
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = topBarHeight, bottom = bottomBarHeight),
@@ -236,12 +247,10 @@ private fun MatchingDetailScreen(
                 onShowPicturesClick = {
                     dialogType = DialogType.PROFILE_IMAGE_DETAIL
                     showDialog = true
-                    onShowPicturesClick()
                 },
                 onAcceptClick = {
                     dialogType = DialogType.ACCEPT_MATCHING
                     showDialog = true
-                    onAcceptClick()
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -402,7 +411,6 @@ private fun MatchingDetailScreenPreview() {
                     imageUrl = "",
                 )
             ),
-            {},
             {},
             {},
             {},

@@ -75,7 +75,21 @@ class MatchingDetailViewModel @AssistedInject constructor(
             MatchingDetailIntent.OnBlockClick -> onBlockClick()
             MatchingDetailIntent.OnReportClick -> onReportClick()
             MatchingDetailIntent.OnAcceptClick -> acceptMatching()
+            MatchingDetailIntent.OnDeclineClick -> declineMatching()
         }
+    }
+
+    private fun declineMatching() = viewModelScope.launch {
+        matchingRepository.refuseMatch()
+            .onSuccess {
+                navigationHelper.navigate(
+                    NavigationEvent.NavigateTo(
+                        route = MatchingGraphDest.MatchingRoute,
+                        popUpTo = true,
+                    )
+                )
+            }
+            .onFailure { errorHelper.sendError(it) }
     }
 
     private fun setNextPage() {

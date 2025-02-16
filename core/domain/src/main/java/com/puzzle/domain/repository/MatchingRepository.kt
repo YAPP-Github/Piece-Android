@@ -5,6 +5,7 @@ import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.OpponentProfile
 
 interface MatchingRepository {
+    suspend fun refuseMatch(): Result<Unit>
     suspend fun reportUser(userId: Int, reason: String): Result<Unit>
     suspend fun getOpponentContacts(): Result<List<Contact>>
     suspend fun blockUser(userId: Int): Result<Unit>
