@@ -70,8 +70,16 @@ class MatchingViewModel @AssistedInject constructor(
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
             MatchingIntent.OnButtonClick -> processOnButtonClick()
-            is MatchingIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
+            is MatchingIntent.OnMatchingDetailClick -> navigationHelper.navigate(
+                NavigationEvent.NavigateTo(
+                    MatchingGraphDest.MatchingDetailRoute
+                )
+            )
+
             MatchingIntent.OnEditProfileClick -> moveToProfileRegisterScreen()
+            MatchingIntent.OnCheckMyProfileClick -> navigationHelper.navigate(
+                NavigationEvent.NavigateTo(MatchingGraphDest.ProfilePreviewRoute)
+            )
         }
     }
 

@@ -8,6 +8,7 @@ import com.puzzle.network.model.matching.GetOpponentValuePicksResponse
 import com.puzzle.network.model.matching.GetOpponentValueTalksResponse
 
 interface MatchingDataSource {
+    suspend fun refuseMatch(): Result<Unit>
     suspend fun reportUser(userId: Int, reason: String): Result<Unit>
     suspend fun blockUser(userId: Int): Result<Unit>
     suspend fun blockContacts(phoneNumbers: List<String>): Result<Unit>

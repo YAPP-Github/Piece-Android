@@ -44,17 +44,23 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     private fun initProfilePreview() = viewModelScope.launch {
         val profileBasicJob = launch {
             profileRepository.retrieveMyProfileBasic()
-                .onSuccess { }
+                .onSuccess {
+                    setState { copy(myProfileBasic = it) }
+                }
                 .onFailure { errorHelper.sendError(it) }
         }
         val valueTalksJob = launch {
-            profileRepository.retrieveMyValuePicks()
-                .onSuccess { }
+            profileRepository.retrieveMyValueTalks()
+                .onSuccess {
+                    setState { copy(myValueTalks = it) }
+                }
                 .onFailure { errorHelper.sendError(it) }
         }
         val valuePicksJob = launch {
-            profileRepository.retrieveMyValueTalks()
-                .onSuccess { }
+            profileRepository.retrieveMyValuePicks()
+                .onSuccess {
+                    setState { copy(myValuePicks = it) }
+                }
                 .onFailure { errorHelper.sendError(it) }
         }
 

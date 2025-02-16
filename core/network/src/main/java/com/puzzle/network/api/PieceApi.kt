@@ -111,6 +111,9 @@ interface PieceApi {
     @PUT("/api/profiles/valuePicks")
     suspend fun updateMyValuePicks(@Body updateMyValuePickRequests: UpdateMyValuePickRequests): Result<ApiResponse<GetMyValuePicksResponse>>
 
+    @PUT("/api/matches/refuse")
+    suspend fun refuseMatch(): Result<ApiResponse<Unit>>
+
     @PUT("/api/profiles/basic")
     suspend fun updateMyProfileBasic(@Body updateMyProfileBasicRequest: UpdateMyProfileBasicRequest): Result<ApiResponse<GetMyProfileBasicResponse>>
 

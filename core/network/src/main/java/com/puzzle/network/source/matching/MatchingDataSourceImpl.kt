@@ -17,6 +17,9 @@ import javax.inject.Singleton
 class MatchingDataSourceImpl @Inject constructor(
     private val pieceApi: PieceApi
 ) : MatchingDataSource {
+    override suspend fun refuseMatch(): Result<Unit> =
+        pieceApi.refuseMatch().unwrapData()
+
     override suspend fun reportUser(userId: Int, reason: String): Result<Unit> =
         pieceApi.reportUser(ReportUserRequest(userId = userId, reason = reason)).unwrapData()
 

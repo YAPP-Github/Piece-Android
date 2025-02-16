@@ -30,6 +30,10 @@ class SpyMatchingRepository : MatchingRepository {
         return Result.success(Unit)
     }
 
+    override suspend fun refuseMatch(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun reportUser(userId: Int, reason: String): Result<Unit> {
         TODO("Not yet implemented")
     }

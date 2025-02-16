@@ -1,11 +1,15 @@
 package com.puzzle.matching.graph.preview.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.domain.model.profile.OpponentProfile
+import com.puzzle.domain.model.profile.MyProfileBasic
+import com.puzzle.domain.model.profile.MyValuePick
+import com.puzzle.domain.model.profile.MyValueTalk
 
 data class ProfilePreviewState(
     val isLoading: Boolean = false,
-    val profile: OpponentProfile? = null,
+    val myProfileBasic: MyProfileBasic? = null,
+    val myValuePicks: List<MyValuePick> = emptyList(),
+    val myValueTalks: List<MyValueTalk> = emptyList(),
 ) : MavericksState {
 
     enum class Page(val title: String) {

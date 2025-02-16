@@ -142,7 +142,9 @@ class SettingViewModel @AssistedInject constructor(
                     setState { copy(isContactBlocked = !state.isContactBlocked) }
                     syncBlockTime()
                 }
-                .onFailure { errorHelper.sendError(it) }
+                .onFailure {
+                    errorHelper.sendError(it)
+                }
         }
     }
 
