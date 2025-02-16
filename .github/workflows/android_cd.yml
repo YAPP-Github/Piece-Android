@@ -41,6 +41,9 @@ jobs:
           echo "PIECE_CHANNEL_TALK_URL=${{ secrets.PIECE_CHANNEL_TALK_URL }}" >> local.properties
           echo "GOOGLE_WEB_CLIENT_ID=${{ secrets.GOOGLE_WEB_CLIENT_ID }}" >> local.properties
 
+      - name: Decode keystore file
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > ./app/upload-keystore.jks
+
       - name: Set up keystore.properties
         run: |
           echo "STORE_FILE_PATH=./upload-keystore.jks" >> keystore.properties
@@ -48,7 +51,6 @@ jobs:
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> keystore.properties
           echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> keystore.properties    
   
-
       - name: Create google-services.json
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
 
@@ -61,11 +63,11 @@ jobs:
       - name: Test
         run: ./gradlew test --stacktrace
 
-      - name: Build AAB for Firebase
+      - name: Build AAB
         run: ./gradlew bundleRelease --stacktrace
 
-      - name: Upload AAB artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
         with:
           name: app-release.aab
           path: app/build/outputs/bundle/release/app-release.aab
@@ -82,5 +84,5 @@ jobs:
         run: |
           firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
           --app ${{ secrets.FIREBASE_APP_ID }} \
-          --release-notes "~새로운 릴리즈 버전이 날라왔어용~" \
-          --groups "최강야뿌앱3팀"
+          --release-notes "~Piece 새로운 버전이 날라왔어용~" \
+          --groups "puzzly-내부-qa"

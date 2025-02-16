@@ -7,5 +7,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.common)
+
     implementation(libs.cloudy.compose)
 }

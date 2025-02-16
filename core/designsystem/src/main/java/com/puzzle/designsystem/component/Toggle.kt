@@ -51,7 +51,7 @@ fun PieceToggle(
             .size(width = 34.dp, height = 20.dp)
             .clip(RoundedCornerShape(999.dp))
             .background(if (checked) PieceTheme.colors.primaryDefault else PieceTheme.colors.light1)
-            .throttledClickable(2000L) { onCheckedChange() }
+            .throttledClickable(1000L) { onCheckedChange() }
     ) {
         Box(
             modifier = Modifier

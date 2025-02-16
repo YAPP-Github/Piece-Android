@@ -20,8 +20,6 @@ import com.puzzle.matching.graph.main.page.MatchingLoadingScreen
 import com.puzzle.matching.graph.main.page.MatchingPendingScreen
 import com.puzzle.matching.graph.main.page.MatchingUserScreen
 import com.puzzle.matching.graph.main.page.MatchingWaitingScreen
-import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.NavigationEvent
 
 @Composable
 internal fun MatchingRoute(
@@ -48,10 +46,8 @@ internal fun MatchingRoute(
         state = state,
         onButtonClick = { viewModel.onIntent(MatchingIntent.OnButtonClick) },
         onMatchingDetailClick = { viewModel.onIntent(MatchingIntent.OnMatchingDetailClick) },
-        onCheckMyProfileClick = {},
-        onEditProfileClick = {
-            viewModel.onIntent(MatchingIntent.OnEditProfileClick)
-        }
+        onCheckMyProfileClick = { viewModel.onIntent(MatchingIntent.OnCheckMyProfileClick) },
+        onEditProfileClick = { viewModel.onIntent(MatchingIntent.OnEditProfileClick) },
     )
 }
 

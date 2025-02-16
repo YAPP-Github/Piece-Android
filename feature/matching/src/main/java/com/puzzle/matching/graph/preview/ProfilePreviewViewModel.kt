@@ -7,6 +7,8 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.ProfileRepository
+import com.puzzle.domain.usecase.profile.GetMyValuePicksUseCase
+import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
@@ -24,6 +26,8 @@ import kotlinx.coroutines.launch
 
 class ProfilePreviewViewModel @AssistedInject constructor(
     @Assisted initialState: ProfilePreviewState,
+    private val getMyValueTalksUseCase: GetMyValueTalksUseCase,
+    private val getMyValuePicksUseCase: GetMyValuePicksUseCase,
     private val profileRepository: ProfileRepository,
     private val navigationHelper: NavigationHelper,
     internal val eventHelper: EventHelper,
@@ -45,23 +49,21 @@ class ProfilePreviewViewModel @AssistedInject constructor(
         val profileBasicJob = launch {
             profileRepository.retrieveMyProfileBasic()
                 .onSuccess {
-                    setState { copy(myProfileBasic = it) }
+                    setState {
+                        copy(myProfileBasic = it.copy(birthdate = it.birthdate.substring(2, 4)))
+                    }
                 }
                 .onFailure { errorHelper.sendError(it) }
         }
         val valueTalksJob = launch {
-            profileRepository.retrieveMyValueTalks()
-                .onSuccess {
-                    setState { copy(myValueTalks = it) }
-                }
-                .onFailure { errorHelper.sendError(it) }
+            getMyValueTalksUseCase().onSuccess {
+                setState { copy(myValueTalks = it) }
+            }.onFailure { errorHelper.sendError(it) }
         }
         val valuePicksJob = launch {
-            profileRepository.retrieveMyValuePicks()
-                .onSuccess {
-                    setState { copy(myValuePicks = it) }
-                }
-                .onFailure { errorHelper.sendError(it) }
+            getMyValuePicksUseCase().onSuccess {
+                setState { copy(myValuePicks = it) }
+            }.onFailure { errorHelper.sendError(it) }
         }
 
         profileBasicJob.join()
@@ -80,7 +82,7 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToBackScreen() {
-        _sideEffects.send(ProfilePreviewSideEffect.Navigate(NavigationEvent.NavigateUp))
+        navigationHelper.navigate(NavigationEvent.NavigateUp)
     }
 
     @AssistedFactory

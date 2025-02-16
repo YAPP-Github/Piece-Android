@@ -139,7 +139,10 @@ private fun ValuePickCards(
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        itemsIndexed(valuePicks) { idx, item ->
+        itemsIndexed(
+            items = valuePicks,
+            key = { _, item -> item.id },
+        ) { idx, item ->
             ValuePickCard(
                 item = item,
                 screenState = screenState,

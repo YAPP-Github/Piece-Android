@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,23 +48,13 @@ import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
 import com.puzzle.matching.graph.preview.page.BasicInfoPage
 import com.puzzle.matching.graph.preview.page.ValuePickPage
 import com.puzzle.matching.graph.preview.page.ValueTalkPage
+import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun ProfilePreviewRoute(
     viewModel: ProfilePreviewViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is ProfilePreviewSideEffect.Navigate -> TODO()
-                }
-            }
-        }
-    }
 
     ProfilePreviewScreen(
         state = state,
@@ -97,6 +88,13 @@ private fun ProfilePreviewScreen(
             .then(
                 if (currentPage != ProfilePreviewState.Page.BasicInfoPage) {
                     Modifier.background(PieceTheme.colors.light3)
+                } else {
+                    Modifier
+                }
+            )
+            .then(
+                if(showDialog){
+                    Modifier.cloudy(radius = 40)
                 } else {
                     Modifier
                 }
@@ -145,9 +143,7 @@ private fun ProfilePreviewScreen(
                     currentPage = page
                 }
             },
-            onShowPicturesClick = {
-                showDialog = true
-            },
+            onShowPicturesClick = { showDialog = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(bottomBarHeight)

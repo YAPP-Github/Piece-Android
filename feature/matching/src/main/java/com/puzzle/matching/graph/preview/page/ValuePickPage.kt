@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.designsystem.R
-import com.puzzle.designsystem.component.PieceSubButton
+import com.puzzle.designsystem.component.PieceChip
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.MyValuePick
 import com.puzzle.matching.graph.detail.common.component.BasicInfoHeader
@@ -108,9 +108,12 @@ private fun ValuePickCards(
             .background(PieceTheme.colors.light3)
             .padding(horizontal = 20.dp),
     ) {
-        itemsIndexed(pickCards) { idx, item ->
+        items(
+            items = pickCards,
+            key = { item -> item.id },
+        ) { item ->
             ValuePickCard(
-                valuePickQuestion = item,
+                item = item,
                 modifier = Modifier.padding(top = 20.dp)
             )
         }
@@ -123,7 +126,7 @@ private fun ValuePickCards(
 
 @Composable
 private fun ValuePickCard(
-    valuePickQuestion: MyValuePick,
+    item: MyValuePick,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -151,23 +154,24 @@ private fun ValuePickCard(
             Spacer(modifier = Modifier.width(6.dp))
 
             Text(
-                text = valuePickQuestion.category,
+                text = item.category,
                 style = PieceTheme.typography.bodySSB,
                 color = PieceTheme.colors.primaryDefault,
             )
         }
 
         Text(
-            text = valuePickQuestion.question,
+            text = item.question,
             style = PieceTheme.typography.headingMSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp),
         )
 
-        valuePickQuestion.answerOptions.forEachIndexed { idx, answer ->
-            PieceSubButton(
+        item.answerOptions.forEachIndexed { idx, answer ->
+            PieceChip(
                 label = answer.content,
-                onClick = {},
+                selected = answer.number == item.selectedAnswer,
+                onChipClicked = {},
                 enabled = true,
                 modifier = Modifier
                     .fillMaxWidth()
