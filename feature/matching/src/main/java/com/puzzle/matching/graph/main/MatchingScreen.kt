@@ -47,13 +47,8 @@ internal fun MatchingRoute(
     MatchingScreen(
         state = state,
         onButtonClick = { viewModel.onIntent(MatchingIntent.OnButtonClick) },
-        onMatchingDetailClick = {
-            viewModel.onIntent(
-                MatchingIntent.Navigate(
-                    NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute)
-                )
-            )
-        },
+        onMatchingDetailClick = { viewModel.onIntent(MatchingIntent.OnMatchingDetailClick) },
+        onCheckMyProfileClick = {},
         onEditProfileClick = {
             viewModel.onIntent(MatchingIntent.OnEditProfileClick)
         }
@@ -65,6 +60,7 @@ internal fun MatchingScreen(
     state: MatchingState,
     onButtonClick: () -> Unit,
     onMatchingDetailClick: () -> Unit,
+    onCheckMyProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
 ) {
     when (state.userRole) {
@@ -72,7 +68,7 @@ internal fun MatchingScreen(
             isNotificationEnabled = state.isNotificationEnabled,
             isImageRejected = state.isImageRejected,
             isDescriptionRejected = state.isDescriptionRejected,
-            onCheckMyProfileClick = {},
+            onCheckMyProfileClick = onCheckMyProfileClick,
             onEditProfileClick = onEditProfileClick,
         )
 
@@ -80,7 +76,7 @@ internal fun MatchingScreen(
             if (state.matchInfo == null) {
                 MatchingWaitingScreen(
                     isNotificationEnabled = state.isNotificationEnabled,
-                    onCheckMyProfileClick = {},
+                    onCheckMyProfileClick = onCheckMyProfileClick,
                     remainTime = state.formattedRemainWaitingTime,
                 )
             } else {
@@ -88,7 +84,7 @@ internal fun MatchingScreen(
                     MatchStatus.UNKNOWN -> MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
                     MatchStatus.BLOCKED -> MatchingWaitingScreen(
                         isNotificationEnabled = state.isNotificationEnabled,
-                        onCheckMyProfileClick = {},
+                        onCheckMyProfileClick = onCheckMyProfileClick,
                         remainTime = state.formattedRemainWaitingTime
                     )
 
