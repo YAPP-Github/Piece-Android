@@ -134,6 +134,7 @@ private fun VerificationScreen(
         PieceSubCloseTopBar(
             title = "",
             onCloseClick = { navigate(NavigationEvent.NavigateUp) },
+            closeButtonEnabled = false,
             modifier = Modifier.fillMaxWidth(),
         )
 

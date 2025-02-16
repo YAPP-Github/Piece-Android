@@ -31,6 +31,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -208,9 +209,29 @@ class RegisterProfileViewModel @AssistedInject constructor(
                     )
                 },
             ).onSuccess {
+                loadMyProfile()
                 setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
             }.onFailure { errorHelper.sendError(it) }
         }
+    }
+
+    private suspend fun loadMyProfile() = coroutineScope {
+        val profileBasicJob = launch {
+            profileRepository.loadMyProfileBasic()
+                .onFailure { errorHelper.sendError(it) }
+        }
+        val valueTalksJob = launch {
+            profileRepository.loadMyValuePicks()
+                .onFailure { errorHelper.sendError(it) }
+        }
+        val valuePicksJob = launch {
+            profileRepository.loadMyValueTalks()
+                .onFailure { errorHelper.sendError(it) }
+        }
+
+        profileBasicJob.join()
+        valueTalksJob.join()
+        valuePicksJob.join()
     }
 
     private fun saveValueTalk(state: RegisterProfileState) {
