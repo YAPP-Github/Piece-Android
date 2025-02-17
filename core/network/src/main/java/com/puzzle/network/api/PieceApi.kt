@@ -38,6 +38,7 @@ import okhttp3.MultipartBody
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.HTTP
 import retrofit2.http.Multipart
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -165,6 +166,6 @@ interface PieceApi {
     @DELETE("/api/sse/personal/disconnect")
     suspend fun disconnectSSE(): Result<ApiResponse<Unit>>
 
-    @DELETE("/api/users")
+    @HTTP(method = "DELETE", path = "/api/users", hasBody = true)
     suspend fun withdraw(@Body withdrawRequest: WithdrawRequest): Result<ApiResponse<Unit>>
 }

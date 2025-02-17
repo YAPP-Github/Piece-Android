@@ -4,6 +4,7 @@ import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_CONTACTS
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
+import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -59,15 +60,22 @@ internal fun ColumnScope.AccessRightsPage(
     val context = LocalContext.current
     val permissionList = rememberMultiplePermissionsState(
         listOfNotNull(
-            if (SDK_INT >= 33) READ_MEDIA_IMAGES else READ_EXTERNAL_STORAGE,
+            when {
+                SDK_INT < 33 -> READ_EXTERNAL_STORAGE
+                SDK_INT == 33 -> READ_MEDIA_IMAGES
+                else -> READ_MEDIA_VISUAL_USER_SELECTED
+            },
             if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null,
             READ_CONTACTS
         )
     )
     val galleryPermission = permissionList.permissions
         .find {
-            if (SDK_INT >= 33) it.permission == READ_MEDIA_IMAGES
-            else it.permission == READ_EXTERNAL_STORAGE
+            it.permission == when {
+                SDK_INT < 33 -> READ_EXTERNAL_STORAGE
+                SDK_INT == 33 -> READ_MEDIA_IMAGES
+                else -> READ_MEDIA_VISUAL_USER_SELECTED
+            }
         }
     val notificationPermission = permissionList.permissions
         .find { if (SDK_INT >= TIRAMISU) it.permission == POST_NOTIFICATIONS else true }
