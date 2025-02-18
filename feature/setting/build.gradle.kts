@@ -41,4 +41,5 @@ dependencies {
     implementation(projects.core.common)
 
     implementation(libs.lottie.compose)
+    implementation(libs.accompanist.permission)
 }

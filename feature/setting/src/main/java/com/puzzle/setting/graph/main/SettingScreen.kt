@@ -1,8 +1,14 @@
+@file:OptIn(ExperimentalPermissionsApi::class)
+
 package com.puzzle.setting.graph.main
 
+import android.Manifest.permission.READ_CONTACTS
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.provider.ContactsContract
+import android.provider.Settings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.shrinkOut
@@ -43,6 +49,11 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
@@ -270,6 +281,9 @@ private fun SystemSettingBody(
         modifier = Modifier.padding(bottom = 8.dp),
     )
 
+    val context = LocalContext.current
+    val contactsPermission = rememberPermissionState(READ_CONTACTS)
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -284,13 +298,19 @@ private fun SystemSettingBody(
         )
 
         PieceToggle(
-            checked = isContactBlocked,
-            onCheckedChange = onContactBlockedCheckedChange,
+            checked = contactsPermission.status == PermissionStatus.Granted && isContactBlocked,
+            onCheckedChange = {
+                if (contactsPermission.status == PermissionStatus.Granted) {
+                    onContactBlockedCheckedChange()
+                } else {
+                    handlePermission(context, contactsPermission)
+                }
+            },
         )
     }
 
     AnimatedVisibility(
-        visible = isContactBlocked,
+        visible = (contactsPermission.status == PermissionStatus.Granted && isContactBlocked),
         enter = fadeIn() + slideInVertically(),
         exit = shrinkOut() + slideOutVertically(),
         modifier = Modifier.fillMaxWidth(),
@@ -345,7 +365,11 @@ private fun SystemSettingBody(
             }
 
             if (isLoadingContactBlocked) {
-                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_setting_loading))
+                val composition by rememberLottieComposition(
+                    LottieCompositionSpec.RawRes(
+                        R.raw.anim_setting_loading
+                    )
+                )
                 val progress by animateLottieCompositionAsState(
                     composition = composition,
                     iterations = LottieConstants.IterateForever,
@@ -361,7 +385,13 @@ private fun SystemSettingBody(
                     contentDescription = "초기화",
                     modifier = Modifier
                         .padding(start = 11.dp)
-                        .throttledClickable(2000L) { onRefreshClick() },
+                        .throttledClickable(2000L) {
+                            if (contactsPermission.status == PermissionStatus.Granted) {
+                                onRefreshClick()
+                            } else {
+                                handlePermission(context, contactsPermission)
+                            }
+                        },
                 )
             }
         }
@@ -372,6 +402,20 @@ private fun SystemSettingBody(
         thickness = 1.dp,
         modifier = Modifier.padding(vertical = 16.dp)
     )
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+internal fun handlePermission(context: Context, permission: PermissionState?) {
+    permission?.let {
+        if (it.status == PermissionStatus.Granted || !it.status.shouldShowRationale) {
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", context.packageName, null)
+            }
+            context.startActivity(intent)
+        } else {
+            it.launchPermissionRequest()
+        }
+    }
 }
 
 @Composable
@@ -547,7 +591,8 @@ private fun readContactPhoneNumbers(context: Context): List<String> {
     val projection = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
 
     contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
-        val numberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+        val numberIndex =
+            cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
         while (cursor.moveToNext()) {
             val phoneNumber = cursor.getString(numberIndex).replace(Regex("[^0-9]"), "")
             if (phoneNumber.isNotBlank()) {

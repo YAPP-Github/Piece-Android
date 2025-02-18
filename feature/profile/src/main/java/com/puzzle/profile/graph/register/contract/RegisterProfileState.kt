@@ -44,7 +44,7 @@ data class RegisterProfileState(
 ) : MavericksState {
 
     val isValuePickComplete: Boolean =
-        valuePicks.find { it.selectedAnswer == 0 } == null
+        valuePicks.find { it.selectedAnswer == null } == null
 
     val isValueTalkComplete: Boolean =
         valueTalks.find { it.answer.isBlank() } == null
