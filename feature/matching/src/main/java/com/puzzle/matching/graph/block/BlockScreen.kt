@@ -37,7 +37,7 @@ import com.puzzle.matching.graph.block.contract.BlockState
 
 @Composable
 internal fun BlockRoute(
-    userId: Int,
+    matchId: Int,
     userName: String,
     viewModel: BlockViewModel = mavericksViewModel(),
 ) {
@@ -59,7 +59,7 @@ internal fun BlockRoute(
         state = state,
         userName = userName,
         onBackClick = { viewModel.onIntent(BlockIntent.OnBackClick) },
-        onBlockButtonClick = { viewModel.onIntent(BlockIntent.OnBlockButtonClick(userId)) },
+        onBlockButtonClick = { viewModel.onIntent(BlockIntent.OnBlockButtonClick(matchId)) },
         onBlockDoneClick = { viewModel.onIntent(BlockIntent.OnBlockDoneClick) },
     )
 }

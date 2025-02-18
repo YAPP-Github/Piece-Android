@@ -40,13 +40,13 @@ sealed class MatchingGraphDest : Route {
     data object MatchingRoute : MatchingGraphDest()
 
     @Serializable
-    data object MatchingDetailRoute : MatchingGraphDest()
+    data class MatchingDetailRoute(val matchId: Int) : MatchingGraphDest()
 
     @Serializable
-    data class ReportRoute(val userId: Int, val userName: String) : MatchingGraphDest()
+    data class ReportRoute(val matchId: Int, val userName: String) : MatchingGraphDest()
 
     @Serializable
-    data class BlockRoute(val userId: Int, val userName: String) : MatchingGraphDest()
+    data class BlockRoute(val matchId: Int, val userName: String) : MatchingGraphDest()
 
     @Serializable
     data object ContactRoute : MatchingGraphDest()

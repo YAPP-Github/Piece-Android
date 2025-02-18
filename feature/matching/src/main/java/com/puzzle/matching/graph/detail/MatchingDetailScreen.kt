@@ -60,6 +60,7 @@ import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun MatchingDetailRoute(
+    matchId: Int,
     viewModel: MatchingDetailViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
@@ -86,8 +87,20 @@ internal fun MatchingDetailRoute(
                 MatchingDetailIntent.OnMoreClick(
                     {
                         MatchingDetailMoreBottomSheet(
-                            onReportClicked = { viewModel.onIntent(MatchingDetailIntent.OnReportClick) },
-                            onBlockClicked = { viewModel.onIntent(MatchingDetailIntent.OnBlockClick) },
+                            onReportClicked = {
+                                viewModel.onIntent(
+                                    MatchingDetailIntent.OnReportClick(
+                                        matchId
+                                    )
+                                )
+                            },
+                            onBlockClicked = {
+                                viewModel.onIntent(
+                                    MatchingDetailIntent.OnBlockClick(
+                                        matchId
+                                    )
+                                )
+                            },
                         )
                     }
                 )

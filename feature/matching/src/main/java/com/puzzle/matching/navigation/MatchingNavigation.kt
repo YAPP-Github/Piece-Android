@@ -21,14 +21,15 @@ fun NavGraphBuilder.matchingNavGraph() {
             MatchingRoute()
         }
 
-        composable<MatchingGraphDest.MatchingDetailRoute> {
-            MatchingDetailRoute()
+        composable<MatchingGraphDest.MatchingDetailRoute> { backStackEntry ->
+            val matchingDetail = backStackEntry.toRoute<MatchingGraphDest.MatchingDetailRoute>()
+            MatchingDetailRoute(matchId = matchingDetail.matchId)
         }
 
         composable<MatchingGraphDest.ReportRoute> { backStackEntry ->
             val report = backStackEntry.toRoute<MatchingGraphDest.ReportRoute>()
             ReportRoute(
-                userId = report.userId,
+                matchId = report.matchId,
                 userName = report.userName,
             )
         }
@@ -36,7 +37,7 @@ fun NavGraphBuilder.matchingNavGraph() {
         composable<MatchingGraphDest.BlockRoute> { backStackEntry ->
             val block = backStackEntry.toRoute<MatchingGraphDest.BlockRoute>()
             BlockRoute(
-                userId = block.userId,
+                matchId = block.matchId,
                 userName = block.userName,
             )
         }

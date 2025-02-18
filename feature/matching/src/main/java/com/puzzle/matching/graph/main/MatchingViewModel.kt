@@ -70,11 +70,13 @@ class MatchingViewModel @AssistedInject constructor(
     private fun processIntent(intent: MatchingIntent) {
         when (intent) {
             MatchingIntent.OnButtonClick -> processOnButtonClick()
-            is MatchingIntent.OnMatchingDetailClick -> navigationHelper.navigate(
-                NavigationEvent.NavigateTo(
-                    MatchingGraphDest.MatchingDetailRoute
+            is MatchingIntent.OnMatchingDetailClick -> withState {
+                navigationHelper.navigate(
+                    NavigationEvent.NavigateTo(
+                        MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId)
+                    )
                 )
-            )
+            }
 
             MatchingIntent.OnEditProfileClick -> moveToProfileRegisterScreen()
             MatchingIntent.OnCheckMyProfileClick -> navigationHelper.navigate(
@@ -187,14 +189,16 @@ class MatchingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun checkMatchingPiece() = viewModelScope.launch {
-        matchingRepository.checkMatchingPiece()
-            .onSuccess {
-                setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.WAITING)) }
-            }
-            .onFailure { errorHelper.sendError(it) }
+    private fun checkMatchingPiece() = withState{
+        viewModelScope.launch {
+            matchingRepository.checkMatchingPiece()
+                .onSuccess {
+                    setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.WAITING)) }
+                }.onFailure { errorHelper.sendError(it) }
 
-        _sideEffects.send(MatchingSideEffect.Navigate(NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute)))
+            _sideEffects.send(MatchingSideEffect.Navigate(
+                NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))))
+        }
     }
 
     private fun acceptMatchingInResponsed() = viewModelScope.launch {

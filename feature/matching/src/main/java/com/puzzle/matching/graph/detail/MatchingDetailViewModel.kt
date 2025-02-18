@@ -38,8 +38,6 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private val _sideEffects = Channel<MatchingDetailSideEffect>(BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
 
-    private val matchUserId = 0 // Todo 임시
-
     init {
         intents.receiveAsFlow()
             .onEach(::processIntent)
@@ -72,8 +70,8 @@ class MatchingDetailViewModel @AssistedInject constructor(
 
             MatchingDetailIntent.OnPreviousPageClick -> setPreviousPage()
             MatchingDetailIntent.OnNextPageClick -> setNextPage()
-            MatchingDetailIntent.OnBlockClick -> onBlockClick()
-            MatchingDetailIntent.OnReportClick -> onReportClick()
+            is MatchingDetailIntent.OnBlockClick -> onBlockClick(intent.matchId)
+            is MatchingDetailIntent.OnReportClick -> onReportClick(intent.matchId)
             MatchingDetailIntent.OnAcceptClick -> acceptMatching()
             MatchingDetailIntent.OnDeclineClick -> declineMatching()
         }
@@ -104,12 +102,12 @@ class MatchingDetailViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onBlockClick() {
+    private fun onBlockClick(matchId: Int) {
         withState {
             navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.BlockRoute(
-                        userId = matchUserId,
+                        matchId = matchId,
                         userName = it.profile!!.nickname,
                     )
                 )
@@ -119,12 +117,12 @@ class MatchingDetailViewModel @AssistedInject constructor(
         }
     }
 
-    private fun onReportClick() {
+    private fun onReportClick(matchId: Int) {
         withState {
             navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
                     MatchingGraphDest.ReportRoute(
-                        userId = matchUserId,
+                        matchId = matchId,
                         userName = it.profile!!.nickname,
                     )
                 )

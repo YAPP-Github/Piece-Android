@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 internal fun ReportRoute(
-    userId: Int,
+    matchId: Int,
     userName: String,
     viewModel: ReportViewModel = mavericksViewModel(),
 ) {
@@ -71,7 +71,7 @@ internal fun ReportRoute(
         onReportClick = { reason ->
             viewModel.onIntent(
                 ReportIntent.OnReportButtonClick(
-                    userId = userId,
+                    userId = matchId,
                     reason = reason,
                 )
             )
