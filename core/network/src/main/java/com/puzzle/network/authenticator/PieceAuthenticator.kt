@@ -26,7 +26,9 @@ class PieceAuthenticator @Inject constructor(
         val originRequest = response.request
 
         // 토큰이 헤더에 달리지 않은 API 호출은 그냥 반환
-        if (originRequest.header("Authorization").isNullOrEmpty()) {
+        if (originRequest.header("Authorization").isNullOrEmpty() &&
+            "token" !in originRequest.url.queryParameterNames
+        ) {
             return null
         }
 
