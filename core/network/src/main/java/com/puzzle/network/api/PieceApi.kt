@@ -158,7 +158,7 @@ interface PieceApi {
     suspend fun updateBlockAcquaintances(@Body updateSettingRequest: UpdateSettingRequest): Result<ApiResponse<Unit>>
 
     @GET("/api/users/reject")
-    suspend fun getRejectReaseon(): Result<ApiResponse<GetRejectReasonResponse>>
+    suspend fun getRejectReason(): Result<ApiResponse<GetRejectReasonResponse>>
 
     @GET("/api/settings/blocks/contacts/sync-time")
     suspend fun getBlockSyncTime(): Result<ApiResponse<GetBlockSyncTimeResponse>>

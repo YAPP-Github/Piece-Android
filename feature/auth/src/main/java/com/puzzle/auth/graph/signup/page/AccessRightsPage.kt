@@ -10,6 +10,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.TIRAMISU
+import android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 import android.provider.Settings
 import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
@@ -62,19 +63,19 @@ internal fun ColumnScope.AccessRightsPage(
         listOfNotNull(
             when {
                 SDK_INT < 33 -> READ_EXTERNAL_STORAGE
-                SDK_INT == 33 -> READ_MEDIA_IMAGES
-                else -> READ_MEDIA_VISUAL_USER_SELECTED
+                else -> READ_MEDIA_IMAGES
             },
+            if (SDK_INT >= UPSIDE_DOWN_CAKE) READ_MEDIA_VISUAL_USER_SELECTED else null,
             if (SDK_INT >= TIRAMISU) POST_NOTIFICATIONS else null,
             READ_CONTACTS
         )
     )
     val galleryPermission = permissionList.permissions
         .find {
-            it.permission == when {
-                SDK_INT < 33 -> READ_EXTERNAL_STORAGE
-                SDK_INT == 33 -> READ_MEDIA_IMAGES
-                else -> READ_MEDIA_VISUAL_USER_SELECTED
+            it.permission in when {
+                SDK_INT < 33 -> setOf(READ_EXTERNAL_STORAGE)
+                SDK_INT == 33 -> setOf(READ_MEDIA_IMAGES)
+                else -> setOf(READ_MEDIA_IMAGES, READ_MEDIA_VISUAL_USER_SELECTED)
             }
         }
     val notificationPermission = permissionList.permissions
@@ -218,7 +219,7 @@ private fun PiecePermissionRow(
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-private fun handlePermission(context: Context, permission: PermissionState?) {
+internal fun handlePermission(context: Context, permission: PermissionState?) {
     permission?.let {
         if (it.status == PermissionStatus.Granted || !it.status.shouldShowRationale) {
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {

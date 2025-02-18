@@ -24,17 +24,18 @@ class UserRepositoryImpl @Inject constructor(
         UserRole.create(userRoleString)
     }
 
-    override suspend fun getRejectReason(): Result<RejectReason> {
-        val result = userDataSource.getRejectReason().mapCatching(GetRejectReasonResponse::toDomain)
+    override suspend fun getRejectReason(): Result<RejectReason> = suspendRunCatching {
+        val result = userDataSource.getRejectReason()
+            .map(GetRejectReasonResponse::toDomain)
+            .getOrThrow()
 
-        result.getOrThrow().let { rejectReason ->
-            if (rejectReason.profileStatus == ProfileStatus.APPROVED) {
-                localUserDataSource.setUserRole(UserRole.USER.name)
-            } else {
-                localUserDataSource.setUserRole(UserRole.PENDING.name)
-            }
+        if (result.profileStatus == ProfileStatus.APPROVED) {
+            localUserDataSource.setUserRole(UserRole.USER.name)
+        } else {
+            localUserDataSource.setUserRole(UserRole.PENDING.name)
         }
-        return result
+
+        result
     }
 
     override suspend fun getUserSettingInfo(): Result<UserSetting> =

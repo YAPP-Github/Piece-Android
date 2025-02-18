@@ -124,17 +124,19 @@ class MatchingViewModel @AssistedInject constructor(
         valuePicksJob.join()
     }
 
-    private suspend fun getRejectReason() = userRepository.getRejectReason()
-        .onSuccess {
-            setState {
-                copy(
-                    isImageRejected = it.reasonImage,
-                    isDescriptionRejected = it.reasonValues
-                )
+    private suspend fun getRejectReason() {
+        userRepository.getRejectReason()
+            .onSuccess {
+                setState {
+                    copy(
+                        isImageRejected = it.reasonImage,
+                        isDescriptionRejected = it.reasonValues
+                    )
+                }
+            }.onFailure {
+                errorHelper.sendError(it)
             }
-        }.onFailure {
-            errorHelper.sendError(it)
-        }
+    }
 
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
         .onSuccess {

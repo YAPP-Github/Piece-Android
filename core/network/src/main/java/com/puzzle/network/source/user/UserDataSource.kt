@@ -15,7 +15,7 @@ class UserDataSource @Inject constructor(
         pieceApi.getSettingInfos().unwrapData()
 
     suspend fun getRejectReason(): Result<GetRejectReasonResponse> =
-        pieceApi.getRejectReaseon().unwrapData()
+        pieceApi.getRejectReason().unwrapData()
 
     suspend fun updatePushNotification(toggle: Boolean): Result<Unit> =
         pieceApi.updatePushNotification(UpdateSettingRequest(toggle)).unwrapData()
