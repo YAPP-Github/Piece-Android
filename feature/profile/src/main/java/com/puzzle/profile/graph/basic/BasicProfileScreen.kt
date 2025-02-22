@@ -357,6 +357,8 @@ private fun ColumnScope.SnsPlatformContent(
             value = contact.content,
             image = image,
             onValueChange = { onContactChange(idx, contact.copy(content = it)) },
+            keyboardType = if (contact.type == ContactType.PHONE_NUMBER) KeyboardType.Phone
+            else KeyboardType.Text,
             onDropDownClick = { onSnsPlatformChange(idx) },
             onDeleteClick = { onDeleteClick(idx) },
             isMandatory = (idx == 0),
