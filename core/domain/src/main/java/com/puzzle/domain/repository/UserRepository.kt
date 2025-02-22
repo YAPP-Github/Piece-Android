@@ -3,10 +3,11 @@ package com.puzzle.domain.repository
 import com.puzzle.domain.model.user.RejectReason
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.model.user.UserSetting
+import kotlinx.coroutines.flow.Flow
 import java.time.LocalDateTime
 
 interface UserRepository {
-    suspend fun getUserRole(): Result<UserRole>
+    fun getUserRole(): Flow<UserRole>
     suspend fun getRejectReason(): Result<RejectReason>
     suspend fun getUserSettingInfo(): Result<UserSetting>
     suspend fun getBlockSyncTime(): Result<LocalDateTime>

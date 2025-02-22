@@ -7,7 +7,6 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.configure.ForceUpdate
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
-import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.model.user.UserRole.NONE
 import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
@@ -22,10 +21,11 @@ import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -46,8 +46,12 @@ class MainViewModel @Inject constructor(
     private val _forceUpdate = MutableStateFlow<ForceUpdate?>(null)
     val forceUpdate = _forceUpdate.asStateFlow()
 
-    private val _userRole: MutableStateFlow<UserRole> = MutableStateFlow(UserRole.USER)
-    val userRole = _userRole.asStateFlow()
+    val userRole = userRepository.getUserRole()
+        .stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(5000L),
+            initialValue = NONE
+        )
 
     init {
         handleError()
@@ -111,13 +115,7 @@ class MainViewModel @Inject constructor(
         authRepository.checkTokenHealth().onFailure { return@launch }
 
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
-        val userRole = async { userRepository.getUserRole() }
-            .await()
-            .getOrElse { return@launch }
-
-        _userRole.value = userRole
-
-        when (userRole) {
+        when (userRole.value) {
             REGISTER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
