@@ -78,7 +78,7 @@ internal fun MatchingScreen(
             } else {
                 when (state.matchInfo.matchStatus) {
                     MatchStatus.UNKNOWN -> MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
-                    MatchStatus.BLOCKED -> MatchingWaitingScreen(
+                    MatchStatus.REFUSED -> MatchingWaitingScreen(
                         isNotificationEnabled = state.isNotificationEnabled,
                         onCheckMyProfileClick = onCheckMyProfileClick,
                         remainTime = state.formattedRemainWaitingTime

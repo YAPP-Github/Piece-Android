@@ -88,30 +88,18 @@ internal fun MatchingDetailRoute(
                     {
                         MatchingDetailMoreBottomSheet(
                             onReportClicked = {
-                                viewModel.onIntent(
-                                    MatchingDetailIntent.OnReportClick(
-                                        matchId
-                                    )
-                                )
+                                viewModel.onIntent(MatchingDetailIntent.OnReportClick(matchId))
                             },
                             onBlockClicked = {
-                                viewModel.onIntent(
-                                    MatchingDetailIntent.OnBlockClick(
-                                        matchId
-                                    )
-                                )
+                                viewModel.onIntent(MatchingDetailIntent.OnBlockClick(matchId))
                             },
                         )
                     }
                 )
             )
         },
-        onDeclineClick = {
-            viewModel.onIntent(MatchingDetailIntent.OnDeclineClick)
-        },
-        onAcceptClick = {
-            viewModel.onIntent(MatchingDetailIntent.OnAcceptClick)
-        },
+        onDeclineClick = { viewModel.onIntent(MatchingDetailIntent.OnDeclineClick) },
+        onAcceptClick = { viewModel.onIntent(MatchingDetailIntent.OnAcceptClick) },
     )
 }
 
@@ -164,8 +152,8 @@ private fun MatchingDetailScreen(
                     dialogTop = {
                         PieceDialogDefaultTop(
                             title = buildAnnotatedString {
-                                append("수줍은 수달님과의\n인연을")
-                                withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                append("수줍은 수달님과의\n인연을 ")
+                                withStyle(style = SpanStyle(color = PieceTheme.colors.error)) {
                                     append("거절")
                                 }
                                 append("하시겠습니까?")
