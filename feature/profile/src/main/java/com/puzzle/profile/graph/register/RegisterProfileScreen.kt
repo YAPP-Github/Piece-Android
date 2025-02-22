@@ -196,7 +196,7 @@ private fun RegisterProfileScreen(
         ) {
             PiecePageIndicator(
                 currentStep = state.currentPage.ordinal + 1,
-                totalSteps = RegisterProfileState.Page.entries.size,
+                totalSteps = RegisterProfileState.Page.entries.size-1,
             )
         }
 

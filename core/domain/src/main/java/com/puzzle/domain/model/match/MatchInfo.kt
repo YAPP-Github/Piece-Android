@@ -51,8 +51,8 @@ enum class MatchStatus {
     // 둘다 수락
     MATCHED,
 
-    // 내가 차단했을 때, (심사 완료됐지만 매칭 상대 없을 때 -> 이건 상대 데이터가 없어서 여기서 처리 못함)
-    BLOCKED,
+    // 내가 차단했을 때
+    REFUSED,
 
     // 오류
     UNKNOWN;

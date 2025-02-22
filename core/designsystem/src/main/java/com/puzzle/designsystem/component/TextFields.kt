@@ -343,6 +343,7 @@ fun PieceTextInputSnsDropDown(
     onDropDownClick: () -> Unit,
     modifier: Modifier = Modifier,
     isMandatory: Boolean = false,
+    keyboardType: KeyboardType = KeyboardType.Text,
     onDeleteClick: () -> Unit = {},
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -382,7 +383,10 @@ fun PieceTextInputSnsDropDown(
                 value = value,
                 onValueChange = onValueChange,
                 singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = keyboardType
+                ),
                 keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
                 textStyle = PieceTheme.typography.bodyMM,
                 cursorBrush = SolidColor(PieceTheme.colors.primaryDefault),
