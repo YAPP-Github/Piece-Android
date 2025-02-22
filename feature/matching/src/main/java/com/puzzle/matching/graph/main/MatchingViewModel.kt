@@ -146,10 +146,19 @@ class MatchingViewModel @AssistedInject constructor(
         .onSuccess {
             setState { copy(matchInfo = it) }
 
-            if (it.matchStatus != MatchStatus.REFUSED) {
-                startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
-            } else {
-                startWaitingTimer()
+            when (it.matchStatus) {
+                MatchStatus.REFUSED -> startWaitingTimer()
+                MatchStatus.BEFORE_OPEN -> {
+                    eventHelper.sendEvent(
+                        PieceEvent.ShowSnackBar(
+                            msg = "새로운 매칭 조각이 도착했어요",
+                            type = SnackBarType.Matching
+                        )
+                    )
+                    startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
+                }
+
+                else -> startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
             }
 
             // MatchingHome 화면에서 사전에 MatchingDetail에서 필요한 데이터를 케싱해놓습니다.
