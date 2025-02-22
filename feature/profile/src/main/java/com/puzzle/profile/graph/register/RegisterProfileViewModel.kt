@@ -92,14 +92,11 @@ class RegisterProfileViewModel @AssistedInject constructor(
                         category = it.category,
                         title = it.title,
                         guides = it.guides,
+                        placeholder = it.placeholder,
                         answer = "",
                     )
                 }
-                setState {
-                    copy(
-                        valueTalks = result
-                    )
-                }
+                setState { copy(valueTalks = result) }
             }
             .onFailure { errorHelper.sendError(it) }
     }
@@ -139,9 +136,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
                 viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.NavigateUp)) }
             } else {
                 state.currentPage.getPreviousPage()
-                    ?.let { previosPage ->
-                        setState { copy(currentPage = previosPage) }
-                    }
+                    ?.let { previousPage -> setState { copy(currentPage = previousPage) } }
             }
         }
     }
@@ -170,9 +165,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     private fun saveValuePick(state: RegisterProfileState) {
-        setState {
-            copy(valuePicks = state.valuePicks)
-        }
+        setState { copy(valuePicks = state.valuePicks) }
 
         if (!state.isValuePickComplete) {
             eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
