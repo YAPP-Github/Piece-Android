@@ -7,6 +7,7 @@ import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.configure.ForceUpdate
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
+import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.model.user.UserRole.NONE
 import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
@@ -44,6 +45,9 @@ class MainViewModel @Inject constructor(
 
     private val _forceUpdate = MutableStateFlow<ForceUpdate?>(null)
     val forceUpdate = _forceUpdate.asStateFlow()
+
+    private val _userRole: MutableStateFlow<UserRole> = MutableStateFlow(UserRole.USER)
+    val userRole = _userRole.asStateFlow()
 
     init {
         handleError()
@@ -110,6 +114,8 @@ class MainViewModel @Inject constructor(
         val userRole = async { userRepository.getUserRole() }
             .await()
             .getOrElse { return@launch }
+
+        _userRole.value = userRole
 
         when (userRole) {
             REGISTER -> {
