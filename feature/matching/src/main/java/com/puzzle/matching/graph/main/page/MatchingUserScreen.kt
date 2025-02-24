@@ -22,6 +22,10 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,8 +38,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.verticalScrollbar
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceDialog
+import com.puzzle.designsystem.component.PieceDialogBottom
+import com.puzzle.designsystem.component.PieceDialogDefaultTop
 import com.puzzle.designsystem.component.PieceMainTopBar
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -56,6 +64,36 @@ internal fun MatchingUserScreen(
     onMatchingDetailClick: () -> Unit,
 ) {
     val listState = rememberLazyListState()
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (showDialog) {
+        PieceDialog(
+            dialogTop = {
+                PieceDialogDefaultTop(
+                    title = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                            append("수줍은 수달")
+                        }
+                        append("님과의\n인연을 이어가시겠습니까?")
+                    },
+                    subText = "서로 매칭을 수락하면, 연락처가 공개됩니다.",
+                )
+            },
+            dialogBottom = {
+                PieceDialogBottom(
+                    leftButtonText = "뒤로",
+                    rightButtonText = "매칭 수락하기",
+                    onLeftButtonClick = { showDialog = false },
+                    onRightButtonClick = {
+                        showDialog = false
+                        onButtonClick()
+                    },
+                )
+            },
+            onDismissRequest = { showDialog = false },
+        )
+    }
+
 
     Column(
         modifier = Modifier
@@ -111,7 +149,16 @@ internal fun MatchingUserScreen(
         ) {
             MatchStatusRow(matchInfo.matchStatus)
 
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        when (matchInfo.matchStatus) {
+                            BEFORE_OPEN -> onButtonClick()
+                            else -> onMatchingDetailClick()
+                        }
+                    },
+            ) {
                 Text(
                     text = matchInfo.description,
                     maxLines = 2,
@@ -134,10 +181,7 @@ internal fun MatchingUserScreen(
                     modifier = Modifier.padding(top = 12.dp),
                 ) {
                     Text(
-                        text = stringResource(
-                            R.string.value_count_format,
-                            matchInfo.matchedValueCount
-                        ),
+                        text = "${matchInfo.birthYear}년생",
                         style = PieceTheme.typography.bodyMM,
                         color = PieceTheme.colors.dark2,
                     )
@@ -205,10 +249,7 @@ internal fun MatchingUserScreen(
                             color = PieceTheme.colors.light2
                         ),
                 ) {
-                    items(
-                        items = matchInfo.matchedValueList,
-                        key = { it },
-                    ) { value -> ValueTag(value) }
+                    items(items = matchInfo.matchedValueList) { value -> ValueTag(value) }
 
                     item {
                         Spacer(
@@ -229,7 +270,12 @@ internal fun MatchingUserScreen(
                 PieceSolidButton(
                     label = label,
                     enabled = matchInfo.matchStatus != RESPONDED,
-                    onClick = onButtonClick,
+                    onClick = {
+                        when (matchInfo.matchStatus) {
+                            BEFORE_OPEN -> onButtonClick()
+                            else -> showDialog = true
+                        }
+                    },
                     modifier = Modifier
                         .padding(top = 16.dp)
                         .fillMaxWidth(),

@@ -91,9 +91,7 @@ internal fun ValuePickPage(
         Column {
             Spacer(Modifier.height(spaceHeight))
 
-            Column(
-                modifier = modifier.fillMaxSize(),
-            ) {
+            Column(modifier = modifier.fillMaxSize()) {
                 ValuePickTabRow(
                     tabIndex = tabIndex.intValue,
                     tabTitles = tabTitles,
@@ -177,7 +175,7 @@ private fun ValuePickCards(
     ) {
         itemsIndexed(pickCards) { idx, item ->
             ValuePickCard(
-                valuePickQuestion = item,
+                opponentValuePick = item,
                 modifier = Modifier.padding(top = 20.dp)
             )
         }
@@ -240,7 +238,7 @@ private fun ValuePickTabRow(
 
 @Composable
 private fun ValuePickCard(
-    valuePickQuestion: OpponentValuePick,
+    opponentValuePick: OpponentValuePick,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -261,21 +259,20 @@ private fun ValuePickCard(
             Image(
                 painter = painterResource(id = R.drawable.ic_question),
                 contentDescription = "basic info 배경화면",
-                modifier = Modifier
-                    .size(20.dp),
+                modifier = Modifier.size(20.dp),
             )
 
             Spacer(modifier = modifier.width(6.dp))
 
             Text(
-                text = valuePickQuestion.category,
+                text = opponentValuePick.category,
                 style = PieceTheme.typography.bodySSB,
                 color = PieceTheme.colors.primaryDefault,
             )
 
             Spacer(modifier = modifier.weight(1f))
 
-            if (valuePickQuestion.isSameWithMe) {
+            if (opponentValuePick.isSameWithMe) {
                 Text(
                     text = stringResource(R.string.valuepick_similar),
                     style = PieceTheme.typography.captionM,
@@ -290,17 +287,17 @@ private fun ValuePickCard(
         }
 
         Text(
-            text = valuePickQuestion.question,
+            text = opponentValuePick.question,
             style = PieceTheme.typography.headingMSB,
             color = PieceTheme.colors.dark1,
             modifier = Modifier.padding(top = 12.dp, bottom = 24.dp),
         )
 
-        valuePickQuestion.answerOptions.forEachIndexed { idx, answer ->
+        opponentValuePick.answerOptions.forEachIndexed { idx, answer ->
             PieceSubButton(
                 label = answer.content,
                 onClick = {},
-                enabled = true,
+                enabled = opponentValuePick.selectedAnswer == answer.number,
                 modifier = Modifier
                     .fillMaxWidth()
                     .then(

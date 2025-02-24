@@ -114,8 +114,6 @@ private fun ValueTalkCards(talkCards: List<OpponentValueTalk>) {
             .padding(horizontal = 20.dp),
     ) {
         itemsIndexed(talkCards) { idx, item ->
-            Spacer(Modifier.height(20.dp))
-
             ValueTalkCard(
                 item = item,
                 idx = idx,
@@ -146,6 +144,8 @@ private fun ValueTalkCard(
 
     Column(
         modifier = modifier
+            .padding(top = 20.dp)
+            .fillMaxWidth()
             .clip(RoundedCornerShape(12.dp))
             .background(PieceTheme.colors.white)
             .padding(
@@ -159,25 +159,23 @@ private fun ValueTalkCard(
             text = item.category,
             style = PieceTheme.typography.bodyMM,
             color = PieceTheme.colors.primaryDefault,
+            modifier = Modifier.padding(bottom = 24.dp),
         )
-
-        Spacer(modifier = Modifier.height(24.dp))
 
         Image(
             painter = painterResource(id = icons[idxInRange]),
             contentDescription = "basic info 배경화면",
             modifier = Modifier
-                .size(60.dp),
+                .size(60.dp)
+                .padding(bottom = 24.dp),
         )
-        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = item.summary,
             style = PieceTheme.typography.headingMSB,
             color = PieceTheme.colors.black,
+            modifier = Modifier.padding(bottom = 8.dp),
         )
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = item.answer,

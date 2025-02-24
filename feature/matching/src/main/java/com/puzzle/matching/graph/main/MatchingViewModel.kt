@@ -5,6 +5,8 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
+import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.event.SnackBarType
 import com.puzzle.domain.model.auth.Timer
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
@@ -143,12 +145,21 @@ class MatchingViewModel @AssistedInject constructor(
 
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
         .onSuccess {
-            setState {
-                copy(matchInfo = it)
-            }
+            setState { copy(matchInfo = it) }
 
-            if (it.matchStatus != MatchStatus.BLOCKED) {
-                startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
+            when (it.matchStatus) {
+                MatchStatus.REFUSED -> startWaitingTimer()
+                MatchStatus.BEFORE_OPEN -> {
+                    eventHelper.sendEvent(
+                        PieceEvent.ShowSnackBar(
+                            msg = "새로운 매칭 조각이 도착했어요",
+                            type = SnackBarType.Matching
+                        )
+                    )
+                    startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
+                }
+
+                else -> startMatchingValidTimer(startTimeInSec = it.remainMatchingUpdateTimeInSec)
             }
 
             // MatchingHome 화면에서 사전에 MatchingDetail에서 필요한 데이터를 케싱해놓습니다.
@@ -209,16 +220,18 @@ class MatchingViewModel @AssistedInject constructor(
         matchingRepository.acceptMatching()
             .onSuccess {
                 setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.RESPONDED)) }
-            }
-            .onFailure { errorHelper.sendError(it) }
+
+                eventHelper.sendEvent(
+                    PieceEvent.ShowSnackBar(msg = "매칭을 수락했습니다", type = SnackBarType.Matching)
+                )
+            }.onFailure { errorHelper.sendError(it) }
     }
 
     private fun acceptMatchingInMatced() = viewModelScope.launch {
         matchingRepository.acceptMatching()
             .onSuccess {
                 setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.MATCHED)) }
-            }
-            .onFailure { errorHelper.sendError(it) }
+            }.onFailure { errorHelper.sendError(it) }
     }
 
     private fun startWaitingTimer() {
@@ -228,9 +241,7 @@ class MatchingViewModel @AssistedInject constructor(
         timerJob = viewModelScope.launch {
             timer.startTimer(getRemainingTimeInSec(currentTimeInSec))
                 .collect { remainTimeInSec ->
-                    setState {
-                        copy(remainWaitingTimeInSec = remainTimeInSec)
-                    }
+                    setState { copy(remainWaitingTimeInSec = remainTimeInSec) }
 
                     if (remainTimeInSec == 0L) {
                         getMatchInfo()

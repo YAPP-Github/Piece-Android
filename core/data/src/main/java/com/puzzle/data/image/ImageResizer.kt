@@ -5,7 +5,7 @@ import java.io.InputStream
 interface ImageResizer {
     fun resizeImage(
         uri: String,
-        reqWidth: Int = 1024,
-        reqHeight: Int = 1024,
+        reqWidth: Int = 512,
+        reqHeight: Int = 512,
     ): InputStream
 }

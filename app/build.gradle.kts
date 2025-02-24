@@ -35,9 +35,7 @@ android {
     }
 
     buildTypes {
-        release {
-            signingConfig = signingConfigs.getByName("release")
-        }
+        release { signingConfig = signingConfigs.getByName("release") }
     }
 
     buildFeatures {

@@ -86,8 +86,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
                         popUpTo = true,
                     )
                 )
-            }
-            .onFailure { errorHelper.sendError(it) }
+            }.onFailure { errorHelper.sendError(it) }
     }
 
     private fun setNextPage() {
