@@ -25,6 +25,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -70,9 +71,8 @@ class LoginViewModel @AssistedInject constructor(
             oAuthProvider = oAuthProvider,
             oauthCredential = token,
         ).onSuccess {
-            val userRole = async { userRepository.getUserRole() }
+            val userRole = async { userRepository.getUserRole().first() }
                 .await()
-                .getOrElse { return@launch }
 
             when (userRole) {
                 REGISTER -> {

@@ -11,7 +11,8 @@ import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetRejectReasonResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
 import com.puzzle.network.source.user.UserDataSource
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -19,10 +20,11 @@ class UserRepositoryImpl @Inject constructor(
     private val localUserDataSource: LocalUserDataSource,
     private val userDataSource: UserDataSource,
 ) : UserRepository {
-    override suspend fun getUserRole(): Result<UserRole> = suspendRunCatching {
-        val userRoleString = localUserDataSource.userRole.first()
-        UserRole.create(userRoleString)
-    }
+    override fun getUserRole(): Flow<UserRole> = localUserDataSource
+        .userRole
+        .map {
+            UserRole.create(it)
+        }
 
     override suspend fun getRejectReason(): Result<RejectReason> = suspendRunCatching {
         val result = userDataSource.getRejectReason()

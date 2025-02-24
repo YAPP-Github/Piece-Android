@@ -25,9 +25,11 @@ import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.component.PieceModalBottomSheet
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.user.UserRole
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.presentation.network.NetworkMonitor
 import com.puzzle.presentation.network.NetworkScreen
 import com.puzzle.presentation.ui.App
@@ -58,6 +60,7 @@ class MainActivity : ComponentActivity() {
             viewModel.apply {
                 val networkState by networkMonitor.networkState.collectAsStateWithLifecycle()
                 val forceUpdate by viewModel.forceUpdate.collectAsStateWithLifecycle()
+                val userRole by viewModel.userRole.collectAsStateWithLifecycle()
                 val navController = rememberNavController()
                 val snackBarHostState = remember { SnackbarHostState() }
                 var bottomSheetContent by remember { mutableStateOf<@Composable (() -> Unit)?>(null) }
@@ -115,6 +118,13 @@ class MainActivity : ComponentActivity() {
                             snackBarHostState = snackBarHostState,
                             navController = navController,
                             navigateToTopLevelDestination = { topLevelDestination ->
+                                if (topLevelDestination == ProfileGraphDest.MainProfileRoute &&
+                                    userRole != UserRole.USER
+                                ) {
+                                    eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = "아직 심사 중입니다."))
+                                    return@App
+                                }
+
                                 navigationHelper.navigate(
                                     NavigationEvent.TopLevelNavigateTo(topLevelDestination)
                                 )
