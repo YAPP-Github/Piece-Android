@@ -31,6 +31,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -89,7 +90,8 @@ class MatchingViewModel @AssistedInject constructor(
 
     internal fun initMatchInfo() = viewModelScope.launch {
         userRepository.getUserRole()
-            .onSuccess { userRole ->
+            .catch { errorHelper.sendError(it) }
+            .collect { userRole ->
                 when (userRole) {
                     UserRole.PENDING -> getRejectReason()
                     UserRole.USER -> getMatchInfo()
@@ -101,7 +103,6 @@ class MatchingViewModel @AssistedInject constructor(
                 // MatchingHome 화면에서 사전에 내 프로필 데이터를 케싱해놓습니다.
                 loadMyProfile()
             }
-            .onFailure { errorHelper.sendError(it) }
     }
 
 
