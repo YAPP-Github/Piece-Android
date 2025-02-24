@@ -432,9 +432,6 @@ private fun WeightContent(
     onWeightChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isSaveFailed: Boolean =
-        weightInputState == InputState.WARNIING && weight.isBlank()
-
     SectionTitle(title = stringResource(R.string.basic_profile_weight_header))
 
     PieceTextInputDefault(
@@ -455,27 +452,20 @@ private fun WeightContent(
         modifier = modifier,
     )
 
-    val errorMessage = when {
-        isSaveFailed -> stringResource(R.string.basic_profile_required_field)
-        weight.length > 3 -> stringResource(R.string.basic_profile_number_validation_check)
-        else -> null
-    }
-
     AnimatedVisibility(
-        visible = !errorMessage.isNullOrBlank(),
-        enter = fadeIn() + slideInVertically(),
-        exit = shrinkOut() + slideOutVertically(),
+        visible = weightInputState == InputState.WARNIING
     ) {
-        errorMessage?.let { message ->
-            Text(
-                text = message,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.error,
-                modifier = modifier,
-            )
-        }
+        Text(
+            text = when {
+                weight.isBlank() -> "필수 항목을 입력해 주세요."
+                else -> "숫자가 정확한 지 확인해 주세요"
+            },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.error,
+            modifier = modifier,
+        )
     }
 }
 
@@ -486,9 +476,6 @@ private fun HeightContent(
     onHeightChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isSaveFailed: Boolean =
-        heightInputState == InputState.WARNIING && height.isBlank()
-
     SectionTitle(title = stringResource(R.string.basic_profile_height_header))
 
     PieceTextInputDefault(
@@ -509,30 +496,21 @@ private fun HeightContent(
         modifier = modifier,
     )
 
-    val errorMessage = when {
-        isSaveFailed -> stringResource(R.string.basic_profile_required_field)
-        // TODO : 소수점으로 입력하는 경우가 있을 것, 이 부분은 조금 더 고민 필요
-        height.length > 5 -> stringResource(R.string.basic_profile_number_validation_check)
-        else -> null
-    }
-
     AnimatedVisibility(
-        visible = !errorMessage.isNullOrBlank(),
-        enter = fadeIn() + slideInVertically(),
-        exit = shrinkOut() + slideOutVertically(),
+        visible = heightInputState == InputState.WARNIING
     ) {
-        errorMessage?.let { message ->
-            Text(
-                text = message,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = PieceTheme.typography.bodySM,
-                color = PieceTheme.colors.error,
-                modifier = modifier,
-            )
-        }
+        Text(
+            text = when {
+                height.isBlank() -> "필수 항목을 입력해 주세요."
+                else -> "숫자가 정확한 지 확인해 주세요"
+            },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = PieceTheme.typography.bodySM,
+            color = PieceTheme.colors.error,
+            modifier = modifier,
+        )
     }
-
 }
 
 @Composable
@@ -576,8 +554,7 @@ private fun BirthdateContent(
     onBirthdateChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isSaveFailed: Boolean =
-        birthdateInputState == InputState.WARNIING && birthdate.isBlank()
+    val isSaveFailed: Boolean = birthdateInputState == InputState.WARNIING
     var isInputFocused by remember { mutableStateOf(false) }
     val isGuideMessageVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
 
@@ -609,8 +586,8 @@ private fun BirthdateContent(
         exit = shrinkOut() + slideOutVertically(),
     ) {
         Text(
-            text = if (isSaveFailed) {
-                stringResource(R.string.basic_profile_required_field)
+            text = if (isSaveFailed && birthdate.isBlank()) {
+                "필수 항목을 입력해 주세요."
             } else {
                 stringResource(R.string.basic_profile_birthday_guide)
             },

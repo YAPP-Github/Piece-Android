@@ -52,38 +52,27 @@ data class RegisterProfileState(
     val usingSnsPlatforms = contacts.map { it.type }
         .toSet()
 
-    val isBasicProfileComplete: Boolean = !imageUrl.isNullOrBlank() &&
-            description.isNotBlank() &&
-            birthdate.isNotBlank() &&
-            location.isNotBlank() &&
-            height.isNotBlank() &&
-            weight.isNotBlank() &&
-            job.isNotBlank() &&
-            nickname.isNotBlank() &&
-            isSmoke != null &&
-            isSnsActive != null &&
-            contacts.isNotEmpty() &&
-            contacts.find { it.content.isBlank() } == null &&
-            nickNameGuideMessage == NickNameGuideMessage.AVAILABLE
+    val isInputFieldIncomplete: Boolean = contacts.isEmpty() ||
+            descriptionInputState == InputState.WARNIING ||
+            birthdateInputState == InputState.WARNIING ||
+            locationInputState == InputState.WARNIING ||
+            heightInputState == InputState.WARNIING ||
+            weightInputState == InputState.WARNIING ||
+            jobInputState == InputState.WARNIING ||
+            imageUrlInputState == InputState.WARNIING ||
+            contactsInputState == InputState.WARNIING ||
+            (nickNameGuideMessage != NickNameGuideMessage.AVAILABLE
+                    && nickNameGuideMessage != NickNameGuideMessage.DEFAULT)
 
-    val updatedNickNameGuideMessage: NickNameGuideMessage =
+    val nickNameStateInSavingProfile: NickNameGuideMessage =
         when {
-            nickname.isBlank() -> {
-                NickNameGuideMessage.REQUIRED_FIELD
-            }
-
             nickname.length in 1..6 &&
-                    nickNameGuideMessage != NickNameGuideMessage.AVAILABLE -> {
+                    nickNameGuideMessage != NickNameGuideMessage.AVAILABLE ->
                 NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
-            }
 
-            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> {
-                nickNameGuideMessage
-            }
-
-            else -> {
-                nickNameGuideMessage
-            }
+            nickname.isBlank() -> NickNameGuideMessage.REQUIRED_FIELD
+            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> nickNameGuideMessage
+            else -> nickNameGuideMessage
         }
 
     enum class Location(val displayName: String) {

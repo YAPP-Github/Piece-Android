@@ -18,7 +18,10 @@ import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getBirthDateInputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getHeightInputState
 import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getWeightInputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
 import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
@@ -248,35 +251,28 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     private fun saveBasicProfile(state: RegisterProfileState) {
-        // 프로필이 미완성일 때
-        if (!state.isBasicProfileComplete) {
-            setState {
-                copy(
-                    imageUrlInputState = getInputState(state.imageUrl),
-                    nickNameGuideMessage = updatedNickNameGuideMessage,
-                    descriptionInputState = getInputState(state.description),
-                    birthdateInputState = getInputState(state.birthdate),
-                    locationInputState = getInputState(state.location),
-                    heightInputState = getInputState(state.height),
-                    weightInputState = getInputState(state.weight),
-                    jobInputState = getInputState(state.job),
-                    isSmokeInputState = getInputState(state.isSmoke),
-                    isSnsActiveInputState = getInputState(state.isSnsActive),
-                    contactsInputState = getInputState(state.contacts),
-                )
-            }
-            eventHelper.sendEvent(PieceEvent.ShowSnackBar("모든 항목을 작성해 주세요"))
+        val updatedState = state.copy(
+            imageUrlInputState = getInputState(state.imageUrl),
+            nickNameGuideMessage = state.nickNameStateInSavingProfile,
+            descriptionInputState = getInputState(state.description),
+            birthdateInputState = getBirthDateInputState(state.birthdate),
+            locationInputState = getInputState(state.location),
+            heightInputState = getHeightInputState(state.height),
+            weightInputState = getWeightInputState(state.weight),
+            jobInputState = getInputState(state.job),
+            isSmokeInputState = getInputState(state.isSmoke),
+            isSnsActiveInputState = getInputState(state.isSnsActive),
+            contactsInputState = getInputState(state.contacts)
+        )
+
+        if (updatedState.isInputFieldIncomplete) {
+            setState { updatedState }
             return
         }
 
         // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
         state.currentPage.getNextPage()?.let { nextPage ->
-            setState {
-                copy(
-                    currentPage = nextPage,
-                    nickNameGuideMessage = NickNameGuideMessage.LENGTH_GUIDE,
-                )
-            }
+            setState { copy(currentPage = nextPage) }
         }
     }
 

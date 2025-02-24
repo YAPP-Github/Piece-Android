@@ -1,6 +1,5 @@
 package com.puzzle.profile.graph.basic
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
@@ -20,7 +19,10 @@ import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
 import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getBirthDateInputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getHeightInputState
 import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getWeightInputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.basic.contract.ScreenState
 import dagger.assisted.Assisted
@@ -111,22 +113,19 @@ class BasicProfileViewModel @AssistedInject constructor(
     private fun saveBasicProfile() {
         withState { state ->
             viewModelScope.launch {
-                if (state.isProfileIncomplete) {
-                    Log.d("test", "여기로 빠짐")
+                val updatedState = state.copy(
+                    nickNameGuideMessage = state.nickNameStateInSavingProfile,
+                    descriptionInputState = getInputState(state.description),
+                    imageUrlInputState = getInputState(state.imageUrl),
+                    birthdateInputState = getBirthDateInputState(state.birthdate),
+                    locationInputState = getInputState(state.location),
+                    heightInputState = getHeightInputState(state.height),
+                    weightInputState = getWeightInputState(state.weight),
+                    jobInputState = getInputState(state.job),
+                )
 
-                    setState {
-                        copy(
-                            profileScreenState = ScreenState.SAVE_FAILED,
-                            nickNameGuideMessage = nickNameStateInSavingProfile,
-                            descriptionInputState = getInputState(state.description),
-                            imageUrlInputState = getInputState(state.imageUrl),
-                            birthdateInputState = getInputState(state.birthdate),
-                            locationInputState = getInputState(state.location),
-                            heightInputState = getInputState(state.height),
-                            weightInputState = getInputState(state.weight),
-                            jobInputState = getInputState(state.job)
-                        )
-                    }
+                if (updatedState.isInputFieldIncomplete) {
+                    setState { updatedState }
                     return@launch
                 }
 
