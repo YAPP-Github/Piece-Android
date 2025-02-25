@@ -47,12 +47,14 @@ class MatchingRepositoryImpl @Inject constructor(
     override suspend fun getMatchInfo(): Result<MatchInfo> =
         matchingDataSource.getMatchInfo().mapCatching(GetMatchInfoResponse::toDomain)
 
-    override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> =
-        localMatchingDataSource.opponentProfile
-            .map {
-                if (it != null) Result.success(it)
-                else Result.failure(NullPointerException("OpponentProfile is null"))
-            }.first()
+    override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> {
+        val profile = localMatchingDataSource.opponentProfile.first()
+        return if (profile != null) {
+            Result.success(profile)
+        } else {
+            Result.failure(NullPointerException("OpponentProfile is null"))
+        }
+    }
 
     override suspend fun loadOpponentProfile(): Result<Unit> = suspendRunCatching {
         coroutineScope {
