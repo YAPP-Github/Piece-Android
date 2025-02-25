@@ -55,13 +55,15 @@ class ProfileRepositoryImplTest {
                     id = null,
                     category = null,
                     title = null,
-                    guides = null
+                    placeholder = "",
+                    guides = null,
                 ),
                 ValueTalkResponse(
                     id = 1,
                     category = "음주",
                     title = "술자리에 대한 대화",
-                    guides = null
+                    placeholder = "",
+                    guides = null,
                 )
             )
         )
@@ -83,12 +85,14 @@ class ProfileRepositoryImplTest {
                 id = 1,
                 title = "술자리에 대한 대화",
                 category = "음주",
+                placeholder = "",
                 guides = null
             ),
             ValueTalkResponse(
                 id = 2,
                 title = "취미 공유하기",
                 category = "취미",
+                placeholder = "",
                 guides = null
             )
         )
@@ -165,6 +169,7 @@ class ProfileRepositoryImplTest {
                 title = "술자리에 대한 대화",
                 answer = "가끔 즐깁니다.",
                 summary = "술자리 즐기기",
+                placeholder = "",
                 guides = emptyList(),
             )
         )
@@ -241,6 +246,7 @@ class ProfileRepositoryImplTest {
                 title = "술자리에 대한 대화",
                 answer = "가끔 즐깁니다.",
                 summary = "술자리 즐기기",
+                placeholder = "",
                 guides = emptyList(),
             )
         )
