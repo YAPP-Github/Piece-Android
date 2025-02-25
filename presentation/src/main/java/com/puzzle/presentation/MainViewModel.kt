@@ -23,8 +23,10 @@ import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -44,6 +46,13 @@ class MainViewModel @Inject constructor(
 
     private val _forceUpdate = MutableStateFlow<ForceUpdate?>(null)
     val forceUpdate = _forceUpdate.asStateFlow()
+
+    val userRole = userRepository.getUserRole()
+        .stateIn(
+            scope = viewModelScope,
+            started = WhileSubscribed(5000L),
+            initialValue = NONE
+        )
 
     init {
         handleError()
@@ -107,10 +116,7 @@ class MainViewModel @Inject constructor(
         authRepository.checkTokenHealth().onFailure { return@launch }
 
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
-        val userRole = userRepository.getUserRole()
-            .getOrElse { return@launch }
-
-        when (userRole) {
+        when (userRole.value) {
             REGISTER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
