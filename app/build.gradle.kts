@@ -38,7 +38,6 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
             manifestPlaceholders["appName"] = "@string/app_name_debug"
         }
         release {
@@ -47,7 +46,6 @@ android {
         }
         create("qa") {
             initWith(getByName("debug"))
-            applicationIdSuffix = ".qa"
             manifestPlaceholders["appName"] = "@string/app_name_qa"
         }
     }

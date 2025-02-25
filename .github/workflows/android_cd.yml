@@ -50,34 +50,39 @@ jobs:
           echo "STORE_PASSWORD=${{ secrets.STORE_PASSWORD }}" >> keystore.properties
           echo "KEY_ALIAS=${{ secrets.KEY_ALIAS }}" >> keystore.properties
           echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> keystore.properties    
-
-
-      - name: Create google-services.json for Release
+  
+      - name: Create google-services.json
         run: echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > ./app/google-services.json
-  
-      - name: Build AAB for Release
+
+      - name: Build with Gradle
+        run: ./gradlew assembleDebug --build-cache --stacktrace
+
+      - name: KtlintCheck
+        run: ./gradlew ktlintcheck
+
+      - name: Test
+        run: ./gradlew test --stacktrace
+
+      - name: Build AAB
         run: ./gradlew bundleRelease --stacktrace
-  
-      - name: Upload Release AAB as Artifact
+
+      - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
-            name: app-release.aab
-            path: app/build/outputs/bundle/release/app-release.aab
+          name: app-release.aab
+          path: app/build/outputs/bundle/release/app-release.aab
 
-      - name: Create google-services.json for QA
-        run: echo '${{ secrets.GOOGLE_SERVICES_JSON_QA }}' > ./app/src/qa/google-services.json
-
-      - name: Build QA APK
-        run: ./gradlew assembleQa --stacktrace
+      - name: Build APK for Testing
+        run: ./gradlew assembleRelease --stacktrace
 
       - name: Install Firebase CLI
         run: curl -sL firebase.tools | bash
 
-      - name: Upload QA APK to Firebase App Distribution
+      - name: Upload APK to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
-          firebase appdistribution:distribute app/build/outputs/apk/qa/app-qa.apk \
+          firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
           --app ${{ secrets.FIREBASE_APP_ID }} \
-          --release-notes "~Piece QA 빌드 업데이트~" \
+          --release-notes "~Piece 새로운 버전이 날라왔어용~" \
           --groups "puzzly-내부-qa"
