@@ -55,9 +55,6 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 
-        // TODO(재확인 필요)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-
         setContent {
             viewModel.apply {
                 val networkState by networkMonitor.networkState.collectAsStateWithLifecycle()

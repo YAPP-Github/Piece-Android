@@ -97,7 +97,7 @@ private fun ContactScreen(
     var isMatchingAnimationEnd by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        delay(5000L)
+        delay(3000L)
         isMatchingAnimationEnd = true
     }
 
@@ -122,36 +122,35 @@ private fun ContactScreen(
                 .padding(horizontal = 20.dp),
         )
 
-        AnimatedContent(
-            targetState = isMatchingAnimationEnd,
-            transitionSpec = { fadeIn() togetherWith fadeOut() },
+
+        Box(
+            contentAlignment = Center,
             modifier = Modifier
                 .align(Center)
-                .size(500.dp),
-        ) { isMatchingAnimationEnd ->
-            Box(
-                contentAlignment = Center,
-                modifier = Modifier.size(500.dp)
+                .size(500.dp)
+        ) {
+            AnimatedVisibility(
+                visible = isMatchingAnimationEnd,
+                enter = fadeIn(),
+                exit = fadeOut(),
             ) {
-                if (isMatchingAnimationEnd) {
-                    AsyncImage(
-                        model = state.imageUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.FillBounds,
-                        modifier = Modifier
-                            .size(220.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(PieceTheme.colors.black),
-                    )
-                } else {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_matching_success))
-                    LottieAnimation(
-                        composition = composition,
-                        contentScale = ContentScale.FillHeight,
-                        modifier = Modifier.size(500.dp),
-                    )
-                }
+                AsyncImage(
+                    model = state.imageUrl,
+                    contentDescription = null,
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .size(220.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(PieceTheme.colors.black),
+                )
             }
+
+            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_matching_success))
+            LottieAnimation(
+                composition = composition,
+                contentScale = ContentScale.FillHeight,
+                modifier = Modifier.size(500.dp),
+            )
         }
 
         state.selectedContact?.let { selectedContact ->
