@@ -1,6 +1,7 @@
 package com.puzzle.auth.graph.login
 
 import android.content.Context
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -25,12 +27,14 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent
 import com.puzzle.auth.graph.login.contract.LoginSideEffect
+import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceLoginButton
@@ -41,6 +45,7 @@ import com.puzzle.domain.model.auth.OAuthProvider
 internal fun LoginRoute(
     viewModel: LoginViewModel = mavericksViewModel(),
 ) {
+    val state by viewModel.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val authResultLauncher = rememberLauncherForActivityResult(
@@ -75,6 +80,7 @@ internal fun LoginRoute(
     }
 
     LoginScreen(
+        state = state,
         loginKakao = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.KAKAO)) },
         loginGoogle = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.GOOGLE)) },
     )
@@ -82,6 +88,7 @@ internal fun LoginRoute(
 
 @Composable
 private fun LoginScreen(
+    state: LoginState,
     loginKakao: () -> Unit,
     loginGoogle: () -> Unit,
     modifier: Modifier = Modifier,
@@ -174,6 +181,8 @@ private fun loginKakao(
                 } else if (token != null) {
                     onSuccess(token.accessToken)
                 }
+
+                Log.d("test", "${token} ${error}")
             }
         } else {
             // 카카오 계정 로그인 (웹)
@@ -183,6 +192,8 @@ private fun loginKakao(
                 } else if (token != null) {
                     onSuccess(token.accessToken)
                 }
+
+                Log.d("test", "${token} ${error}")
             }
         }
     }
@@ -220,6 +231,7 @@ private fun handleGoogleSignIn(
 private fun PreviewAuthScreen() {
     PieceTheme {
         LoginScreen(
+            state = LoginState(),
             loginKakao = {},
             loginGoogle = {},
         )

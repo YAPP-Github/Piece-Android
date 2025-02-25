@@ -44,10 +44,10 @@ android {
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["appName"] = "@string/app_name"
         }
-        create("qa") {
-            initWith(getByName("debug"))
-            manifestPlaceholders["appName"] = "@string/app_name_qa"
-        }
+//        create("qa") {
+//            initWith(getByName("debug"))
+//            manifestPlaceholders["appName"] = "@string/app_name_qa"
+//        }
     }
 
     buildFeatures {
