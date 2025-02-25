@@ -50,6 +50,7 @@ class FakeProfileDataSource : ProfileDataSource {
                 category = valueTalk.category,
                 answer = valueTalk.answer,
                 summary = valueTalk.summary,
+                placeholder = valueTalk.placeholder,
                 guides = valueTalk.guides,
             )
         }

@@ -139,9 +139,8 @@ private fun ValueTalkCard(
 
         PieceTextInputLong(
             value = item.answer,
-            onValueChange = {
-                onContentChange(item.copy(answer = it))
-            },
+            onValueChange = { onContentChange(item.copy(answer = it)) },
+            hint = item.placeholder,
             limit = 300,
             readOnly = false,
             modifier = Modifier.fillMaxWidth()
@@ -247,6 +246,7 @@ private fun ValueTalkPagePreview() {
                     category = "개인 성장",
                     title = "당신의 장기적인 목표는 무엇인가요?",
                     answer = "",
+                    placeholder = "연애에서 중요하게 생각하는 가치와 관계의 \n모습을 구체적으로 적어보세요. 따뜻하고 진실된 태도는 큰 매력이 됩니다.",
                     guides = listOf("5년 후의 모습을 상상해보세요", "목표 달성을 위한 단계를 생각해보세요")
                 ),
                 ValueTalkRegisterRO(
@@ -254,6 +254,7 @@ private fun ValueTalkPagePreview() {
                     category = "관계",
                     title = "가장 영향력 있는 사람은 누구인가요?",
                     answer = "",
+                    placeholder = "연애에서 중요하게 생각하는 가치와 관계의 \n모습을 구체적으로 적어보세요. 따뜻하고 진실된 태도는 큰 매력이 됩니다.",
                     guides = listOf("그 사람의 어떤 점이 영향을 주었나요?", "그 영향은 당신의 삶을 어떻게 변화시켰나요?")
                 ),
                 ValueTalkRegisterRO(
@@ -261,6 +262,7 @@ private fun ValueTalkPagePreview() {
                     category = "직업",
                     title = "이상적인 직장 환경은 어떤 모습인가요?",
                     answer = "",
+                    placeholder = "연애에서 중요하게 생각하는 가치와 관계의 \n모습을 구체적으로 적어보세요. 따뜻하고 진실된 태도는 큰 매력이 됩니다.",
                     guides = listOf("팀 문화, 업무 방식, 근무 환경 등을 고려해보세요", "현재 직장과 비교해 보세요")
                 ),
                 ValueTalkRegisterRO(
@@ -268,6 +270,7 @@ private fun ValueTalkPagePreview() {
                     category = "취미",
                     title = "새롭게 도전해보고 싶은 취미는 무엇인가요?",
                     answer = "",
+                    placeholder = "연애에서 중요하게 생각하는 가치와 관계의 \n모습을 구체적으로 적어보세요. 따뜻하고 진실된 태도는 큰 매력이 됩니다.",
                     guides = listOf("그 취미에 관심을 갖게 된 이유는 무엇인가요?", "어떤 점이 흥미롭게 느껴지나요?")
                 ),
                 ValueTalkRegisterRO(
@@ -275,6 +278,7 @@ private fun ValueTalkPagePreview() {
                     category = "건강",
                     title = "스트레스 해소 방법은 무엇인가요?",
                     answer = "",
+                    placeholder = "연애에서 중요하게 생각하는 가치와 관계의 \n모습을 구체적으로 적어보세요. 따뜻하고 진실된 태도는 큰 매력이 됩니다.",
                     guides = listOf("효과적인 스트레스 해소 방법 3가지를 적어보세요", "새로운 방법을 시도해본다면 어떤 것이 있을까요?")
                 )
             ),

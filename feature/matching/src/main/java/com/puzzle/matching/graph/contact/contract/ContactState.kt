@@ -8,6 +8,7 @@ import com.puzzle.domain.model.profile.ContactType
 data class ContactState(
     val isLoading: Boolean = false,
     val nickName: String = "",
+    val imageUrl: String = "",
     val contacts: List<Contact> = emptyList(),
     val selectedContact: Contact? = null,
 ) : MavericksState

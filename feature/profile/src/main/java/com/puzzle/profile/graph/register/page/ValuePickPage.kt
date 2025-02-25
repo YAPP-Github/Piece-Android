@@ -147,11 +147,7 @@ private fun ValuePickCard(
             PieceChip(
                 label = answer.content,
                 selected = answer.number == item.selectedAnswer,
-                onChipClicked = {
-                    onContentChange(
-                        item.copy(selectedAnswer = answer.number)
-                    )
-                },
+                onChipClicked = { onContentChange(item.copy(selectedAnswer = answer.number)) },
                 modifier = if (index < item.answerOptions.size - 1) {
                     Modifier
                         .fillMaxWidth()

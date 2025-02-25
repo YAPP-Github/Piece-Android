@@ -52,6 +52,7 @@ class GetMyValueTalksUseCaseTest {
             title = "나의 개발 여정",
             answer = "대학에서 컴퓨터공학을 전공하고 스타트업에서 junior 개발자로 시작했어요. 꾸준한 학습과 도전을 통해 성장하고 있습니다.",
             summary = "기술에 대한 열정과 성장 마인드셋",
+            placeholder = "",
             guides = emptyList(),
         ),
         MyValueTalk(
@@ -60,6 +61,7 @@ class GetMyValueTalksUseCaseTest {
             title = "일과 삶의 균형",
             answer = "개발 공부와 개인적인 성장, 취미 활동 사이의 균형을 중요하게 생각해요. 주말에는 주로 카페에서 책을 읽거나 새로운 기술을 공부합니다.",
             summary = "균형 잡힌 삶을 추구하는 개발자",
+            placeholder = "",
             guides = emptyList(),
         )
     )
