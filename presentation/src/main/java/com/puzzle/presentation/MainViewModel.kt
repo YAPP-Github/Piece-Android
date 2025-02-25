@@ -71,7 +71,14 @@ class MainViewModel @Inject constructor(
                     return@collect
                 }
 
-                // Todo : 그 외 IoException 등등..
+                else -> exception.message?.let { errorMsg ->
+                    eventHelper.sendEvent(
+                        PieceEvent.ShowSnackBar(
+                            msg = errorMsg,
+                            type = SnackBarType.Info
+                        )
+                    )
+                }
             }
         }
     }

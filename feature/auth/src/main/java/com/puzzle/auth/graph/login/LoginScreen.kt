@@ -1,7 +1,6 @@
 package com.puzzle.auth.graph.login
 
 import android.content.Context
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -34,7 +33,6 @@ import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent
 import com.puzzle.auth.graph.login.contract.LoginSideEffect
-import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceLoginButton
@@ -80,7 +78,6 @@ internal fun LoginRoute(
     }
 
     LoginScreen(
-        state = state,
         loginKakao = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.KAKAO)) },
         loginGoogle = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.GOOGLE)) },
     )
@@ -88,7 +85,6 @@ internal fun LoginRoute(
 
 @Composable
 private fun LoginScreen(
-    state: LoginState,
     loginKakao: () -> Unit,
     loginGoogle: () -> Unit,
     modifier: Modifier = Modifier,
@@ -181,8 +177,6 @@ private fun loginKakao(
                 } else if (token != null) {
                     onSuccess(token.accessToken)
                 }
-
-                Log.d("test", "${token} ${error}")
             }
         } else {
             // 카카오 계정 로그인 (웹)
@@ -192,8 +186,6 @@ private fun loginKakao(
                 } else if (token != null) {
                     onSuccess(token.accessToken)
                 }
-
-                Log.d("test", "${token} ${error}")
             }
         }
     }
@@ -231,7 +223,6 @@ private fun handleGoogleSignIn(
 private fun PreviewAuthScreen() {
     PieceTheme {
         LoginScreen(
-            state = LoginState(),
             loginKakao = {},
             loginGoogle = {},
         )

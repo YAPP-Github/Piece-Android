@@ -8,6 +8,7 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.domain.model.profile.ValuePickAnswer
@@ -204,7 +205,16 @@ class RegisterProfileViewModel @AssistedInject constructor(
             ).onSuccess {
                 loadMyProfile()
                 setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
-            }.onFailure {
+            }.onFailure { exception ->
+                if (exception is HttpResponseException) {
+                    exception.msg?.let { message ->
+                        eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = message))
+                    }
+                    setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
+                    return@launch
+                }
+
+                errorHelper.sendError(exception)
                 setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
             }
         }
