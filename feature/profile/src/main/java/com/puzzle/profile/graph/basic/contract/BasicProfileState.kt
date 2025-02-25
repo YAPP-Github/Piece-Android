@@ -44,12 +44,10 @@ data class BasicProfileState(
 
     val nickNameStateInSavingProfile: NickNameGuideMessage =
         when {
-            nickname.length in 1..6 &&
-                    nickNameGuideMessage != NickNameGuideMessage.AVAILABLE ->
-                NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
-
+            nickNameGuideMessage == NickNameGuideMessage.AVAILABLE -> NickNameGuideMessage.DEFAULT
+            nickNameGuideMessage == NickNameGuideMessage.DEFAULT -> nickNameGuideMessage
             nickname.isBlank() -> NickNameGuideMessage.REQUIRED_FIELD
-            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> nickNameGuideMessage
+            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
             else -> nickNameGuideMessage
         }
 }

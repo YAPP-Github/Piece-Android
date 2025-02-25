@@ -265,10 +265,9 @@ class RegisterProfileViewModel @AssistedInject constructor(
             contactsInputState = getInputState(state.contacts)
         )
 
-        if (updatedState.isInputFieldIncomplete) {
-            setState { updatedState }
-            return
-        }
+        setState { updatedState }
+
+        if (updatedState.isInputFieldIncomplete) return
 
         // 닉네임이 중복 검사를 통과한 상태, 저장 API 호출 진행
         state.currentPage.getNextPage()?.let { nextPage ->

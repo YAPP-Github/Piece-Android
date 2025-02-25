@@ -1,5 +1,6 @@
 package com.puzzle.profile.graph.basic
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
@@ -111,36 +112,35 @@ class BasicProfileViewModel @AssistedInject constructor(
     }
 
     private fun saveBasicProfile() {
-        withState { state ->
+        withState { currentState  ->
             viewModelScope.launch {
-                val updatedState = state.copy(
-                    nickNameGuideMessage = state.nickNameStateInSavingProfile,
-                    descriptionInputState = getInputState(state.description),
-                    imageUrlInputState = getInputState(state.imageUrl),
-                    birthdateInputState = getBirthDateInputState(state.birthdate),
-                    locationInputState = getInputState(state.location),
-                    heightInputState = getHeightInputState(state.height),
-                    weightInputState = getWeightInputState(state.weight),
-                    jobInputState = getInputState(state.job),
+                val updatedState = currentState .copy(
+                    nickNameGuideMessage = currentState .nickNameStateInSavingProfile,
+                    descriptionInputState = getInputState(currentState .description),
+                    imageUrlInputState = getInputState(currentState .imageUrl),
+                    birthdateInputState = getBirthDateInputState(currentState .birthdate),
+                    locationInputState = getInputState(currentState .location),
+                    heightInputState = getHeightInputState(currentState .height),
+                    weightInputState = getWeightInputState(currentState .weight),
+                    jobInputState = getInputState(currentState .job),
                 )
 
-                if (updatedState.isInputFieldIncomplete) {
-                    setState { updatedState }
-                    return@launch
-                }
+                setState { updatedState }
+
+                if (updatedState.isInputFieldIncomplete) return@launch
 
                 profileRepository.updateMyProfileBasic(
-                    description = state.description,
-                    nickname = state.nickname,
-                    birthdate = state.birthdate.toBirthDate(),
-                    height = state.height.toInt(),
-                    weight = state.weight.toInt(),
-                    location = state.location,
-                    job = state.job,
-                    smokingStatus = if (state.isSmoke) "흡연" else "비흡연",
-                    snsActivityLevel = if (state.isSnsActive) "활동" else "은둔",
-                    imageUrl = state.imageUrl,
-                    contacts = state.contacts,
+                    description = currentState .description,
+                    nickname = currentState .nickname,
+                    birthdate = currentState .birthdate.toBirthDate(),
+                    height = currentState .height.toInt(),
+                    weight = currentState .weight.toInt(),
+                    location = currentState .location,
+                    job = currentState .job,
+                    smokingStatus = if (currentState .isSmoke) "흡연" else "비흡연",
+                    snsActivityLevel = if (currentState .isSnsActive) "활동" else "은둔",
+                    imageUrl = currentState .imageUrl,
+                    contacts = currentState .contacts,
                 ).onSuccess {
                     setState {
                         copy(profileScreenState = ScreenState.SAVED)
