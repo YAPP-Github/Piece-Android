@@ -576,8 +576,7 @@ private fun BirthdateContent(
     onBirthdateChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val isSaveFailed: Boolean =
-        birthdateInputState == InputState.WARNIING && birthdate.isBlank()
+    val isSaveFailed: Boolean = birthdateInputState == InputState.WARNIING && birthdate.isBlank()
     var isInputFocused by remember { mutableStateOf(false) }
     val isGuideMessageVisible = isInputFocused || birthdate.isNotBlank() || isSaveFailed
 

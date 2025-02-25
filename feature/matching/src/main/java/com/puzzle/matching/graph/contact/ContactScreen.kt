@@ -1,12 +1,17 @@
 package com.puzzle.matching.graph.contact
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,7 +21,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -32,6 +41,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import coil3.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
@@ -48,6 +61,7 @@ import com.puzzle.matching.graph.contact.contract.getContactIconId
 import com.puzzle.matching.graph.contact.contract.getContactNameId
 import com.puzzle.matching.graph.contact.contract.getSelectedContactIconId
 import com.puzzle.matching.graph.contact.contract.getUnSelectedContactIconId
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun ContactRoute(
@@ -69,12 +83,8 @@ internal fun ContactRoute(
 
     ContactScreen(
         state = state,
-        onCloseClick = {
-            viewModel.onIntent(ContactIntent.OnCloseClick)
-        },
-        onContactClick = {
-            viewModel.onIntent(ContactIntent.OnContactClick(it))
-        },
+        onCloseClick = { viewModel.onIntent(ContactIntent.OnCloseClick) },
+        onContactClick = { viewModel.onIntent(ContactIntent.OnContactClick(it)) },
     )
 }
 
@@ -83,62 +93,113 @@ private fun ContactScreen(
     state: ContactState,
     onCloseClick: () -> Unit,
     onContactClick: (Contact) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
-    Box {
-        BackgroundImage(modifier = modifier)
+    var isMatchingAnimationEnd by remember { mutableStateOf(false) }
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = modifier.padding(horizontal = 20.dp),
-        ) {
-            PieceSubCloseTopBar(
-                title = "",
-                onCloseClick = onCloseClick,
-                modifier = Modifier.fillMaxWidth(),
-            )
+    LaunchedEffect(Unit) {
+        delay(5000L)
+        isMatchingAnimationEnd = true
+    }
 
-            ContactBody(nickName = state.nickName)
+    Box(modifier = Modifier.fillMaxSize()) {
+        BackgroundImage()
 
-            Spacer(modifier = Modifier.weight(1f))
+        PieceSubCloseTopBar(
+            title = "",
+            onCloseClick = onCloseClick,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+        )
 
-            state.selectedContact?.let { selectedContact ->
-                ContactInfo(
-                    selectedContact = selectedContact,
-                    contacts = state.contacts,
-                    onContactClick = onContactClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
+        ContactBody(
+            nickName = state.nickName,
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .padding(top = 80.dp)
+                .padding(horizontal = 20.dp),
+        )
+
+        AnimatedContent(
+            targetState = isMatchingAnimationEnd,
+            transitionSpec = { fadeIn() togetherWith fadeOut() },
+            modifier = Modifier
+                .align(Center)
+                .size(500.dp),
+        ) { isMatchingAnimationEnd ->
+            Box(
+                contentAlignment = Center,
+                modifier = Modifier.size(500.dp)
+            ) {
+                if (isMatchingAnimationEnd) {
+                    AsyncImage(
+                        model = state.imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.FillBounds,
+                        modifier = Modifier
+                            .size(220.dp)
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(PieceTheme.colors.black),
+                    )
+                } else {
+                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_matching_success))
+                    LottieAnimation(
+                        composition = composition,
+                        contentScale = ContentScale.FillHeight,
+                        modifier = Modifier.size(500.dp),
+                    )
+                }
             }
+        }
+
+        state.selectedContact?.let { selectedContact ->
+            ContactInfo(
+                isMatchingAnimationEnd = isMatchingAnimationEnd,
+                selectedContact = selectedContact,
+                contacts = state.contacts,
+                onContactClick = onContactClick,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
         }
     }
 }
 
 @Composable
-private fun ContactBody(nickName: String) {
-    Text(
-        text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                append(nickName)
-            }
-            append(stringResource(R.string.maching_contact_header))
-        },
-        style = PieceTheme.typography.headingLSB,
-        modifier = Modifier.padding(top = 20.dp),
-    )
+private fun ContactBody(
+    nickName: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier,
+    ) {
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                    append(nickName)
+                }
+                append(stringResource(R.string.maching_contact_header))
+            },
+            textAlign = TextAlign.Center,
+            style = PieceTheme.typography.headingLSB,
+        )
 
-    Text(
-        text = stringResource(R.string.maching_contact_sub_header),
-        textAlign = TextAlign.Center,
-        style = PieceTheme.typography.bodyMR,
-        color = PieceTheme.colors.dark1,
-        modifier = Modifier.padding(top = 8.dp),
-    )
+        Text(
+            text = stringResource(R.string.maching_contact_sub_header),
+            textAlign = TextAlign.Center,
+            style = PieceTheme.typography.bodyMR,
+            color = PieceTheme.colors.dark1,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
 }
 
+@SuppressLint("UnusedContentLambdaTargetStateParameter")
 @Composable
 private fun ContactInfo(
+    isMatchingAnimationEnd: Boolean,
     selectedContact: Contact,
     contacts: List<Contact>,
     onContactClick: (Contact) -> Unit,
@@ -148,92 +209,122 @@ private fun ContactInfo(
     val contactNameId: Int? = selectedContact.type.getContactNameId()
     val clipboardManager: ClipboardManager = LocalClipboardManager.current
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .background(color = PieceTheme.colors.white)
-            .padding(vertical = 24.dp, horizontal = 32.dp)
-            .fillMaxWidth(),
+    AnimatedVisibility(
+        visible = isMatchingAnimationEnd,
+        enter = fadeIn(),
+        exit = fadeOut(),
+        modifier = modifier,
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            if (contactIconId != null && contactNameId != null) {
-                Image(
-                    painter = painterResource(contactIconId),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                )
-
-                Text(
-                    text = stringResource(contactNameId),
-                    textAlign = TextAlign.Center,
-                    style = PieceTheme.typography.bodySSB,
-                    color = PieceTheme.colors.dark3,
-                    modifier = Modifier.padding(start = 8.dp),
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.padding(top = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = 10.dp)
+                .padding(horizontal = 20.dp),
         ) {
-            Text(
-                text = selectedContact.content,
-                textAlign = TextAlign.Center,
-                style = PieceTheme.typography.headingMSB,
-                color = PieceTheme.colors.black,
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(
+                    alignment = Alignment.CenterHorizontally,
+                    space = 12.dp,
+                ),
+                modifier = Modifier.padding(bottom = 22.dp),
+            ) {
+                contacts.forEach { contact ->
+                    val isSelected = selectedContact == contact
+                    val contactOnOffIconId =
+                        if (isSelected) {
+                            contact.type.getSelectedContactIconId()
+                        } else {
+                            contact.type.getUnSelectedContactIconId()
+                        }
 
-            Image(
-                painter = painterResource(R.drawable.ic_copy),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(20.dp)
-                    .padding(start = 8.dp)
-                    .clickable {
-                        clipboardManager.setText(AnnotatedString(selectedContact.content))
-                    },
-            )
-        }
-    }
-
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier.padding(top = 21.dp, bottom = 10.dp),
-    ) {
-        contacts.forEach {
-            val contactOnOffIconId =
-                if (selectedContact == it) {
-                    it.type.getSelectedContactIconId()
-                } else {
-                    it.type.getUnSelectedContactIconId()
+                    if (contactOnOffIconId != null) {
+                        AnimatedContent(
+                            targetState = isSelected,
+                            transitionSpec = { fadeIn() togetherWith fadeOut() },
+                        ) { _ ->
+                            Image(
+                                painter = painterResource(contactOnOffIconId),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .size(52.dp)
+                                    .clickable { onContactClick(contact) },
+                            )
+                        }
+                    }
                 }
+            }
 
-            if (contactOnOffIconId != null) {
-                Image(
-                    painter = painterResource(contactOnOffIconId),
-                    contentDescription = null,
+            AnimatedContent(
+                targetState = selectedContact,
+                transitionSpec = { fadeIn() togetherWith fadeOut() },
+            ) { _ ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
-                        .size(52.dp)
-                        .clickable {
-                            onContactClick(it)
-                        },
-                )
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(color = PieceTheme.colors.white)
+                        .padding(vertical = 24.dp, horizontal = 32.dp),
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (contactIconId != null && contactNameId != null) {
+                            Image(
+                                painter = painterResource(contactIconId),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                            )
+
+                            Text(
+                                text = stringResource(contactNameId),
+                                textAlign = TextAlign.Center,
+                                style = PieceTheme.typography.bodySSB,
+                                color = PieceTheme.colors.dark3,
+                                modifier = Modifier.padding(start = 8.dp),
+                            )
+                        }
+                    }
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 8.dp),
+                    ) {
+                        Text(
+                            text = selectedContact.content,
+                            textAlign = TextAlign.Center,
+                            style = PieceTheme.typography.headingMSB,
+                            color = PieceTheme.colors.black,
+                        )
+
+                        Image(
+                            painter = painterResource(R.drawable.ic_copy),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .padding(start = 8.dp)
+                                .size(20.dp)
+                                .clickable {
+                                    clipboardManager.setText(
+                                        AnnotatedString(
+                                            selectedContact.content
+                                        )
+                                    )
+                                },
+                        )
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun BackgroundImage(modifier: Modifier = Modifier) {
+private fun BackgroundImage() {
     Image(
         painter = painterResource(id = R.drawable.matching_contact_bg),
         contentDescription = "basic info 배경화면",
         contentScale = ContentScale.FillBounds,
-        modifier = modifier
-            .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
     )
 }
 
@@ -269,7 +360,6 @@ private fun ContactScreenPreview() {
             ),
             onCloseClick = {},
             onContactClick = {},
-            modifier = Modifier.fillMaxSize(),
         )
     }
 }

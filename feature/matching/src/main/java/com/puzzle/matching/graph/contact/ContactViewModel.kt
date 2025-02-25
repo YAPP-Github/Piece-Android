@@ -16,7 +16,6 @@ import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.flow.launchIn
@@ -45,12 +44,15 @@ class ContactViewModel @AssistedInject constructor(
 
     private fun initContactInfo() = viewModelScope.launch {
         setState { copy(isLoading = true) }
-        val opponentProfileDeferred = launch {
+        val opponentProfileJob = launch {
             getOpponentProfileUseCase().onSuccess { response ->
-                setState { copy(nickName = response.nickname) }
-            }.onFailure {
-                errorHelper.sendError(it)
-            }
+                setState {
+                    copy(
+                        nickName = response.nickname,
+                        imageUrl = response.imageUrl,
+                    )
+                }
+            }.onFailure { errorHelper.sendError(it) }
         }
 
         val opponentContactsDeferred = launch {
@@ -61,12 +63,10 @@ class ContactViewModel @AssistedInject constructor(
                         selectedContact = response.first()
                     )
                 }
-            }.onFailure {
-                errorHelper.sendError(it)
-            }
+            }.onFailure { errorHelper.sendError(it) }
         }
 
-        opponentProfileDeferred.join()
+        opponentProfileJob.join()
         opponentContactsDeferred.join()
 
         setState { copy(isLoading = false) }

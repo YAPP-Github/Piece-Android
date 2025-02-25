@@ -20,8 +20,8 @@ import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -107,8 +107,7 @@ class MainViewModel @Inject constructor(
         authRepository.checkTokenHealth().onFailure { return@launch }
 
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
-        val userRole = async { userRepository.getUserRole() }
-            .await()
+        val userRole = userRepository.getUserRole()
             .getOrElse { return@launch }
 
         when (userRole) {
@@ -124,7 +123,7 @@ class MainViewModel @Inject constructor(
             PENDING, USER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = MatchingGraphDest.MatchingRoute,
+                        route = MatchingGraphDest.ContactRoute,
                         popUpTo = true,
                     )
                 )
@@ -132,7 +131,7 @@ class MainViewModel @Inject constructor(
 
             NONE -> navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
-                    route = AuthGraphDest.VerificationRoute,
+                    route = OnboardingRoute,
                     popUpTo = true,
                 )
             )

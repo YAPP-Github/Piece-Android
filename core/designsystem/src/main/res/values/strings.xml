@@ -97,8 +97,8 @@
     <string name="valuepick_similar">나와 같은</string>
 
     <!-- Matching Contact -->
-    <string name="maching_contact_header">님과 퍼즐 완성!</string>
-    <string name="maching_contact_sub_header">망설이지 말고 연락해 보세요\n두 분의 평화로운 사랑을 피스가 응원헤요</string>
+    <string name="maching_contact_header">님과 퍼즐 완성 !</string>
+    <string name="maching_contact_sub_header">망설이지 말고 연락해 보세요\n두 분의 평화로운 사랑을 피스가 응원해요</string>
     <string name="maching_contact_kakao_id">카카오톡 아이디</string>
     <string name="maching_contact_open_chat_id">카카오톡 오픈채팅방</string>
     <string name="maching_contact_insta_id">인스타 아이디</string>
