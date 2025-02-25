@@ -204,7 +204,9 @@ class RegisterProfileViewModel @AssistedInject constructor(
             ).onSuccess {
                 loadMyProfile()
                 setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
-            }.onFailure { errorHelper.sendError(it) }
+            }.onFailure {
+                setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
+            }
         }
     }
 

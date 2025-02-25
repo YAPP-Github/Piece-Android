@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
         enableEdgeToEdge()
-        blockCapture()
+        blockScreenShot()
 
         setContent {
             viewModel.apply {
@@ -181,7 +181,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun blockCapture() {
+    private fun blockScreenShot() {
         if (BuildConfig.DEBUG) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
