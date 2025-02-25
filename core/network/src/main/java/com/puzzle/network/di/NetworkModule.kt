@@ -5,7 +5,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.google.firebase.remoteconfig.remoteConfig
-import com.puzzle.network.BuildConfig.BUILD_TYPE
+import com.puzzle.network.BuildConfig.DEBUG
 import com.puzzle.network.source.auth.AuthDataSource
 import com.puzzle.network.source.auth.AuthDataSourceImpl
 import com.puzzle.network.source.error.DebugErrorDataSourceImpl
@@ -89,8 +89,8 @@ object NetworkProvidesModule {
         @Debug debugErrorDataSource: ErrorDataSource,
         @Release releaseErrorDataSource: ErrorDataSource,
     ): ErrorDataSource {
-        return if (BUILD_TYPE == "RELEASE") releaseErrorDataSource
-        else debugErrorDataSource
+        return if (DEBUG) debugErrorDataSource
+        else releaseErrorDataSource
     }
 }
 
