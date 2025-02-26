@@ -1,7 +1,7 @@
 package com.puzzle.profile.graph.basic.contract
 
 import com.airbnb.mvrx.MavericksState
-import com.puzzle.common.toBirthDate
+import com.puzzle.common.isValidBirthDateFormat
 import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
 
@@ -118,7 +118,7 @@ enum class InputState {
         fun getBirthDateInputState(fieldValue: String?): InputState =
             when {
                 fieldValue.isNullOrBlank() -> WARNIING
-                runCatching { fieldValue.toBirthDate() }.isFailure -> WARNIING
+                !fieldValue.isValidBirthDateFormat() -> WARNIING
                 else -> DEFAULT
             }
 
