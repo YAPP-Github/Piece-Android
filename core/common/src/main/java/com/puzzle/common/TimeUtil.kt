@@ -28,8 +28,6 @@ fun String.toBirthDate(): String {
     )
 }
 
-// 위 메서드 아래에
-
 fun String.isValidBirthDateFormat(): Boolean {
     return try {
         val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
