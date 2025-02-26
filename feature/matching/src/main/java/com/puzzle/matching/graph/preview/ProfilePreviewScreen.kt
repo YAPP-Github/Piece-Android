@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
+import com.puzzle.common.ui.windowInsetsPadding
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceLoading
@@ -86,11 +89,7 @@ private fun ProfilePreviewScreen(
 
     Box(
         modifier = Modifier
-            .padding(
-                top = WindowInsets.systemBars
-                    .asPaddingValues()
-                    .calculateTopPadding(),
-            )
+            .windowInsetsPadding()
             .fillMaxSize()
             .then(
                 if (currentPage != ProfilePreviewState.Page.BasicInfoPage) {

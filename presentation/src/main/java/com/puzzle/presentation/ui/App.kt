@@ -14,6 +14,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -29,14 +30,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -97,13 +95,17 @@ fun App(
             }
         },
         floatingActionButton = {
-            AnimatedVisibility(visible = currentDestination?.shouldHideBottomNavigation() == false) {
+            AnimatedVisibility(
+                visible = currentDestination?.shouldHideBottomNavigation() == false,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically(),
+            ) {
                 FloatingActionButton(
                     onClick = { navigateToBottomNaviNaviateTo(MatchingGraph) },
                     containerColor = PieceTheme.colors.white,
                     shape = CircleShape,
                     elevation = bottomAppBarFabElevation(),
-                    modifier = Modifier.offset(y = 84.dp),
+                    modifier = Modifier.offset(y =84.dp),
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_matching),
@@ -140,7 +142,9 @@ private fun AppBottomBar(
 ) {
     NavigationBar(
         containerColor = PieceTheme.colors.white,
-        modifier = Modifier.height(68.dp),
+        modifier = Modifier
+            .navigationBarsPadding()
+            .height(68.dp),
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             NavigationBarItem(

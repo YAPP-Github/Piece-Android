@@ -30,7 +30,7 @@ fun PieceTheme(
 @Composable
 fun StatusBarColor(color: Color) {
     val view = LocalView.current
-    val useDarkIcons = color.luminance() > 0.5f
+    val useDarkIcons = color.luminance() > 0.5f || color == Color.Transparent
     SideEffect {
         if (!view.isInEditMode) {
             val window = (view.context as Activity).window
@@ -44,7 +44,7 @@ fun StatusBarColor(color: Color) {
 @Composable
 fun NavigationBarColor(color: Color) {
     val view = LocalView.current
-    val useDarkIcons = color.luminance() > 0.5f
+    val useDarkIcons = color.luminance() > 0.5f || color == Color.Transparent
     SideEffect {
         if (!view.isInEditMode) {
             val window = (view.context as Activity).window
