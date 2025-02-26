@@ -9,6 +9,19 @@ data class ApiResponse<T>(
     val data: T?,
 )
 
+@Serializable
+data class ApiErrorResponse(
+    val code: String?,
+    val message: String?,
+    val errors: List<ErrorResponse>,
+)
+
+@Serializable
+data class ErrorResponse(
+    val field: String?,
+    val message: String?,
+)
+
 internal fun <T> Result<ApiResponse<T>>.unwrapData(): Result<T> =
     this.mapCatching { response -> response.data ?: Unit as T }
 

@@ -1,12 +1,14 @@
 package com.puzzle.presentation
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
+import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.event.SnackBarType
 import com.puzzle.domain.model.configure.ForceUpdate
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
+import com.puzzle.domain.model.error.HttpResponseStatus
 import com.puzzle.domain.model.user.UserRole.NONE
 import com.puzzle.domain.model.user.UserRole.PENDING
 import com.puzzle.domain.model.user.UserRole.REGISTER
@@ -16,6 +18,7 @@ import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
+import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -62,15 +65,37 @@ class MainViewModel @Inject constructor(
 
     private fun handleError() = viewModelScope.launch {
         errorHelper.errorEvent.collect { exception ->
-            Log.e("Piece", exception.stackTraceToString())
-
             when (exception) {
                 is HttpResponseException -> {
-                    // Todo : HTTP 호출 에러
+                    handleHttpError(exception)
                     return@collect
                 }
 
-                // Todo : 그 외 IoException 등등..
+                else -> exception.message?.let { errorMsg ->
+                    eventHelper.sendEvent(
+                        PieceEvent.ShowSnackBar(
+                            msg = errorMsg,
+                            type = SnackBarType.Info
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handleHttpError(exception: HttpResponseException) {
+        when (exception.status) {
+            HttpResponseStatus.Unauthorized -> navigationHelper.navigate(
+                NavigationEvent.TopLevelNavigateTo(AuthGraph)
+            )
+
+            else -> exception.msg?.let { errorMsg ->
+                eventHelper.sendEvent(
+                    PieceEvent.ShowSnackBar(
+                        msg = errorMsg,
+                        type = SnackBarType.Info
+                    )
+                )
             }
         }
     }
@@ -129,7 +154,7 @@ class MainViewModel @Inject constructor(
             PENDING, USER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = MatchingGraphDest.ContactRoute,
+                        route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )
                 )
