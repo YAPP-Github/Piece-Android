@@ -98,10 +98,8 @@ enum class InputState {
     ;
 
     companion object {
-        const val MIN_HEIGHT_CM = 100
-        const val MAX_HEIGHT_CM = 250
-        const val MIN_WEIGHT_KG = 20
-        const val MAX_WEIGHT_KG = 200
+        const val MAX_WEIGHT_INPUT_LENGTH: Int = 3
+        const val MAX_HEIGHT_INPUT_LENGTH: Int = 3
 
         fun getInputState(fieldValue: String?): InputState =
             if (fieldValue.isNullOrBlank()) WARNIING
@@ -122,17 +120,17 @@ enum class InputState {
                 else -> DEFAULT
             }
 
-        fun getHeightInputState(fieldValue: String?): InputState =
+        fun getHeightInputState(fieldValue: String?, isInSave: Boolean): InputState =
             when {
-                fieldValue.isNullOrBlank() -> WARNIING
-                fieldValue.toDouble().toInt() !in MIN_HEIGHT_CM..MAX_HEIGHT_CM -> WARNIING
+                fieldValue.isNullOrBlank() -> if (isInSave) WARNIING else DEFAULT
+                fieldValue.length > MAX_HEIGHT_INPUT_LENGTH -> WARNIING
                 else -> DEFAULT
             }
 
-        fun getWeightInputState(fieldValue: String?): InputState =
+        fun getWeightInputState(fieldValue: String?, isInSave: Boolean): InputState =
             when {
-                fieldValue.isNullOrBlank() -> WARNIING
-                fieldValue.toDouble().toInt() !in MIN_WEIGHT_KG..MAX_WEIGHT_KG -> WARNIING
+                fieldValue.isNullOrBlank() -> if (isInSave) WARNIING else DEFAULT
+                fieldValue.length > MAX_WEIGHT_INPUT_LENGTH -> WARNIING
                 else -> DEFAULT
             }
     }

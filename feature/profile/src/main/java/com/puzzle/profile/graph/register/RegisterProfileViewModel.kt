@@ -257,8 +257,14 @@ class RegisterProfileViewModel @AssistedInject constructor(
             descriptionInputState = getInputState(state.description),
             birthdateInputState = getBirthDateInputState(state.birthdate),
             locationInputState = getInputState(state.location),
-            heightInputState = getHeightInputState(state.height),
-            weightInputState = getWeightInputState(state.weight),
+            heightInputState = getHeightInputState(
+                fieldValue = state.height,
+                isInSave = true
+            ),
+            weightInputState = getWeightInputState(
+                fieldValue = state.weight,
+                isInSave = true
+            ),
             jobInputState = getInputState(state.job),
             isSmokeInputState = getInputState(state.isSmoke),
             isSnsActiveInputState = getInputState(state.isSnsActive),
@@ -332,7 +338,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 height = height,
-                heightInputState = InputState.DEFAULT,
+                heightInputState = getHeightInputState(
+                    fieldValue = height,
+                    isInSave = false
+                ),
             )
         }
     }
@@ -341,7 +350,10 @@ class RegisterProfileViewModel @AssistedInject constructor(
         setState {
             copy(
                 weight = weight,
-                weightInputState = InputState.DEFAULT,
+                weightInputState = getWeightInputState(
+                    fieldValue = weight,
+                    isInSave = false
+                ),
             )
         }
     }

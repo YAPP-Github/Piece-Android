@@ -119,8 +119,14 @@ class BasicProfileViewModel @AssistedInject constructor(
                     imageUrlInputState = getInputState(currentState.imageUrl),
                     birthdateInputState = getBirthDateInputState(currentState.birthdate),
                     locationInputState = getInputState(currentState.location),
-                    heightInputState = getHeightInputState(currentState.height),
-                    weightInputState = getWeightInputState(currentState.weight),
+                    heightInputState = getHeightInputState(
+                        fieldValue = currentState.height,
+                        isInSave = true
+                    ),
+                    weightInputState = getWeightInputState(
+                        fieldValue = currentState.weight,
+                        isInSave = true
+                    ),
                     jobInputState = getInputState(currentState.job),
                 )
 
@@ -247,7 +253,10 @@ class BasicProfileViewModel @AssistedInject constructor(
                 } else {
                     profileScreenState
                 },
-                heightInputState = InputState.DEFAULT
+                heightInputState = getHeightInputState(
+                    fieldValue = newState.height,
+                    isInSave = true
+                )
             )
         }
     }
@@ -266,7 +275,10 @@ class BasicProfileViewModel @AssistedInject constructor(
                 } else {
                     profileScreenState
                 },
-                weightInputState = InputState.DEFAULT
+                weightInputState = getWeightInputState(
+                    fieldValue = newState.weight,
+                    isInSave = true
+                )
             )
         }
     }
