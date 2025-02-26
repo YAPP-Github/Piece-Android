@@ -42,10 +42,10 @@ class BasicProfileViewModel @AssistedInject constructor(
     private val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<BasicProfileState>(initialState) {
-
     private val intents = Channel<BasicProfileIntent>(BUFFERED)
     private val _sideEffects = Channel<BasicProfileSideEffect>(BUFFERED)
     val sideEffects = _sideEffects.receiveAsFlow()
+
     private val initialState: BasicProfileState = BasicProfileState()
 
     init {
@@ -222,10 +222,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
     private fun updateBirthdate(birthdate: String) {
         setState {
-            val newState = copy(
-                birthdate = birthdate,
-            )
-
+            val newState = copy(birthdate = birthdate)
             val isProfileEdited = newState != initialState
 
             newState.copy(
@@ -241,9 +238,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
     private fun updateHeight(height: String) {
         setState {
-            val newState = copy(
-                height = height,
-            )
+            val newState = copy(height = height)
 
             val isProfileEdited = newState != initialState
 

@@ -5,5 +5,6 @@ data class ValueTalkRegisterRO(
     val category: String,
     val title: String,
     val answer: String,
+    val placeholder: String,
     val guides: List<String>,
 )

@@ -179,9 +179,7 @@ private fun SettingScreen(
                 onRefreshClick = onRefreshClick,
             )
 
-            InquiryBody(
-                onContactUsClick = onInquiryClick,
-            )
+            InquiryBody(onContactUsClick = onInquiryClick)
 
             AnnouncementBody(
                 version = state.version,
@@ -365,11 +363,7 @@ private fun SystemSettingBody(
             }
 
             if (isLoadingContactBlocked) {
-                val composition by rememberLottieComposition(
-                    LottieCompositionSpec.RawRes(
-                        R.raw.anim_setting_loading
-                    )
-                )
+                val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_setting_loading))
                 val progress by animateLottieCompositionAsState(
                     composition = composition,
                     iterations = LottieConstants.IterateForever,

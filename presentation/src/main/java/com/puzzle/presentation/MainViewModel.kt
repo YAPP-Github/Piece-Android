@@ -20,6 +20,7 @@ import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -128,7 +129,7 @@ class MainViewModel @Inject constructor(
             PENDING, USER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = MatchingGraphDest.MatchingRoute,
+                        route = MatchingGraphDest.ContactRoute,
                         popUpTo = true,
                     )
                 )
@@ -136,7 +137,7 @@ class MainViewModel @Inject constructor(
 
             NONE -> navigationHelper.navigate(
                 NavigationEvent.NavigateTo(
-                    route = AuthGraphDest.VerificationRoute,
+                    route = OnboardingRoute,
                     popUpTo = true,
                 )
             )

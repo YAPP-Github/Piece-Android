@@ -33,4 +33,5 @@ data class MyValueTalk(
     val answer: String,
     val summary: String,
     val guides: List<String>,
+    val placeholder: String,
 )

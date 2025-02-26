@@ -19,6 +19,7 @@ import com.puzzle.network.source.matching.MatchingDataSource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MatchingRepositoryImpl @Inject constructor(
@@ -39,14 +40,20 @@ class MatchingRepositoryImpl @Inject constructor(
     override suspend fun getOpponentContacts(): Result<List<Contact>> =
         matchingDataSource.getContacts()
             .mapCatching { response ->
-                response.contacts.orEmpty().map(ContactResponse::toDomain)
+                response.contacts.orEmpty()
+                    .map(ContactResponse::toDomain)
             }
 
     override suspend fun getMatchInfo(): Result<MatchInfo> =
         matchingDataSource.getMatchInfo().mapCatching(GetMatchInfoResponse::toDomain)
 
-    override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> = suspendRunCatching {
-        localMatchingDataSource.opponentProfile.first()
+    override suspend fun retrieveOpponentProfile(): Result<OpponentProfile> {
+        val profile = localMatchingDataSource.opponentProfile.first()
+        return if (profile != null) {
+            Result.success(profile)
+        } else {
+            Result.failure(NullPointerException("OpponentProfile is null"))
+        }
     }
 
     override suspend fun loadOpponentProfile(): Result<Unit> = suspendRunCatching {

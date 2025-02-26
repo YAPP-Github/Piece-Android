@@ -27,7 +27,11 @@ class LocalProfileDataSourceImpl @Inject constructor(
     override val valuePickQuestions: Flow<List<ValuePickQuestion>> =
         dataStore.getValue(VALUE_PICK_QUESTIONS, "")
             .map { jsonString ->
-                gson.fromJson(jsonString, object : TypeToken<List<ValuePickQuestion>>() {}.type)
+                try {
+                    gson.fromJson(jsonString, object : TypeToken<List<ValuePickQuestion>>() {}.type)
+                } catch (e: Exception) {
+                    emptyList()
+                }
             }
 
     override suspend fun setValuePickQuestions(valuePicks: List<ValuePickQuestion>) {
