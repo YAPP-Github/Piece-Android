@@ -1,6 +1,7 @@
 package com.puzzle.matching.graph.detail
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -10,12 +11,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,6 +52,7 @@ import com.puzzle.designsystem.component.PieceLoading
 import com.puzzle.designsystem.component.PieceRoundingSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.designsystem.foundation.StatusBarColor
 import com.puzzle.domain.model.profile.OpponentProfile
 import com.puzzle.matching.graph.detail.bottomsheet.MatchingDetailMoreBottomSheet
 import com.puzzle.matching.graph.detail.common.constant.DialogType
@@ -188,10 +194,16 @@ private fun MatchingDetailScreen(
         }
     }
 
-    BackgroundImage(modifier)
+    BackgroundImage()
+    SetStatusBarColor(state.currentPage)
 
     Box(
         modifier = modifier
+            .padding(
+                top = WindowInsets.systemBars
+                    .asPaddingValues()
+                    .calculateTopPadding(),
+            )
             .fillMaxSize()
             .then(
                 if (state.currentPage != MatchingDetailPage.BasicInfoPage) {
@@ -220,7 +232,6 @@ private fun MatchingDetailScreen(
             },
             modifier = Modifier
                 .fillMaxSize()
-                .statusBarsPadding()
                 .padding(top = topBarHeight, bottom = bottomBarHeight),
         )
 
@@ -239,7 +250,6 @@ private fun MatchingDetailScreen(
                         Modifier
                     }
                 )
-                .statusBarsPadding()
                 .padding(horizontal = 20.dp),
         )
 
@@ -269,13 +279,27 @@ private fun MatchingDetailScreen(
 }
 
 @Composable
-private fun BackgroundImage(modifier: Modifier = Modifier) {
+private fun BackgroundImage() {
     Image(
         painter = painterResource(id = R.drawable.matchingdetail_bg),
         contentDescription = "basic info 배경화면",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize(),
     )
+}
+
+@Composable
+private fun SetStatusBarColor(page: MatchingDetailPage) {
+    val statusBarColor by animateColorAsState(
+        targetValue = when (page) {
+            MatchingDetailPage.BasicInfoPage -> Color.Transparent
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(700),
+        label = "StatusBarColorAnimation"
+    )
+
+    StatusBarColor(statusBarColor)
 }
 
 @Composable

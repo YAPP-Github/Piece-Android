@@ -14,7 +14,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -51,7 +50,9 @@ import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSnackBar
 import com.puzzle.designsystem.component.PieceSnackBarHost
+import com.puzzle.designsystem.foundation.NavigationBarColor
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.designsystem.foundation.StatusBarColor
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
@@ -139,9 +140,7 @@ private fun AppBottomBar(
 ) {
     NavigationBar(
         containerColor = PieceTheme.colors.white,
-        modifier = Modifier
-            .navigationBarsPadding()
-            .height(68.dp),
+        modifier = Modifier.height(68.dp),
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             NavigationBarItem(
@@ -225,13 +224,12 @@ private fun SystemBarColor(currentDestination: NavDestination?) {
         WindowCompat.setDecorFitsSystemWindows(window, true)
     }
 
-    StatusBarColor(currentDestination)
-    NavigationBarColor(currentDestination)
+    SetStatusBarColor(currentDestination)
+    SetNavigationBarColor(currentDestination)
 }
 
 @Composable
-private fun StatusBarColor(currentDestination: NavDestination?) {
-    val view = LocalView.current
+private fun SetStatusBarColor(currentDestination: NavDestination?) {
     val statusBarColor by animateColorAsState(
         targetValue = when (currentDestination?.route) {
             MatchingGraphDest.MatchingRoute::class.qualifiedName -> PieceTheme.colors.black
@@ -245,20 +243,11 @@ private fun StatusBarColor(currentDestination: NavDestination?) {
         label = "StatusBarColorAnimation"
     )
 
-    val useDarkIcons = statusBarColor.luminance() > 0.5f
-    LaunchedEffect(statusBarColor) {
-        if (!view.isInEditMode) {
-            val window = (view.context as Activity).window
-            window.statusBarColor = statusBarColor.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                useDarkIcons
-        }
-    }
+    StatusBarColor(statusBarColor)
 }
 
 @Composable
-private fun NavigationBarColor(currentDestination: NavDestination?) {
-    val view = LocalView.current
+private fun SetNavigationBarColor(currentDestination: NavDestination?) {
     val navigationBarColor by animateColorAsState(
         targetValue = when (currentDestination?.route) {
             MatchingDetailRoute::class.qualifiedName,
@@ -271,13 +260,5 @@ private fun NavigationBarColor(currentDestination: NavDestination?) {
         label = "NavigationBarColorAnimation"
     )
 
-    val useDarkIcons = navigationBarColor.luminance() > 0.5f
-    LaunchedEffect(navigationBarColor) {
-        if (!view.isInEditMode) {
-            val window = (view.context as Activity).window
-            window.navigationBarColor = navigationBarColor.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
-                useDarkIcons
-        }
-    }
+    NavigationBarColor(navigationBarColor)
 }
