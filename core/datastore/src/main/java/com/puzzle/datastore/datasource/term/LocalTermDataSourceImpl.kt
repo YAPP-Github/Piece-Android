@@ -22,7 +22,11 @@ class LocalTermDataSourceImpl @Inject constructor(
 ) : LocalTermDataSource {
     override val terms: Flow<List<Term>> = dataStore.getValue(TERM, "")
         .map { jsonString ->
-            gson.fromJson(jsonString, object : TypeToken<List<Term>>() {}.type)
+            try {
+                gson.fromJson(jsonString, object : TypeToken<List<Term>>() {}.type)
+            } catch (e: Exception) {
+                emptyList()
+            }
         }
 
     override suspend fun setTerms(terms: List<Term>) {

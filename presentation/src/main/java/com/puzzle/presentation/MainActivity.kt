@@ -1,6 +1,7 @@
 package com.puzzle.presentation
 
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -49,12 +50,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-//        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
 
-        // TODO(재확인 필요)
-        WindowCompat.setDecorFitsSystemWindows(window, true)
+        enableEdgeToEdge()
+        window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
 
         setContent {
             viewModel.apply {
