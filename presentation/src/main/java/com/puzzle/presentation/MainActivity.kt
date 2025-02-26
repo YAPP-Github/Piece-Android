@@ -182,7 +182,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun blockScreenShot() {
-        if (BuildConfig.DEBUG) {
+        if (!BuildConfig.DEBUG) {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }

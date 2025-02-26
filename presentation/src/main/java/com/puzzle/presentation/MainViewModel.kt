@@ -154,7 +154,7 @@ class MainViewModel @Inject constructor(
             PENDING, USER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = MatchingGraphDest.ContactRoute,
+                        route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )
                 )
