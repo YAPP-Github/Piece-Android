@@ -90,7 +90,7 @@ class ContactViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToBackScreen() {
-        _sideEffects.send(ContactSideEffect.Navigate(NavigationEvent.NavigateUp))
+        _sideEffects.send(ContactSideEffect.Navigate(NavigationEvent.Up))
     }
 
     @AssistedFactory

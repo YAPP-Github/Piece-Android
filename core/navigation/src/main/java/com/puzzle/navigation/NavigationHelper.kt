@@ -17,7 +17,8 @@ class NavigationHelper @Inject constructor() {
 }
 
 sealed class NavigationEvent {
-    data class NavigateTo(val route: Route, val popUpTo: Boolean = false) : NavigationEvent()
-    data object NavigateUp : NavigationEvent()
-    data class TopLevelNavigateTo(val route: Route) : NavigationEvent()
+    data class To(val route: Route, val popUpTo: Boolean = false) : NavigationEvent()
+    data object Up : NavigationEvent()
+    data class TopLevelTo(val route: Route) : NavigationEvent()
+    data class BottomNaviTo(val route: Route) : NavigationEvent()
 }

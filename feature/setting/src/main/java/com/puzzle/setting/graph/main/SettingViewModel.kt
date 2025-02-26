@@ -12,7 +12,7 @@ import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
-import com.puzzle.navigation.NavigationEvent.NavigateTo
+import com.puzzle.navigation.NavigationEvent.To
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.setting.BuildConfig
@@ -117,11 +117,11 @@ class SettingViewModel @AssistedInject constructor(
     }
 
     private fun moveToWithdrawScreen() =
-        navigationHelper.navigate(NavigateTo(SettingGraphDest.WithdrawRoute))
+        navigationHelper.navigate(To(SettingGraphDest.WithdrawRoute))
 
     private fun navigateToWebView(title: String, url: String) =
         navigationHelper.navigate(
-            NavigateTo(
+            To(
                 SettingGraphDest.WebViewRoute(
                     title = title,
                     url = url
@@ -131,7 +131,7 @@ class SettingViewModel @AssistedInject constructor(
 
     private suspend fun logout() {
         authRepository.logout()
-            .onSuccess { navigationHelper.navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph)) }
+            .onSuccess { navigationHelper.navigate(NavigationEvent.TopLevelTo(AuthGraph)) }
             .onFailure { errorHelper.sendError(it) }
     }
 

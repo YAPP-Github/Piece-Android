@@ -66,7 +66,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
         when (intent) {
             is MatchingDetailIntent.OnMoreClick -> showBottomSheet(intent.content)
             MatchingDetailIntent.OnMatchingDetailCloseClick ->
-                navigationHelper.navigate(NavigationEvent.NavigateUp)
+                navigationHelper.navigate(NavigationEvent.Up)
 
             MatchingDetailIntent.OnPreviousPageClick -> setPreviousPage()
             MatchingDetailIntent.OnNextPageClick -> setNextPage()
@@ -81,7 +81,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
         matchingRepository.refuseMatch()
             .onSuccess {
                 navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )
@@ -104,7 +104,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private fun onBlockClick(matchId: Int) {
         withState {
             navigationHelper.navigate(
-                NavigationEvent.NavigateTo(
+                NavigationEvent.To(
                     MatchingGraphDest.BlockRoute(
                         matchId = matchId,
                         userName = it.profile!!.nickname,
@@ -119,7 +119,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
     private fun onReportClick(matchId: Int) {
         withState {
             navigationHelper.navigate(
-                NavigationEvent.NavigateTo(
+                NavigationEvent.To(
                     MatchingGraphDest.ReportRoute(
                         matchId = matchId,
                         userName = it.profile!!.nickname,
@@ -135,7 +135,7 @@ class MatchingDetailViewModel @AssistedInject constructor(
         matchingRepository.acceptMatching()
             .onSuccess {
                 navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )

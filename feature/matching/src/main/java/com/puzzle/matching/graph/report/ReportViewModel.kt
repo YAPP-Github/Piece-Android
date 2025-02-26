@@ -45,7 +45,7 @@ class ReportViewModel @AssistedInject constructor(
     private suspend fun processIntent(intent: ReportIntent) {
         when (intent) {
             ReportIntent.OnBackClick -> _sideEffects.send(
-                ReportSideEffect.Navigate(NavigationEvent.NavigateUp)
+                ReportSideEffect.Navigate(NavigationEvent.Up)
             )
 
             is ReportIntent.OnReportButtonClick -> reportUser(
@@ -55,7 +55,7 @@ class ReportViewModel @AssistedInject constructor(
 
             ReportIntent.OnReportDoneClick -> _sideEffects.send(
                 ReportSideEffect.Navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )

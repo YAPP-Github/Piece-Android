@@ -58,7 +58,7 @@ class WithdrawViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToPreviousScreen() {
-        _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.NavigateUp))
+        _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.Up))
     }
 
     private fun moveToWithdrawPage() {
@@ -77,7 +77,7 @@ class WithdrawViewModel @AssistedInject constructor(
             authRepository.withdraw(reason)
                 .onSuccess {
                     _sideEffects.send(
-                        WithdrawSideEffect.Navigate(NavigationEvent.TopLevelNavigateTo(AuthGraph))
+                        WithdrawSideEffect.Navigate(NavigationEvent.TopLevelTo(AuthGraph))
                     )
                 }.onFailure { errorHelper.sendError(it) }
         }

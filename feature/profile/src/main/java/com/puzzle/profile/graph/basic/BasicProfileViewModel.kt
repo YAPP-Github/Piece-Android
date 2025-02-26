@@ -1,6 +1,5 @@
 package com.puzzle.profile.graph.basic
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
@@ -104,7 +103,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
     private suspend fun moveToBackScreen() {
         _sideEffects.send(
-            BasicProfileSideEffect.Navigate(NavigationEvent.NavigateUp)
+            BasicProfileSideEffect.Navigate(NavigationEvent.Up)
         )
     }
 

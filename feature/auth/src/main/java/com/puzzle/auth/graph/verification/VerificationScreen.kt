@@ -133,7 +133,7 @@ private fun VerificationScreen(
     ) {
         PieceSubCloseTopBar(
             title = "",
-            onCloseClick = { navigate(NavigationEvent.NavigateUp) },
+            onCloseClick = { navigate(NavigationEvent.Up) },
             closeButtonEnabled = false,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -169,7 +169,7 @@ private fun VerificationScreen(
 
         PieceSolidButton(
             label = stringResource(R.string.confirm),
-            onClick = { navigate(NavigationEvent.NavigateTo(AuthGraphDest.SignUpRoute)) },
+            onClick = { navigate(NavigationEvent.To(AuthGraphDest.SignUpRoute)) },
             enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier
                 .fillMaxWidth()

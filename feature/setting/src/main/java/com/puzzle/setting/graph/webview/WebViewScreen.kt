@@ -21,7 +21,7 @@ internal fun WebViewRoute(
     WebViewScreen(
         title = title,
         url = url,
-        onBackClick = { viewModel.navigationHelper.navigate(NavigationEvent.NavigateUp) },
+        onBackClick = { viewModel.navigationHelper.navigate(NavigationEvent.Up) },
     )
 }
 

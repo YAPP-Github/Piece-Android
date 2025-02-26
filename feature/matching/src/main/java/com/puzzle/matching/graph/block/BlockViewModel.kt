@@ -44,11 +44,11 @@ class BlockViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: BlockIntent) {
         when (intent) {
-            BlockIntent.OnBackClick -> _sideEffects.send(BlockSideEffect.Navigate(NavigationEvent.NavigateUp))
+            BlockIntent.OnBackClick -> _sideEffects.send(BlockSideEffect.Navigate(NavigationEvent.Up))
             is BlockIntent.OnBlockButtonClick -> blockUser(intent.userId)
             BlockIntent.OnBlockDoneClick -> _sideEffects.send(
                 BlockSideEffect.Navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )

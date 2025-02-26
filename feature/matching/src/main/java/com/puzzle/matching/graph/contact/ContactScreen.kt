@@ -49,6 +49,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.common.ui.windowInsetsPadding
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
@@ -101,9 +102,13 @@ private fun ContactScreen(
         isMatchingAnimationEnd = true
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        BackgroundImage()
+    BackgroundImage()
 
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .windowInsetsPadding(),
+    ) {
         PieceSubCloseTopBar(
             title = "",
             onCloseClick = onCloseClick,

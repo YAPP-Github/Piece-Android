@@ -82,7 +82,7 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToBackScreen() {
-        navigationHelper.navigate(NavigationEvent.NavigateUp)
+        navigationHelper.navigate(NavigationEvent.Up)
     }
 
     @AssistedFactory

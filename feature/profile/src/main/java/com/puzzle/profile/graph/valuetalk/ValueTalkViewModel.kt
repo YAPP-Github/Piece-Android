@@ -87,7 +87,7 @@ class ValueTalkViewModel @AssistedInject constructor(
 
     private fun processBackClick() = withState { state ->
         when (state.screenState) {
-            ValueTalkState.ScreenState.NORMAL -> navigationHelper.navigate(NavigationEvent.NavigateUp)
+            ValueTalkState.ScreenState.NORMAL -> navigationHelper.navigate(NavigationEvent.Up)
             ValueTalkState.ScreenState.EDITING ->
                 setState { copy(screenState = ValueTalkState.ScreenState.NORMAL) }
         }
