@@ -3,6 +3,7 @@ package com.puzzle.network.source.configure
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
 import com.google.firebase.remoteconfig.get
+import com.puzzle.network.BuildConfig
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
@@ -42,7 +43,9 @@ class ConfigDataSource @Inject constructor(
         }
 
     companion object Key {
-        const val FORCE_UPDATE = "forceUpdate"
-        const val IS_NOTIFICATION_ENABLED = "isNotificationEnabled"
+        const val FORCE_UPDATE = "force_update"
+        const val IS_NOTIFICATION_ENABLED = "is_notification_enabled"
+
+        fun getKey(key: String): String = "${key}_AN_${BuildConfig.BUILD_TYPE}"
     }
 }
