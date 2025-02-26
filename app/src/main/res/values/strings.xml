@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Piece</string>
+    <string name="app_name_debug">Piece_Debug</string>
 </resources>
