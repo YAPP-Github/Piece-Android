@@ -686,6 +686,7 @@ private fun SelfDescriptionContent(
         hint = "수식어 형태로 작성해 주세요",
         keyboardType = KeyboardType.Text,
         onValueChange = onDescribeMySelfChanged,
+        limit = 20,
         rightComponent = {
             if (description.isNotEmpty()) {
                 Image(
@@ -777,6 +778,7 @@ private fun NickNameContent(
             hint = "6자 이하로 작성해주세요",
             keyboardType = KeyboardType.Text,
             onValueChange = onNickNameChanged,
+            limit = 6,
             rightComponent = {
                 if (nickName.isNotEmpty()) {
                     Image(

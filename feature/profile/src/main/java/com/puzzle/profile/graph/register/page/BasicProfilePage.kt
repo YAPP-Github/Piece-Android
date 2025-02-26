@@ -622,9 +622,8 @@ private fun SelfDescriptionContent(
         value = description,
         hint = stringResource(R.string.basic_profile_self_description_guide),
         keyboardType = KeyboardType.Text,
-        onValueChange = {
-            if (it.length <= 20) onDescribeMySelfChanged(it)
-        },
+        onValueChange = onDescribeMySelfChanged,
+        limit = 20,
         rightComponent = {
             if (description.isNotBlank()) {
                 Image(
@@ -723,6 +722,7 @@ private fun NickNameContent(
                 hint = stringResource(R.string.basic_profile_nickname_length_guide),
                 keyboardType = KeyboardType.Text,
                 onValueChange = onNickNameChanged,
+                limit = 6,
                 rightComponent = {
                     if (nickName.isNotBlank()) {
                         Image(

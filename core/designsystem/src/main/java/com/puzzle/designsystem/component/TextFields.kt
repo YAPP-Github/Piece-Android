@@ -50,6 +50,7 @@ fun PieceTextInputDefault(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     hint: String = "",
+    limit: Int? = null,
     readOnly: Boolean = false,
     keyboardType: KeyboardType = KeyboardType.Text,
     throttleTime: Long = 2000L,
@@ -63,7 +64,9 @@ fun PieceTextInputDefault(
 
     BasicTextField(
         value = value,
-        onValueChange = onValueChange,
+        onValueChange = { input ->
+            limit?.let { if (input.length <= limit) onValueChange(input) } ?: onValueChange(input)
+        },
         singleLine = true,
         readOnly = readOnly,
         keyboardOptions = KeyboardOptions(
