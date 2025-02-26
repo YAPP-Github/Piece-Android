@@ -75,7 +75,7 @@ class MatchingViewModel @AssistedInject constructor(
             MatchingIntent.OnButtonClick -> processOnButtonClick()
             is MatchingIntent.OnMatchingDetailClick -> withState {
                 navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId)
                     )
                 )
@@ -83,7 +83,7 @@ class MatchingViewModel @AssistedInject constructor(
 
             MatchingIntent.OnEditProfileClick -> moveToProfileRegisterScreen()
             MatchingIntent.OnCheckMyProfileClick -> navigationHelper.navigate(
-                NavigationEvent.NavigateTo(MatchingGraphDest.ProfilePreviewRoute)
+                NavigationEvent.To(MatchingGraphDest.ProfilePreviewRoute)
             )
         }
     }
@@ -107,7 +107,7 @@ class MatchingViewModel @AssistedInject constructor(
 
 
     private fun moveToProfileRegisterScreen() {
-        navigationHelper.navigate(NavigationEvent.NavigateTo(ProfileGraphDest.RegisterProfileRoute))
+        navigationHelper.navigate(NavigationEvent.To(ProfileGraphDest.RegisterProfileRoute))
     }
 
     private fun loadMyProfile() = viewModelScope.launch {
@@ -193,7 +193,7 @@ class MatchingViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _sideEffects.send(
                 MatchingSideEffect.Navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         MatchingGraphDest.ContactRoute
                     )
                 )
@@ -210,7 +210,7 @@ class MatchingViewModel @AssistedInject constructor(
 
             _sideEffects.send(
                 MatchingSideEffect.Navigate(
-                    NavigationEvent.NavigateTo(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))
+                    NavigationEvent.To(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))
                 )
             )
         }

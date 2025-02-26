@@ -2,7 +2,10 @@
 
 package com.puzzle.presentation.ui
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -26,12 +29,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -54,9 +63,6 @@ import com.puzzle.navigation.SettingGraph
 import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
-import com.puzzle.presentation.network.NetworkScreen
-import com.puzzle.presentation.network.NetworkState
-import com.puzzle.presentation.update.ForceUpdateDialog
 import kotlin.reflect.KClass
 
 @Composable
@@ -64,10 +70,11 @@ fun App(
     snackBarHostState: SnackbarHostState,
     navController: NavHostController,
     modifier: Modifier = Modifier,
-    navigateToTopLevelDestination: (Route) -> Unit,
+    navigateToBottomNaviNaviateTo: (Route) -> Unit,
 ) {
     val currentDestination = navController.currentBackStackEntryAsState()
         .value?.destination
+    StatusBarColor(currentDestination)
 
     Scaffold(
         snackbarHost = {
@@ -85,14 +92,14 @@ fun App(
             ) {
                 AppBottomBar(
                     currentDestination = currentDestination,
-                    navigateToTopLevelDestination = navigateToTopLevelDestination,
+                    navigateToTopLevelDestination = navigateToBottomNaviNaviateTo,
                 )
             }
         },
         floatingActionButton = {
             AnimatedVisibility(visible = currentDestination?.shouldHideBottomNavigation() == false) {
                 FloatingActionButton(
-                    onClick = { navigateToTopLevelDestination(MatchingGraph) },
+                    onClick = { navigateToBottomNaviNaviateTo(MatchingGraph) },
                     containerColor = PieceTheme.colors.white,
                     shape = CircleShape,
                     elevation = bottomAppBarFabElevation(),
@@ -199,3 +206,28 @@ private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any { it.hasRoute(route) } == true
+
+@Composable
+private fun StatusBarColor(currentDestination: NavDestination?) {
+    val view = LocalView.current
+    val statusBarColor by animateColorAsState(
+        targetValue = when (currentDestination?.route) {
+            MatchingGraphDest.MatchingRoute::class.qualifiedName -> PieceTheme.colors.black
+            MatchingDetailRoute::class.qualifiedName -> Color.Transparent
+            MatchingGraphDest.ContactRoute::class.qualifiedName -> Color.Transparent
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(700),
+        label = "StatusBarColorAnimation"
+    )
+
+    val useDarkIcons = statusBarColor.luminance() > 0.5f
+    LaunchedEffect(statusBarColor) {
+        if (!view.isInEditMode) {
+            val window = (view.context as Activity).window
+            window.statusBarColor = statusBarColor.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                useDarkIcons
+        }
+    }
+}

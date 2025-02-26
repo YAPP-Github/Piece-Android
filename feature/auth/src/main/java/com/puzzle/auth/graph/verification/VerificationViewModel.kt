@@ -101,7 +101,7 @@ class VerificationViewModel @AssistedInject constructor(
                     copy(authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED)
                 }
 
-                navigationHelper.navigate(NavigationEvent.NavigateTo(AuthGraphDest.SignUpRoute))
+                navigationHelper.navigate(NavigationEvent.To(AuthGraphDest.SignUpRoute))
 
                 // 인증에 실패했을 경우,
                 //setState { copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID) }

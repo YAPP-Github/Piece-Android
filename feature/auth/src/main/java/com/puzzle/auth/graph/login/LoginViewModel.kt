@@ -77,7 +77,7 @@ class LoginViewModel @AssistedInject constructor(
             when (userRole) {
                 REGISTER -> {
                     navigationHelper.navigate(
-                        NavigationEvent.NavigateTo(
+                        NavigationEvent.To(
                             route = AuthGraphDest.SignUpRoute,
                             popUpTo = true,
                         )
@@ -86,7 +86,7 @@ class LoginViewModel @AssistedInject constructor(
 
                 PENDING, USER -> {
                     navigationHelper.navigate(
-                        NavigationEvent.NavigateTo(
+                        NavigationEvent.To(
                             route = MatchingGraphDest.MatchingRoute,
                             popUpTo = true,
                         )
@@ -94,7 +94,7 @@ class LoginViewModel @AssistedInject constructor(
                 }
 
                 NONE -> navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = AuthGraphDest.VerificationRoute,
                         popUpTo = true,
                     )

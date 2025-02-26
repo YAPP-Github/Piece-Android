@@ -133,7 +133,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private fun moveToPrevious() {
         withState { state ->
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
-                viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.NavigateUp)) }
+                viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.Up)) }
             } else {
                 state.currentPage.getPreviousPage()
                     ?.let { previousPage -> setState { copy(currentPage = previousPage) } }
@@ -161,7 +161,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     private fun navigateToProfilePreview() = viewModelScope.launch {
-        _sideEffects.send(Navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraphDest.ProfilePreviewRoute)))
+        _sideEffects.send(Navigate(NavigationEvent.TopLevelTo(MatchingGraphDest.ProfilePreviewRoute)))
     }
 
     private fun saveValuePick(state: RegisterProfileState) {
@@ -424,7 +424,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
     }
 
     private fun navigateToHome() {
-        navigationHelper.navigate(NavigationEvent.TopLevelNavigateTo(MatchingGraphDest.MatchingRoute))
+        navigationHelper.navigate(NavigationEvent.TopLevelTo(MatchingGraphDest.MatchingRoute))
     }
 
     private fun showBottomSheet(content: @Composable () -> Unit) {

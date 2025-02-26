@@ -119,7 +119,7 @@ class MainViewModel @Inject constructor(
         when (userRole.value) {
             REGISTER -> {
                 navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = AuthGraphDest.SignUpRoute,
                         popUpTo = true,
                     )
@@ -128,15 +128,15 @@ class MainViewModel @Inject constructor(
 
             PENDING, USER -> {
                 navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
-                        route = MatchingGraphDest.ContactRoute,
+                    NavigationEvent.To(
+                        route = MatchingGraphDest.MatchingRoute,
                         popUpTo = true,
                     )
                 )
             }
 
             NONE -> navigationHelper.navigate(
-                NavigationEvent.NavigateTo(
+                NavigationEvent.To(
                     route = OnboardingRoute,
                     popUpTo = true,
                 )
