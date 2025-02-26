@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -219,6 +220,7 @@ private fun MatchingDetailScreen(
             },
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .padding(top = topBarHeight, bottom = bottomBarHeight),
         )
 
@@ -237,6 +239,7 @@ private fun MatchingDetailScreen(
                         Modifier
                     }
                 )
+                .statusBarsPadding()
                 .padding(horizontal = 20.dp),
         )
 
@@ -256,6 +259,7 @@ private fun MatchingDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(bottomBarHeight)
+                    .statusBarsPadding()
                     .padding(top = 12.dp, bottom = 10.dp)
                     .padding(horizontal = 20.dp)
                     .align(Alignment.BottomCenter),

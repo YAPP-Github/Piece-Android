@@ -12,6 +12,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -69,12 +70,10 @@ import kotlin.reflect.KClass
 fun App(
     snackBarHostState: SnackbarHostState,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
     navigateToBottomNaviNaviateTo: (Route) -> Unit,
 ) {
     val currentDestination = navController.currentBackStackEntryAsState()
         .value?.destination
-    StatusBarColor(currentDestination)
 
     Scaffold(
         snackbarHost = {
@@ -115,13 +114,22 @@ fun App(
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
-        val contentModifier = modifier.padding(innerPadding)
+        val contentModifier = when (currentDestination?.route) {
+            MatchingDetailRoute::class.qualifiedName,
+            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName,
+            MatchingGraphDest.ContactRoute::class.qualifiedName,
+                -> Modifier.consumeWindowInsets(innerPadding)
+
+            else -> Modifier.padding(innerPadding)
+        }
 
         AppNavHost(
             navController = navController,
             modifier = contentModifier,
         )
     }
+
+    SystemBarColor(currentDestination)
 }
 
 @Composable
@@ -208,13 +216,29 @@ private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any { it.hasRoute(route) } == true
 
 @Composable
+private fun SystemBarColor(currentDestination: NavDestination?) {
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+    if (!view.isInEditMode) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    } else {
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+    }
+
+    StatusBarColor(currentDestination)
+    NavigationBarColor(currentDestination)
+}
+
+@Composable
 private fun StatusBarColor(currentDestination: NavDestination?) {
     val view = LocalView.current
     val statusBarColor by animateColorAsState(
         targetValue = when (currentDestination?.route) {
             MatchingGraphDest.MatchingRoute::class.qualifiedName -> PieceTheme.colors.black
-            MatchingDetailRoute::class.qualifiedName -> Color.Transparent
-            MatchingGraphDest.ContactRoute::class.qualifiedName -> Color.Transparent
+            MatchingDetailRoute::class.qualifiedName,
+            MatchingGraphDest.ContactRoute::class.qualifiedName,
+            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName -> Color.Transparent
+
             else -> PieceTheme.colors.white
         },
         animationSpec = tween(700),
@@ -227,6 +251,32 @@ private fun StatusBarColor(currentDestination: NavDestination?) {
             val window = (view.context as Activity).window
             window.statusBarColor = statusBarColor.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
+                useDarkIcons
+        }
+    }
+}
+
+@Composable
+private fun NavigationBarColor(currentDestination: NavDestination?) {
+    val view = LocalView.current
+    val navigationBarColor by animateColorAsState(
+        targetValue = when (currentDestination?.route) {
+            MatchingDetailRoute::class.qualifiedName,
+            MatchingGraphDest.ContactRoute::class.qualifiedName,
+            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName -> Color.Transparent
+
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(700),
+        label = "NavigationBarColorAnimation"
+    )
+
+    val useDarkIcons = navigationBarColor.luminance() > 0.5f
+    LaunchedEffect(navigationBarColor) {
+        if (!view.isInEditMode) {
+            val window = (view.context as Activity).window
+            window.navigationBarColor = navigationBarColor.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
                 useDarkIcons
         }
     }

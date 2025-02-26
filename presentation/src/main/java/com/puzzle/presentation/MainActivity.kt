@@ -82,25 +82,19 @@ class MainActivity : ComponentActivity() {
                         launch {
                             eventHelper.eventFlow.collect { event ->
                                 when (event) {
-                                    is PieceEvent.ShowSnackBar -> {
-                                        scope.launch {
-                                            snackBarHostState.currentSnackbarData?.dismiss()
-                                            snackBarHostState.showSnackbar("${event.msg}/${event.type}")
-                                        }
+                                    is PieceEvent.ShowSnackBar -> scope.launch {
+                                        snackBarHostState.currentSnackbarData?.dismiss()
+                                        snackBarHostState.showSnackbar("${event.msg}/${event.type}")
                                     }
 
                                     PieceEvent.HideSnackBar -> snackBarHostState.currentSnackbarData?.dismiss()
 
-                                    is PieceEvent.ShowBottomSheet -> {
-                                        scope.launch {
-                                            bottomSheetContent = event.content
-                                            sheetState.show()
-                                        }
+                                    is PieceEvent.ShowBottomSheet -> scope.launch {
+                                        bottomSheetContent = event.content
+                                        sheetState.show()
                                     }
 
-                                    PieceEvent.HideBottomSheet -> {
-                                        scope.launch { sheetState.hide() }
-                                    }
+                                    PieceEvent.HideBottomSheet -> scope.launch { sheetState.hide() }
                                 }
                             }
                         }
@@ -149,9 +143,7 @@ class MainActivity : ComponentActivity() {
                             navController.currentBackStackEntry?.destination?.route
                                 ?: navController.graph.startDestinationRoute
                                 ?: AuthGraph.toString()
-                        ) {
-                            inclusive = true
-                        }
+                        ) { inclusive = true }
                     }
                     launchSingleTop = true
                 }

@@ -18,7 +18,7 @@ import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.To
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -119,7 +119,7 @@ class MainViewModel @Inject constructor(
         when (userRole.value) {
             REGISTER -> {
                 navigationHelper.navigate(
-                    NavigationEvent.To(
+                    To(
                         route = AuthGraphDest.SignUpRoute,
                         popUpTo = true,
                     )
@@ -128,15 +128,15 @@ class MainViewModel @Inject constructor(
 
             PENDING, USER -> {
                 navigationHelper.navigate(
-                    NavigationEvent.To(
+                    To(
                         route = MatchingGraphDest.MatchingRoute,
-                        popUpTo = true,
+                        popUpTo = true
                     )
                 )
             }
 
             NONE -> navigationHelper.navigate(
-                NavigationEvent.To(
+                To(
                     route = OnboardingRoute,
                     popUpTo = true,
                 )

@@ -22,7 +22,7 @@ import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.To
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.ProfileGraphDest
 import dagger.assisted.Assisted
@@ -75,7 +75,7 @@ class MatchingViewModel @AssistedInject constructor(
             MatchingIntent.OnButtonClick -> processOnButtonClick()
             is MatchingIntent.OnMatchingDetailClick -> withState {
                 navigationHelper.navigate(
-                    NavigationEvent.To(
+                    To(
                         MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId)
                     )
                 )
@@ -83,7 +83,7 @@ class MatchingViewModel @AssistedInject constructor(
 
             MatchingIntent.OnEditProfileClick -> moveToProfileRegisterScreen()
             MatchingIntent.OnCheckMyProfileClick -> navigationHelper.navigate(
-                NavigationEvent.To(MatchingGraphDest.ProfilePreviewRoute)
+                To(MatchingGraphDest.ProfilePreviewRoute)
             )
         }
     }
@@ -107,7 +107,7 @@ class MatchingViewModel @AssistedInject constructor(
 
 
     private fun moveToProfileRegisterScreen() {
-        navigationHelper.navigate(NavigationEvent.To(ProfileGraphDest.RegisterProfileRoute))
+        navigationHelper.navigate(To(ProfileGraphDest.RegisterProfileRoute))
     }
 
     private fun loadMyProfile() = viewModelScope.launch {
@@ -193,7 +193,7 @@ class MatchingViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _sideEffects.send(
                 MatchingSideEffect.Navigate(
-                    NavigationEvent.To(
+                    To(
                         MatchingGraphDest.ContactRoute
                     )
                 )
@@ -210,7 +210,7 @@ class MatchingViewModel @AssistedInject constructor(
 
             _sideEffects.send(
                 MatchingSideEffect.Navigate(
-                    NavigationEvent.To(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))
+                    To(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))
                 )
             )
         }
