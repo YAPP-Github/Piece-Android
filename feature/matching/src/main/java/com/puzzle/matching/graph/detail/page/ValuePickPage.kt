@@ -257,7 +257,7 @@ private fun ValuePickCard(
                 .height(28.dp),
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_question),
+                painter = painterResource(id = R.drawable.ic_question_default),
                 contentDescription = "basic info 배경화면",
                 modifier = Modifier.size(20.dp),
             )

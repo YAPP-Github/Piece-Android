@@ -12,6 +12,7 @@ import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
@@ -82,7 +83,12 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToBackScreen() {
-        navigationHelper.navigate(NavigationEvent.NavigateUp)
+        navigationHelper.navigate(
+            NavigationEvent.NavigateTo(
+                route = MatchingGraphDest.MatchingRoute,
+                popUpTo = true,
+            )
+        )
     }
 
     @AssistedFactory

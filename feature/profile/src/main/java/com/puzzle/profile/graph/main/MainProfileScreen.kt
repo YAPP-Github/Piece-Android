@@ -216,7 +216,7 @@ private fun MyMatchingPiece(
     )
 
     MyMatchingPieceDetail(
-        imageId = R.drawable.ic_question,
+        imageId = R.drawable.ic_question_default,
         title = stringResource(R.string.main_profile_value_pick_title),
         content = stringResource(R.string.main_profile_value_pick_content),
         onMyMatchingPieceDetailClick = onValuePickClick,
