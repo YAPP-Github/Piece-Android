@@ -83,7 +83,7 @@ fun PieceSnackBar(
 
         Text(
             text = message,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             style = PieceTheme.typography.bodySM,
             color = PieceTheme.colors.white,

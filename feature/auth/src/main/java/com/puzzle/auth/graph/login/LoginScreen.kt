@@ -33,7 +33,6 @@ import com.google.android.gms.tasks.Task
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent
 import com.puzzle.auth.graph.login.contract.LoginSideEffect
-import com.puzzle.auth.graph.login.contract.LoginState
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceLoginButton
@@ -79,7 +78,6 @@ internal fun LoginRoute(
     }
 
     LoginScreen(
-        state = state,
         loginKakao = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.KAKAO)) },
         loginGoogle = { viewModel.onIntent(LoginIntent.LoginOAuth(OAuthProvider.GOOGLE)) },
     )
@@ -87,7 +85,6 @@ internal fun LoginRoute(
 
 @Composable
 private fun LoginScreen(
-    state: LoginState,
     loginKakao: () -> Unit,
     loginGoogle: () -> Unit,
     modifier: Modifier = Modifier,
@@ -226,7 +223,6 @@ private fun handleGoogleSignIn(
 private fun PreviewAuthScreen() {
     PieceTheme {
         LoginScreen(
-            state = LoginState(),
             loginKakao = {},
             loginGoogle = {},
         )
