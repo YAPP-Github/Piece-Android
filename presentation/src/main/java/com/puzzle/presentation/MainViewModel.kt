@@ -1,5 +1,6 @@
 package com.puzzle.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.puzzle.common.event.EventHelper
@@ -20,16 +21,18 @@ import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
-import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.OnboardingRoute
+import com.puzzle.navigation.ProfileGraphDest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -141,7 +144,8 @@ class MainViewModel @Inject constructor(
         authRepository.checkTokenHealth().onFailure { return@launch }
 
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
-        when (userRole.value) {
+        val userRole = userRepository.getUserRole().first()
+        when (userRole) {
             REGISTER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
@@ -154,7 +158,7 @@ class MainViewModel @Inject constructor(
             PENDING, USER -> {
                 navigationHelper.navigate(
                     NavigationEvent.NavigateTo(
-                        route = MatchingGraphDest.MatchingRoute,
+                        route = ProfileGraphDest.ValueTalkProfileRoute,
                         popUpTo = true,
                     )
                 )

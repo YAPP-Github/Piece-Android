@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,6 +34,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -220,45 +222,93 @@ private fun ValueTalkCard(
     onAiSummarySaveClick: (MyValueTalk) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier) {
-        Text(
-            text = item.category,
-            style = PieceTheme.typography.bodySSB,
-            color = PieceTheme.colors.primaryDefault,
-            modifier = Modifier.padding(bottom = 6.dp),
-        )
+    var isAiSummationHelpVisible by remember { mutableStateOf(false) }
 
-        Text(
-            text = item.title,
-            style = PieceTheme.typography.headingMSB,
-            color = PieceTheme.colors.dark1,
-            modifier = Modifier.padding(bottom = 20.dp),
-        )
+    LaunchedEffect(isAiSummationHelpVisible) {
+        if (isAiSummationHelpVisible) {
+            delay(5000L)
+            isAiSummationHelpVisible = false
+        }
+    }
 
-        PieceTextInputLong(
-            value = item.answer,
-            onValueChange = { onContentChange(item.copy(answer = it)) },
-            limit = 300,
-            hint = item.placeholder,
-            readOnly = when (screenState) {
-                ScreenState.NORMAL -> true
-                ScreenState.EDITING -> false
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        when (screenState) {
-            ScreenState.NORMAL -> AiSummaryContent(
-                item = item,
-                onAiSummarySaveClick = onAiSummarySaveClick,
+    Box(modifier = modifier) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = item.category,
+                style = PieceTheme.typography.bodySSB,
+                color = PieceTheme.colors.primaryDefault,
+                modifier = Modifier.padding(bottom = 6.dp),
             )
 
-            ScreenState.EDITING -> GuideRow(
-                guides = item.guides,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp)
+            Text(
+                text = item.title,
+                style = PieceTheme.typography.headingMSB,
+                color = PieceTheme.colors.dark1,
+                modifier = Modifier.padding(bottom = 20.dp),
             )
+
+            PieceTextInputLong(
+                value = item.answer,
+                onValueChange = { onContentChange(item.copy(answer = it)) },
+                limit = 300,
+                hint = item.placeholder,
+                readOnly = when (screenState) {
+                    ScreenState.NORMAL -> true
+                    ScreenState.EDITING -> false
+                },
+                modifier = Modifier.fillMaxWidth(),
+            )
+
+            when (screenState) {
+                ScreenState.NORMAL -> AiSummaryContent(
+                    item = item,
+                    onAiSummaryHelpClick = {
+                        if (isAiSummationHelpVisible) isAiSummationHelpVisible = false
+                        isAiSummationHelpVisible = true
+                    },
+                    onAiSummarySaveClick = onAiSummarySaveClick,
+                )
+
+                ScreenState.EDITING -> GuideRow(
+                    guides = item.guides,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                )
+            }
+        }
+
+        AnimatedVisibility(
+            visible = isAiSummationHelpVisible,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 65.dp, bottom = 82.dp),
+        ) {
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                modifier = Modifier.padding(start = 6.dp)
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_ballon_point),
+                    contentDescription = null,
+                )
+
+                Text(
+                    text = "AI가 내 가치관을 두 줄로 요약해서 보여줘요.\n" +
+                            "AI요약이 마음에 안 든다면, 수정할 수 있어요",
+                    style = PieceTheme.typography.captionM,
+                    color = PieceTheme.colors.white,
+                    modifier = Modifier
+                        .graphicsLayer { translationX -= 4 }
+                        .background(
+                            color = PieceTheme.colors.primaryDefault,
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        .padding(vertical = 10.dp, horizontal = 12.dp)
+                )
+            }
         }
     }
 }
@@ -266,6 +316,7 @@ private fun ValueTalkCard(
 @Composable
 private fun AiSummaryContent(
     item: MyValueTalk,
+    onAiSummaryHelpClick: () -> Unit,
     onAiSummarySaveClick: (MyValueTalk) -> Unit
 ) {
     var editableAiSummary: String by remember { mutableStateOf(item.summary) }
@@ -288,7 +339,8 @@ private fun AiSummaryContent(
             colorFilter = ColorFilter.tint(PieceTheme.colors.dark3),
             modifier = Modifier
                 .padding(start = 4.dp)
-                .size(20.dp),
+                .size(20.dp)
+                .clickable { onAiSummaryHelpClick() },
         )
     }
 
