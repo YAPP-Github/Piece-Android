@@ -17,24 +17,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceLoading
@@ -43,12 +40,10 @@ import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
-import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
 import com.puzzle.matching.graph.preview.page.BasicInfoPage
 import com.puzzle.matching.graph.preview.page.ValuePickPage
 import com.puzzle.matching.graph.preview.page.ValueTalkPage
-import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun ProfilePreviewRoute(
@@ -92,13 +87,7 @@ private fun ProfilePreviewScreen(
                     Modifier
                 }
             )
-            .then(
-                if(showDialog){
-                    Modifier.cloudy(radius = 40)
-                } else {
-                    Modifier
-                }
-            )
+            .blur(isBlur = showDialog),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp

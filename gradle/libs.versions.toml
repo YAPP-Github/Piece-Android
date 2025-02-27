@@ -89,8 +89,6 @@ kakao = "2.20.6"
 coil = "3.1.0"
 # https://airbnb.io/lottie/#/android-compose
 lottie-compose = "6.5.2"
-# https://github.com/skydoves/Cloudy
-cloudy = "0.2.4"
 # https://airbnb.io/mavericks/#/setup
 mavericks = "3.0.9"
 
@@ -171,7 +169,6 @@ mavericks-hilt = { module = "com.airbnb.android:mavericks-hilt", version.ref = "
 coil-compose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
-cloudy-compose = { module = "com.github.skydoves:cloudy", version.ref = "cloudy" }
 
 accompanist-permission = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
