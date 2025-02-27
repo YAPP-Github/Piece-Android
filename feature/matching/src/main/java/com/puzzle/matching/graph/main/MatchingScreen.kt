@@ -59,43 +59,48 @@ internal fun MatchingScreen(
     onCheckMyProfileClick: () -> Unit,
     onEditProfileClick: () -> Unit,
 ) {
-    when (state.userRole) {
-        UserRole.PENDING -> MatchingPendingScreen(
-            isNotificationEnabled = state.isNotificationEnabled,
-            isImageRejected = state.isImageRejected,
-            isDescriptionRejected = state.isDescriptionRejected,
-            onCheckMyProfileClick = onCheckMyProfileClick,
-            onEditProfileClick = onEditProfileClick,
-        )
+    if (state.isLoading) {
+        MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
+    } else {
+        when (state.userRole) {
+            UserRole.PENDING -> MatchingPendingScreen(
+                isNotificationEnabled = state.isNotificationEnabled,
+                isImageRejected = state.isImageRejected,
+                isDescriptionRejected = state.isDescriptionRejected,
+                onCheckMyProfileClick = onCheckMyProfileClick,
+                onEditProfileClick = onEditProfileClick,
+            )
 
-        UserRole.USER -> {
-            if (state.matchInfo == null) {
-                MatchingWaitingScreen(
-                    isNotificationEnabled = state.isNotificationEnabled,
-                    onCheckMyProfileClick = onCheckMyProfileClick,
-                    remainTime = state.formattedRemainWaitingTime,
-                )
-            } else {
-                when (state.matchInfo.matchStatus) {
-                    MatchStatus.UNKNOWN -> MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
-                    MatchStatus.REFUSED -> MatchingWaitingScreen(
+            UserRole.USER -> {
+                if (state.matchInfo == null) {
+                    MatchingWaitingScreen(
                         isNotificationEnabled = state.isNotificationEnabled,
                         onCheckMyProfileClick = onCheckMyProfileClick,
-                        remainTime = state.formattedRemainWaitingTime
+                        remainTime = state.formattedRemainWaitingTime,
                     )
+                } else {
+                    when (state.matchInfo.matchStatus) {
+                        MatchStatus.REFUSED -> MatchingWaitingScreen(
+                            isNotificationEnabled = state.isNotificationEnabled,
+                            onCheckMyProfileClick = onCheckMyProfileClick,
+                            remainTime = state.formattedRemainWaitingTime
+                        )
 
-                    else -> MatchingUserScreen(
-                        isNotificationEnabled = state.isNotificationEnabled,
-                        matchInfo = state.matchInfo,
-                        remainTime = state.formattedRemainMatchingStartTime,
-                        onButtonClick = onButtonClick,
-                        onMatchingDetailClick = onMatchingDetailClick,
-                    )
+                        MatchStatus.UNKNOWN -> MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
+
+                        else -> MatchingUserScreen(
+                            isNotificationEnabled = state.isNotificationEnabled,
+                            matchInfo = state.matchInfo,
+                            remainTime = state.formattedRemainMatchingStartTime,
+                            onButtonClick = onButtonClick,
+                            onMatchingDetailClick = onMatchingDetailClick,
+                        )
+                    }
                 }
             }
-        }
 
-        else -> Unit
+            else -> MatchingLoadingScreen(isNotificationEnabled = state.isNotificationEnabled)
+        }
     }
 }
 

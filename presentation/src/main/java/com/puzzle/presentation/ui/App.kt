@@ -55,7 +55,6 @@ import com.puzzle.designsystem.foundation.StatusBarColor
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
-import com.puzzle.navigation.MatchingGraphDest.MatchingDetailRoute
 import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.navigation.ProfileGraphDest.MainProfileRoute
@@ -106,7 +105,7 @@ fun App(
                     containerColor = PieceTheme.colors.white,
                     shape = CircleShape,
                     elevation = bottomAppBarFabElevation(),
-                    modifier = Modifier.offset(y =84.dp),
+                    modifier = Modifier.offset(y = 84.dp),
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_matching),
@@ -118,11 +117,14 @@ fun App(
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
-        val contentModifier = when (currentDestination?.route) {
-            MatchingDetailRoute::class.qualifiedName,
-            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName,
-            MatchingGraphDest.ContactRoute::class.qualifiedName,
-                -> Modifier.consumeWindowInsets(innerPadding)
+        val contentModifier = when {
+            currentDestination?.route?.startsWith(
+                MatchingGraphDest.MatchingDetailRoute::class.qualifiedName ?: ""
+            ) == true || currentDestination?.route?.startsWith(
+                MatchingGraphDest.ContactRoute::class.qualifiedName ?: ""
+            ) == true || currentDestination?.route?.startsWith(
+                MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName ?: ""
+            ) == true -> Modifier.consumeWindowInsets(innerPadding)
 
             else -> Modifier.padding(innerPadding)
         }
@@ -200,7 +202,7 @@ private val HIDDEN_BOTTOM_NAV_ROUTES = setOf(
     MatchingGraphDest.ReportRoute::class,
     MatchingGraphDest.ContactRoute::class,
     MatchingGraphDest.ProfilePreviewRoute::class,
-    MatchingDetailRoute::class,
+    MatchingGraphDest.MatchingDetailRoute::class,
     ProfileGraphDest.RegisterProfileRoute::class,
     ProfileGraphDest.ValueTalkProfileRoute::class,
     ProfileGraphDest.ValuePickProfileRoute::class,
@@ -236,11 +238,18 @@ private fun SystemBarColor(currentDestination: NavDestination?) {
 @Composable
 private fun SetStatusBarColor(currentDestination: NavDestination?) {
     val statusBarColor by animateColorAsState(
-        targetValue = when (currentDestination?.route) {
-            MatchingGraphDest.MatchingRoute::class.qualifiedName -> PieceTheme.colors.black
-            MatchingDetailRoute::class.qualifiedName,
-            MatchingGraphDest.ContactRoute::class.qualifiedName,
-            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName -> Color.Transparent
+        targetValue = when {
+            currentDestination?.route?.startsWith(
+                MatchingGraphDest.MatchingRoute::class.qualifiedName ?: ""
+            ) == true -> PieceTheme.colors.black
+
+            currentDestination?.route?.startsWith(
+                MatchingGraphDest.MatchingDetailRoute::class.qualifiedName ?: ""
+            ) == true || currentDestination?.route?.startsWith(
+                MatchingGraphDest.ContactRoute::class.qualifiedName ?: ""
+            ) == true || currentDestination?.route?.startsWith(
+                MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName ?: ""
+            ) == true -> Color.Transparent
 
             else -> PieceTheme.colors.white
         },
@@ -253,11 +262,15 @@ private fun SetStatusBarColor(currentDestination: NavDestination?) {
 
 @Composable
 private fun SetNavigationBarColor(currentDestination: NavDestination?) {
-    val navigationBarColor by animateColorAsState(
-        targetValue = when (currentDestination?.route) {
-            MatchingDetailRoute::class.qualifiedName,
-            MatchingGraphDest.ContactRoute::class.qualifiedName,
-            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName -> Color.Transparent
+    val navigationBarColor: Color by animateColorAsState(
+        targetValue = when {
+            currentDestination?.route?.startsWith(
+                MatchingGraphDest.MatchingDetailRoute::class.qualifiedName ?: ""
+            ) == true || currentDestination?.route?.startsWith(
+                MatchingGraphDest.ContactRoute::class.qualifiedName ?: ""
+            ) == true || currentDestination?.route?.startsWith(
+                MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName ?: ""
+            ) == true -> Color.Transparent
 
             else -> PieceTheme.colors.white
         },

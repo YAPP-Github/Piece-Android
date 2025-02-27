@@ -1,6 +1,5 @@
 package com.puzzle.matching.graph.main
 
-import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
@@ -91,7 +90,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     internal fun initMatchInfo() = viewModelScope.launch {
         userRepository.getUserRole()
-            .catch { errorHelper.sendError(it) }
+            .catch { error -> errorHelper.sendError(error) }
             .collect { userRole ->
                 setState { copy(userRole = userRole) }
 
@@ -100,12 +99,12 @@ class MatchingViewModel @AssistedInject constructor(
                     UserRole.USER -> getMatchInfo()
                     else -> Unit
                 }
+                setState { copy(isLoading = false) }
 
                 // MatchingHome 화면에서 사전에 내 프로필 데이터를 케싱해놓습니다.
                 loadMyProfile()
             }
     }
-
 
     private fun moveToProfileRegisterScreen() {
         navigationHelper.navigate(To(ProfileGraphDest.RegisterProfileRoute))
@@ -146,8 +145,6 @@ class MatchingViewModel @AssistedInject constructor(
 
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
         .onSuccess {
-            Log.d("test", "성공 ${it.toString()}")
-
             setState { copy(matchInfo = it) }
 
             when (it.matchStatus) {
@@ -169,7 +166,6 @@ class MatchingViewModel @AssistedInject constructor(
             matchingRepository.loadOpponentProfile()
                 .onFailure { errorHelper.sendError(it) }
         }.onFailure {
-            Log.d("test", it.toString())
             if (it is HttpResponseException) {
                 // 1. 회원가입하고 처음 매칭을 하는데 아직 오후 10시가 안되었을 때
                 // 2. 내가 차단했을 때
@@ -193,17 +189,8 @@ class MatchingViewModel @AssistedInject constructor(
         }
     }
 
-    private fun navigateToContactScreen() {
-        viewModelScope.launch {
-            _sideEffects.send(
-                MatchingSideEffect.Navigate(
-                    To(
-                        MatchingGraphDest.ContactRoute
-                    )
-                )
-            )
-        }
-    }
+    private fun navigateToContactScreen() =
+        navigationHelper.navigate(To(MatchingGraphDest.ContactRoute))
 
     private fun checkMatchingPiece() = withState {
         viewModelScope.launch {

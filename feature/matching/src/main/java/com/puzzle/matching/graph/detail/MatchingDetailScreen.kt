@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -118,78 +117,71 @@ private fun MatchingDetailScreen(
     onMoreClick: () -> Unit,
     onDeclineClick: () -> Unit,
     onAcceptClick: () -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogType by remember { mutableStateOf(DialogType.ACCEPT_MATCHING) }
 
     if (showDialog) {
         when (dialogType) {
-            DialogType.ACCEPT_MATCHING -> {
-                PieceDialog(
-                    dialogTop = {
-                        PieceDialogDefaultTop(
-                            title = buildAnnotatedString {
-                                withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
-                                    append("수줍은 수달")
-                                }
-                                append("님과의\n인연을 이어가시겠습니까?")
-                            },
-                            subText = "서로 매칭을 수락하면, 연락처가 공개됩니다.",
-                        )
-                    },
-                    dialogBottom = {
-                        PieceDialogBottom(
-                            leftButtonText = "뒤로",
-                            rightButtonText = "매칭 수락하기",
-                            onLeftButtonClick = { showDialog = false },
-                            onRightButtonClick = {
-                                showDialog = false
-                                onAcceptClick()
-                            },
-                        )
-                    },
-                    onDismissRequest = { showDialog = false },
-                )
-            }
+            DialogType.ACCEPT_MATCHING -> PieceDialog(
+                dialogTop = {
+                    PieceDialogDefaultTop(
+                        title = buildAnnotatedString {
+                            withStyle(style = SpanStyle(color = PieceTheme.colors.primaryDefault)) {
+                                append("수줍은 수달")
+                            }
+                            append("님과의\n인연을 이어가시겠습니까?")
+                        },
+                        subText = "서로 매칭을 수락하면, 연락처가 공개됩니다.",
+                    )
+                },
+                dialogBottom = {
+                    PieceDialogBottom(
+                        leftButtonText = "뒤로",
+                        rightButtonText = "매칭 수락하기",
+                        onLeftButtonClick = { showDialog = false },
+                        onRightButtonClick = {
+                            showDialog = false
+                            onAcceptClick()
+                        },
+                    )
+                },
+                onDismissRequest = { showDialog = false },
+            )
 
-            DialogType.DECLINE_MATCHING -> {
-                PieceDialog(
-                    dialogTop = {
-                        PieceDialogDefaultTop(
-                            title = buildAnnotatedString {
-                                append("수줍은 수달님과의\n인연을 ")
-                                withStyle(style = SpanStyle(color = PieceTheme.colors.error)) {
-                                    append("거절")
-                                }
-                                append("하시겠습니까?")
-                            },
-                            subText = "매칭을 거절하면 이후에 되돌릴 수 없으니\n신중히 선택해 주세요.",
-                        )
-                    },
-                    dialogBottom = {
-                        PieceDialogBottom(
-                            leftButtonText = "뒤로",
-                            rightButtonText = "매칭 거절하기",
-                            onLeftButtonClick = { showDialog = false },
-                            onRightButtonClick = {
-                                showDialog = false
-                                onDeclineClick()
-                            },
-                        )
-                    },
-                    onDismissRequest = { showDialog = false },
-                )
-            }
+            DialogType.DECLINE_MATCHING -> PieceDialog(
+                dialogTop = {
+                    PieceDialogDefaultTop(
+                        title = buildAnnotatedString {
+                            append("수줍은 수달님과의\n인연을 ")
+                            withStyle(style = SpanStyle(color = PieceTheme.colors.error)) {
+                                append("거절")
+                            }
+                            append("하시겠습니까?")
+                        },
+                        subText = "매칭을 거절하면 이후에 되돌릴 수 없으니\n신중히 선택해 주세요.",
+                    )
+                },
+                dialogBottom = {
+                    PieceDialogBottom(
+                        leftButtonText = "뒤로",
+                        rightButtonText = "매칭 거절하기",
+                        onLeftButtonClick = { showDialog = false },
+                        onRightButtonClick = {
+                            showDialog = false
+                            onDeclineClick()
+                        },
+                    )
+                },
+                onDismissRequest = { showDialog = false },
+            )
 
-            DialogType.PROFILE_IMAGE_DETAIL -> {
-                PieceImageDialog(
-                    imageUri = state.profile?.imageUrl,
-                    buttonLabel = "매칭 수락하기",
-                    onApproveClick = { dialogType = DialogType.ACCEPT_MATCHING },
-                    onDismissRequest = { showDialog = false },
-                )
-            }
+            DialogType.PROFILE_IMAGE_DETAIL -> PieceImageDialog(
+                imageUri = state.profile?.imageUrl,
+                buttonLabel = "매칭 수락하기",
+                onApproveClick = { dialogType = DialogType.ACCEPT_MATCHING },
+                onDismissRequest = { showDialog = false },
+            )
         }
     }
 
@@ -197,7 +189,7 @@ private fun MatchingDetailScreen(
     SetStatusBarColor(state.currentPage)
 
     Box(
-        modifier = modifier
+        modifier = Modifier
             .windowInsetsPadding()
             .fillMaxSize()
             .then(
@@ -258,7 +250,6 @@ private fun MatchingDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(bottomBarHeight)
-                    .statusBarsPadding()
                     .padding(top = 12.dp, bottom = 10.dp)
                     .padding(horizontal = 20.dp)
                     .align(Alignment.BottomCenter),
@@ -308,35 +299,33 @@ private fun MatchingDetailContent(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 when (it) {
-                    MatchingDetailPage.BasicInfoPage ->
-                        BasicInfoPage(
-                            nickName = profile.nickname,
-                            selfDescription = profile.description,
-                            birthYear = profile.birthYear,
-                            age = profile.age,
-                            height = profile.height,
-                            weight = profile.weight,
-                            location = profile.location,
-                            job = profile.job,
-                            smokingStatus = profile.smokingStatus,
-                            onMoreClick = onMoreClick,
-                        )
+                    MatchingDetailPage.BasicInfoPage -> BasicInfoPage(
+                        nickName = profile.nickname,
+                        selfDescription = profile.description,
+                        birthYear = profile.birthYear,
+                        age = profile.age,
+                        height = profile.height,
+                        weight = profile.weight,
+                        location = profile.location,
+                        job = profile.job,
+                        smokingStatus = profile.smokingStatus,
+                        onMoreClick = onMoreClick,
+                    )
 
-                    MatchingDetailPage.ValueTalkPage ->
-                        ValueTalkPage(
-                            nickName = profile.nickname,
-                            selfDescription = profile.description,
-                            talkCards = profile.valueTalks,
-                            onMoreClick = onMoreClick,
-                        )
+                    MatchingDetailPage.ValueTalkPage -> ValueTalkPage(
+                        nickName = profile.nickname,
+                        selfDescription = profile.description,
+                        talkCards = profile.valueTalks,
+                        onMoreClick = onMoreClick,
+                    )
 
-                    MatchingDetailPage.ValuePickPage ->
-                        ValuePickPage(
-                            nickName = profile.nickname,
-                            selfDescription = profile.description,
-                            pickCards = profile.valuePicks,
-                            onDeclineClick = onDeclineClick,
-                        )
+                    MatchingDetailPage.ValuePickPage -> ValuePickPage(
+                        nickName = profile.nickname,
+                        selfDescription = profile.description,
+                        pickCards = profile.valuePicks,
+                        onDeclineClick = onDeclineClick,
+                        onMoreClick = onMoreClick,
+                    )
                 }
             }
         } ?: PieceLoading()
@@ -362,9 +351,7 @@ private fun MatchingDetailBottomBar(
                 contentDescription = "이전 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
-                    .clickable {
-                        onShowPicturesClick()
-                    },
+                    .clickable { onShowPicturesClick() },
             )
         }
 
@@ -374,8 +361,7 @@ private fun MatchingDetailBottomBar(
             Image(
                 painter = painterResource(id = R.drawable.ic_left_disable),
                 contentDescription = "이전 페이지 버튼",
-                modifier = Modifier
-                    .size(52.dp),
+                modifier = Modifier.size(52.dp),
             )
         } else {
             Image(
@@ -383,9 +369,7 @@ private fun MatchingDetailBottomBar(
                 contentDescription = "이전 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
-                    .clickable {
-                        onPreviousPageClick()
-                    },
+                    .clickable { onPreviousPageClick() },
             )
         }
 

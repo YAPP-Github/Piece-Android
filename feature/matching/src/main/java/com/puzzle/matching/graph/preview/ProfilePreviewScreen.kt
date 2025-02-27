@@ -36,6 +36,7 @@ import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
+import com.puzzle.common.ui.windowInsetsPadding
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceLoading
@@ -85,6 +86,7 @@ private fun ProfilePreviewScreen(
 
     Box(
         modifier = modifier
+            .windowInsetsPadding()
             .fillMaxSize()
             .then(
                 if (currentPage != ProfilePreviewState.Page.BasicInfoPage) {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -49,7 +50,7 @@ fun PieceModalBottomSheet(
         sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
         sheetState = sheetState,
         sheetContent = {
-            Column {
+            Column(modifier = Modifier.navigationBarsPadding()) {
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()

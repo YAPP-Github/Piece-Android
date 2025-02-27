@@ -60,18 +60,15 @@ internal fun ValuePickPage(
     selfDescription: String,
     pickCards: List<OpponentValuePick>,
     onDeclineClick: () -> Unit,
+    onMoreClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-
     val valuePickHeaderHeight = 104.dp
-
     val valuePickHeaderHeightPx = with(density) { valuePickHeaderHeight.roundToPx() }
-
     val connection = remember(valuePickHeaderHeightPx) {
         CollapsingHeaderNestedScrollConnection(valuePickHeaderHeightPx)
     }
-
     val spaceHeight by remember(density) {
         derivedStateOf {
             with(density) {
@@ -81,7 +78,6 @@ internal fun ValuePickPage(
     }
 
     val tabIndex = rememberSaveable { mutableIntStateOf(0) }
-
     val tabTitles = listOf(
         stringResource(R.string.valuepick_all),
         stringResource(R.string.valuepick_same),
@@ -110,7 +106,7 @@ internal fun ValuePickPage(
         BasicInfoHeader(
             nickName = nickName,
             selfDescription = selfDescription,
-            onMoreClick = { },
+            onMoreClick = { onMoreClick() },
             modifier = Modifier
                 .offset { IntOffset(0, connection.headerOffset) }
                 .background(PieceTheme.colors.white)
@@ -360,6 +356,7 @@ private fun ProfileValuePickPagePreview() {
                 ),
             ),
             onDeclineClick = {},
+            onMoreClick = {},
         )
     }
 }
