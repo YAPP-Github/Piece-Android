@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.common.ui.windowInsetsPadding
@@ -61,7 +62,6 @@ import com.puzzle.matching.graph.detail.contract.MatchingDetailState.MatchingDet
 import com.puzzle.matching.graph.detail.page.BasicInfoPage
 import com.puzzle.matching.graph.detail.page.ValuePickPage
 import com.puzzle.matching.graph.detail.page.ValueTalkPage
-import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun MatchingDetailRoute(
@@ -206,13 +206,7 @@ private fun MatchingDetailScreen(
                     Modifier
                 }
             )
-            .then(
-                if (showDialog) {
-                    Modifier.cloudy(radius = 40)
-                } else {
-                    Modifier
-                }
-            ),
+            .blur(isBlur = showDialog),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp

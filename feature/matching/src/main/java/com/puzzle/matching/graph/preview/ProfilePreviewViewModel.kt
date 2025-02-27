@@ -4,7 +4,6 @@ import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
-import com.puzzle.common.event.EventHelper
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.usecase.profile.GetMyValuePicksUseCase
@@ -12,6 +11,7 @@ import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
@@ -30,7 +30,6 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     private val getMyValuePicksUseCase: GetMyValuePicksUseCase,
     private val profileRepository: ProfileRepository,
     private val navigationHelper: NavigationHelper,
-    internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ProfilePreviewState>(initialState) {
     private val intents = Channel<ProfilePreviewIntent>(BUFFERED)
@@ -75,15 +74,15 @@ class ProfilePreviewViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: ProfilePreviewIntent) {
+    private fun processIntent(intent: ProfilePreviewIntent) {
         when (intent) {
             ProfilePreviewIntent.OnCloseClick -> moveToBackScreen()
         }
     }
 
-    private suspend fun moveToBackScreen() {
-        navigationHelper.navigate(NavigationEvent.Up)
-    }
+    private fun moveToBackScreen() = navigationHelper.navigate(
+        NavigationEvent.To(route = MatchingGraphDest.MatchingRoute, popUpTo = true)
+    )
 
     @AssistedFactory
     interface Factory : AssistedViewModelFactory<ProfilePreviewViewModel, ProfilePreviewState> {

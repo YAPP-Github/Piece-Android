@@ -1,6 +1,7 @@
 package com.puzzle.profile.graph.basic.contract
 
 import com.airbnb.mvrx.MavericksState
+import com.puzzle.common.isValidBirthDateFormat
 import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
 
@@ -30,36 +31,24 @@ data class BasicProfileState(
     val usingSnsPlatforms = contacts.map { it.type }
         .toSet()
 
-    val isProfileIncomplete: Boolean = contacts.isEmpty() ||
-            description.isBlank() ||
-            birthdate.isBlank() ||
-            location.isBlank() ||
-            height.isBlank() ||
-            weight.isBlank() ||
-            job.isBlank() ||
-            nickname.isBlank() ||
-            imageUrl.isBlank() ||
+    val isInputFieldIncomplete: Boolean = contacts.isEmpty() ||
+            descriptionInputState == InputState.WARNIING ||
+            birthdateInputState == InputState.WARNIING ||
+            locationInputState == InputState.WARNIING ||
+            heightInputState == InputState.WARNIING ||
+            weightInputState == InputState.WARNIING ||
+            jobInputState == InputState.WARNIING ||
+            imageUrlInputState == InputState.WARNIING ||
             (nickNameGuideMessage != NickNameGuideMessage.AVAILABLE
                     && nickNameGuideMessage != NickNameGuideMessage.DEFAULT)
 
     val nickNameStateInSavingProfile: NickNameGuideMessage =
         when {
-            nickname.isBlank() -> {
-                NickNameGuideMessage.REQUIRED_FIELD
-            }
-
-            nickname.length in 1..6 &&
-                    nickNameGuideMessage != NickNameGuideMessage.AVAILABLE -> {
-                NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
-            }
-
-            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> {
-                nickNameGuideMessage
-            }
-
-            else -> {
-                nickNameGuideMessage
-            }
+            nickNameGuideMessage == NickNameGuideMessage.AVAILABLE -> NickNameGuideMessage.DEFAULT
+            nickNameGuideMessage == NickNameGuideMessage.DEFAULT -> nickNameGuideMessage
+            nickname.isBlank() -> NickNameGuideMessage.REQUIRED_FIELD
+            nickNameGuideMessage == NickNameGuideMessage.LENGTH_GUIDE -> NickNameGuideMessage.DUPLICATE_CHECK_REQUIRED
+            else -> nickNameGuideMessage
         }
 }
 
@@ -109,6 +98,9 @@ enum class InputState {
     ;
 
     companion object {
+        const val MAX_WEIGHT_INPUT_LENGTH: Int = 3
+        const val MAX_HEIGHT_INPUT_LENGTH: Int = 3
+
         fun getInputState(fieldValue: String?): InputState =
             if (fieldValue.isNullOrBlank()) WARNIING
             else DEFAULT
@@ -120,5 +112,26 @@ enum class InputState {
         fun getInputState(fieldValue: List<Contact>): InputState =
             if (fieldValue.isEmpty() || fieldValue.find { it.content.isBlank() } != null) WARNIING
             else DEFAULT
+
+        fun getBirthDateInputState(fieldValue: String?): InputState =
+            when {
+                fieldValue.isNullOrBlank() -> WARNIING
+                !fieldValue.isValidBirthDateFormat() -> WARNIING
+                else -> DEFAULT
+            }
+
+        fun getHeightInputState(fieldValue: String?, isInSave: Boolean): InputState =
+            when {
+                fieldValue.isNullOrBlank() -> if (isInSave) WARNIING else DEFAULT
+                fieldValue.length > MAX_HEIGHT_INPUT_LENGTH -> WARNIING
+                else -> DEFAULT
+            }
+
+        fun getWeightInputState(fieldValue: String?, isInSave: Boolean): InputState =
+            when {
+                fieldValue.isNullOrBlank() -> if (isInSave) WARNIING else DEFAULT
+                fieldValue.length > MAX_WEIGHT_INPUT_LENGTH -> WARNIING
+                else -> DEFAULT
+            }
     }
 }

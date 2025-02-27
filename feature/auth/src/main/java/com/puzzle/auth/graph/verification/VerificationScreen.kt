@@ -357,7 +357,7 @@ private fun PhoneNumberBody(
             PieceSolidButton(
                 label = requestButtonLabel,
                 onClick = { onRequestAuthCodeClick(phoneNumber) },
-                enabled = phoneNumber.isNotEmpty() && !isAuthCodeVerified,
+                enabled = phoneNumber.length == 11 && !isAuthCodeVerified,
                 modifier = Modifier.padding(start = 8.dp)
             )
         }

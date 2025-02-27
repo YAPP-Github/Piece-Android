@@ -1,5 +1,6 @@
 package com.puzzle.profile.graph.register
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -26,8 +27,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
+import com.puzzle.designsystem.component.PieceDialog
+import com.puzzle.designsystem.component.PieceDialogBottom
+import com.puzzle.designsystem.component.PieceDialogIconTop
 import com.puzzle.designsystem.component.PiecePageIndicator
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
@@ -177,26 +182,58 @@ private fun RegisterProfileScreen(
     val focusManager = LocalFocusManager.current
     var valueTalks: List<ValueTalkRegisterRO> by remember(state.valueTalks) { mutableStateOf(state.valueTalks) }
     var valuePicks: List<ValuePickRegisterRO> by remember(state.valuePicks) { mutableStateOf(state.valuePicks) }
+    var showDialog by remember { mutableStateOf(false) }
+
+    if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
+        BackHandler { showDialog = true }
+    }
+
+    if (showDialog) {
+        PieceDialog(
+            onDismissRequest = { showDialog = false },
+            dialogTop = {
+                PieceDialogIconTop(
+                    iconId = R.drawable.ic_notice,
+                    title = stringResource(R.string.profile_warning_title),
+                    subText = stringResource(R.string.profile_warning_description),
+                )
+            },
+            dialogBottom = {
+                PieceDialogBottom(
+                    leftButtonText = stringResource(R.string.back),
+                    rightButtonText = stringResource(R.string.profile_continue),
+                    onLeftButtonClick = { onBackClick() },
+                    onRightButtonClick = { showDialog = false },
+                )
+            },
+        )
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .addFocusCleaner(focusManager),
+            .addFocusCleaner(focusManager)
+            .blur(isBlur = showDialog),
     ) {
         PieceSubBackTopBar(
             title = "",
             onBackClick = onBackClick,
-            isShowBackButton = (state.currentPage != RegisterProfileState.Page.FINISH &&
-                    state.currentPage != RegisterProfileState.Page.SUMMATION),
+            isShowBackButton = state.currentPage !in setOf(
+                RegisterProfileState.Page.FINISH,
+                RegisterProfileState.Page.SUMMATION,
+                RegisterProfileState.Page.BASIC_PROFILE
+            ),
             modifier = Modifier.padding(horizontal = 20.dp),
         )
 
-        if (state.currentPage != RegisterProfileState.Page.FINISH &&
-            state.currentPage != RegisterProfileState.Page.SUMMATION
+        if (state.currentPage !in setOf(
+                RegisterProfileState.Page.FINISH,
+                RegisterProfileState.Page.SUMMATION,
+            )
         ) {
             PiecePageIndicator(
                 currentStep = state.currentPage.ordinal + 1,
-                totalSteps = RegisterProfileState.Page.entries.size-1,
+                totalSteps = RegisterProfileState.Page.entries.size - 1,
             )
         }
 

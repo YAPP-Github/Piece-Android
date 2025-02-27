@@ -11,18 +11,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,8 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
-import com.puzzle.common.ui.windowInsetsPadding
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceImageDialog
 import com.puzzle.designsystem.component.PieceLoading
@@ -53,7 +48,6 @@ import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
 import com.puzzle.matching.graph.preview.page.BasicInfoPage
 import com.puzzle.matching.graph.preview.page.ValuePickPage
 import com.puzzle.matching.graph.preview.page.ValueTalkPage
-import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun ProfilePreviewRoute(
@@ -71,11 +65,12 @@ internal fun ProfilePreviewRoute(
 private fun ProfilePreviewScreen(
     state: ProfilePreviewState,
     onCloseClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var currentPage by remember { mutableStateOf(ProfilePreviewState.Page.BasicInfoPage) }
     var showDialog by remember { mutableStateOf(false) }
 
-    BackgroundImage()
+    BackgroundImage(modifier = modifier)
     SetStatusBarColor(currentPage)
 
     if (showDialog) {
@@ -88,8 +83,7 @@ private fun ProfilePreviewScreen(
     }
 
     Box(
-        modifier = Modifier
-            .windowInsetsPadding()
+        modifier = modifier
             .fillMaxSize()
             .then(
                 if (currentPage != ProfilePreviewState.Page.BasicInfoPage) {
@@ -98,13 +92,7 @@ private fun ProfilePreviewScreen(
                     Modifier
                 }
             )
-            .then(
-                if (showDialog) {
-                    Modifier.cloudy(radius = 40)
-                } else {
-                    Modifier
-                }
-            )
+            .blur(isBlur = showDialog),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp
@@ -235,7 +223,9 @@ private fun ProfilePreviewBottomBar(
                 contentDescription = "이전 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
-                    .clickable { onShowPicturesClick() },
+                    .clickable {
+                        onShowPicturesClick()
+                    },
             )
         }
 
@@ -254,7 +244,9 @@ private fun ProfilePreviewBottomBar(
                 contentDescription = "이전 페이지 버튼",
                 modifier = Modifier
                     .size(52.dp)
-                    .clickable { onPreviousPageClick() },
+                    .clickable {
+                        onPreviousPageClick()
+                    },
             )
         }
 

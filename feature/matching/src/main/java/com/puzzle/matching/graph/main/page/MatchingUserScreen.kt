@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.verticalScrollbar
 import com.puzzle.designsystem.R
@@ -98,6 +99,7 @@ internal fun MatchingUserScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .blur(isBlur = showDialog)
             .background(PieceTheme.colors.black)
             .padding(horizontal = 20.dp),
     ) {

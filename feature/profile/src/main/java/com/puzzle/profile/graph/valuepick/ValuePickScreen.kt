@@ -174,7 +174,7 @@ private fun ValuePickCard(
     Column(modifier = modifier) {
         Row(modifier = Modifier.padding(bottom = 12.dp)) {
             Image(
-                painter = painterResource(R.drawable.ic_question),
+                painter = painterResource(R.drawable.ic_question_default),
                 contentDescription = "질문",
                 colorFilter = ColorFilter.tint(PieceTheme.colors.primaryDefault),
                 modifier = Modifier

@@ -19,7 +19,10 @@ import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
 import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
 import com.puzzle.profile.graph.basic.contract.InputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getBirthDateInputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getHeightInputState
 import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputState
+import com.puzzle.profile.graph.basic.contract.InputState.Companion.getWeightInputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.basic.contract.ScreenState
 import dagger.assisted.Assisted
@@ -108,37 +111,41 @@ class BasicProfileViewModel @AssistedInject constructor(
     }
 
     private fun saveBasicProfile() {
-        withState { state ->
+        withState { currentState ->
             viewModelScope.launch {
-                if (state.isProfileIncomplete) {
-                    setState {
-                        copy(
-                            profileScreenState = ScreenState.SAVE_FAILED,
-                            nickNameGuideMessage = nickNameStateInSavingProfile,
-                            descriptionInputState = getInputState(state.description),
-                            imageUrlInputState = getInputState(state.imageUrl),
-                            birthdateInputState = getInputState(state.birthdate),
-                            locationInputState = getInputState(state.location),
-                            heightInputState = getInputState(state.height),
-                            weightInputState = getInputState(state.weight),
-                            jobInputState = getInputState(state.job)
-                        )
-                    }
-                    return@launch
-                }
+                val updatedState = currentState.copy(
+                    nickNameGuideMessage = currentState.nickNameStateInSavingProfile,
+                    descriptionInputState = getInputState(currentState.description),
+                    imageUrlInputState = getInputState(currentState.imageUrl),
+                    birthdateInputState = getBirthDateInputState(currentState.birthdate),
+                    locationInputState = getInputState(currentState.location),
+                    heightInputState = getHeightInputState(
+                        fieldValue = currentState.height,
+                        isInSave = true
+                    ),
+                    weightInputState = getWeightInputState(
+                        fieldValue = currentState.weight,
+                        isInSave = true
+                    ),
+                    jobInputState = getInputState(currentState.job),
+                )
+
+                setState { updatedState }
+
+                if (updatedState.isInputFieldIncomplete) return@launch
 
                 profileRepository.updateMyProfileBasic(
-                    description = state.description,
-                    nickname = state.nickname,
-                    birthdate = state.birthdate.toBirthDate(),
-                    height = state.height.toInt(),
-                    weight = state.weight.toInt(),
-                    location = state.location,
-                    job = state.job,
-                    smokingStatus = if (state.isSmoke) "흡연" else "비흡연",
-                    snsActivityLevel = if (state.isSnsActive) "활동" else "은둔",
-                    imageUrl = state.imageUrl,
-                    contacts = state.contacts,
+                    description = currentState.description,
+                    nickname = currentState.nickname,
+                    birthdate = currentState.birthdate.toBirthDate(),
+                    height = currentState.height.toInt(),
+                    weight = currentState.weight.toInt(),
+                    location = currentState.location,
+                    job = currentState.job,
+                    smokingStatus = if (currentState.isSmoke) "흡연" else "비흡연",
+                    snsActivityLevel = if (currentState.isSnsActive) "활동" else "은둔",
+                    imageUrl = currentState.imageUrl,
+                    contacts = currentState.contacts,
                 ).onSuccess {
                     setState {
                         copy(profileScreenState = ScreenState.SAVED)
@@ -241,7 +248,10 @@ class BasicProfileViewModel @AssistedInject constructor(
                 } else {
                     profileScreenState
                 },
-                heightInputState = InputState.DEFAULT
+                heightInputState = getHeightInputState(
+                    fieldValue = newState.height,
+                    isInSave = true
+                )
             )
         }
     }
@@ -260,7 +270,10 @@ class BasicProfileViewModel @AssistedInject constructor(
                 } else {
                     profileScreenState
                 },
-                weightInputState = InputState.DEFAULT
+                weightInputState = getWeightInputState(
+                    fieldValue = newState.weight,
+                    isInSave = true
+                )
             )
         }
     }
