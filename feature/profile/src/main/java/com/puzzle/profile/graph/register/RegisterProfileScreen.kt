@@ -19,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +27,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
@@ -213,7 +213,7 @@ private fun RegisterProfileScreen(
         modifier = modifier
             .fillMaxSize()
             .addFocusCleaner(focusManager)
-            .then(if (showDialog) Modifier.blur(5.dp) else Modifier),
+            .blur(isBlur = showDialog),
     ) {
         PieceSubBackTopBar(
             title = "",

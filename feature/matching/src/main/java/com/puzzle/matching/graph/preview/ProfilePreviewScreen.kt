@@ -23,7 +23,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceImageDialog
@@ -87,7 +87,7 @@ private fun ProfilePreviewScreen(
                     Modifier
                 }
             )
-            .then(if (showDialog) Modifier.blur(radius = 40.dp) else Modifier)
+            .blur(isBlur = showDialog),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp

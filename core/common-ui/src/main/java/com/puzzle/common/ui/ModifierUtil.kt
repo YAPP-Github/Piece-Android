@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.geometry.CornerRadius
@@ -119,3 +120,9 @@ fun Modifier.verticalScrollbar(
         }
     }
 }
+
+@Composable
+fun Modifier.blur(
+    isBlur: Boolean,
+    radius: Dp = 5.dp,
+): Modifier = composed { if (isBlur) this.blur(radius) else this }
