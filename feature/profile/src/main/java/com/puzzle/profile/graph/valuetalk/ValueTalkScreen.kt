@@ -296,8 +296,7 @@ private fun ValueTalkCard(
                 )
 
                 Text(
-                    text = "AI가 내 가치관을 두 줄로 요약해서 보여줘요.\n" +
-                            "AI요약이 마음에 안 든다면, 수정할 수 있어요",
+                    text = stringResource(R.string.summation_help),
                     style = PieceTheme.typography.captionM,
                     color = PieceTheme.colors.white,
                     modifier = Modifier
