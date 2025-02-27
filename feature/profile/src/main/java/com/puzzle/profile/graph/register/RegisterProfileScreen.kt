@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.repeatOnStarted
@@ -241,7 +242,7 @@ private fun RegisterProfileScreen(
             AnimatedContent(
                 targetState = state.currentPage,
                 transitionSpec = {
-                    fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+                    fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
                 },
                 modifier = Modifier.fillMaxSize(),
                 label = "",

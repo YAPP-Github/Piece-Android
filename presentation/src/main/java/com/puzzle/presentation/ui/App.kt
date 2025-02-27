@@ -44,6 +44,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSnackBar
@@ -243,7 +244,7 @@ private fun SetStatusBarColor(currentDestination: NavDestination?) {
 
             else -> PieceTheme.colors.white
         },
-        animationSpec = tween(700),
+        animationSpec = tween(ANIMATION_DURATION),
         label = "StatusBarColorAnimation"
     )
 
@@ -260,7 +261,7 @@ private fun SetNavigationBarColor(currentDestination: NavDestination?) {
 
             else -> PieceTheme.colors.white
         },
-        animationSpec = tween(700),
+        animationSpec = tween(ANIMATION_DURATION),
         label = "NavigationBarColorAnimation"
     )
 

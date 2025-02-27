@@ -30,6 +30,7 @@ import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
 import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.auth.graph.signup.page.TermPage
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationEvent.To
@@ -96,7 +97,7 @@ private fun SignUpScreen(
     AnimatedContent(
         targetState = state.signUpPage,
         transitionSpec = {
-            fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+            fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
         },
         modifier = Modifier
             .fillMaxSize()

@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
@@ -161,7 +162,7 @@ private fun ProfilePreviewContent(
             AnimatedContent(
                 targetState = currentPage,
                 transitionSpec = {
-                    fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+                    fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
                 },
                 modifier = Modifier.fillMaxSize(),
             ) {
@@ -289,7 +290,7 @@ private fun SetStatusBarColor(page: ProfilePreviewState.Page) {
             ProfilePreviewState.Page.BasicInfoPage -> Color.Transparent
             else -> PieceTheme.colors.white
         },
-        animationSpec = tween(700),
+        animationSpec = tween(ANIMATION_DURATION),
         label = "StatusBarColorAnimation"
     )
 
