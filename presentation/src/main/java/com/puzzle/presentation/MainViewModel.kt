@@ -21,6 +21,9 @@ import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.MatchingGraphDest
+import com.puzzle.navigation.NavigationEvent.To
+import com.puzzle.navigation.NavigationEvent.TopLevelTo
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.OnboardingRoute
 import com.puzzle.navigation.ProfileGraphDest
@@ -86,9 +89,7 @@ class MainViewModel @Inject constructor(
 
     private fun handleHttpError(exception: HttpResponseException) {
         when (exception.status) {
-            HttpResponseStatus.Unauthorized -> navigationHelper.navigate(
-                NavigationEvent.TopLevelNavigateTo(AuthGraph)
-            )
+            HttpResponseStatus.Unauthorized -> navigationHelper.navigate(TopLevelTo(AuthGraph))
 
             else -> exception.msg?.let { errorMsg ->
                 eventHelper.sendEvent(
@@ -152,22 +153,14 @@ class MainViewModel @Inject constructor(
                     )
                 )
             }
+        when (userRole.value) {
+            REGISTER ->
+                navigationHelper.navigate(To(route = AuthGraphDest.SignUpRoute, popUpTo = true))
 
-            PENDING, USER -> {
-                navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
-                        route = ProfileGraphDest.ValueTalkProfileRoute,
-                        popUpTo = true,
-                    )
-                )
-            }
+            PENDING, USER ->
+                navigationHelper.navigate(To(route = MatchingGraphDest.MatchingRoute, popUpTo = true))
 
-            NONE -> navigationHelper.navigate(
-                NavigationEvent.NavigateTo(
-                    route = OnboardingRoute,
-                    popUpTo = true,
-                )
-            )
+            NONE -> navigationHelper.navigate(To(route = OnboardingRoute, popUpTo = true))
         }
     }.also { _isInitialized.value = true }
 }

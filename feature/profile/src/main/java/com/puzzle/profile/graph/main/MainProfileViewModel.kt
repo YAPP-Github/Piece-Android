@@ -82,19 +82,19 @@ class MainProfileViewModel @AssistedInject constructor(
 
     private suspend fun moveToValuePickScreen() {
         _sideEffects.send(
-            MainProfileSideEffect.Navigate(NavigationEvent.NavigateTo(ProfileGraphDest.ValuePickProfileRoute))
+            MainProfileSideEffect.Navigate(NavigationEvent.To(ProfileGraphDest.ValuePickProfileRoute))
         )
     }
 
     private suspend fun moveToBasicProfileScreen() {
         _sideEffects.send(
-            MainProfileSideEffect.Navigate(NavigationEvent.NavigateTo(ProfileGraphDest.BasicProfileRoute))
+            MainProfileSideEffect.Navigate(NavigationEvent.To(ProfileGraphDest.BasicProfileRoute))
         )
     }
 
     private suspend fun moveToValueTalkScreen() {
         _sideEffects.send(
-            MainProfileSideEffect.Navigate(NavigationEvent.NavigateTo(ProfileGraphDest.ValueTalkProfileRoute))
+            MainProfileSideEffect.Navigate(NavigationEvent.To(ProfileGraphDest.ValueTalkProfileRoute))
         )
     }
 

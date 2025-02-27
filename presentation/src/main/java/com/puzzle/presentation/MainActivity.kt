@@ -27,7 +27,7 @@ import com.puzzle.designsystem.component.PieceModalBottomSheet
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.navigation.AuthGraph
-import com.puzzle.navigation.MatchingGraph
+import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.presentation.network.NetworkMonitor
@@ -81,25 +81,19 @@ class MainActivity : ComponentActivity() {
                         launch {
                             eventHelper.eventFlow.collect { event ->
                                 when (event) {
-                                    is PieceEvent.ShowSnackBar -> {
-                                        scope.launch {
-                                            snackBarHostState.currentSnackbarData?.dismiss()
-                                            snackBarHostState.showSnackbar("${event.msg}/${event.type}")
-                                        }
+                                    is PieceEvent.ShowSnackBar -> scope.launch {
+                                        snackBarHostState.currentSnackbarData?.dismiss()
+                                        snackBarHostState.showSnackbar("${event.msg}/${event.type}")
                                     }
 
                                     PieceEvent.HideSnackBar -> snackBarHostState.currentSnackbarData?.dismiss()
 
-                                    is PieceEvent.ShowBottomSheet -> {
-                                        scope.launch {
-                                            bottomSheetContent = event.content
-                                            sheetState.show()
-                                        }
+                                    is PieceEvent.ShowBottomSheet -> scope.launch {
+                                        bottomSheetContent = event.content
+                                        sheetState.show()
                                     }
 
-                                    PieceEvent.HideBottomSheet -> {
-                                        scope.launch { sheetState.hide() }
-                                    }
+                                    PieceEvent.HideBottomSheet -> scope.launch { sheetState.hide() }
                                 }
                             }
                         }
@@ -114,8 +108,8 @@ class MainActivity : ComponentActivity() {
                         App(
                             snackBarHostState = snackBarHostState,
                             navController = navController,
-                            navigateToTopLevelDestination = { topLevelDestination ->
-                                if (topLevelDestination == ProfileGraphDest.MainProfileRoute &&
+                            navigateToBottomNaviNaviateTo = { bottomNaviDestination ->
+                                if (bottomNaviDestination == ProfileGraphDest.MainProfileRoute &&
                                     userRole != UserRole.USER
                                 ) {
                                     eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = "아직 심사 중입니다."))
@@ -123,7 +117,7 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 navigationHelper.navigate(
-                                    NavigationEvent.TopLevelNavigateTo(topLevelDestination)
+                                    NavigationEvent.BottomNaviTo(bottomNaviDestination)
                                 )
                             }
                         )
@@ -141,16 +135,14 @@ class MainActivity : ComponentActivity() {
         event: NavigationEvent
     ) {
         when (event) {
-            is NavigationEvent.NavigateTo -> {
+            is NavigationEvent.To -> {
                 val navOptions = navOptions {
                     if (event.popUpTo) {
                         popUpTo(
                             navController.currentBackStackEntry?.destination?.route
                                 ?: navController.graph.startDestinationRoute
                                 ?: AuthGraph.toString()
-                        ) {
-                            inclusive = true
-                        }
+                        ) { inclusive = true }
                     }
                     launchSingleTop = true
                 }
@@ -161,13 +153,24 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            is NavigationEvent.NavigateUp -> navController.navigateUp()
+            is NavigationEvent.Up -> navController.navigateUp()
 
-            is NavigationEvent.TopLevelNavigateTo -> {
+            is NavigationEvent.TopLevelTo -> {
                 val topLevelNavOptions = navOptions {
-                    popUpTo(MatchingGraph) {
+                    popUpTo(0) { inclusive = true }
+                    launchSingleTop = true
+                }
+
+                navController.navigate(
+                    route = event.route,
+                    navOptions = topLevelNavOptions
+                )
+            }
+
+            is NavigationEvent.BottomNaviTo -> {
+                val topLevelNavOptions = navOptions {
+                    popUpTo(MatchingGraphDest.MatchingRoute) {
                         saveState = true
-                        inclusive = true
                     }
                     launchSingleTop = true
                     restoreState = true

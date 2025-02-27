@@ -116,8 +116,9 @@ fun PieceDialogDefaultTop(
 fun PieceDialogIconTop(
     @DrawableRes iconId: Int,
     title: String,
-    descriptionComposable: @Composable () -> Unit,
     contentDescription: String? = null,
+    subText: String? = null,
+    descriptionComposable: @Composable (() -> Unit)? = null,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -139,50 +140,27 @@ fun PieceDialogIconTop(
             modifier = Modifier.padding(bottom = 12.dp),
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(PieceTheme.colors.light3)
-                .padding(vertical = 12.dp),
-        ) {
-            descriptionComposable()
+        subText?.let {
+            Text(
+                text = subText,
+                color = PieceTheme.colors.dark2,
+                style = PieceTheme.typography.bodySM,
+                textAlign = TextAlign.Center,
+            )
         }
-    }
-}
 
-@Composable
-fun PieceDialogIconTop(
-    @DrawableRes id: Int,
-    title: String,
-    subText: String,
-    contentDescription: String? = null,
-) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(top = 40.dp, bottom = 12.dp),
-    ) {
-        Image(
-            painter = painterResource(id),
-            contentDescription = contentDescription,
-            modifier = Modifier.size(40.dp),
-        )
-
-        Text(
-            text = title,
-            color = PieceTheme.colors.black,
-            style = PieceTheme.typography.headingMSB,
-            textAlign = TextAlign.Center,
-        )
-
-        Text(
-            text = subText,
-            color = PieceTheme.colors.dark2,
-            style = PieceTheme.typography.bodySM,
-            textAlign = TextAlign.Center,
-        )
+        descriptionComposable?.let {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(PieceTheme.colors.light3)
+                    .padding(vertical = 12.dp),
+            ) {
+                descriptionComposable()
+            }
+        }
     }
 }
 

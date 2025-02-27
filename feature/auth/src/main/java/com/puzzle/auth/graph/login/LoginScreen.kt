@@ -30,6 +30,7 @@ import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
+import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.user.UserApiClient
 import com.puzzle.auth.graph.login.contract.LoginIntent
 import com.puzzle.auth.graph.login.contract.LoginSideEffect
@@ -172,7 +173,7 @@ private fun loginKakao(
         if (isKakaoTalkLoginAvailable(context)) {
             // 카카오톡 로그인
             loginWithKakaoAccount(context) { token, error ->
-                if (error != null) {
+                if (error != null && error !is ClientError) {
                     onFailure(error)
                 } else if (token != null) {
                     onSuccess(token.accessToken)
@@ -181,7 +182,7 @@ private fun loginKakao(
         } else {
             // 카카오 계정 로그인 (웹)
             loginWithKakaoAccount(context) { token, error ->
-                if (error != null) {
+                if (error != null && error !is ClientError) {
                     onFailure(error)
                 } else if (token != null) {
                     onSuccess(token.accessToken)
@@ -196,10 +197,7 @@ private fun handleGoogleSignIn(
     onSuccess: (String) -> Unit,
     onFailure: (Throwable) -> Unit,
 ) {
-    if (task == null) {
-        onFailure(IllegalStateException("Google sign-in task is null"))
-        return
-    }
+    if (task == null) return
 
     try {
         val account = task.result

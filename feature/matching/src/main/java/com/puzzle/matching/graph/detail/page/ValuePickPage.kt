@@ -44,6 +44,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.CollapsingHeaderNestedScrollConnection
 import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
@@ -139,7 +140,7 @@ private fun ValuePickTabContent(
     AnimatedContent(
         targetState = tabIndex,
         transitionSpec = {
-            fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+            fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
         },
         modifier = Modifier.fillMaxSize(),
     ) {

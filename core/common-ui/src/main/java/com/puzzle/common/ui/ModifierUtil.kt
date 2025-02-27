@@ -8,6 +8,11 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.geometry.CornerRadius
@@ -119,3 +125,21 @@ fun Modifier.verticalScrollbar(
         }
     }
 }
+
+@Composable
+fun Modifier.windowInsetsPadding(): Modifier = composed {
+    this.padding(
+        top = WindowInsets.systemBars
+            .asPaddingValues()
+            .calculateTopPadding(),
+        bottom = WindowInsets.navigationBars
+            .asPaddingValues()
+            .calculateBottomPadding(),
+    )
+}
+
+@Composable
+fun Modifier.blur(
+    isBlur: Boolean,
+    radius: Dp = 5.dp,
+): Modifier = composed { if (isBlur) this.blur(radius) else this }

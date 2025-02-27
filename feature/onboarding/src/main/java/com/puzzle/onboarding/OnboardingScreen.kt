@@ -63,7 +63,7 @@ internal fun OnboardingRoute(viewModel: OnboardingViewModel = hiltViewModel()) {
         onStartButtonClick = {
             viewModel.onIntent(
                 OnboardingIntent.Navigate(
-                    NavigationEvent.NavigateTo(
+                    NavigationEvent.To(
                         route = AuthGraphDest.LoginRoute,
                         popUpTo = true,
                     )

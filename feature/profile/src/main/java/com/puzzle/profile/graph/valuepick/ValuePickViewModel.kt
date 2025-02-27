@@ -76,7 +76,7 @@ class ValuePickViewModel @AssistedInject constructor(
         when (state.screenState) {
             ValuePickState.ScreenState.EDITING -> setState { copy(screenState = ValuePickState.ScreenState.NORMAL) }
             ValuePickState.ScreenState.NORMAL -> navigationHelper.navigate(
-                NavigationEvent.NavigateUp
+                NavigationEvent.Up
             )
         }
     }
