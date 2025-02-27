@@ -1,6 +1,7 @@
 package com.puzzle.matching.graph.preview
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -30,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
 import com.puzzle.designsystem.R
@@ -38,6 +42,7 @@ import com.puzzle.designsystem.component.PieceLoading
 import com.puzzle.designsystem.component.PieceRoundingOutlinedButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.designsystem.foundation.StatusBarColor
 import com.puzzle.domain.model.profile.MyProfileBasic
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
@@ -67,6 +72,7 @@ private fun ProfilePreviewScreen(
     var showDialog by remember { mutableStateOf(false) }
 
     BackgroundImage(modifier = modifier)
+    SetStatusBarColor(currentPage)
 
     if (showDialog) {
         PieceImageDialog(
@@ -97,6 +103,7 @@ private fun ProfilePreviewScreen(
             currentPage = currentPage,
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .padding(
                     top = topBarHeight,
                     bottom = bottomBarHeight,
@@ -155,7 +162,7 @@ private fun ProfilePreviewContent(
             AnimatedContent(
                 targetState = currentPage,
                 transitionSpec = {
-                    fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+                    fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
                 },
                 modifier = Modifier.fillMaxSize(),
             ) {
@@ -274,6 +281,20 @@ private fun BackgroundImage(modifier: Modifier = Modifier) {
         contentScale = ContentScale.Crop,
         modifier = modifier.fillMaxSize(),
     )
+}
+
+@Composable
+private fun SetStatusBarColor(page: ProfilePreviewState.Page) {
+    val statusBarColor by animateColorAsState(
+        targetValue = when (page) {
+            ProfilePreviewState.Page.BasicInfoPage -> Color.Transparent
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(ANIMATION_DURATION),
+        label = "StatusBarColorAnimation"
+    )
+
+    StatusBarColor(statusBarColor)
 }
 
 @Preview

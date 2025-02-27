@@ -1,6 +1,7 @@
 package com.puzzle.matching.graph.detail
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,9 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.blur
 import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.repeatOnStarted
+import com.puzzle.common.ui.windowInsetsPadding
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -47,6 +52,7 @@ import com.puzzle.designsystem.component.PieceLoading
 import com.puzzle.designsystem.component.PieceRoundingSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.designsystem.foundation.StatusBarColor
 import com.puzzle.domain.model.profile.OpponentProfile
 import com.puzzle.matching.graph.detail.bottomsheet.MatchingDetailMoreBottomSheet
 import com.puzzle.matching.graph.detail.common.constant.DialogType
@@ -187,10 +193,12 @@ private fun MatchingDetailScreen(
         }
     }
 
-    BackgroundImage(modifier)
+    BackgroundImage()
+    SetStatusBarColor(state.currentPage)
 
     Box(
         modifier = modifier
+            .windowInsetsPadding()
             .fillMaxSize()
             .then(
                 if (state.currentPage != MatchingDetailPage.BasicInfoPage) {
@@ -250,6 +258,7 @@ private fun MatchingDetailScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(bottomBarHeight)
+                    .statusBarsPadding()
                     .padding(top = 12.dp, bottom = 10.dp)
                     .padding(horizontal = 20.dp)
                     .align(Alignment.BottomCenter),
@@ -259,13 +268,27 @@ private fun MatchingDetailScreen(
 }
 
 @Composable
-private fun BackgroundImage(modifier: Modifier = Modifier) {
+private fun BackgroundImage() {
     Image(
         painter = painterResource(id = R.drawable.matchingdetail_bg),
         contentDescription = "basic info 배경화면",
         contentScale = ContentScale.Crop,
         modifier = Modifier.fillMaxSize(),
     )
+}
+
+@Composable
+private fun SetStatusBarColor(page: MatchingDetailPage) {
+    val statusBarColor by animateColorAsState(
+        targetValue = when (page) {
+            MatchingDetailPage.BasicInfoPage -> Color.Transparent
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(ANIMATION_DURATION),
+        label = "StatusBarColorAnimation"
+    )
+
+    StatusBarColor(statusBarColor)
 }
 
 @Composable
@@ -280,7 +303,7 @@ private fun MatchingDetailContent(
             AnimatedContent(
                 targetState = state.currentPage,
                 transitionSpec = {
-                    fadeIn(tween(700)) togetherWith fadeOut(tween(700))
+                    fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
                 },
                 modifier = Modifier.fillMaxSize(),
             ) {

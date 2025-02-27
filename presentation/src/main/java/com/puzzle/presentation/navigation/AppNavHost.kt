@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.puzzle.auth.navigation.authNavGraph
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.matching.navigation.matchingNavGraph
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.onboarding.navigation.onboardingNavigation
@@ -21,8 +22,8 @@ fun AppNavHost(
 ) {
     NavHost(
         navController = navController,
-        popExitTransition = { fadeOut(tween(700)) },
-        popEnterTransition = { fadeIn(tween(700)) },
+        popExitTransition = { fadeOut(tween(ANIMATION_DURATION)) },
+        popEnterTransition = { fadeIn(tween(ANIMATION_DURATION)) },
         startDestination = AuthGraph,
         modifier = modifier,
     ) {

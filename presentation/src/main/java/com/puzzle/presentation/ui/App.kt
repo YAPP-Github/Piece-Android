@@ -2,13 +2,17 @@
 
 package com.puzzle.presentation.ui
 
+import android.app.Activity
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -26,22 +30,28 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSnackBar
 import com.puzzle.designsystem.component.PieceSnackBarHost
+import com.puzzle.designsystem.foundation.NavigationBarColor
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.designsystem.foundation.StatusBarColor
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraph
 import com.puzzle.navigation.MatchingGraphDest
@@ -54,17 +64,13 @@ import com.puzzle.navigation.SettingGraph
 import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
-import com.puzzle.presentation.network.NetworkScreen
-import com.puzzle.presentation.network.NetworkState
-import com.puzzle.presentation.update.ForceUpdateDialog
 import kotlin.reflect.KClass
 
 @Composable
 fun App(
     snackBarHostState: SnackbarHostState,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
-    navigateToTopLevelDestination: (Route) -> Unit,
+    navigateToBottomNaviNaviateTo: (Route) -> Unit,
 ) {
     val currentDestination = navController.currentBackStackEntryAsState()
         .value?.destination
@@ -85,18 +91,22 @@ fun App(
             ) {
                 AppBottomBar(
                     currentDestination = currentDestination,
-                    navigateToTopLevelDestination = navigateToTopLevelDestination,
+                    navigateToTopLevelDestination = navigateToBottomNaviNaviateTo,
                 )
             }
         },
         floatingActionButton = {
-            AnimatedVisibility(visible = currentDestination?.shouldHideBottomNavigation() == false) {
+            AnimatedVisibility(
+                visible = currentDestination?.shouldHideBottomNavigation() == false,
+                enter = fadeIn() + slideInVertically(),
+                exit = fadeOut() + slideOutVertically(),
+            ) {
                 FloatingActionButton(
-                    onClick = { navigateToTopLevelDestination(MatchingGraph) },
+                    onClick = { navigateToBottomNaviNaviateTo(MatchingGraph) },
                     containerColor = PieceTheme.colors.white,
                     shape = CircleShape,
                     elevation = bottomAppBarFabElevation(),
-                    modifier = Modifier.offset(y = 84.dp),
+                    modifier = Modifier.offset(y =84.dp),
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_matching),
@@ -108,13 +118,22 @@ fun App(
         },
         floatingActionButtonPosition = FabPosition.Center,
     ) { innerPadding ->
-        val contentModifier = modifier.padding(innerPadding)
+        val contentModifier = when (currentDestination?.route) {
+            MatchingDetailRoute::class.qualifiedName,
+            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName,
+            MatchingGraphDest.ContactRoute::class.qualifiedName,
+                -> Modifier.consumeWindowInsets(innerPadding)
+
+            else -> Modifier.padding(innerPadding)
+        }
 
         AppNavHost(
             navController = navController,
             modifier = contentModifier,
         )
     }
+
+    SystemBarColor(currentDestination)
 }
 
 @Composable
@@ -199,3 +218,52 @@ private fun NavDestination?.shouldHideBottomNavigation(): Boolean =
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>): Boolean =
     this?.hierarchy?.any { it.hasRoute(route) } == true
+
+@Composable
+private fun SystemBarColor(currentDestination: NavDestination?) {
+    val view = LocalView.current
+    val window = (view.context as Activity).window
+    if (!view.isInEditMode) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+    } else {
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+    }
+
+    SetStatusBarColor(currentDestination)
+    SetNavigationBarColor(currentDestination)
+}
+
+@Composable
+private fun SetStatusBarColor(currentDestination: NavDestination?) {
+    val statusBarColor by animateColorAsState(
+        targetValue = when (currentDestination?.route) {
+            MatchingGraphDest.MatchingRoute::class.qualifiedName -> PieceTheme.colors.black
+            MatchingDetailRoute::class.qualifiedName,
+            MatchingGraphDest.ContactRoute::class.qualifiedName,
+            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName -> Color.Transparent
+
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(ANIMATION_DURATION),
+        label = "StatusBarColorAnimation"
+    )
+
+    StatusBarColor(statusBarColor)
+}
+
+@Composable
+private fun SetNavigationBarColor(currentDestination: NavDestination?) {
+    val navigationBarColor by animateColorAsState(
+        targetValue = when (currentDestination?.route) {
+            MatchingDetailRoute::class.qualifiedName,
+            MatchingGraphDest.ContactRoute::class.qualifiedName,
+            MatchingGraphDest.ProfilePreviewRoute::class.qualifiedName -> Color.Transparent
+
+            else -> PieceTheme.colors.white
+        },
+        animationSpec = tween(ANIMATION_DURATION),
+        label = "NavigationBarColorAnimation"
+    )
+
+    NavigationBarColor(navigationBarColor)
+}

@@ -106,7 +106,7 @@ class BasicProfileViewModel @AssistedInject constructor(
 
     private suspend fun moveToBackScreen() {
         _sideEffects.send(
-            BasicProfileSideEffect.Navigate(NavigationEvent.NavigateUp)
+            BasicProfileSideEffect.Navigate(NavigationEvent.Up)
         )
     }
 
