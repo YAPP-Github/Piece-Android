@@ -20,13 +20,11 @@ import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
-import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent.To
 import com.puzzle.navigation.NavigationEvent.TopLevelTo
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.OnboardingRoute
-import com.puzzle.navigation.ProfileGraphDest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
@@ -145,20 +143,13 @@ class MainViewModel @Inject constructor(
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
         val userRole = userRepository.getUserRole().first()
         when (userRole) {
-            REGISTER -> {
-                navigationHelper.navigate(
-                    NavigationEvent.NavigateTo(
-                        route = AuthGraphDest.SignUpRoute,
-                        popUpTo = true,
-                    )
-                )
-            }
-        when (userRole.value) {
             REGISTER ->
                 navigationHelper.navigate(To(route = AuthGraphDest.SignUpRoute, popUpTo = true))
 
             PENDING, USER ->
-                navigationHelper.navigate(To(route = MatchingGraphDest.MatchingRoute, popUpTo = true))
+                navigationHelper.navigate(
+                    To(route = MatchingGraphDest.MatchingRoute, popUpTo = true)
+                )
 
             NONE -> navigationHelper.navigate(To(route = OnboardingRoute, popUpTo = true))
         }
