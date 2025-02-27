@@ -30,6 +30,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -140,7 +141,8 @@ class MainViewModel @Inject constructor(
         authRepository.checkTokenHealth().onFailure { return@launch }
 
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
-        when (userRole.value) {
+        val userRole = userRepository.getUserRole().first()
+        when (userRole) {
             REGISTER ->
                 navigationHelper.navigate(To(route = AuthGraphDest.SignUpRoute, popUpTo = true))
 
