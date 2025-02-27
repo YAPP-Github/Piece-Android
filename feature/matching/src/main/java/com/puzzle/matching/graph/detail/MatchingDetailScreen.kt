@@ -24,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -56,7 +57,6 @@ import com.puzzle.matching.graph.detail.contract.MatchingDetailState.MatchingDet
 import com.puzzle.matching.graph.detail.page.BasicInfoPage
 import com.puzzle.matching.graph.detail.page.ValuePickPage
 import com.puzzle.matching.graph.detail.page.ValueTalkPage
-import com.skydoves.cloudy.cloudy
 
 @Composable
 internal fun MatchingDetailRoute(
@@ -199,13 +199,7 @@ private fun MatchingDetailScreen(
                     Modifier
                 }
             )
-            .then(
-                if (showDialog) {
-                    Modifier.cloudy(radius = 40)
-                } else {
-                    Modifier
-                }
-            ),
+            .then(if (showDialog) Modifier.blur(40.dp) else Modifier),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp

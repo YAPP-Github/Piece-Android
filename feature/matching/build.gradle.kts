@@ -12,5 +12,4 @@ dependencies {
     implementation(libs.lottie.compose)
     implementation(libs.coil.compose)
     implementation(libs.coil.network)
-    implementation(libs.cloudy.compose)
 }

@@ -24,6 +24,10 @@
     <string name="permission_notification_description">매칭 현황 등 중요 메시지 수신을 위해 필요해요.</string>
     <string name="permission_contacts">연락처 [선택]</string>
     <string name="permission_contacts_description">지인을 수집하기 위해 필요해요.</string>
+    <string name="profile_warning_title">작성 중인 프로필이 사라져요!</string>
+    <string name="profile_warning_description">지금 뒤로 가면 프로필이 저장되지 않습니다.\n계속 이어서 작성해 보세요.</string>
+    <string name="back">뒤로</string>
+    <string name="profile_continue">이어서 작성하기</string>
 
     <!--Matching-->
     <string name="matching_title">Matching</string>

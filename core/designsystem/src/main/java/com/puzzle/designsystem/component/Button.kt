@@ -46,6 +46,7 @@ fun PieceSolidButton(
             disabledContainerColor = PieceTheme.colors.light1,
             disabledContentColor = PieceTheme.colors.white,
         ),
+        contentPadding = PaddingValues(vertical = 14.dp),
         modifier = modifier
             .height(52.dp)
             .widthIn(min = 100.dp),
