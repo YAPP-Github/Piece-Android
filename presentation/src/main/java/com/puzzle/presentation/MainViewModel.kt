@@ -22,6 +22,7 @@ import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.AuthGraphDest
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent.To
+import com.puzzle.navigation.NavigationEvent.TopLevelTo
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -85,9 +86,7 @@ class MainViewModel @Inject constructor(
 
     private fun handleHttpError(exception: HttpResponseException) {
         when (exception.status) {
-            HttpResponseStatus.Unauthorized -> navigationHelper.navigate(
-                NavigationEvent.TopLevelNavigateTo(AuthGraph)
-            )
+            HttpResponseStatus.Unauthorized -> navigationHelper.navigate(TopLevelTo(AuthGraph))
 
             else -> exception.msg?.let { errorMsg ->
                 eventHelper.sendEvent(
@@ -142,30 +141,15 @@ class MainViewModel @Inject constructor(
 
         // 토큰이 만료되지 않을경우 UserRole에 따라 화면 분기
         when (userRole.value) {
-            REGISTER -> {
-                navigationHelper.navigate(
-                    To(
-                        route = AuthGraphDest.SignUpRoute,
-                        popUpTo = true,
-                    )
-                )
-            }
+            REGISTER ->
+                navigationHelper.navigate(To(route = AuthGraphDest.SignUpRoute, popUpTo = true))
 
-            PENDING, USER -> {
+            PENDING, USER ->
                 navigationHelper.navigate(
-                    To(
-                        route = MatchingGraphDest.MatchingRoute,
-                        popUpTo = true
-                    )
+                    To(route = MatchingGraphDest.MatchingRoute, popUpTo = true)
                 )
-            }
 
-            NONE -> navigationHelper.navigate(
-                To(
-                    route = OnboardingRoute,
-                    popUpTo = true,
-                )
-            )
+            NONE -> navigationHelper.navigate(To(route = OnboardingRoute, popUpTo = true))
         }
     }.also { _isInitialized.value = true }
 }
