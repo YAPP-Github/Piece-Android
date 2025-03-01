@@ -13,10 +13,10 @@ import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.model.error.HttpResponseStatus
 import com.puzzle.domain.model.match.MatchStatus
 import com.puzzle.domain.model.match.getRemainingTimeInSec
+import com.puzzle.domain.model.user.ProfileStatus
 import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.MatchingRepository
-import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
 import com.puzzle.matching.graph.main.contract.MatchingSideEffect
@@ -31,7 +31,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -41,7 +40,6 @@ class MatchingViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingState,
     private val configureRepository: ConfigureRepository,
     private val matchingRepository: MatchingRepository,
-    private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
     private val timer: Timer,
     private val eventHelper: EventHelper,
@@ -89,18 +87,20 @@ class MatchingViewModel @AssistedInject constructor(
     }
 
     internal fun initMatchInfo() = viewModelScope.launch {
-        userRepository.getUserRole()
-            .catch { errorHelper.sendError(it) }
-            .collect { userRole ->
-                setState { copy(userRole = userRole) }
+        userRepository.getUserInfo()
+            .onSuccess { userInfo ->
+                setState { copy(userRole = userInfo.userRole) }
 
-                when (userRole) {
-                    UserRole.PENDING -> getRejectReason()
-                    UserRole.USER -> getMatchInfo()
+                when {
+                    userInfo.profileStatus == ProfileStatus.REJECTED -> getRejectReason()
+                    userInfo.userRole == UserRole.USER -> getMatchInfo()
                     else -> Unit
                 }
+
                 setState { copy(isLoading = false) }
-            }
+
+            }.onFailure { errorHelper.sendError(it) }
+
     }
 
     private fun moveToProfileRegisterScreen() {
@@ -116,9 +116,7 @@ class MatchingViewModel @AssistedInject constructor(
                         isDescriptionRejected = it.reasonValues
                     )
                 }
-            }.onFailure {
-                errorHelper.sendError(it)
-            }
+            }.onFailure { errorHelper.sendError(it) }
     }
 
     private suspend fun getMatchInfo() = matchingRepository.getMatchInfo()
