@@ -133,7 +133,10 @@ private fun SettingScreen(
                     leftButtonText = stringResource(R.string.cancel),
                     rightButtonText = stringResource(R.string.confirm),
                     onLeftButtonClick = { isLogoutDialogShow = false },
-                    onRightButtonClick = { onLogoutClick() },
+                    onRightButtonClick = {
+                        isLogoutDialogShow = false
+                        onLogoutClick()
+                    },
                 )
             },
         )

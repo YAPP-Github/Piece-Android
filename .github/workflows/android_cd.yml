@@ -74,11 +74,11 @@ jobs:
       - name: Install Firebase CLI
         run: curl -sL firebase.tools | bash
 
-      - name: Upload Debug APK to Firebase App Distribution
+      - name: Upload Release APK to Firebase App Distribution
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
-          firebase appdistribution:distribute app/build/outputs/apk/debug/app-debug.apk \
+          firebase appdistribution:distribute app/build/outputs/apk/release/app-release.apk \
           --app ${{ secrets.FIREBASE_APP_ID }} \
           --release-notes "QA 버전 배포" \
           --groups "puzzly-내부-qa"

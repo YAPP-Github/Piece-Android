@@ -203,7 +203,10 @@ private fun RegisterProfileScreen(
                 PieceDialogBottom(
                     leftButtonText = stringResource(R.string.back),
                     rightButtonText = stringResource(R.string.profile_continue),
-                    onLeftButtonClick = { onBackClick() },
+                    onLeftButtonClick = {
+                        showDialog = false
+                        onBackClick()
+                    },
                     onRightButtonClick = { showDialog = false },
                 )
             },

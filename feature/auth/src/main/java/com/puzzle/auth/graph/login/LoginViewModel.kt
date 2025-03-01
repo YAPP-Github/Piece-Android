@@ -36,7 +36,7 @@ class LoginViewModel @AssistedInject constructor(
     private val authRepository: AuthRepository,
     private val userRepository: UserRepository,
     private val navigationHelper: NavigationHelper,
-    private val errorHelper: ErrorHelper,
+    internal val errorHelper: ErrorHelper,
 ) : MavericksViewModel<LoginState>(initialState) {
     private val _intents = Channel<LoginIntent>(BUFFERED)
 

@@ -65,9 +65,9 @@ internal fun MatchingUserScreen(
     onMatchingDetailClick: () -> Unit,
 ) {
     val listState = rememberLazyListState()
-    var showDialog by remember { mutableStateOf(false) }
+    var isShowDialog by remember { mutableStateOf(false) }
 
-    if (showDialog) {
+    if (isShowDialog) {
         PieceDialog(
             dialogTop = {
                 PieceDialogDefaultTop(
@@ -84,14 +84,14 @@ internal fun MatchingUserScreen(
                 PieceDialogBottom(
                     leftButtonText = "뒤로",
                     rightButtonText = "매칭 수락하기",
-                    onLeftButtonClick = { showDialog = false },
+                    onLeftButtonClick = { isShowDialog = false },
                     onRightButtonClick = {
-                        showDialog = false
+                        isShowDialog = false
                         onButtonClick()
                     },
                 )
             },
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { isShowDialog = false },
         )
     }
 
@@ -99,7 +99,7 @@ internal fun MatchingUserScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .blur(isBlur = showDialog)
+            .blur(isBlur = isShowDialog)
             .background(PieceTheme.colors.black)
             .padding(horizontal = 20.dp),
     ) {
@@ -275,7 +275,7 @@ internal fun MatchingUserScreen(
                     onClick = {
                         when (matchInfo.matchStatus) {
                             BEFORE_OPEN -> onButtonClick()
-                            else -> showDialog = true
+                            else -> isShowDialog = true
                         }
                     },
                     modifier = Modifier
