@@ -148,6 +148,24 @@ class FakeProfileDataSource : ProfileDataSource {
         )
     )
 
+    override suspend fun updateProfile(
+        birthdate: String,
+        description: String,
+        height: Int,
+        weight: Int,
+        imageUrl: String,
+        job: String,
+        location: String,
+        nickname: String,
+        smokingStatus: String,
+        snsActivityLevel: String,
+        contacts: List<Contact>,
+        valuePicks: List<ValuePickAnswer>,
+        valueTalks: List<ValueTalkAnswer>
+    ): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun disconnectSSE(): Result<Unit> {
         TODO("Not yet implemented")
     }

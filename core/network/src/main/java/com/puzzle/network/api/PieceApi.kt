@@ -24,6 +24,7 @@ import com.puzzle.network.model.profile.UpdateAiSummaryRequest
 import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests
 import com.puzzle.network.model.profile.UpdateMyValueTalkRequests
+import com.puzzle.network.model.profile.UpdateProfileRequest
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.terms.AgreeTermsRequest
@@ -77,6 +78,9 @@ interface PieceApi {
 
     @POST("/api/profiles")
     suspend fun uploadProfile(@Body uploadProfileRequest: UploadProfileRequest): Result<ApiResponse<UploadProfileResponse>>
+
+    @PUT("/api/profiles")
+    suspend fun updateProfile(@Body updateProfileRequest: UpdateProfileRequest): Result<ApiResponse<Unit>>
 
     @Multipart
     @POST("/api/profiles/images")

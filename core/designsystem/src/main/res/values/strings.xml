@@ -230,7 +230,9 @@
 
     <!--Finish-->
     <string name="finish_register_profile_header">프로필 생성을 마쳤습니다!</string>
+    <string name="finish_edit_profile_header">프로필 수정을 마쳤습니다!</string>
     <string name="finish_register_profile_sub_header">작성 후 24시간 이내에 심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.</string>
+    <string name="finish_edit_profile_sub_header">작성 후 24시간 이내에 재심사가 진행됩니다.\n생성한 프로필을 검토하며 기다려 주세요.</string>
     <string name="finish_register_profile_tohome">홈으로</string>
 
     <!--Update-->

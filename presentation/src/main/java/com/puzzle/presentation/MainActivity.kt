@@ -75,6 +75,9 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     event = event,
                                 )
+
+                                // 네비게이션 작동 시 현재 화면에 뛰워져 있는 스낵바를 숨깁니다.
+                                snackBarHostState.currentSnackbarData?.dismiss()
                             }
                         }
 

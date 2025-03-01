@@ -61,5 +61,21 @@ interface ProfileDataSource {
         valueTalks: List<ValueTalkAnswer>,
     ): Result<UploadProfileResponse>
 
+    suspend fun updateProfile(
+        birthdate: String,
+        description: String,
+        height: Int,
+        weight: Int,
+        imageUrl: String,
+        job: String,
+        location: String,
+        nickname: String,
+        smokingStatus: String,
+        snsActivityLevel: String,
+        contacts: List<Contact>,
+        valuePicks: List<ValuePickAnswer>,
+        valueTalks: List<ValueTalkAnswer>,
+    ): Result<Unit>
+
     suspend fun disconnectSSE(): Result<Unit>
 }

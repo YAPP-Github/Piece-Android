@@ -232,18 +232,12 @@ private fun MyMatchingPieceDetail(
     onMyMatchingPieceDetailClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
-        modifier = modifier.clickable {
-            onMyMatchingPieceDetailClick()
-        },
-    ) {
+    Row(modifier = modifier.clickable { onMyMatchingPieceDetailClick() }) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.weight(1f),
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(imageId),
                     contentDescription = null,

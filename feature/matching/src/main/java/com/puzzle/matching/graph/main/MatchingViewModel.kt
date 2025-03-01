@@ -44,7 +44,7 @@ class MatchingViewModel @AssistedInject constructor(
     private val profileRepository: ProfileRepository,
     private val userRepository: UserRepository,
     private val timer: Timer,
-    internal val eventHelper: EventHelper,
+    private val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
     internal val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
@@ -90,7 +90,7 @@ class MatchingViewModel @AssistedInject constructor(
 
     internal fun initMatchInfo() = viewModelScope.launch {
         userRepository.getUserRole()
-            .catch { error -> errorHelper.sendError(error) }
+            .catch { errorHelper.sendError(it) }
             .collect { userRole ->
                 setState { copy(userRole = userRole) }
 
@@ -100,33 +100,11 @@ class MatchingViewModel @AssistedInject constructor(
                     else -> Unit
                 }
                 setState { copy(isLoading = false) }
-
-                // MatchingHome 화면에서 사전에 내 프로필 데이터를 케싱해놓습니다.
-                loadMyProfile()
             }
     }
 
     private fun moveToProfileRegisterScreen() {
         navigationHelper.navigate(To(ProfileGraphDest.RegisterProfileRoute))
-    }
-
-    private fun loadMyProfile() = viewModelScope.launch {
-        val profileBasicJob = launch {
-            profileRepository.loadMyProfileBasic()
-                .onFailure { errorHelper.sendError(it) }
-        }
-        val valueTalksJob = launch {
-            profileRepository.loadMyValuePicks()
-                .onFailure { errorHelper.sendError(it) }
-        }
-        val valuePicksJob = launch {
-            profileRepository.loadMyValueTalks()
-                .onFailure { errorHelper.sendError(it) }
-        }
-
-        profileBasicJob.join()
-        valueTalksJob.join()
-        valuePicksJob.join()
     }
 
     private suspend fun getRejectReason() {
