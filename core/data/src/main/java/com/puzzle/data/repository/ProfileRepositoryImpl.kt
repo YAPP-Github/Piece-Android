@@ -231,7 +231,7 @@ class ProfileRepositoryImpl @Inject constructor(
             profileDataSource.uploadProfileImage(imageInputStream).getOrThrow()
         }
 
-        profileDataSource.uploadProfile(
+        profileDataSource.updateProfile(
             birthdate = birthdate,
             description = description,
             height = height,
