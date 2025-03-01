@@ -76,7 +76,7 @@ private class PieceCall<T : Any>(
                         return Result.failure(
                             HttpResponseException(
                                 status = HttpResponseStatus.create(code()),
-                                msg = errorResponse.errors.firstOrNull()?.message
+                                msg = errorResponse.errors?.firstOrNull()?.message
                                     ?: "일시적인 서버 에러입니다. 계속해서 반복될 경우 문의 하기를 이용해주세요.",
                             )
                         )

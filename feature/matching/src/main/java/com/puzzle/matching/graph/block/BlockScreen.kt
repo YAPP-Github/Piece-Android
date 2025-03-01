@@ -88,7 +88,10 @@ internal fun BlockScreen(
                     leftButtonText = stringResource(R.string.cancel),
                     rightButtonText = stringResource(R.string.block),
                     onLeftButtonClick = { isBlockDialogShow = false },
-                    onRightButtonClick = { onBlockButtonClick() },
+                    onRightButtonClick = {
+                        isBlockDialogShow = false
+                        onBlockButtonClick()
+                    },
                 )
             },
         )

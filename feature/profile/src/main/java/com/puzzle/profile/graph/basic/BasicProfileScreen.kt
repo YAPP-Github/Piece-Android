@@ -508,7 +508,7 @@ private fun WeightContent(
         value = weight,
         keyboardType = KeyboardType.Number,
         onValueChange = { weight ->
-            if (weight.isDigitsOnly()) {
+            if (weight.isDigitsOnly() && weight.length <= 3) {
                 onWeightChanged(weight)
             }
         },
@@ -552,7 +552,7 @@ private fun HeightContent(
         value = height,
         keyboardType = KeyboardType.Number,
         onValueChange = { height ->
-            if (height.isDigitsOnly()) {
+            if (height.isDigitsOnly() && height.length <= 3) {
                 onHeightChanged(height)
             }
         },
@@ -632,7 +632,7 @@ private fun BirthdateContent(
         value = birthdate,
         hint = stringResource(R.string.basic_profile_birthday_guide),
         keyboardType = KeyboardType.Number,
-        onValueChange = onBirthdayChanged,
+        onValueChange = { if (it.length <= 8) onBirthdayChanged(it) },
         rightComponent = {
             if (birthdate.isNotEmpty()) {
                 Image(

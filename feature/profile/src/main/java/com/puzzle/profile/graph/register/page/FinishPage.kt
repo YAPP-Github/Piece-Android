@@ -19,14 +19,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.foundation.PieceTheme
+import com.puzzle.domain.model.user.UserRole
 
 @Composable
 internal fun FinishPage(
+    userRole: UserRole,
     onHomeClick: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = stringResource(R.string.finish_register_profile_header),
+            text = if (userRole == UserRole.PENDING) stringResource(R.string.finish_edit_profile_header)
+            else stringResource(R.string.finish_register_profile_header),
             style = PieceTheme.typography.headingLSB,
             color = PieceTheme.colors.black,
             modifier = Modifier
@@ -82,6 +85,7 @@ internal fun FinishPage(
 private fun FinishPagePreview() {
     PieceTheme {
         FinishPage(
+            userRole = UserRole.REGISTER,
             onHomeClick = {},
         )
     }

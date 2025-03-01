@@ -212,6 +212,42 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateProfile(
+        birthdate: String,
+        description: String,
+        height: Int,
+        weight: Int,
+        imageUrl: String,
+        job: String,
+        location: String,
+        nickname: String,
+        smokingStatus: String,
+        snsActivityLevel: String,
+        contacts: List<Contact>,
+        valuePicks: List<ValuePickAnswer>,
+        valueTalks: List<ValueTalkAnswer>
+    ): Result<Unit> = suspendRunCatching {
+        val uploadedImageUrl = imageResizer.resizeImage(imageUrl).use { imageInputStream ->
+            profileDataSource.uploadProfileImage(imageInputStream).getOrThrow()
+        }
+
+        profileDataSource.uploadProfile(
+            birthdate = birthdate,
+            description = description,
+            height = height,
+            weight = weight,
+            imageUrl = uploadedImageUrl,
+            job = job,
+            location = location,
+            nickname = nickname,
+            smokingStatus = smokingStatus,
+            snsActivityLevel = snsActivityLevel,
+            contacts = contacts,
+            valuePicks = valuePicks,
+            valueTalks = valueTalks
+        ).getOrThrow()
+    }
+
     override suspend fun connectSSE(): Result<Unit> = suspendRunCatching { sseClient.connect() }
     override suspend fun disconnectSSE(): Result<Unit> = suspendRunCatching {
         profileDataSource.disconnectSSE().getOrThrow()

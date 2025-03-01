@@ -14,7 +14,7 @@ enum class UserRole {
     USER;
 
     companion object {
-        fun create(value: String): UserRole {
+        fun create(value: String?): UserRole {
             return UserRole.entries.firstOrNull { it.name == value } ?: NONE
         }
     }

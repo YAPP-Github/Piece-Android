@@ -1,7 +1,6 @@
 package com.puzzle.profile.graph.register.page
 
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -439,7 +438,7 @@ private fun WeightContent(
         value = weight,
         keyboardType = KeyboardType.Number,
         onValueChange = { weight ->
-            if (weight.isDigitsOnly()) {
+            if (weight.isDigitsOnly() && weight.length <= 3) {
                 onWeightChanged(weight)
             }
         },
@@ -483,7 +482,7 @@ private fun HeightContent(
         value = height,
         keyboardType = KeyboardType.Number,
         onValueChange = { height ->
-            if (height.isDigitsOnly()) {
+            if (height.isDigitsOnly() && height.length <= 3) {
                 onHeightChanged(height)
             }
         },
@@ -565,7 +564,7 @@ private fun BirthdateContent(
         value = birthdate,
         hint = stringResource(R.string.basic_profile_birthday_guide),
         keyboardType = KeyboardType.Number,
-        onValueChange = onBirthdateChanged,
+        onValueChange = { if (it.length <= 8) onBirthdateChanged(it) },
         rightComponent = {
             if (birthdate.isNotBlank()) {
                 Image(

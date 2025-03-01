@@ -24,6 +24,7 @@ import com.puzzle.network.model.profile.UpdateAiSummaryRequest
 import com.puzzle.network.model.profile.UpdateMyProfileBasicRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests
 import com.puzzle.network.model.profile.UpdateMyValueTalkRequests
+import com.puzzle.network.model.profile.UpdateProfileRequest
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.terms.AgreeTermsRequest
@@ -33,6 +34,7 @@ import com.puzzle.network.model.token.RefreshTokenResponse
 import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetRejectReasonResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
+import com.puzzle.network.model.user.GetUserInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import okhttp3.MultipartBody
 import retrofit2.http.Body
@@ -75,8 +77,14 @@ interface PieceApi {
     @POST("/api/profiles/check-nickname")
     suspend fun checkNickname(@Query("nickname") nickname: String): Result<ApiResponse<Boolean>>
 
+    @GET("/api/users/info")
+    suspend fun getUserInfo(): Result<ApiResponse<GetUserInfoResponse>>
+
     @POST("/api/profiles")
     suspend fun uploadProfile(@Body uploadProfileRequest: UploadProfileRequest): Result<ApiResponse<UploadProfileResponse>>
+
+    @PUT("/api/profiles")
+    suspend fun updateProfile(@Body updateProfileRequest: UpdateProfileRequest): Result<ApiResponse<Unit>>
 
     @Multipart
     @POST("/api/profiles/images")

@@ -168,7 +168,7 @@ private fun VerificationScreen(
         Spacer(modifier = Modifier.weight(1f))
 
         PieceSolidButton(
-            label = stringResource(R.string.confirm),
+            label = stringResource(R.string.next),
             onClick = { navigate(NavigationEvent.To(AuthGraphDest.SignUpRoute)) },
             enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier

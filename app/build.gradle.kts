@@ -10,8 +10,8 @@ android {
     namespace = "com.puzzle.piece"
 
     defaultConfig {
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
         targetSdk = 35
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -37,9 +37,7 @@ android {
     }
 
     buildTypes {
-        debug {
-            manifestPlaceholders["appName"] = "@string/app_name_debug"
-        }
+        debug { manifestPlaceholders["appName"] = "@string/app_name_debug" }
         release {
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["appName"] = "@string/app_name"

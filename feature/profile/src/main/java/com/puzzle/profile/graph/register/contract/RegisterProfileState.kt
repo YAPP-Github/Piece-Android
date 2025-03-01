@@ -4,12 +4,14 @@ import com.airbnb.mvrx.MavericksState
 import com.puzzle.designsystem.R
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
+import com.puzzle.domain.model.user.UserRole
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
 
 data class RegisterProfileState(
+    val userRole: UserRole = UserRole.REGISTER,
     val currentPage: Page = Page.BASIC_PROFILE,
     val imageUrl: String? = null,
     val imageUrlInputState: InputState = InputState.DEFAULT,

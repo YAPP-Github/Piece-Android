@@ -9,8 +9,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.puzzle.auth.BuildConfig
+import com.puzzle.domain.model.error.ErrorHelper
 
-internal class GoogleApiContract : ActivityResultContract<Unit, Task<GoogleSignInAccount>?>() {
+internal class GoogleApiContract(private val onFailure: (Throwable) -> Unit) : ActivityResultContract<Unit, Task<GoogleSignInAccount>?>() {
     override fun createIntent(context: Context, input: Unit): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID)
@@ -24,7 +25,10 @@ internal class GoogleApiContract : ActivityResultContract<Unit, Task<GoogleSignI
     override fun parseResult(resultCode: Int, intent: Intent?): Task<GoogleSignInAccount>? {
         return when (resultCode) {
             Activity.RESULT_OK -> GoogleSignIn.getSignedInAccountFromIntent(intent)
-            else -> null
+            else -> {
+                onFailure(IllegalArgumentException(resultCode.toString()))
+                null
+            }
         }
     }
 }

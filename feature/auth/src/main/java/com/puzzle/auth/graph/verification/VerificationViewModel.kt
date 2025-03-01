@@ -10,9 +10,8 @@ import com.puzzle.auth.graph.verification.contract.VerificationSideEffect.Naviga
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.domain.model.auth.Timer
 import com.puzzle.domain.model.error.ErrorHelper
+import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.repository.AuthRepository
-import com.puzzle.navigation.AuthGraphDest
-import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -78,12 +77,15 @@ class VerificationViewModel @AssistedInject constructor(
                     }
 
                     startTimer()
-                }.onFailure {
-                    // 정말 휴대폰 번호가 유효하지 않았을 경우
-                    setState { copy(isValidPhoneNumber = false) }
+                }.onFailure { exception ->
+                    // 휴대폰 번호 옳지 않았을 떄
+                    if (exception is HttpResponseException) {
+                        setState { copy(isValidPhoneNumber = false) }
+                        return@onFailure
+                    }
 
-                    // Todo 네트워크 통신 오류
-                    errorHelper.sendError(it)
+                    // 네트워크 통신 오류
+                    errorHelper.sendError(exception)
                 }
         }
     }
@@ -97,15 +99,16 @@ class VerificationViewModel @AssistedInject constructor(
                 // 인증에 성공했을 경우,
                 timerJob?.cancel()
 
-                setState {
-                    copy(authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED)
+                setState { copy(authCodeStatus = VerificationState.AuthCodeStatus.VERIFIED) }
+            }.onFailure { exception ->
+                // 인증에 실패했을 경우,
+                if (exception is HttpResponseException) {
+                    setState { copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID) }
+                    return@onFailure
                 }
 
-                navigationHelper.navigate(NavigationEvent.To(AuthGraphDest.SignUpRoute))
-
-                // 인증에 실패했을 경우,
-                //setState { copy(authCodeStatus = VerificationState.AuthCodeStatus.INVALID) }
-            }.onFailure { errorHelper.sendError(it) }
+                errorHelper.sendError(exception)
+            }
         }
     }
 
