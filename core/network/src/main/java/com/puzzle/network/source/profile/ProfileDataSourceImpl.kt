@@ -18,6 +18,7 @@ import com.puzzle.network.model.profile.UpdateMyValuePickRequest
 import com.puzzle.network.model.profile.UpdateMyValuePickRequests
 import com.puzzle.network.model.profile.UpdateMyValueTalkRequest
 import com.puzzle.network.model.profile.UpdateMyValueTalkRequests
+import com.puzzle.network.model.profile.UpdateProfileRequest
 import com.puzzle.network.model.profile.UploadProfileRequest
 import com.puzzle.network.model.profile.UploadProfileResponse
 import com.puzzle.network.model.profile.ValuePickAnswerRequest
@@ -152,6 +153,48 @@ class ProfileDataSourceImpl @Inject constructor(
         valueTalks: List<ValueTalkAnswer>
     ): Result<UploadProfileResponse> = pieceApi.uploadProfile(
         UploadProfileRequest(
+            birthdate = birthdate,
+            description = description,
+            height = height,
+            weight = weight,
+            imageUrl = imageUrl,
+            job = job,
+            location = location,
+            nickname = nickname,
+            smokingStatus = smokingStatus,
+            snsActivityLevel = snsActivityLevel,
+            valuePicks = valuePicks.map {
+                ValuePickAnswerRequest(
+                    valuePickId = it.valuePickId,
+                    selectedAnswer = it.selectedAnswer!!,
+                )
+            },
+            valueTalks = valueTalks.map {
+                ValueTalkAnswerRequest(
+                    valueTalkId = it.valueTalkId,
+                    answer = it.answer,
+                )
+            },
+            contacts = contacts.associate { it.type.name to it.content }
+        )
+    ).unwrapData()
+
+    override suspend fun updateProfile(
+        birthdate: String,
+        description: String,
+        height: Int,
+        weight: Int,
+        imageUrl: String,
+        job: String,
+        location: String,
+        nickname: String,
+        smokingStatus: String,
+        snsActivityLevel: String,
+        contacts: List<Contact>,
+        valuePicks: List<ValuePickAnswer>,
+        valueTalks: List<ValueTalkAnswer>
+    ): Result<Unit> = pieceApi.updateProfile(
+        UpdateProfileRequest(
             birthdate = birthdate,
             description = description,
             height = height,

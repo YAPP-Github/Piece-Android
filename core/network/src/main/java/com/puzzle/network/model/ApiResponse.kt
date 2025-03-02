@@ -13,7 +13,7 @@ data class ApiResponse<T>(
 data class ApiErrorResponse(
     val code: String?,
     val message: String?,
-    val errors: List<ErrorResponse>,
+    val errors: List<ErrorResponse>? = emptyList(),
 )
 
 @Serializable

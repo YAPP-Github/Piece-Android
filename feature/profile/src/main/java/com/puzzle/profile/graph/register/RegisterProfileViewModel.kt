@@ -7,14 +7,19 @@ import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.common.event.EventHelper
 import com.puzzle.common.event.PieceEvent
+import com.puzzle.common.toBirthDate
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.domain.model.profile.ValuePickAnswer
 import com.puzzle.domain.model.profile.ValueTalkAnswer
+import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.ProfileRepository
-import com.puzzle.domain.usecase.profile.UploadProfileUseCase
+import com.puzzle.domain.repository.UserRepository
+import com.puzzle.domain.usecase.profile.GetMyProfileBasicUseCase
+import com.puzzle.domain.usecase.profile.GetMyValuePicksUseCase
+import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -36,6 +41,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -43,8 +49,11 @@ import kotlinx.coroutines.launch
 
 class RegisterProfileViewModel @AssistedInject constructor(
     @Assisted initialState: RegisterProfileState,
-    private val uploadProfileUseCase: UploadProfileUseCase,
+    private val getMyProfileBasicUseCase: GetMyProfileBasicUseCase,
+    private val getMyValueTalksUseCase: GetMyValueTalksUseCase,
+    private val getMyValuePicksUseCase: GetMyValuePicksUseCase,
     private val profileRepository: ProfileRepository,
+    private val userRepository: UserRepository,
     internal val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
@@ -66,6 +75,83 @@ class RegisterProfileViewModel @AssistedInject constructor(
         val valueTalkJob = launch { retrieveValueTalk() }
         valuePickJob.join()
         valueTalkJob.join()
+
+        val userRole = userRepository.getUserRole().first()
+        setState { copy(userRole = userRole) }
+
+        if (userRole == UserRole.PENDING) {
+            val myValuePickJob = launch { updateValuePicks() }
+            val myValueTalkJob = launch { updateValueTalks() }
+            val myProfileBasicJob = launch { updateProfileBasic() }
+
+            myValuePickJob.join()
+            myValueTalkJob.join()
+            myProfileBasicJob.join()
+        }
+    }
+
+    private suspend fun updateValuePicks() {
+        getMyValuePicksUseCase()
+            .onSuccess { myValuePicks ->
+                setState {
+                    copy(
+                        valuePicks = valuePicks.map { valuePick ->
+                            myValuePicks.find { it.id == valuePick.id }?.let { myValuePick ->
+                                ValuePickRegisterRO(
+                                    id = myValuePick.id,
+                                    category = myValuePick.category,
+                                    question = myValuePick.question,
+                                    answerOptions = myValuePick.answerOptions,
+                                    selectedAnswer = myValuePick.selectedAnswer,
+                                )
+                            } ?: valuePick
+                        }
+                    )
+                }
+            }.onFailure { errorHelper.sendError(it) }
+    }
+
+    private suspend fun updateValueTalks() {
+        getMyValueTalksUseCase()
+            .onSuccess { myValueTalks ->
+                setState {
+                    copy(
+                        valueTalks = valueTalks.map { valueTalk ->
+                            myValueTalks.find { it.id == valueTalk.id }?.let { myValueTalk ->
+                                ValueTalkRegisterRO(
+                                    id = myValueTalk.id,
+                                    category = myValueTalk.category,
+                                    title = myValueTalk.title,
+                                    guides = myValueTalk.guides,
+                                    placeholder = myValueTalk.placeholder,
+                                    answer = myValueTalk.answer,
+                                )
+                            } ?: valueTalk
+                        }
+                    )
+                }
+            }.onFailure { errorHelper.sendError(it) }
+    }
+
+    private suspend fun updateProfileBasic() {
+        getMyProfileBasicUseCase()
+            .onSuccess { myProfileBasic ->
+                setState {
+                    copy(
+                        description = myProfileBasic.description,
+                        nickname = myProfileBasic.nickname,
+                        birthdate = myProfileBasic.birthdate,
+                        height = myProfileBasic.height.toString(),
+                        weight = myProfileBasic.weight.toString(),
+                        location = myProfileBasic.location,
+                        job = myProfileBasic.job,
+                        isSmoke = myProfileBasic.isSmoke(),
+                        isSnsActive = myProfileBasic.isSnsActive(),
+                        imageUrl = myProfileBasic.imageUrl,
+                        contacts = myProfileBasic.contacts,
+                    )
+                }
+            }.onFailure { errorHelper.sendError(it) }
     }
 
     private suspend fun retrieveValuePick() {
@@ -181,45 +267,94 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
 
         viewModelScope.launch {
-            uploadProfileUseCase(
-                birthdate = state.birthdate,
-                description = state.description,
-                height = state.height.toInt(),
-                weight = state.weight.toInt(),
-                imageUrl = state.imageUrl.toString(),
-                job = state.job,
-                location = state.location,
-                nickname = state.nickname,
-                smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
-                snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
-                contacts = state.contacts,
-                valuePicks = state.valuePicks.map { valuePick ->
-                    ValuePickAnswer(
-                        valuePickId = valuePick.id,
-                        selectedAnswer = valuePick.selectedAnswer,
-                    )
-                },
-                valueTalks = state.valueTalks.map {
-                    ValueTalkAnswer(
-                        valueTalkId = it.id,
-                        answer = it.answer,
-                    )
-                },
-            ).onSuccess {
-                loadMyProfile()
-                setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
-            }.onFailure { exception ->
-                if (exception is HttpResponseException) {
-                    exception.msg?.let { message ->
-                        eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = message))
-                    }
-                    setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
-                    return@launch
-                }
-
-                errorHelper.sendError(exception)
-                setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
+            when (state.userRole) {
+                UserRole.PENDING -> updateProfile(state)
+                else -> uploadProfile(state)
             }
+        }
+    }
+
+    private suspend fun updateProfile(state: RegisterProfileState) {
+        profileRepository.updateProfile(
+            birthdate = state.birthdate.toBirthDate(),
+            description = state.description,
+            height = state.height.toInt(),
+            weight = state.weight.toInt(),
+            imageUrl = state.imageUrl.toString(),
+            job = state.job,
+            location = state.location,
+            nickname = state.nickname,
+            smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
+            snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
+            contacts = state.contacts,
+            valuePicks = state.valuePicks.map { valuePick ->
+                ValuePickAnswer(
+                    valuePickId = valuePick.id,
+                    selectedAnswer = valuePick.selectedAnswer,
+                )
+            },
+            valueTalks = state.valueTalks.map {
+                ValueTalkAnswer(
+                    valueTalkId = it.id,
+                    answer = it.answer,
+                )
+            },
+        ).onSuccess {
+            loadMyProfile()
+            setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
+        }.onFailure { exception ->
+            if (exception is HttpResponseException) {
+                exception.msg?.let { message ->
+                    eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = message))
+                }
+                setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
+                return@onFailure
+            }
+
+            errorHelper.sendError(exception)
+            setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
+        }
+    }
+
+    private suspend fun uploadProfile(state: RegisterProfileState) {
+        profileRepository.uploadProfile(
+            birthdate = state.birthdate.toBirthDate(),
+            description = state.description,
+            height = state.height.toInt(),
+            weight = state.weight.toInt(),
+            imageUrl = state.imageUrl.toString(),
+            job = state.job,
+            location = state.location,
+            nickname = state.nickname,
+            smokingStatus = if (state.isSmoke!!) "흡연" else "비흡연",
+            snsActivityLevel = if (state.isSnsActive!!) "활동" else "은둔",
+            contacts = state.contacts,
+            valuePicks = state.valuePicks.map { valuePick ->
+                ValuePickAnswer(
+                    valuePickId = valuePick.id,
+                    selectedAnswer = valuePick.selectedAnswer,
+                )
+            },
+            valueTalks = state.valueTalks.map {
+                ValueTalkAnswer(
+                    valueTalkId = it.id,
+                    answer = it.answer,
+                )
+            },
+        ).onSuccess {
+            loadMyProfile()
+            setState { copy(currentPage = RegisterProfileState.Page.FINISH) }
+        }.onFailure { exception ->
+            if (exception is HttpResponseException) {
+                exception.msg?.let { message ->
+                    eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = message))
+                }
+                setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
+                return@onFailure
+            }
+
+            errorHelper.sendError(exception)
+            setState { copy(currentPage = RegisterProfileState.Page.VALUE_PICK) }
         }
     }
 

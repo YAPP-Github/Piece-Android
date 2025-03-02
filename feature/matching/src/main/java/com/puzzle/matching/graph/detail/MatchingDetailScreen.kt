@@ -118,10 +118,10 @@ private fun MatchingDetailScreen(
     onDeclineClick: () -> Unit,
     onAcceptClick: () -> Unit,
 ) {
-    var showDialog by remember { mutableStateOf(false) }
+    var isShowDialog by remember { mutableStateOf(false) }
     var dialogType by remember { mutableStateOf(DialogType.ACCEPT_MATCHING) }
 
-    if (showDialog) {
+    if (isShowDialog) {
         when (dialogType) {
             DialogType.ACCEPT_MATCHING -> PieceDialog(
                 dialogTop = {
@@ -139,14 +139,14 @@ private fun MatchingDetailScreen(
                     PieceDialogBottom(
                         leftButtonText = "뒤로",
                         rightButtonText = "매칭 수락하기",
-                        onLeftButtonClick = { showDialog = false },
+                        onLeftButtonClick = { isShowDialog = false },
                         onRightButtonClick = {
-                            showDialog = false
+                            isShowDialog = false
                             onAcceptClick()
                         },
                     )
                 },
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { isShowDialog = false },
             )
 
             DialogType.DECLINE_MATCHING -> PieceDialog(
@@ -166,21 +166,21 @@ private fun MatchingDetailScreen(
                     PieceDialogBottom(
                         leftButtonText = "뒤로",
                         rightButtonText = "매칭 거절하기",
-                        onLeftButtonClick = { showDialog = false },
+                        onLeftButtonClick = { isShowDialog = false },
                         onRightButtonClick = {
-                            showDialog = false
+                            isShowDialog = false
                             onDeclineClick()
                         },
                     )
                 },
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { isShowDialog = false },
             )
 
             DialogType.PROFILE_IMAGE_DETAIL -> PieceImageDialog(
                 imageUri = state.profile?.imageUrl,
                 buttonLabel = "매칭 수락하기",
                 onApproveClick = { dialogType = DialogType.ACCEPT_MATCHING },
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { isShowDialog = false },
             )
         }
     }
@@ -199,7 +199,7 @@ private fun MatchingDetailScreen(
                     Modifier
                 }
             )
-            .blur(isBlur = showDialog),
+            .blur(isBlur = isShowDialog),
     ) {
         val topBarHeight = 60.dp
         val bottomBarHeight = 74.dp
@@ -209,7 +209,7 @@ private fun MatchingDetailScreen(
             onMoreClick = onMoreClick,
             onDeclineClick = {
                 dialogType = DialogType.DECLINE_MATCHING
-                showDialog = true
+                isShowDialog = true
             },
             modifier = Modifier
                 .fillMaxSize()
@@ -219,7 +219,7 @@ private fun MatchingDetailScreen(
         PieceSubCloseTopBar(
             title = state.currentPage.title,
             onCloseClick = onCloseClick,
-            closeButtonEnabled = !(showDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL),
+            closeButtonEnabled = !(isShowDialog && dialogType == DialogType.PROFILE_IMAGE_DETAIL),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(topBarHeight)
@@ -234,18 +234,18 @@ private fun MatchingDetailScreen(
                 .padding(horizontal = 20.dp),
         )
 
-        if (!showDialog || dialogType != DialogType.PROFILE_IMAGE_DETAIL) {
+        if (!isShowDialog || dialogType != DialogType.PROFILE_IMAGE_DETAIL) {
             MatchingDetailBottomBar(
                 currentPage = state.currentPage,
                 onNextPageClick = onNextPageClick,
                 onPreviousPageClick = onPreviousPageClick,
                 onShowPicturesClick = {
                     dialogType = DialogType.PROFILE_IMAGE_DETAIL
-                    showDialog = true
+                    isShowDialog = true
                 },
                 onAcceptClick = {
                     dialogType = DialogType.ACCEPT_MATCHING
-                    showDialog = true
+                    isShowDialog = true
                 },
                 modifier = Modifier
                     .fillMaxWidth()

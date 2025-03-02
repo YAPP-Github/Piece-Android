@@ -39,6 +39,7 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
+import com.puzzle.domain.model.user.UserRole
 import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
@@ -203,7 +204,10 @@ private fun RegisterProfileScreen(
                 PieceDialogBottom(
                     leftButtonText = stringResource(R.string.back),
                     rightButtonText = stringResource(R.string.profile_continue),
-                    onLeftButtonClick = { onBackClick() },
+                    onLeftButtonClick = {
+                        showDialog = false
+                        onBackClick()
+                    },
                     onRightButtonClick = { showDialog = false },
                 )
             },
@@ -282,7 +286,10 @@ private fun RegisterProfileScreen(
                     )
 
                     RegisterProfileState.Page.SUMMATION -> SummationPage()
-                    RegisterProfileState.Page.FINISH -> FinishPage(onHomeClick = onHomeClick)
+                    RegisterProfileState.Page.FINISH -> FinishPage(
+                        userRole = state.userRole,
+                        onHomeClick = onHomeClick
+                    )
                 }
             }
         }
@@ -291,7 +298,10 @@ private fun RegisterProfileScreen(
             PieceSolidButton(
                 label = when (state.currentPage) {
                     RegisterProfileState.Page.FINISH -> stringResource(R.string.check_my_profile)
-                    RegisterProfileState.Page.VALUE_PICK -> stringResource(R.string.generate_profile)
+                    RegisterProfileState.Page.VALUE_PICK ->
+                        if (state.userRole == UserRole.PENDING) stringResource(R.string.edit_profile)
+                        else stringResource(R.string.generate_profile)
+
                     else -> stringResource(R.string.next)
                 },
                 onClick = {

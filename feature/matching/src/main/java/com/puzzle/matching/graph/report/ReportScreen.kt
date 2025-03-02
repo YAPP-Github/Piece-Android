@@ -110,6 +110,7 @@ internal fun ReportScreen(
                     rightButtonText = stringResource(R.string.report),
                     onLeftButtonClick = { isReportDialogShow = false },
                     onRightButtonClick = {
+                        isReportDialogShow = false
                         onReportClick(
                             if (state.selectedReason == ReportState.ReportReason.OTHER) textInput
                             else state.selectedReason?.label ?: ""

@@ -5,6 +5,7 @@ import com.puzzle.network.model.unwrapData
 import com.puzzle.network.model.user.GetBlockSyncTimeResponse
 import com.puzzle.network.model.user.GetRejectReasonResponse
 import com.puzzle.network.model.user.GetSettingInfoResponse
+import com.puzzle.network.model.user.GetUserInfoResponse
 import com.puzzle.network.model.user.UpdateSettingRequest
 import javax.inject.Inject
 
@@ -16,6 +17,8 @@ class UserDataSource @Inject constructor(
 
     suspend fun getRejectReason(): Result<GetRejectReasonResponse> =
         pieceApi.getRejectReason().unwrapData()
+
+    suspend fun getUserInfo(): Result<GetUserInfoResponse> = pieceApi.getUserInfo().unwrapData()
 
     suspend fun updatePushNotification(toggle: Boolean): Result<Unit> =
         pieceApi.updatePushNotification(UpdateSettingRequest(toggle)).unwrapData()

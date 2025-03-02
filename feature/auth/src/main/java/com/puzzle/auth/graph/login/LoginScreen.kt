@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -26,7 +26,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
@@ -39,16 +38,17 @@ import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceLoginButton
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.auth.OAuthProvider
+import kotlinx.coroutines.launch
 
 @Composable
 internal fun LoginRoute(
     viewModel: LoginViewModel = mavericksViewModel(),
 ) {
-    val state by viewModel.collectAsState()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val scope = rememberCoroutineScope()
     val authResultLauncher = rememberLauncherForActivityResult(
-        contract = GoogleApiContract()
+        contract = GoogleApiContract({ scope.launch { viewModel.errorHelper.sendError(it) } })
     ) { task ->
         handleGoogleSignIn(
             task = task,
@@ -197,7 +197,10 @@ private fun handleGoogleSignIn(
     onSuccess: (String) -> Unit,
     onFailure: (Throwable) -> Unit,
 ) {
-    if (task == null) return
+    if (task == null) {
+        onFailure(IllegalStateException("GoogleSignInTask is Null"))
+        return
+    }
 
     try {
         val account = task.result
