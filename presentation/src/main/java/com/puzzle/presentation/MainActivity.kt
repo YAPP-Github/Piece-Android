@@ -10,6 +10,7 @@ import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.puzzle.analytics.AnalyticsHelper
+import com.puzzle.analytics.LocalAnalyticsHelper
 import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.component.PieceModalBottomSheet
@@ -43,6 +46,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var networkMonitor: NetworkMonitor
+
+    @Inject
+    lateinit var analyticsHelper: AnalyticsHelper
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -101,29 +107,31 @@ class MainActivity : ComponentActivity() {
                 }
 
                 PieceTheme {
-                    PieceModalBottomSheet(
-                        sheetState = sheetState,
-                        sheetContent = bottomSheetContent,
-                    ) {
-                        App(
-                            snackBarHostState = snackBarHostState,
-                            navController = navController,
-                            navigateToBottomNaviNaviateTo = { bottomNaviDestination ->
-                                if (bottomNaviDestination == ProfileGraphDest.MainProfileRoute &&
-                                    userRole != UserRole.USER
-                                ) {
-                                    eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = "아직 심사 중입니다."))
-                                    return@App
+                    CompositionLocalProvider(LocalAnalyticsHelper provides analyticsHelper) {
+                        PieceModalBottomSheet(
+                            sheetState = sheetState,
+                            sheetContent = bottomSheetContent,
+                        ) {
+                            App(
+                                snackBarHostState = snackBarHostState,
+                                navController = navController,
+                                navigateToBottomNaviNaviateTo = { bottomNaviDestination ->
+                                    if (bottomNaviDestination == ProfileGraphDest.MainProfileRoute &&
+                                        userRole != UserRole.USER
+                                    ) {
+                                        eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = "아직 심사 중입니다."))
+                                        return@App
+                                    }
+
+                                    navigationHelper.navigate(
+                                        NavigationEvent.BottomNaviTo(bottomNaviDestination)
+                                    )
                                 }
+                            )
 
-                                navigationHelper.navigate(
-                                    NavigationEvent.BottomNaviTo(bottomNaviDestination)
-                                )
-                            }
-                        )
-
-                        NetworkScreen(networkState)
-                        ForceUpdateDialog(forceUpdate)
+                            NetworkScreen(networkState)
+                            ForceUpdateDialog(forceUpdate)
+                        }
                     }
                 }
             }

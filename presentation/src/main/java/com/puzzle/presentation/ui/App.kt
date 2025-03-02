@@ -44,6 +44,7 @@ import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.puzzle.analytics.TrackScreenViewEvent
 import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.NoRippleInteractionSource
 import com.puzzle.designsystem.R
@@ -61,6 +62,7 @@ import com.puzzle.navigation.ProfileGraphDest.MainProfileRoute
 import com.puzzle.navigation.Route
 import com.puzzle.navigation.SettingGraph
 import com.puzzle.navigation.SettingGraphDest
+import com.puzzle.navigation.getRouteClassName
 import com.puzzle.presentation.navigation.AppNavHost
 import com.puzzle.presentation.navigation.TopLevelDestination
 import kotlin.reflect.KClass
@@ -136,6 +138,11 @@ fun App(
     }
 
     SystemBarColor(currentDestination)
+
+    TrackScreenViewEvent(
+        key = currentDestination,
+        screenName = getRouteClassName(currentDestination?.route)
+    )
 }
 
 @Composable

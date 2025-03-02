@@ -11,12 +11,19 @@ import com.puzzle.analytics.AnalyticsEvent.Types.SCREEN_VIEW
 abstract class AnalyticsHelper {
     abstract fun logEvent(event: AnalyticsEvent)
     abstract fun setUserId(userId: String?)
+}
 
-    @Composable
-    fun TrackScreenViewEvent(
-        screenName: String,
-        analyticsHelper: AnalyticsHelper = LocalAnalyticsHelper.current,
-    ) = LaunchedEffect(Unit) {
+val LocalAnalyticsHelper = staticCompositionLocalOf<AnalyticsHelper> {
+    NoOpAnalyticsHelper()
+}
+
+@Composable
+fun TrackScreenViewEvent(
+    key: Any?,
+    screenName: String?,
+    analyticsHelper: AnalyticsHelper = LocalAnalyticsHelper.current,
+) = LaunchedEffect(key) {
+    if (screenName != null) {
         analyticsHelper.logEvent(
             AnalyticsEvent(
                 type = SCREEN_VIEW,
@@ -26,30 +33,27 @@ abstract class AnalyticsHelper {
             ),
         )
     }
-
-    @Composable
-    fun TrackClickEvent(
-        screenName: String,
-        buttonName: String,
-        properties: MutableMap<String, Any?>? = null,
-        analyticsHelper: AnalyticsHelper = LocalAnalyticsHelper.current,
-    ) = LaunchedEffect(Unit) {
-        val eventProperties = mutableMapOf<String, Any?>(
-            SCREEN_NAME to screenName,
-            BUTTON_NAME to buttonName,
-        )
-
-        properties?.let { eventProperties.putAll(it) }
-
-        analyticsHelper.logEvent(
-            AnalyticsEvent(
-                type = BUTTON_CLICK,
-                properties = eventProperties
-            )
-        )
-    }
 }
 
-val LocalAnalyticsHelper = staticCompositionLocalOf<AnalyticsHelper> {
-    NoOpAnalyticsHelper()
+@Composable
+fun TrackClickEvent(
+    key: Any?,
+    screenName: String,
+    buttonName: String,
+    properties: MutableMap<String, Any?>? = null,
+    analyticsHelper: AnalyticsHelper = LocalAnalyticsHelper.current,
+) = LaunchedEffect(key) {
+    val eventProperties = mutableMapOf<String, Any?>(
+        SCREEN_NAME to screenName,
+        BUTTON_NAME to buttonName,
+    )
+
+    properties?.let { eventProperties.putAll(it) }
+
+    analyticsHelper.logEvent(
+        AnalyticsEvent(
+            type = BUTTON_CLICK,
+            properties = eventProperties
+        )
+    )
 }

@@ -2,6 +2,7 @@ import java.util.Properties
 
 plugins {
     id("piece.android.library")
+    id("piece.android.compose")
 }
 
 android {
