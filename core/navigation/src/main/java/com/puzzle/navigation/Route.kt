@@ -77,3 +77,5 @@ sealed class ProfileGraphDest : Route {
 
 @Serializable
 data object OnboardingRoute : Route
+
+fun getRouteClassName(route: String?): String? = route?.substringAfterLast(".")

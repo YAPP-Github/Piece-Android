@@ -98,7 +98,7 @@ accompanist = "0.37.0"
 
 ## Amplitude
 # https://amplitude.com/docs/sdks/analytics/android
-amplitudeAnalytics = "1.16.8"
+amplitude = "1.16.8"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -175,6 +175,8 @@ accompanist-permission = { module = "com.google.accompanist:accompanist-permissi
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidxCredentials" }
 google-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "googleAuth" }
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
+
+amplitude-analytics = { module = "com.amplitude:analytics-android", version.ref = "amplitude" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }

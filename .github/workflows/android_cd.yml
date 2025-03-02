@@ -33,6 +33,7 @@ jobs:
       - name: Set up local.properties
         run: |
           echo "KAKAO_APP_KEY=${{ secrets.KAKAO_APP_KEY }}" >> local.properties
+          echo "AMPLITUDE_API_KEY=${{ secrets.AMPLITUDE_API_KEY }}" >> local.properties
           echo "PIECE_DEV_BASE_URL=${{ secrets.PIECE_DEV_BASE_URL }}" >> local.properties
           echo "PIECE_PROD_BASE_URL=${{ secrets.PIECE_PROD_BASE_URL }}" >> local.properties
           echo "PIECE_NOTICE_URL=${{ secrets.PIECE_NOTICE_URL }}" >> local.properties
