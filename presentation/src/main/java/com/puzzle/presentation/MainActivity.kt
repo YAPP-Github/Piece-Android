@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
                             App(
                                 snackBarHostState = snackBarHostState,
                                 navController = navController,
-                                navigateToBottomNaviNaviateTo = { bottomNaviDestination ->
+                                navigateToBottomNaviDestination = { bottomNaviDestination ->
                                     if (bottomNaviDestination == ProfileGraphDest.MainProfileRoute &&
                                         userRole != UserRole.USER
                                     ) {

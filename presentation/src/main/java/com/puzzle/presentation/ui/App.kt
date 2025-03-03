@@ -71,7 +71,7 @@ import kotlin.reflect.KClass
 fun App(
     snackBarHostState: SnackbarHostState,
     navController: NavHostController,
-    navigateToBottomNaviNaviateTo: (Route) -> Unit,
+    navigateToBottomNaviDestination: (Route) -> Unit,
 ) {
     val currentDestination = navController.currentBackStackEntryAsState()
         .value?.destination
@@ -92,7 +92,7 @@ fun App(
             ) {
                 AppBottomBar(
                     currentDestination = currentDestination,
-                    navigateToTopLevelDestination = navigateToBottomNaviNaviateTo,
+                    navigateToBottomNaviDestination = navigateToBottomNaviDestination,
                 )
             }
         },
@@ -103,7 +103,7 @@ fun App(
                 exit = fadeOut() + slideOutVertically(),
             ) {
                 FloatingActionButton(
-                    onClick = { navigateToBottomNaviNaviateTo(MatchingGraph) },
+                    onClick = { navigateToBottomNaviDestination(MatchingGraph) },
                     containerColor = PieceTheme.colors.white,
                     shape = CircleShape,
                     elevation = bottomAppBarFabElevation(),
@@ -148,7 +148,7 @@ fun App(
 @Composable
 private fun AppBottomBar(
     currentDestination: NavDestination?,
-    navigateToTopLevelDestination: (Route) -> Unit,
+    navigateToBottomNaviDestination: (Route) -> Unit,
 ) {
     NavigationBar(
         containerColor = PieceTheme.colors.white,
@@ -189,12 +189,12 @@ private fun AppBottomBar(
                 interactionSource = remember { NoRippleInteractionSource() },
                 onClick = {
                     when (topLevelRoute) {
-                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
-                        TopLevelDestination.PROFILE -> navigateToTopLevelDestination(
+                        TopLevelDestination.MATCHING -> navigateToBottomNaviDestination(MatchingGraph)
+                        TopLevelDestination.PROFILE -> navigateToBottomNaviDestination(
                             MainProfileRoute
                         )
 
-                        TopLevelDestination.SETTING -> navigateToTopLevelDestination(SettingGraph)
+                        TopLevelDestination.SETTING -> navigateToBottomNaviDestination(SettingGraph)
                     }
                 },
             )
