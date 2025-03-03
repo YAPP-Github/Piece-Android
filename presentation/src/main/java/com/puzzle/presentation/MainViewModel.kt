@@ -28,7 +28,6 @@ import com.puzzle.navigation.OnboardingRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
@@ -46,9 +45,6 @@ class MainViewModel @Inject constructor(
     internal val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : ViewModel() {
-    private val _isInitialized = MutableStateFlow(false)
-    val isInitialized: StateFlow<Boolean> = _isInitialized.asStateFlow()
-
     private val _forceUpdate = MutableStateFlow<ForceUpdate?>(null)
     val forceUpdate = _forceUpdate.asStateFlow()
 
@@ -62,7 +58,6 @@ class MainViewModel @Inject constructor(
     init {
         handleError()
         initConfigure()
-        checkRedirection()
     }
 
     private fun handleError() = viewModelScope.launch {
@@ -136,7 +131,7 @@ class MainViewModel @Inject constructor(
             .onFailure { errorHelper.sendError(it) }
     }
 
-    private fun checkRedirection() = viewModelScope.launch {
+    internal fun checkRedirection() = viewModelScope.launch {
         // 토큰이 만료 되었을경우 종료
         authRepository.checkTokenHealth().onFailure { return@launch }
 
@@ -150,5 +145,5 @@ class MainViewModel @Inject constructor(
 
             NONE -> navigationHelper.navigate(TopLevelTo(route = OnboardingRoute))
         }
-    }.also { _isInitialized.value = true }
+    }
 }
