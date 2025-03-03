@@ -106,6 +106,11 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun onBackClick() = withState { state ->
+        if (state.signUpPage == SignUpState.SignUpPage.TermPage) {
+            navigationHelper.navigate(NavigationEvent.Up)
+            return@withState
+        }
+
         SignUpState.SignUpPage.getPreviousPage(state.signUpPage)?.let {
             setState { copy(signUpPage = it) }
         }
