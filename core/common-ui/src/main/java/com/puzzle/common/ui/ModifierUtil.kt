@@ -8,11 +8,8 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -128,14 +125,9 @@ fun Modifier.verticalScrollbar(
 
 @Composable
 fun Modifier.windowInsetsPadding(): Modifier = composed {
-    this.padding(
-        top = WindowInsets.systemBars
-            .asPaddingValues()
-            .calculateTopPadding(),
-        bottom = WindowInsets.navigationBars
-            .asPaddingValues()
-            .calculateBottomPadding(),
-    )
+    this
+        .navigationBarsPadding()
+        .statusBarsPadding()
 }
 
 @Composable

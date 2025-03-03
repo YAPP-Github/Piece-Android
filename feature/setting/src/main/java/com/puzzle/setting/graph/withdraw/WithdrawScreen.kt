@@ -13,24 +13,20 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.addFocusCleaner
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.setting.graph.withdraw.contract.WithdrawIntent
-import com.puzzle.setting.graph.withdraw.contract.WithdrawSideEffect
 import com.puzzle.setting.graph.withdraw.contract.WithdrawState
 import com.puzzle.setting.graph.withdraw.page.ConfirmPage
 import com.puzzle.setting.graph.withdraw.page.ReasonPage
@@ -40,34 +36,14 @@ internal fun WithdrawRoute(
     viewModel: WithdrawViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is WithdrawSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     WithdrawScreen(
         state = state,
-        onReasonsClick = {
-            viewModel.onIntent(WithdrawIntent.OnReasonsClick(it))
-        },
+        onReasonsClick = { viewModel.onIntent(WithdrawIntent.OnReasonsClick(it)) },
         updateReason = { viewModel.onIntent(WithdrawIntent.UpdateReason(it)) },
-        onWithdrawClick = {
-            viewModel.onIntent(WithdrawIntent.OnWithdrawClick)
-        },
-        onNextClick = {
-            viewModel.onIntent(WithdrawIntent.OnNextClick)
-        },
-        onBackClick = {
-            viewModel.onIntent(WithdrawIntent.onBackClick)
-        },
+        onWithdrawClick = { viewModel.onIntent(WithdrawIntent.OnWithdrawClick) },
+        onNextClick = { viewModel.onIntent(WithdrawIntent.OnNextClick) },
+        onBackClick = { viewModel.onIntent(WithdrawIntent.onBackClick) },
     )
 }
 

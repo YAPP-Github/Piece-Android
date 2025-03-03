@@ -56,7 +56,6 @@ import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.model.profile.ContactType
 import com.puzzle.matching.graph.contact.contract.ContactIntent
-import com.puzzle.matching.graph.contact.contract.ContactSideEffect
 import com.puzzle.matching.graph.contact.contract.ContactState
 import com.puzzle.matching.graph.contact.contract.getContactIconId
 import com.puzzle.matching.graph.contact.contract.getContactNameId
@@ -69,18 +68,6 @@ internal fun ContactRoute(
     viewModel: ContactViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is ContactSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     ContactScreen(
         state = state,

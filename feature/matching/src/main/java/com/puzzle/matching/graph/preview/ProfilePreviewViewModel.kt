@@ -9,7 +9,6 @@ import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.usecase.profile.GetMyValuePicksUseCase
 import com.puzzle.domain.usecase.profile.GetMyValueTalksUseCase
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewIntent
-import com.puzzle.matching.graph.preview.contract.ProfilePreviewSideEffect
 import com.puzzle.matching.graph.preview.contract.ProfilePreviewState
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -33,8 +32,6 @@ class ProfilePreviewViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ProfilePreviewState>(initialState) {
     private val intents = Channel<ProfilePreviewIntent>(BUFFERED)
-    private val _sideEffects = Channel<ProfilePreviewSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         initProfilePreview()

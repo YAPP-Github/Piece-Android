@@ -11,7 +11,6 @@ import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.usecase.matching.GetOpponentProfileUseCase
 import com.puzzle.matching.graph.detail.contract.MatchingDetailIntent
-import com.puzzle.matching.graph.detail.contract.MatchingDetailSideEffect
 import com.puzzle.matching.graph.detail.contract.MatchingDetailState
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -30,13 +29,11 @@ class MatchingDetailViewModel @AssistedInject constructor(
     @Assisted initialState: MatchingDetailState,
     private val getOpponentProfileUseCase: GetOpponentProfileUseCase,
     private val matchingRepository: MatchingRepository,
-    internal val navigationHelper: NavigationHelper,
+    private val navigationHelper: NavigationHelper,
     private val eventHelper: EventHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<MatchingDetailState>(initialState) {
     private val intents = Channel<MatchingDetailIntent>(BUFFERED)
-    private val _sideEffects = Channel<MatchingDetailSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         intents.receiveAsFlow()
