@@ -1,5 +1,6 @@
 package com.puzzle.presentation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -32,7 +33,9 @@ import com.puzzle.domain.model.user.UserRole
 import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
+import com.puzzle.navigation.NavigationEvent.BottomNaviTo
 import com.puzzle.navigation.ProfileGraphDest
+import com.puzzle.navigation.Route
 import com.puzzle.presentation.network.NetworkMonitor
 import com.puzzle.presentation.network.NetworkScreen
 import com.puzzle.presentation.ui.App
@@ -52,10 +55,22 @@ class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    private var isInitialized: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
-        splashScreen.setKeepOnScreenCondition { !viewModel.isInitialized.value }
+        splashScreen.setKeepOnScreenCondition { isInitialized }
+
+        if (intent.extras != null) {
+            // 백그라운드 알림으로 앱에 진입했을 경우,
+            viewModel.navigationHelper.navigate(NavigationEvent.To(MatchingGraphDest.MatchingRoute))
+        } else {
+            // 앱을 직졉 켰을경우,
+            viewModel.checkRedirection()
+        }
+        isInitialized = false
+
         enableEdgeToEdge()
         blockScreenShot()
 
@@ -119,16 +134,11 @@ class MainActivity : ComponentActivity() {
                                 snackBarHostState = snackBarHostState,
                                 navController = navController,
                                 navigateToBottomNaviDestination = { bottomNaviDestination ->
-                                    if (bottomNaviDestination == ProfileGraphDest.MainProfileRoute &&
-                                        userRole != UserRole.USER
-                                    ) {
+                                    if (isPendingUser(bottomNaviDestination, userRole)) {
                                         eventHelper.sendEvent(PieceEvent.ShowSnackBar(msg = "아직 심사 중입니다."))
-                                        return@App
+                                    } else {
+                                        navigationHelper.navigate(BottomNaviTo(bottomNaviDestination))
                                     }
-
-                                    navigationHelper.navigate(
-                                        NavigationEvent.BottomNaviTo(bottomNaviDestination)
-                                    )
                                 }
                             )
 
@@ -139,6 +149,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        // 인메모리 상태에서 알림을 클릭했을 경우,
+        viewModel.navigationHelper.navigate(NavigationEvent.To(MatchingGraphDest.MatchingRoute))
     }
 
     private fun handleNavigationEvent(
@@ -178,7 +195,7 @@ class MainActivity : ComponentActivity() {
                 )
             }
 
-            is NavigationEvent.BottomNaviTo -> {
+            is BottomNaviTo -> {
                 val topLevelNavOptions = navOptions {
                     popUpTo(MatchingGraphDest.MatchingRoute) {
                         saveState = true
@@ -200,4 +217,8 @@ class MainActivity : ComponentActivity() {
             window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         }
     }
+
+    private fun isPendingUser(bottomNaviDestination: Route, userRole: UserRole): Boolean =
+        bottomNaviDestination == ProfileGraphDest.MainProfileRoute &&
+                userRole != UserRole.USER
 }

@@ -19,13 +19,14 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.activity.compose)
-    implementation(libs.androidx.navigation.ui)
-
     implementation(projects.feature.onboarding)
     implementation(projects.feature.auth)
     implementation(projects.feature.setting)
     implementation(projects.feature.matching)
     implementation(projects.feature.profile)
+
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.ui)
+    implementation(libs.firebase.messaging)
 }

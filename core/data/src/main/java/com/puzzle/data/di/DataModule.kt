@@ -6,6 +6,7 @@ import com.puzzle.data.repository.AuthRepositoryImpl
 import com.puzzle.data.repository.ConfigureRepositoryImpl
 import com.puzzle.data.repository.ErrorRepositoryImpl
 import com.puzzle.data.repository.MatchingRepositoryImpl
+import com.puzzle.data.repository.NotificationRepositoryImpl
 import com.puzzle.data.repository.ProfileRepositoryImpl
 import com.puzzle.data.repository.TermsRepositoryImpl
 import com.puzzle.data.repository.TokenManagerImpl
@@ -14,6 +15,7 @@ import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.ErrorRepository
 import com.puzzle.domain.repository.MatchingRepository
+import com.puzzle.domain.repository.NotificationRepository
 import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.domain.repository.TermsRepository
 import com.puzzle.domain.repository.UserRepository
@@ -69,6 +71,12 @@ abstract class DataModule {
     abstract fun bindsConfigureRepository(
         configureRepositoryImpl: ConfigureRepositoryImpl,
     ): ConfigureRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindsNotificationRepository(
+        notificationRepositoryImpl: NotificationRepositoryImpl
+    ): NotificationRepository
 
     @Binds
     @Singleton

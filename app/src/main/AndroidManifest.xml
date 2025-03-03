@@ -33,9 +33,9 @@
             android:name="com.puzzle.presentation.MainActivity"
             android:configChanges="orientation|screenSize"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize"
             android:label="${appName}"
-            android:theme="@style/Theme.Piece">
+            android:theme="@style/Theme.Piece"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,5 +57,20 @@
                     android:scheme="kakao${KAKAO_APP_KEY}" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name="com.puzzle.presentation.notification.NotificationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_alarm" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/primary" />
     </application>
 </manifest>
