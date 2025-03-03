@@ -3,13 +3,14 @@
 package com.puzzle.presentation.ui
 
 import android.app.Activity
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -71,7 +72,7 @@ import kotlin.reflect.KClass
 fun App(
     snackBarHostState: SnackbarHostState,
     navController: NavHostController,
-    navigateToBottomNaviNaviateTo: (Route) -> Unit,
+    navigateToBottomNaviDestination: (Route) -> Unit,
 ) {
     val currentDestination = navController.currentBackStackEntryAsState()
         .value?.destination
@@ -85,35 +86,48 @@ fun App(
         },
         containerColor = PieceTheme.colors.white,
         bottomBar = {
-            AnimatedVisibility(
-                visible = currentDestination?.shouldHideBottomNavigation() == false,
-                enter = fadeIn() + slideInVertically(),
-                exit = fadeOut() + slideOutVertically(),
-            ) {
-                AppBottomBar(
-                    currentDestination = currentDestination,
-                    navigateToTopLevelDestination = navigateToBottomNaviNaviateTo,
-                )
+            AnimatedContent(
+                targetState = currentDestination?.shouldHideBottomNavigation() == false,
+                transitionSpec = {
+                    fadeIn(tween(ANIMATION_DURATION)) +
+                            slideInVertically(tween(ANIMATION_DURATION)) togetherWith
+                            fadeOut(tween(ANIMATION_DURATION)) +
+                            slideOutVertically(tween(ANIMATION_DURATION))
+                },
+                modifier = Modifier.navigationBarsPadding(),
+            ) { isVisible ->
+                if (isVisible) {
+                    AppBottomBar(
+                        currentDestination = currentDestination,
+                        navigateToBottomNaviDestination = navigateToBottomNaviDestination,
+                    )
+                }
             }
         },
         floatingActionButton = {
-            AnimatedVisibility(
-                visible = currentDestination?.shouldHideBottomNavigation() == false,
-                enter = fadeIn() + slideInVertically(),
-                exit = fadeOut() + slideOutVertically(),
-            ) {
-                FloatingActionButton(
-                    onClick = { navigateToBottomNaviNaviateTo(MatchingGraph) },
-                    containerColor = PieceTheme.colors.white,
-                    shape = CircleShape,
-                    elevation = bottomAppBarFabElevation(),
-                    modifier = Modifier.offset(y = 84.dp),
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_matching),
-                        contentDescription = null,
-                        modifier = Modifier.size(80.dp),
-                    )
+            AnimatedContent(
+                targetState = currentDestination?.shouldHideBottomNavigation() == false,
+                transitionSpec = {
+                    fadeIn(tween(ANIMATION_DURATION)) +
+                            slideInVertically(tween(ANIMATION_DURATION)) togetherWith
+                            fadeOut(tween(ANIMATION_DURATION)) +
+                            slideOutVertically(tween(ANIMATION_DURATION))
+                },
+            ) { isVisible ->
+                if (isVisible) {
+                    FloatingActionButton(
+                        onClick = { navigateToBottomNaviDestination(MatchingGraph) },
+                        containerColor = PieceTheme.colors.white,
+                        shape = CircleShape,
+                        elevation = bottomAppBarFabElevation(),
+                        modifier = Modifier.offset(y = 84.dp),
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.ic_matching),
+                            contentDescription = null,
+                            modifier = Modifier.size(80.dp),
+                        )
+                    }
                 }
             }
         },
@@ -148,13 +162,11 @@ fun App(
 @Composable
 private fun AppBottomBar(
     currentDestination: NavDestination?,
-    navigateToTopLevelDestination: (Route) -> Unit,
+    navigateToBottomNaviDestination: (Route) -> Unit,
 ) {
     NavigationBar(
         containerColor = PieceTheme.colors.white,
-        modifier = Modifier
-            .navigationBarsPadding()
-            .height(68.dp),
+        modifier = Modifier.height(68.dp),
     ) {
         TopLevelDestination.topLevelDestinations.forEach { topLevelRoute ->
             NavigationBarItem(
@@ -189,12 +201,15 @@ private fun AppBottomBar(
                 interactionSource = remember { NoRippleInteractionSource() },
                 onClick = {
                     when (topLevelRoute) {
-                        TopLevelDestination.MATCHING -> navigateToTopLevelDestination(MatchingGraph)
-                        TopLevelDestination.PROFILE -> navigateToTopLevelDestination(
+                        TopLevelDestination.MATCHING -> navigateToBottomNaviDestination(
+                            MatchingGraph
+                        )
+
+                        TopLevelDestination.PROFILE -> navigateToBottomNaviDestination(
                             MainProfileRoute
                         )
 
-                        TopLevelDestination.SETTING -> navigateToTopLevelDestination(SettingGraph)
+                        TopLevelDestination.SETTING -> navigateToBottomNaviDestination(SettingGraph)
                     }
                 },
             )

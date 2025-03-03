@@ -16,7 +16,6 @@ import com.puzzle.domain.repository.ProfileRepository
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.profile.graph.basic.contract.BasicProfileIntent
-import com.puzzle.profile.graph.basic.contract.BasicProfileSideEffect
 import com.puzzle.profile.graph.basic.contract.BasicProfileState
 import com.puzzle.profile.graph.basic.contract.InputState
 import com.puzzle.profile.graph.basic.contract.InputState.Companion.getBirthDateInputState
@@ -43,9 +42,6 @@ class BasicProfileViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<BasicProfileState>(initialState) {
     private val intents = Channel<BasicProfileIntent>(BUFFERED)
-    private val _sideEffects = Channel<BasicProfileSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
-
     private val initialState: BasicProfileState = BasicProfileState()
 
     init {
@@ -105,9 +101,7 @@ class BasicProfileViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToBackScreen() {
-        _sideEffects.send(
-            BasicProfileSideEffect.Navigate(NavigationEvent.Up)
-        )
+        navigationHelper.navigate(NavigationEvent.Up)
     }
 
     private fun saveBasicProfile() {

@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,44 +32,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.navigation.AuthGraphDest
-import com.puzzle.navigation.NavigationEvent
 import com.puzzle.onboarding.contract.OnboardingIntent
-import com.puzzle.onboarding.contract.OnboardingSideEffect
 import kotlinx.coroutines.launch
 
 @Composable
 internal fun OnboardingRoute(viewModel: OnboardingViewModel = hiltViewModel()) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is OnboardingSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
-
-    OnboardingScreen(
-        onStartButtonClick = {
-            viewModel.onIntent(
-                OnboardingIntent.Navigate(
-                    NavigationEvent.To(
-                        route = AuthGraphDest.LoginRoute,
-                        popUpTo = true,
-                    )
-                )
-            )
-        }
-    )
+    OnboardingScreen(onStartButtonClick = { viewModel.onIntent(OnboardingIntent.OnStartClick) })
 }
 
 @Composable

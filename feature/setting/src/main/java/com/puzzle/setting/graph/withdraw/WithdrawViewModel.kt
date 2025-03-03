@@ -10,7 +10,6 @@ import com.puzzle.navigation.AuthGraph
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.setting.graph.withdraw.contract.WithdrawIntent
-import com.puzzle.setting.graph.withdraw.contract.WithdrawSideEffect
 import com.puzzle.setting.graph.withdraw.contract.WithdrawState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -29,9 +28,6 @@ class WithdrawViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<WithdrawState>(initialState) {
     private val _intents = Channel<WithdrawIntent>(BUFFERED)
-
-    private val _sideEffects = Channel<WithdrawSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         _intents.receiveAsFlow()
@@ -58,7 +54,7 @@ class WithdrawViewModel @AssistedInject constructor(
     }
 
     private suspend fun moveToPreviousScreen() {
-        _sideEffects.send(WithdrawSideEffect.Navigate(NavigationEvent.Up))
+        navigationHelper.navigate(NavigationEvent.Up)
     }
 
     private fun moveToWithdrawPage() {
@@ -75,11 +71,8 @@ class WithdrawViewModel @AssistedInject constructor(
             }
 
             authRepository.withdraw(reason)
-                .onSuccess {
-                    _sideEffects.send(
-                        WithdrawSideEffect.Navigate(NavigationEvent.TopLevelTo(AuthGraph))
-                    )
-                }.onFailure { errorHelper.sendError(it) }
+                .onSuccess { navigationHelper.navigate(NavigationEvent.TopLevelTo(AuthGraph)) }
+                .onFailure { errorHelper.sendError(it) }
         }
     }
 

@@ -5,14 +5,15 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.signup.contract.SignUpIntent
-import com.puzzle.auth.graph.signup.contract.SignUpSideEffect
-import com.puzzle.auth.graph.signup.contract.SignUpSideEffect.Navigate
 import com.puzzle.auth.graph.signup.contract.SignUpState
 import com.puzzle.common.event.EventHelper
+import com.puzzle.common.event.PieceEvent
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.TermsRepository
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
+import com.puzzle.navigation.ProfileGraphDest
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -28,14 +29,11 @@ class SignUpViewModel @AssistedInject constructor(
     @Assisted initialState: SignUpState,
     private val termsRepository: TermsRepository,
     private val matchingRepository: MatchingRepository,
-    internal val navigationHelper: NavigationHelper,
+    private val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
-    internal val eventHelper: EventHelper,
+    private val eventHelper: EventHelper,
 ) : MavericksViewModel<SignUpState>(initialState) {
     private val _intents = Channel<SignUpIntent>(BUFFERED)
-
-    private val _sideEffects = Channel<SignUpSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         fetchTerms()
@@ -57,12 +55,14 @@ class SignUpViewModel @AssistedInject constructor(
             is SignUpIntent.OnTermDetailClick -> onTermDetailClick()
             is SignUpIntent.OnBackClick -> onBackClick()
             is SignUpIntent.OnNextClick -> onNextClick()
-            is SignUpIntent.OnDisEnabledButtonClick -> _sideEffects.send(
-                SignUpSideEffect.ShowSnackBar("필수 권한을 허용해주세요")
+            is SignUpIntent.OnDisEnabledButtonClick -> eventHelper.sendEvent(
+                PieceEvent.ShowSnackBar("필수 권한을 허용해주세요")
             )
 
             is SignUpIntent.OnAvoidAcquaintancesClick -> blockContacts(intent.phoneNumbers)
-            is SignUpIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
+            is SignUpIntent.OnGenerateProfileClick -> navigationHelper.navigate(
+                NavigationEvent.To(ProfileGraphDest.RegisterProfileRoute)
+            )
         }
     }
 
@@ -106,6 +106,11 @@ class SignUpViewModel @AssistedInject constructor(
     }
 
     private fun onBackClick() = withState { state ->
+        if (state.signUpPage == SignUpState.SignUpPage.TermPage) {
+            navigationHelper.navigate(NavigationEvent.Up)
+            return@withState
+        }
+
         SignUpState.SignUpPage.getPreviousPage(state.signUpPage)?.let {
             setState { copy(signUpPage = it) }
         }

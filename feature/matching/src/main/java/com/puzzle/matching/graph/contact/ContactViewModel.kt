@@ -9,7 +9,6 @@ import com.puzzle.domain.model.profile.Contact
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.usecase.matching.GetOpponentProfileUseCase
 import com.puzzle.matching.graph.contact.contract.ContactIntent
-import com.puzzle.matching.graph.contact.contract.ContactSideEffect
 import com.puzzle.matching.graph.contact.contract.ContactState
 import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
@@ -31,8 +30,6 @@ class ContactViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ContactState>(initialState) {
     private val intents = Channel<ContactIntent>(BUFFERED)
-    private val _sideEffects = Channel<ContactSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         intents.receiveAsFlow()
@@ -78,7 +75,7 @@ class ContactViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: ContactIntent) {
         when (intent) {
-            ContactIntent.OnCloseClick -> moveToBackScreen()
+            ContactIntent.OnCloseClick -> navigationHelper.navigate(NavigationEvent.Up)
             is ContactIntent.OnContactClick -> updateSelectedContact(intent.selectedContact)
         }
     }
@@ -87,10 +84,6 @@ class ContactViewModel @AssistedInject constructor(
         setState {
             copy(selectedContact = selectedContact)
         }
-    }
-
-    private suspend fun moveToBackScreen() {
-        _sideEffects.send(ContactSideEffect.Navigate(NavigationEvent.Up))
     }
 
     @AssistedFactory

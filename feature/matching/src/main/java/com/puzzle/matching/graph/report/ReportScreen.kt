@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,11 +23,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.addFocusCleaner
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -39,7 +36,6 @@ import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.component.PieceTextInputLong
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.report.contract.ReportIntent
-import com.puzzle.matching.graph.report.contract.ReportSideEffect
 import com.puzzle.matching.graph.report.contract.ReportState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -51,18 +47,7 @@ internal fun ReportRoute(
     viewModel: ReportViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
 
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is ReportSideEffect.Navigate ->
-                        viewModel.navigationHelper.navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
     ReportScreen(
         state = state,
         userName = userName,

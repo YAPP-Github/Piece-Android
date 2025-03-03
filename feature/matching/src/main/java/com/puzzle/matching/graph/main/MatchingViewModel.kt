@@ -19,7 +19,6 @@ import com.puzzle.domain.repository.ConfigureRepository
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.domain.repository.UserRepository
 import com.puzzle.matching.graph.main.contract.MatchingIntent
-import com.puzzle.matching.graph.main.contract.MatchingSideEffect
 import com.puzzle.matching.graph.main.contract.MatchingState
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent.To
@@ -47,8 +46,6 @@ class MatchingViewModel @AssistedInject constructor(
     internal val navigationHelper: NavigationHelper,
 ) : MavericksViewModel<MatchingState>(initialState) {
     private val intents = Channel<MatchingIntent>(BUFFERED)
-    private val _sideEffects = Channel<MatchingSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     private var timerJob: Job? = null
 
@@ -175,10 +172,8 @@ class MatchingViewModel @AssistedInject constructor(
                     setState { copy(matchInfo = matchInfo?.copy(matchStatus = MatchStatus.WAITING)) }
                 }.onFailure { errorHelper.sendError(it) }
 
-            _sideEffects.send(
-                MatchingSideEffect.Navigate(
-                    To(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))
-                )
+            navigationHelper.navigate(
+                To(MatchingGraphDest.MatchingDetailRoute(it.matchInfo!!.matchId))
             )
         }
     }

@@ -7,29 +7,31 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.common.ui.ANIMATION_DURATION
 import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.blur
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceDialog
 import com.puzzle.designsystem.component.PieceDialogBottom
@@ -44,7 +46,6 @@ import com.puzzle.profile.graph.register.bottomsheet.ContactBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.JobBottomSheet
 import com.puzzle.profile.graph.register.bottomsheet.LocationBottomSheet
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
-import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
 import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
@@ -59,18 +60,6 @@ internal fun RegisterProfileRoute(
     viewModel: RegisterProfileViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is RegisterProfileSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     RegisterProfileScreen(
         state = state,
@@ -157,6 +146,7 @@ internal fun RegisterProfileRoute(
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun RegisterProfileScreen(
     state: RegisterProfileState,
@@ -182,6 +172,9 @@ private fun RegisterProfileScreen(
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
+    val keyboardHeight = WindowInsets.ime.getBottom(LocalDensity.current)
+    val isImeVisible = WindowInsets.isImeVisible
+
     var valueTalks: List<ValueTalkRegisterRO> by remember(state.valueTalks) { mutableStateOf(state.valueTalks) }
     var valuePicks: List<ValuePickRegisterRO> by remember(state.valuePicks) { mutableStateOf(state.valuePicks) }
     var showDialog by remember { mutableStateOf(false) }
@@ -217,6 +210,7 @@ private fun RegisterProfileScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .graphicsLayer { if (isImeVisible) translationY = -keyboardHeight.toFloat() }
             .addFocusCleaner(focusManager)
             .blur(isBlur = showDialog),
     ) {
@@ -242,59 +236,57 @@ private fun RegisterProfileScreen(
             )
         }
 
-        Box(modifier = Modifier.weight(1f)) {
-            AnimatedContent(
-                targetState = state.currentPage,
-                transitionSpec = {
-                    fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
-                },
-                modifier = Modifier.fillMaxSize(),
-                label = "",
-            ) {
-                when (it) {
-                    RegisterProfileState.Page.BASIC_PROFILE -> BasicProfilePage(
-                        state = state,
-                        onProfileImageChanged = onProfileImageChanged,
-                        onNickNameChanged = onNickNameChanged,
-                        onDescribeMySelfChanged = onDescribeMySelfChanged,
-                        onBirthdateChanged = onBirthdateChanged,
-                        onLocationDropDownClicked = onLocationDropDownClicked,
-                        onHeightChanged = onHeightChanged,
-                        onWeightChanged = onWeightChanged,
-                        onJobDropDownClicked = onJobDropDownClicked,
-                        onSmokingStatusChanged = onSmokingStatusChanged,
-                        onSnsActivityChanged = onSnsActivityChanged,
-                        onDuplicationCheckClick = onDuplicationCheckClick,
-                        onContactChange = onContactChange,
-                        onSnsPlatformChange = onSnsPlatformChange,
-                        onAddContactClick = onAddContactClick,
-                        onDeleteClick = onDeleteContactClick,
-                    )
+        AnimatedContent(
+            targetState = state.currentPage,
+            transitionSpec = {
+                fadeIn(tween(ANIMATION_DURATION)) togetherWith fadeOut(tween(ANIMATION_DURATION))
+            },
+            modifier = Modifier.weight(1f),
+            label = "",
+        ) {
+            when (it) {
+                RegisterProfileState.Page.BASIC_PROFILE -> BasicProfilePage(
+                    state = state,
+                    onProfileImageChanged = onProfileImageChanged,
+                    onNickNameChanged = onNickNameChanged,
+                    onDescribeMySelfChanged = onDescribeMySelfChanged,
+                    onBirthdateChanged = onBirthdateChanged,
+                    onLocationDropDownClicked = onLocationDropDownClicked,
+                    onHeightChanged = onHeightChanged,
+                    onWeightChanged = onWeightChanged,
+                    onJobDropDownClicked = onJobDropDownClicked,
+                    onSmokingStatusChanged = onSmokingStatusChanged,
+                    onSnsActivityChanged = onSnsActivityChanged,
+                    onDuplicationCheckClick = onDuplicationCheckClick,
+                    onContactChange = onContactChange,
+                    onSnsPlatformChange = onSnsPlatformChange,
+                    onAddContactClick = onAddContactClick,
+                    onDeleteClick = onDeleteContactClick,
+                )
 
-                    RegisterProfileState.Page.VALUE_TALK -> ValueTalkPage(
-                        valueTalks = valueTalks,
-                        onValueTalkContentChange = { updatedValueTalks ->
-                            valueTalks = updatedValueTalks
-                        },
-                    )
+                RegisterProfileState.Page.VALUE_TALK -> ValueTalkPage(
+                    valueTalks = valueTalks,
+                    onValueTalkContentChange = { updatedValueTalks ->
+                        valueTalks = updatedValueTalks
+                    },
+                )
 
-                    RegisterProfileState.Page.VALUE_PICK -> ValuePickPage(
-                        valuePicks = valuePicks,
-                        onValuePickContentChange = { updatedValuePicks ->
-                            valuePicks = updatedValuePicks
-                        },
-                    )
+                RegisterProfileState.Page.VALUE_PICK -> ValuePickPage(
+                    valuePicks = valuePicks,
+                    onValuePickContentChange = { updatedValuePicks ->
+                        valuePicks = updatedValuePicks
+                    },
+                )
 
-                    RegisterProfileState.Page.SUMMATION -> SummationPage()
-                    RegisterProfileState.Page.FINISH -> FinishPage(
-                        userRole = state.userRole,
-                        onHomeClick = onHomeClick
-                    )
-                }
+                RegisterProfileState.Page.SUMMATION -> SummationPage()
+                RegisterProfileState.Page.FINISH -> FinishPage(
+                    userRole = state.userRole,
+                    onHomeClick = onHomeClick
+                )
             }
         }
 
-        if (state.currentPage != RegisterProfileState.Page.SUMMATION) {
+        if (!isImeVisible && state.currentPage != RegisterProfileState.Page.SUMMATION) {
             PieceSolidButton(
                 label = when (state.currentPage) {
                     RegisterProfileState.Page.FINISH -> stringResource(R.string.check_my_profile)

@@ -11,31 +11,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.signup.contract.SignUpIntent
-import com.puzzle.auth.graph.signup.contract.SignUpSideEffect
 import com.puzzle.auth.graph.signup.contract.SignUpState
 import com.puzzle.auth.graph.signup.page.AccessRightsPage
 import com.puzzle.auth.graph.signup.page.AvoidAcquaintancesPage
 import com.puzzle.auth.graph.signup.page.SignUpCompletedPage
 import com.puzzle.auth.graph.signup.page.TermDetailPage
 import com.puzzle.auth.graph.signup.page.TermPage
-import com.puzzle.common.event.PieceEvent
 import com.puzzle.common.ui.ANIMATION_DURATION
-import com.puzzle.common.ui.repeatOnStarted
-import com.puzzle.navigation.NavigationEvent
-import com.puzzle.navigation.NavigationEvent.To
-import com.puzzle.navigation.NavigationEvent.Up
-import com.puzzle.navigation.ProfileGraphDest.RegisterProfileRoute
 
 @Composable
 internal fun SignUpRoute(
@@ -43,24 +34,6 @@ internal fun SignUpRoute(
 ) {
     val state by viewModel.collectAsState()
     val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is SignUpSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-
-                    is SignUpSideEffect.ShowSnackBar -> viewModel.eventHelper
-                        .sendEvent(PieceEvent.ShowSnackBar(sideEffect.msg))
-
-                    SignUpSideEffect.HideSnackBar -> viewModel.eventHelper
-                        .sendEvent(PieceEvent.HideSnackBar)
-                }
-            }
-        }
-    }
 
     SignUpScreen(
         state = state,
@@ -75,7 +48,7 @@ internal fun SignUpRoute(
             val phoneNumbers = readContactPhoneNumbers(context)
             viewModel.onIntent(SignUpIntent.OnAvoidAcquaintancesClick(phoneNumbers))
         },
-        navigate = { event -> viewModel.onIntent(SignUpIntent.Navigate(event)) }
+        onGenerateProfileClick = { viewModel.onIntent(SignUpIntent.OnGenerateProfileClick) }
     )
 }
 
@@ -90,7 +63,7 @@ private fun SignUpScreen(
     onNextClick: () -> Unit,
     onDisEnabledButtonClick: () -> Unit,
     onAvoidAcquaintancesClick: () -> Unit,
-    navigate: (NavigationEvent) -> Unit,
+    onGenerateProfileClick: () -> Unit,
 ) {
     val (selectedTermIdx, setSelectedTermIdx) = rememberSaveable { mutableStateOf<Int?>(null) }
 
@@ -115,7 +88,7 @@ private fun SignUpScreen(
                         setSelectedTermIdx(it)
                         onTermDetailClick()
                     },
-                    onBackClick = { navigate(Up) },
+                    onBackClick = onBackClick,
                     onNextClick = onNextClick,
                 )
 
@@ -139,7 +112,7 @@ private fun SignUpScreen(
                 )
 
                 SignUpState.SignUpPage.SignUpCompleted -> SignUpCompletedPage(
-                    onGenerateProfileClick = { navigate(To(RegisterProfileRoute)) },
+                    onGenerateProfileClick = onGenerateProfileClick,
                 )
             }
         }

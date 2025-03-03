@@ -11,7 +11,6 @@ import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.ProfileGraphDest
 import com.puzzle.profile.graph.main.contract.MainProfileIntent
-import com.puzzle.profile.graph.main.contract.MainProfileSideEffect
 import com.puzzle.profile.graph.main.contract.MainProfileState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,10 +29,7 @@ class MainProfileViewModel @AssistedInject constructor(
     internal val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<MainProfileState>(initialState) {
-
     private val intents = Channel<MainProfileIntent>(BUFFERED)
-    private val _sideEffects = Channel<MainProfileSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         initMainProfile()
@@ -73,29 +69,23 @@ class MainProfileViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: MainProfileIntent) {
         when (intent) {
-            is MainProfileIntent.Navigate -> _sideEffects.send(MainProfileSideEffect.Navigate(intent.navigationEvent))
+            is MainProfileIntent.Navigate -> navigationHelper.navigate(intent.navigationEvent)
             MainProfileIntent.OnValueTalkClick -> moveToValueTalkScreen()
             MainProfileIntent.OnBasicProfileClick -> moveToBasicProfileScreen()
             MainProfileIntent.OnValuePickClick -> moveToValuePickScreen()
         }
     }
 
-    private suspend fun moveToValuePickScreen() {
-        _sideEffects.send(
-            MainProfileSideEffect.Navigate(NavigationEvent.To(ProfileGraphDest.ValuePickProfileRoute))
-        )
+    private fun moveToValuePickScreen() {
+        navigationHelper.navigate(NavigationEvent.To(ProfileGraphDest.ValuePickProfileRoute))
     }
 
-    private suspend fun moveToBasicProfileScreen() {
-        _sideEffects.send(
-            MainProfileSideEffect.Navigate(NavigationEvent.To(ProfileGraphDest.BasicProfileRoute))
-        )
+    private fun moveToBasicProfileScreen() {
+        navigationHelper.navigate(NavigationEvent.To(ProfileGraphDest.BasicProfileRoute))
     }
 
-    private suspend fun moveToValueTalkScreen() {
-        _sideEffects.send(
-            MainProfileSideEffect.Navigate(NavigationEvent.To(ProfileGraphDest.ValueTalkProfileRoute))
-        )
+    private fun moveToValueTalkScreen() {
+        navigationHelper.navigate(NavigationEvent.To(ProfileGraphDest.ValueTalkProfileRoute))
     }
 
     @AssistedFactory

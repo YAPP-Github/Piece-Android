@@ -41,51 +41,25 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.airbnb.mvrx.compose.collectAsState
 import com.airbnb.mvrx.compose.mavericksViewModel
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
-import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus
 import com.puzzle.auth.graph.verification.contract.VerificationState.AuthCodeStatus.VERIFIED
 import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.clickable
-import com.puzzle.common.ui.repeatOnStarted
 import com.puzzle.designsystem.R
 import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubCloseTopBar
 import com.puzzle.designsystem.component.PieceTextInputDefault
 import com.puzzle.designsystem.foundation.PieceTheme
-import com.puzzle.navigation.AuthGraphDest
-import com.puzzle.navigation.NavigationEvent
 
 @Composable
 internal fun VerificationRoute(
     viewModel: VerificationViewModel = mavericksViewModel()
 ) {
     val state by viewModel.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
-
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is VerificationSideEffect.RequestAuthCode -> viewModel.requestAuthCode(
-                        sideEffect.phoneNumber
-                    )
-
-                    is VerificationSideEffect.VerifyAuthCode -> viewModel.verifyAuthCode(
-                        phoneNumber = sideEffect.phoneNumber,
-                        code = sideEffect.code,
-                    )
-
-                    is VerificationSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     VerificationScreen(
         state = state,
@@ -100,7 +74,8 @@ internal fun VerificationRoute(
                 )
             )
         },
-        navigate = { viewModel.onIntent(VerificationIntent.Navigate(it)) },
+        onBackClick = { viewModel.onIntent(VerificationIntent.OnBackClick) },
+        onNextClick = { viewModel.onIntent(VerificationIntent.OnNextClick) },
     )
 }
 
@@ -109,7 +84,8 @@ private fun VerificationScreen(
     state: VerificationState,
     onRequestAuthCodeClick: (String) -> Unit,
     onVerifyClick: (String, String) -> Unit,
-    navigate: (NavigationEvent) -> Unit,
+    onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -133,7 +109,7 @@ private fun VerificationScreen(
     ) {
         PieceSubCloseTopBar(
             title = "",
-            onCloseClick = { navigate(NavigationEvent.Up) },
+            onCloseClick = onBackClick,
             closeButtonEnabled = false,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -156,6 +132,7 @@ private fun VerificationScreen(
                 authCode = authCode,
                 remainingTimeInSec = state.formattedRemainingTimeInSec,
                 authCodeStatus = state.authCodeStatus,
+                isAuthCodeVerified = state.authCodeStatus == VERIFIED,
                 onAuthCodeChanged = { authCode = it },
                 onVerifyClick = {
                     keyboardController?.hide()
@@ -169,7 +146,7 @@ private fun VerificationScreen(
 
         PieceSolidButton(
             label = stringResource(R.string.next),
-            onClick = { navigate(NavigationEvent.To(AuthGraphDest.SignUpRoute)) },
+            onClick = onNextClick,
             enabled = state.authCodeStatus == VERIFIED,
             modifier = Modifier
                 .fillMaxWidth()
@@ -210,6 +187,7 @@ private fun VerificationHeader(
 private fun AuthCodeBody(
     authCode: String,
     remainingTimeInSec: String,
+    isAuthCodeVerified: Boolean,
     authCodeStatus: AuthCodeStatus,
     onAuthCodeChanged: (String) -> Unit,
     onVerifyClick: () -> Unit,
@@ -249,6 +227,7 @@ private fun AuthCodeBody(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
+                readOnly = isAuthCodeVerified,
                 keyboardActions = KeyboardActions(
                     onDone = {
                         val currentTime = System.currentTimeMillis()
@@ -308,10 +287,7 @@ private fun PhoneNumberBody(
     modifier: Modifier = Modifier,
 ) {
     val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
 
     val requestButtonLabel =
         if (isAuthCodeRequested) stringResource(R.string.verification_resend) else stringResource(R.string.verification_request)
@@ -337,9 +313,10 @@ private fun PhoneNumberBody(
                         onRequestAuthCodeClick(phoneNumber)
                     }
                 },
+                readOnly = isAuthCodeVerified,
                 onValueChange = onPhoneNumberChanged,
                 rightComponent = {
-                    if (phoneNumber.isNotEmpty()) {
+                    if (phoneNumber.isNotEmpty() && !isAuthCodeVerified) {
                         Image(
                             painter = painterResource(R.drawable.ic_delete_circle),
                             contentDescription = null,
@@ -389,7 +366,8 @@ fun PreviewVerificationScreen() {
                 remainingTimeInSec = 299,
                 authCodeStatus = AuthCodeStatus.INIT,
             ),
-            navigate = {},
+            onBackClick = {},
+            onNextClick = {},
             onRequestAuthCodeClick = {},
             onVerifyClick = { _, _ -> },
         )

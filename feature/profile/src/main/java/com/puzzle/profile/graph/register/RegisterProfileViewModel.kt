@@ -30,8 +30,6 @@ import com.puzzle.profile.graph.basic.contract.InputState.Companion.getInputStat
 import com.puzzle.profile.graph.basic.contract.InputState.Companion.getWeightInputState
 import com.puzzle.profile.graph.basic.contract.NickNameGuideMessage
 import com.puzzle.profile.graph.register.contract.RegisterProfileIntent
-import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect
-import com.puzzle.profile.graph.register.contract.RegisterProfileSideEffect.Navigate
 import com.puzzle.profile.graph.register.contract.RegisterProfileState
 import com.puzzle.profile.graph.register.model.ValuePickRegisterRO
 import com.puzzle.profile.graph.register.model.ValueTalkRegisterRO
@@ -59,8 +57,6 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<RegisterProfileState>(initialState) {
     private val intents = Channel<RegisterProfileIntent>(BUFFERED)
-    private val _sideEffects = Channel<RegisterProfileSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         initProfileData()
@@ -223,7 +219,7 @@ class RegisterProfileViewModel @AssistedInject constructor(
     private fun moveToPrevious() {
         withState { state ->
             if (state.currentPage == RegisterProfileState.Page.BASIC_PROFILE) {
-                viewModelScope.launch { _sideEffects.send(Navigate(NavigationEvent.Up)) }
+                viewModelScope.launch { navigationHelper.navigate(NavigationEvent.Up) }
             } else {
                 state.currentPage.getPreviousPage()
                     ?.let { previousPage -> setState { copy(currentPage = previousPage) } }
@@ -250,8 +246,8 @@ class RegisterProfileViewModel @AssistedInject constructor(
         }
     }
 
-    private fun navigateToProfilePreview() = viewModelScope.launch {
-        _sideEffects.send(Navigate(NavigationEvent.TopLevelTo(MatchingGraphDest.ProfilePreviewRoute)))
+    private fun navigateToProfilePreview() {
+        navigationHelper.navigate(NavigationEvent.TopLevelTo(MatchingGraphDest.ProfilePreviewRoute))
     }
 
     private fun saveValuePick(state: RegisterProfileState) {

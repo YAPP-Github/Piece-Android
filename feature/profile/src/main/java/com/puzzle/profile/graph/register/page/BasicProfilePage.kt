@@ -44,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import coil3.compose.AsyncImage
+import com.puzzle.common.ui.addFocusCleaner
 import com.puzzle.common.ui.clickable
 import com.puzzle.common.ui.throttledClickable
 import com.puzzle.designsystem.R
@@ -78,14 +79,14 @@ internal fun BasicProfilePage(
     onDeleteClick: (Int) -> Unit,
     onAddContactClick: () -> Unit,
 ) {
-    val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = Modifier
             .padding(horizontal = 20.dp)
             .verticalScroll(scrollState)
-            .clickable { focusManager.clearFocus() },
+            .addFocusCleaner(focusManager)
     ) {
         Text(
             text = stringResource(R.string.basic_profile_page_header),
@@ -794,7 +795,6 @@ private fun PhotoContent(
     modifier: Modifier = Modifier,
     profileImageUri: String? = null,
 ) {
-    // TODO : 이미지 조건 추가, screenState == BasicProfileState.ScreenState.SAVE_FAILED && 이미지가 없을 경우
     val isSaveFailed: Boolean =
         profileImageUriInputState == InputState.WARNIING && profileImageUri == null
 

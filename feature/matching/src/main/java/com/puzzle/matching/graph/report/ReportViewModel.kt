@@ -7,7 +7,6 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.matching.graph.report.contract.ReportIntent
-import com.puzzle.matching.graph.report.contract.ReportSideEffect
 import com.puzzle.matching.graph.report.contract.ReportState
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -29,9 +28,6 @@ class ReportViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<ReportState>(initialState) {
     private val intents = Channel<ReportIntent>(BUFFERED)
-    private val _sideEffects = Channel<ReportSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
-
     init {
         intents.receiveAsFlow()
             .onEach(::processIntent)
@@ -44,21 +40,17 @@ class ReportViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: ReportIntent) {
         when (intent) {
-            ReportIntent.OnBackClick -> _sideEffects.send(
-                ReportSideEffect.Navigate(NavigationEvent.Up)
-            )
+            ReportIntent.OnBackClick -> navigationHelper.navigate(NavigationEvent.Up)
 
             is ReportIntent.OnReportButtonClick -> reportUser(
                 userId = intent.userId,
                 reason = intent.reason
             )
 
-            ReportIntent.OnReportDoneClick -> _sideEffects.send(
-                ReportSideEffect.Navigate(
-                    NavigationEvent.To(
-                        route = MatchingGraphDest.MatchingRoute,
-                        popUpTo = true,
-                    )
+            ReportIntent.OnReportDoneClick -> navigationHelper.navigate(
+                NavigationEvent.To(
+                    route = MatchingGraphDest.MatchingRoute,
+                    popUpTo = true,
                 )
             )
 

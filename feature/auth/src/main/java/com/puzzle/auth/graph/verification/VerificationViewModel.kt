@@ -5,13 +5,13 @@ import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
 import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.auth.graph.verification.contract.VerificationIntent
-import com.puzzle.auth.graph.verification.contract.VerificationSideEffect
-import com.puzzle.auth.graph.verification.contract.VerificationSideEffect.Navigate
 import com.puzzle.auth.graph.verification.contract.VerificationState
 import com.puzzle.domain.model.auth.Timer
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.model.error.HttpResponseException
 import com.puzzle.domain.repository.AuthRepository
+import com.puzzle.navigation.AuthGraphDest
+import com.puzzle.navigation.NavigationEvent
 import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -28,12 +28,10 @@ class VerificationViewModel @AssistedInject constructor(
     @Assisted initialState: VerificationState,
     private val authRepository: AuthRepository,
     private val timer: Timer,
-    internal val navigationHelper: NavigationHelper,
+    private val navigationHelper: NavigationHelper,
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<VerificationState>(initialState) {
     private val intents = Channel<VerificationIntent>(BUFFERED)
-    private val _sideEffects = Channel<VerificationSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     private var timerJob: Job? = null
 
@@ -47,24 +45,24 @@ class VerificationViewModel @AssistedInject constructor(
         intents.send(intent)
     }
 
-    private suspend fun processIntent(intent: VerificationIntent) {
+    private fun processIntent(intent: VerificationIntent) {
         when (intent) {
-            is VerificationIntent.OnRequestAuthCodeClick -> _sideEffects.send(
-                VerificationSideEffect.RequestAuthCode(intent.phoneNumber)
+            is VerificationIntent.OnRequestAuthCodeClick -> requestAuthCode(intent.phoneNumber)
+            is VerificationIntent.OnVerifyClick -> verifyAuthCode(
+                phoneNumber = intent.phoneNumber,
+                code = intent.code,
             )
 
-            is VerificationIntent.OnVerifyClick -> _sideEffects.send(
-                VerificationSideEffect.VerifyAuthCode(
-                    phoneNumber = intent.phoneNumber,
-                    code = intent.code,
+            is VerificationIntent.OnBackClick -> navigationHelper.navigate(NavigationEvent.Up)
+            is VerificationIntent.OnNextClick -> navigationHelper.navigate(
+                NavigationEvent.TopLevelTo(
+                    AuthGraphDest.SignUpRoute
                 )
             )
-
-            is VerificationIntent.Navigate -> _sideEffects.send(Navigate(intent.navigationEvent))
         }
     }
 
-    internal fun requestAuthCode(phoneNumber: String) {
+    private fun requestAuthCode(phoneNumber: String) {
         viewModelScope.launch {
             authRepository.requestAuthCode(phoneNumber)
                 .onSuccess {
@@ -90,7 +88,7 @@ class VerificationViewModel @AssistedInject constructor(
         }
     }
 
-    internal fun verifyAuthCode(phoneNumber: String, code: String) {
+    private fun verifyAuthCode(phoneNumber: String, code: String) {
         viewModelScope.launch {
             authRepository.verifyAuthCode(
                 phoneNumber = phoneNumber,

@@ -1,5 +1,6 @@
 package com.puzzle.auth.graph.login
 
+import android.util.Log
 import com.airbnb.mvrx.MavericksViewModel
 import com.airbnb.mvrx.MavericksViewModelFactory
 import com.airbnb.mvrx.hilt.AssistedViewModelFactory
@@ -22,10 +23,8 @@ import com.puzzle.navigation.NavigationHelper
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -70,9 +69,8 @@ class LoginViewModel @AssistedInject constructor(
         authRepository.loginOauth(
             oAuthProvider = oAuthProvider,
             oauthCredential = token,
-        ).onSuccess {
-            val userRole = async { userRepository.getUserRole().first() }
-                .await()
+        ).onSuccess { userRole ->
+            Log.d("test", userRole.toString())
 
             when (userRole) {
                 REGISTER -> {

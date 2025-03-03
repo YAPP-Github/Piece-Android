@@ -32,7 +32,6 @@ import com.puzzle.designsystem.component.PieceSolidButton
 import com.puzzle.designsystem.component.PieceSubBackTopBar
 import com.puzzle.designsystem.foundation.PieceTheme
 import com.puzzle.matching.graph.block.contract.BlockIntent
-import com.puzzle.matching.graph.block.contract.BlockSideEffect
 import com.puzzle.matching.graph.block.contract.BlockState
 
 @Composable
@@ -42,18 +41,6 @@ internal fun BlockRoute(
     viewModel: BlockViewModel = mavericksViewModel(),
 ) {
     val state by viewModel.collectAsState()
-
-    val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(viewModel) {
-        lifecycleOwner.repeatOnStarted {
-            viewModel.sideEffects.collect { sideEffect ->
-                when (sideEffect) {
-                    is BlockSideEffect.Navigate -> viewModel.navigationHelper
-                        .navigate(sideEffect.navigationEvent)
-                }
-            }
-        }
-    }
 
     BlockScreen(
         state = state,

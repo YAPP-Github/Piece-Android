@@ -17,7 +17,6 @@ import com.puzzle.navigation.NavigationHelper
 import com.puzzle.navigation.SettingGraphDest
 import com.puzzle.setting.BuildConfig
 import com.puzzle.setting.graph.main.contract.SettingIntent
-import com.puzzle.setting.graph.main.contract.SettingSideEffect
 import com.puzzle.setting.graph.main.contract.SettingState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -39,9 +38,6 @@ class SettingViewModel @AssistedInject constructor(
     internal val errorHelper: ErrorHelper,
 ) : MavericksViewModel<SettingState>(initialState) {
     private val _intents = Channel<SettingIntent>(BUFFERED)
-
-    private val _sideEffects = Channel<SettingSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         initSetting()

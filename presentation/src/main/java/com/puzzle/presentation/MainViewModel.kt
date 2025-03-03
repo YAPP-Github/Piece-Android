@@ -144,14 +144,11 @@ class MainViewModel @Inject constructor(
         val userRole = userRepository.getUserRole().first()
         when (userRole) {
             REGISTER ->
-                navigationHelper.navigate(To(route = AuthGraphDest.SignUpRoute, popUpTo = true))
+                navigationHelper.navigate(To(route = AuthGraphDest.SignUpRoute))
 
-            PENDING, USER ->
-                navigationHelper.navigate(
-                    To(route = MatchingGraphDest.MatchingRoute, popUpTo = true)
-                )
+            PENDING, USER -> navigationHelper.navigate(TopLevelTo(route = MatchingGraphDest.MatchingRoute))
 
-            NONE -> navigationHelper.navigate(To(route = OnboardingRoute, popUpTo = true))
+            NONE -> navigationHelper.navigate(TopLevelTo(route = OnboardingRoute))
         }
     }.also { _isInitialized.value = true }
 }

@@ -7,7 +7,6 @@ import com.airbnb.mvrx.hilt.hiltMavericksViewModelFactory
 import com.puzzle.domain.model.error.ErrorHelper
 import com.puzzle.domain.repository.MatchingRepository
 import com.puzzle.matching.graph.block.contract.BlockIntent
-import com.puzzle.matching.graph.block.contract.BlockSideEffect
 import com.puzzle.matching.graph.block.contract.BlockState
 import com.puzzle.navigation.MatchingGraphDest
 import com.puzzle.navigation.NavigationEvent
@@ -29,8 +28,6 @@ class BlockViewModel @AssistedInject constructor(
     private val errorHelper: ErrorHelper,
 ) : MavericksViewModel<BlockState>(initialState) {
     private val intents = Channel<BlockIntent>(BUFFERED)
-    private val _sideEffects = Channel<BlockSideEffect>(BUFFERED)
-    val sideEffects = _sideEffects.receiveAsFlow()
 
     init {
         intents.receiveAsFlow()
@@ -44,14 +41,12 @@ class BlockViewModel @AssistedInject constructor(
 
     private suspend fun processIntent(intent: BlockIntent) {
         when (intent) {
-            BlockIntent.OnBackClick -> _sideEffects.send(BlockSideEffect.Navigate(NavigationEvent.Up))
+            BlockIntent.OnBackClick -> navigationHelper.navigate(NavigationEvent.Up)
             is BlockIntent.OnBlockButtonClick -> blockUser(intent.userId)
-            BlockIntent.OnBlockDoneClick -> _sideEffects.send(
-                BlockSideEffect.Navigate(
-                    NavigationEvent.To(
-                        route = MatchingGraphDest.MatchingRoute,
-                        popUpTo = true,
-                    )
+            BlockIntent.OnBlockDoneClick -> navigationHelper.navigate(
+                NavigationEvent.To(
+                    route = MatchingGraphDest.MatchingRoute,
+                    popUpTo = true,
                 )
             )
         }
