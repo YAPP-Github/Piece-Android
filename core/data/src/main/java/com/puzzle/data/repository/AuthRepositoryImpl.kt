@@ -4,6 +4,7 @@ import com.puzzle.common.suspendRunCatching
 import com.puzzle.datastore.datasource.token.LocalTokenDataSource
 import com.puzzle.datastore.datasource.user.LocalUserDataSource
 import com.puzzle.domain.model.auth.OAuthProvider
+import com.puzzle.domain.model.user.UserRole
 import com.puzzle.domain.repository.AuthRepository
 import com.puzzle.network.source.auth.AuthDataSource
 import kotlinx.coroutines.coroutineScope
@@ -19,7 +20,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun loginOauth(
         oAuthProvider: OAuthProvider,
         oauthCredential: String
-    ): Result<Unit> = suspendRunCatching {
+    ): Result<UserRole> = suspendRunCatching {
         val response = authDataSource.loginOauth(oAuthProvider, oauthCredential).getOrThrow()
 
         coroutineScope {
@@ -37,6 +38,8 @@ class AuthRepositoryImpl @Inject constructor(
             refreshTokenJob.join()
             userRoleJob.join()
         }
+
+        UserRole.create(response.role)
     }
 
     override suspend fun logout(): Result<Unit> = suspendRunCatching {

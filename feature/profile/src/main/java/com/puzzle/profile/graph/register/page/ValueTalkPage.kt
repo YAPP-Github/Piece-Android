@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -72,7 +73,12 @@ private fun ValueTalkCards(
     onContentChange: (ValueTalkRegisterRO) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
+    val scrollState = rememberLazyListState()
+
+    LazyColumn(
+        state = scrollState,
+        modifier = modifier.fillMaxSize(),
+    ) {
         item {
             Text(
                 text = stringResource(R.string.value_talk_profile_page_header),
